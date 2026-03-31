@@ -73,7 +73,7 @@ classdef alg_sim
             z0 = zeros(d, 1);
             for i = 1:s                
                 op_curr = obj.sys.get_op(i);
-                fi = op_curr.f(z0, param0);
+                fi = op_curr.f(0, z0, param0);
                 nfi(i) = length(fi);
             end
             nf = sum(nfi);
@@ -132,7 +132,7 @@ classdef alg_sim
                     if any(Dzw_curr,"all")
                         %use backward evaluation
                         vi_vec = reshape(vi, [], 1);
-                        zi_vec = op_curr.bw(-Dzw_curr, vi_vec, param);
+                        zi_vec = op_curr.bw(k, -Dzw_curr, vi_vec, param);
                         zi = reshape(zi_vec, [], dl);
                         wi = -(Dzw_curr) \ (vi - zi);
                     else
@@ -140,13 +140,13 @@ classdef alg_sim
                         zi = vi;
                         
                         vi_vec = reshape(vi, [], 1);                        
-                        wi = op_curr.fw(vi_vec, param);
+                        wi = op_curr.fw(k, vi_vec, param);
                     end
 
                     %function evaluation
                     
 
-                    fi = op_curr.f(zi_vec, param);
+                    fi = op_curr.f(k, zi_vec, param);
 
 
 
@@ -195,7 +195,14 @@ classdef alg_sim
 
             end
             
+            %get the residuals
+            %optimality residual: sum(w) = 0            
+            wsum2 = pagemtimes(repmat(kron(ones(1, s), eye(c)), 1, 1, T),  ssim.w);
+            ssim.res_w = sqrt(squeeze(sum(wsum2.^2, [1, 2])));
 
+            %consensus residual: z - zavg = 0
+            zavg = pagemtimes(repmat(kron(ones(1, s), eye(c)/s), 1, 1, T),  ssim.z);
+            ssim.res_z = sqrt(squeeze(sum((ssim.z - repmat(zavg, s, 1, 1)).^2, [1, 2])));
         end
     end
 
