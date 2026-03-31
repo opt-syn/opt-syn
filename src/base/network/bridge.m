@@ -113,7 +113,13 @@ classdef bridge
 
         function obj = lift(obj, d)
             %lift by a kronecker operation with the identity            
-            obj.P = kron(obj.P, eye(d));
+            
+            Ad = kron(obj.P.A, eye(d));
+            Bd = kron(obj.P.B, eye(d));
+            Cd = kron(obj.P.C, eye(d));
+            Dd = kron(obj.P.D, eye(d));
+
+            obj.P = ss(Ad, Bd, Cd, Dd, 1);
 
             obj.nz = obj.nz * d;
             obj.nzp = obj.nzp * d;

@@ -68,8 +68,9 @@ classdef  opt_system
                               -DK, eye(ny)];
             
 
+            nx = size(Pcurr.A, 1);
             nxi = size(Kcurr.A, 1);
-            xN = x_all(1:(nxi-1), :);
+            xN = x_all(1:(nx), :);
             xi = x_all((end-nxi+1):end, :);
 
             Cx = CyP*xN;

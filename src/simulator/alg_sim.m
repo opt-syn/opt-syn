@@ -45,7 +45,9 @@ classdef alg_sim
 %                 end
 %             else
             if nargin <=2
-                x=zeros(n,d);
+                x=zeros(n,dl);
+            else
+                x = reshape(x0, n, dl)
             end
 
             if nargin < 4
@@ -56,13 +58,13 @@ classdef alg_sim
             
             %log the signals
             ssim = struct;
-            ssim.w = zeros( obj.sys.P.nw, d, T);
-            ssim.wp = zeros( obj.sys.P.nwp, d, T);
-            ssim.z = zeros( obj.sys.P.nz, d, T);
-            ssim.zp = zeros( obj.sys.P.nzp, d, T);
-            ssim.u = zeros( obj.sys.P.nu, d, T);
-            ssim.y = zeros( obj.sys.P.ny, d, T);
-            ssim.x = zeros( n, d, T);            
+            ssim.w = zeros( obj.sys.P.nw, dl, T);
+            ssim.wp = zeros( obj.sys.P.nwp, dl, T);
+            ssim.z = zeros( obj.sys.P.nz, dl, T);
+            ssim.zp = zeros( obj.sys.P.nzp, dl, T);
+            ssim.u = zeros( obj.sys.P.nu, dl, T);
+            ssim.y = zeros( obj.sys.P.ny, dl, T);
+            ssim.x = zeros( n, dl, T);            
             ssim.param = cell(1, T);
            
 
