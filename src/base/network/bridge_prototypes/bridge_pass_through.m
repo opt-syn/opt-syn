@@ -35,10 +35,10 @@ classdef bridge_pass_through < bridge
             end
         end
         
-        function outputArg = method1(obj,inputArg)
+        function Eo = E(obj)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            outputArg = obj.Property1 + inputArg;
+            Eo = obj.A;
         end
     end
 end

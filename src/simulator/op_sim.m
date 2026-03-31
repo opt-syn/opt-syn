@@ -5,9 +5,10 @@ classdef op_sim
     %TODO: maybe this should be placed in the operator proper?
     
     properties
-        f = @(z, param) [];  %
+        
         fw= @(z, param) []; %forward evaluation (e.g. gradient)
         bw = @(z, param) []; %backward evaluation (e.g. proximal operator)        
+        f = @(z, param) [];  %function value (or function values in a game)
     end
     
     methods

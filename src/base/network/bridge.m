@@ -4,10 +4,7 @@ classdef bridge
     
     properties
         %plant matrices
-        A;      
-        B;          
-        C;
-        D;
+        P;
         
         %indexing
         nz = 0;
@@ -31,7 +28,8 @@ classdef bridge
         function obj = bridge(P, n)
             %N Construct an instance of this class
             %   Detailed explanation goes here
-            [obj.A, obj.B, obj.C, obj.D] = ssdata(P);            
+            obj.P = P;
+%             [obj.A, obj.B, obj.C, obj.D] = ssdata(P);            
 
             obj.nz = n.nz;
             obj.nw = n.nw;
@@ -91,9 +89,22 @@ classdef bridge
             D = obj.D(iy, iu);
         end
 
+        function Ao = A(obj)
+            Ao = obj.P.A;
+        end
+        function Bo = B(obj)
+            Bo = obj.P.B;
+        end
+        function Co = C(obj)
+            Co = obj.P.C;
+        end
+        function Do = D(obj)
+            Do = obj.P.D;
+        end
+
         function P_out = ss(obj)
             %extract the state-space expression
-            P_out = ss(obj.A, obj.B, obj.C, obj.D, 1);
+            P_out = obj.P;
         end
 
         function P_out = tf(obj)

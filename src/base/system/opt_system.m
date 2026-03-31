@@ -15,7 +15,7 @@ classdef  opt_system
             obj.op = op;
             obj.P = P;
             obj.K = K;
-            if nargin < 3
+            if nargin < 4
                 s = length(obj.op);
                 obj.bind = 1:s;
             else
@@ -30,11 +30,15 @@ classdef  opt_system
         end
 
         function Kcurr = get_K(obj, param)
-            Kcurr = obj.K();
+            %TODO: override this with parameters
+            Kcurr = obj.K;
         end
 
         function sys_alg = get_alg(obj, param)
             %close the loop of the algorithm
+            if nargin < 2
+                param = [];
+            end
             sys_alg = lft(obj.get_P(param), obj.get_K(param));
         end
 
@@ -53,22 +57,34 @@ classdef  opt_system
             [nu, ny] = size(Kcurr.D);
 
             DK = Kcurr.D;
-            DP = Pcurr.D((end-ny):end, (end-nu):end);
-
-            CyP = Pcurr.C((end-ny):end, :);
-            D1P = Pcurr.D((end-ny):end, 1:(end-nu));
-            well_posed_mat = [eye(nu), -DK;
-                              -DP, eye(ny)];
+            DP = Pcurr.D((end-ny+1):end, (end-nu+1):end);
 
 
-            Cblock = [CyP; Kcurr.C] * x_all;
-            Dblock = [D1P * w_all; Kcurr.D * 0];
+            nxi = length(Kcurr.A);
+            nx = length(Pcurr.A);
+            CyP = Pcurr.C((end-ny+1):end, :);            
+            D21P = Pcurr.D((end-ny+1):end, 1:(end-nu));
+            well_posed_mat = [eye(nu), -DP;
+                              -DK, eye(ny)];
+            
 
-            revert = well_posed_mat \ (Cblock + Dblock);
+            nxi = size(Kcurr.A, 1);
+            xN = x_all(1:(nxi-1), :);
+            xi = x_all((end-nxi+1):end, :);
+
+            Cx = CyP*xN;
+            Dw = D21P*w_all;
+            Cxi = Kcurr.C * xi;
+
+            sig_rhs = [Cx + Dw; Cxi];
+%             Cblock = [CyP; Kcurr.C] * x_all;
+%             Dblock = [D21P * w_all; Kcurr.D * 0];
+
+            revert = well_posed_mat \ sig_rhs;
 
 
-            y = revert(1:ny);
-            u = revert((ny+1):end);
+            y = revert(1:ny, :);
+            u = revert((ny+1):end, :);
         end
 
         function dimn = n(obj)
