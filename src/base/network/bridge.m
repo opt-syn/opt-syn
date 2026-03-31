@@ -3,7 +3,11 @@ classdef bridge
     %   Detailed explanation goes here
     
     properties
-        P;      %plant
+        %plant matrices
+        A;      
+        B;          
+        C;
+        D;
         
         %indexing
         nz = 0;
@@ -12,6 +16,7 @@ classdef bridge
         nw =0;
         nwp =0;
         nu =0;
+        nx = 0;
 %         iz;     %input to operators (from network)        
 %         izp;    %input to performance channel (from network)
 %         iy;     %input to controller (from network)
@@ -26,12 +31,13 @@ classdef bridge
         function obj = bridge(P, n)
             %N Construct an instance of this class
             %   Detailed explanation goes here
-            obj.P = P;            
+            [obj.A, obj.B, obj.C, obj.D] = ssdata(P);            
 
             obj.nz = n.nz;
             obj.nw = n.nw;
             obj.ny = n.ny;
             obj.nu = n.nu;
+            obj.nx = length(obj.A);
 
             if isfield(n, 'zp')
                 obj.nzp = n.nzp;
@@ -46,8 +52,6 @@ classdef bridge
             
         end
 
-
-
         %indexers
         function u_ind = index_u(obj)
             u_ind = obj.nw + obj.nwp + (1:obj.nu);
@@ -61,7 +65,6 @@ classdef bridge
             w_ind = 1:obj.nw;
         end
 
-
         function y_ind = index_y(obj)
             y_ind = obj.nz + obj.nzp + (1:obj.ny);
         end
@@ -74,7 +77,28 @@ classdef bridge
             z_ind = 1:obj.nz;
         end
 
-        %lft operations        
+        function wr_ind = index_notu(obj)
+            %TODO: expand with more inputs
+            wr_ind = 1:(obj.nw + obj.nwp);
+        end
+
+        %extract matrices       
+        function D = Dyu(obj)
+            %get the direct feedthrough matrix
+            iu = obj.index_u();
+            iy = obj.index_y();
+
+            D = obj.D(iy, iu);
+        end
+
+        function P_out = ss(obj)
+            %extract the state-space expression
+            P_out = ss(obj.A, obj.B, obj.C, obj.D, 1);
+        end
+
+        function P_out = tf(obj)
+            P_out= ss2tf(obj.ss());
+        end
 
         function obj = lift(obj, d)
             %lift by a kronecker operation with the identity            
@@ -86,20 +110,6 @@ classdef bridge
             obj.nwp = obj.nwp * d;
             obj.nu = obj.nu * d;
             obj.ny = obj.ny * d;
-        end
-
-        function obj = lft_upper(obj, upper_part, ind)
-            %close the loop as Q star P (from above) at the indices ind
-            
-        end
-
-        function obj = lft_lower(obj, lower_part, ind_u, ind_y)
-            %close the loop as  P star K (from below) at the indices ind
-% 
-%             if nargin < 3
-%                 ind_u = 
-%             end
-
         end
     end
 end

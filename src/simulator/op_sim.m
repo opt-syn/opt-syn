@@ -5,23 +5,22 @@ classdef op_sim
     %TODO: maybe this should be placed in the operator proper?
     
     properties
-        f;  %
-        fw; %forward evaluation (e.g. gradient)
-        bw; %backward evaluation (e.g. proximal operator)        
+        f = @(z, param) [];  %
+        fw= @(z, param) []; %forward evaluation (e.g. gradient)
+        bw = @(z, param) []; %backward evaluation (e.g. proximal operator)        
     end
     
     methods
-        function obj = op_sim(f, fw, bw)
+        function obj = op_sim(fw, bw, f)
             %OP_SIM Construct an instance of this class
             %   operations used in the evaluation of the operator
-            obj.f = f;
+            
+            
             obj.fw = fw;
             obj.bw = bw;
-%             if nargin < 4
-%                 obj.blocksize = [];
-%             else
-%                 obj.blocksize = blocksize;
-%             end
+            if nargin == 3
+                obj.f = f;
+            end
         end               
     end
 end
