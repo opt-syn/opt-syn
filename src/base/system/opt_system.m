@@ -90,7 +90,17 @@ classdef  opt_system
 
         function dimn = n(obj)
             %n: number of states
-            dimn = length(obj.K.A) + obj.P.nx;
+            dimn = length(obj.K.A) + length(obj.P.A);
+        end
+
+        function dimn = nxn(obj)
+            %nxn: number of states in network
+            dimn = length(obj.P.A);
+        end
+
+        function dimn = nxi(obj)
+            %nxi: number of states in controller
+            dimn = length(obj.K.A);
         end
 
         function op_out = get_op(obj, i)

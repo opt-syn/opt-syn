@@ -47,7 +47,7 @@ classdef alg_sim
             if nargin <=2
                 x=zeros(n,dl);
             else
-                x = reshape(x0, n, dl)
+                x = reshape(x0, n, dl);
             end
 
             if nargin < 4
@@ -64,7 +64,8 @@ classdef alg_sim
             ssim.zp = zeros( obj.sys.P.nzp, dl, T);
             ssim.u = zeros( obj.sys.P.nu, dl, T);
             ssim.y = zeros( obj.sys.P.ny, dl, T);
-            ssim.x = zeros( n, dl, T);            
+            ssim.xn = zeros( obj.sys.nxn, dl, T);            
+            ssim.xi = zeros( obj.sys.nxi, dl, T);            
             ssim.param = cell(1, T);
            
 
@@ -139,8 +140,10 @@ classdef alg_sim
                         %use forward evaluation
                         zi = vi;
                         
-                        vi_vec = reshape(vi, [], 1);                        
-                        wi = op_curr.fw(k, vi_vec, param);
+                        vi_vec = reshape(vi, [], 1);   
+                        zi_vec = vi_vec;
+                        wi_vec = op_curr.fw(k, vi_vec, param);
+                        wi = reshape(wi_vec, [], dl);
                     end
 
                     %function evaluation
@@ -172,7 +175,11 @@ classdef alg_sim
 
                 %log the signals
 
-                ssim.x(:, :, k) = x;
+
+                xn = x(1:obj.sys.nxn, :);
+                xi = x((obj.sys.nxn+1):end, :);
+                ssim.xn(:, :, k) = xn;
+                ssim.xi(:, :, k) = xi;
                 ssim.z(:, :, k) = z;
                 ssim.zp(:, :, k) = zp;                
                 ssim.w(:, :, k) = w;
@@ -207,5 +214,6 @@ classdef alg_sim
     end
 
 end
+
 
 
