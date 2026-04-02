@@ -26,7 +26,7 @@ n = size(A, 1);
 s = length(p.iz);
 N = [eye(s-1); -ones(1, s-1)];
 
-if isfield(p.opts, 'tracking') && ~isempty(p.opts.tracking)
+if ~isempty(p.opts.tracking)
     S = blkdiag(p.opts.tracking.Sbeta, eye(s-1));
     Rbeta = ones(s, 1)*p.opts.tracking.Rbeta;
     TRACK = 1;
