@@ -205,11 +205,13 @@ classdef alg_sim
             %get the residuals
             %optimality residual: sum(w) = 0            
             wsum2 = pagemtimes(repmat(kron(ones(1, s), eye(c)), 1, 1, T),  ssim.w);
-            ssim.res_w = sqrt(squeeze(sum(wsum2.^2, [1, 2])));
+            ssim.res_w = sqrt(squeeze(sum(wsum2.^2, [1, 2])))';
 
             %consensus residual: z - zavg = 0
             zavg = pagemtimes(repmat(kron(ones(1, s), eye(c)/s), 1, 1, T),  ssim.z);
-            ssim.res_z = sqrt(squeeze(sum((ssim.z - repmat(zavg, s, 1, 1)).^2, [1, 2])));
+            ssim.res_z = sqrt(squeeze(sum((ssim.z - repmat(zavg, s, 1, 1)).^2, [1, 2])))';
+
+            ssim.k = 0:(T-1);
         end
     end
 

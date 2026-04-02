@@ -1,0 +1,111 @@
+classdef alg_plotter
+    %ALG_PLOTTER Plot trajectories of an algorithm execution
+    
+    
+    properties
+        sim;      %data in the simulation
+        FS = 16;  %fontsize for axes
+        FST = 20; %fontsize for title
+    end
+    
+    methods
+        function obj = alg_plotter(sim)
+            %ALG_PLOTTER Construct an instance of this class
+            %   Detailed explanation goes here
+            obj.sim = sim;
+        end
+        
+        function fig = plot(obj,traces, fignum)
+            %PLOT: multi-pane display 
+            %Input:
+            %   traces: signals to plot (e.g. {'x', 'w', 'f'})
+            
+            if (nargin == 3) && isnumeric(fignum)
+                fig = figure(fignum);
+            else
+                fig = figure;
+            end
+            clf
+
+            nplt = length(traces);
+            nrows = floor(sqrt(nplt));
+            ncols = ceil(sqrt(nplt));
+
+            tiledlayout(nrows, ncols)
+            axlist = cell(nplt, 1);
+            for r = 1:nplt
+                axcurr = nexttile;
+                axcurr = obj.plot_tile(axcurr, traces{r});
+                axlist{r} = axcurr;
+            end
+        end
+
+        function fig = plot_6(obj, fignum)
+            if nargin < 2
+                fignum = [];
+            end
+            sigs = {'xn', 'w', 'res_w', 'xi', 'z', 'res_z'};
+            fig = obj.plot(sigs, fignum);
+        end
+
+        function fig = plot_4(obj, fignum)
+            if nargin < 2
+                fignum = [];
+            end
+            sigs = {'w', 'res_w', 'z', 'res_z'};
+            fig = obj.plot(sigs, fignum);
+        end
+
+        function ax = plot_tile(obj, ax, sig)
+            %PLOT_TILE plot the signal 'sig' v.s. time
+
+
+            k = obj.sim.k;
+            T = length(k);
+            if ismember(sig, fieldnames(obj.sim))
+                sig_curr = getfield(obj.sim, sig);
+            elseif strcmp(sig, 'x')
+                sig_curr = [obj.sim.xn; obj.sim.xi];
+            end
+               
+                %TODO: plot the regulation signals
+
+                sz_curr = size(sig_curr);
+                sig_flat = reshape(permute(sig_curr, [length(sz_curr), 1:(length(sz_curr)-1)]), T,  []);
+    
+                szflat = size(sig_flat, 2);
+                hold on
+                for i =1:szflat
+                    plot(obj.sim.k, sig_flat(:, i))
+                end
+    
+                xlabel('$k$', 'interpreter', 'latex', 'fontsize', obj.FS)
+                ylabel(obj.get_name(sig), 'interpreter', 'latex', 'fontsize', obj.FS)
+            
+                if ismember(sig, {'res_w', 'res_z'})
+                    set(ax, 'YScale', 'log');
+                end
+            
+        end
+
+        function name = get_name(obj, sig)
+            %get the name of the signal in latex-formatted strings
+            if length(sig)==1
+                name_mid = sig;
+            elseif strcmp(sig(2), '_')
+                name_mid = [sig(1), '_{', sig(3:end), '}'];
+            elseif strcmp(sig, 'xi')
+                name_mid = '\xi';
+            elseif strcmp(sig, 'xn')
+                name_mid = 'x_{N}';
+            elseif strcmp(sig, 'res_w')
+                name_mid = '||1^{\top} w||_2';
+            elseif strcmp(sig, 'res_z')
+                name_mid = '||z - z_{avg}||_2';
+            end
+
+            name = ['$', name_mid, '$'];
+        end
+    end
+end
+
