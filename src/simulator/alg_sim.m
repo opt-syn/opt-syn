@@ -5,7 +5,7 @@ classdef alg_sim
         sys; %system to simulate
         d;   %number of dimensions (kronecker lift)        
         c=1;   %number of partitions of dimension
-        sampler = struct('w', @(param) [], 'param', @(param) []);
+        sampler = struct('wp', @(param) [], 'param', @(param) []);
     end
     
     methods 
@@ -107,7 +107,7 @@ classdef alg_sim
                 %TODO: allow for performance
                 for i = 1:s
                     %ASSERT D is lower-triangular
-                    wp = obj.sampler.w(param);
+                    wp = obj.sampler.wp(param);
                     if i==1
                         %flush the w and z values
                         w = NaN * w;

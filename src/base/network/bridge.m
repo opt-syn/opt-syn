@@ -1,27 +1,21 @@
 classdef bridge
-    %N Summary of this class goes here
-    %   Detailed explanation goes here
+    %BRIDGE a network sitting between the oracle F and the controller K
+    
     
     properties
         %plant matrices
         P;
         
-        %indexing
-        nz = 0;
-        nzp =0;
-        ny =0;
-        nw =0;
-        nwp =0;
-        nu =0;
-        nx = 0;
-%         iz;     %input to operators (from network)        
-%         izp;    %input to performance channel (from network)
-%         iy;     %input to controller (from network)
-% 
-% 
-%         iw;     %output of operators (to network)
-%         iwp;    %output of performance channel (to network)
-%         iu;     %output of controller (to network)        
+        %indexing [iz, izp, iy], [iw, iwp, iu]
+        nz = 0; %input to operators (from network)        
+        nzp =0; %input to performance channel (from network)
+        ny =0;  %input to controller (from network)
+
+
+        nw =0;  %output of operators (to network)
+        nwp =0; %output of performance channel (to network)
+        nu =0;  %output of controller (to network)        
+           
     end
     
     methods
@@ -34,8 +28,7 @@ classdef bridge
             obj.nz = n.nz;
             obj.nw = n.nw;
             obj.ny = n.ny;
-            obj.nu = n.nu;
-            obj.nx = length(obj.A);
+            obj.nu = n.nu;            
 
             if isfield(n, 'zp')
                 obj.nzp = n.nzp;
@@ -102,6 +95,10 @@ classdef bridge
             Do = obj.P.D;
         end
 
+        function nxo = nx(obj)
+            nxo = length(obj.P.A);
+        end
+
         function P_out = ss(obj)
             %extract the state-space expression
             P_out = obj.P;
@@ -127,6 +124,58 @@ classdef bridge
             obj.nwp = obj.nwp * d;
             obj.nu = obj.nu * d;
             obj.ny = obj.ny * d;
+        end
+
+
+        function obj = add_oracle_input(obj, ind_w, ind_z)
+
+            %ADD_ORACLE_INPUT: add external inputs at the oracle F
+            %
+            %z + dz \in F(w + dz) + dz
+            %ind_w: at the input of the oracle
+            %ind_z: at the output of the oracle
+
+            %
+            %Does not add extra outputs
+            
+            nwpnew = length(ind_w);
+            nzpnew = length(ind_z);
+
+            B = obj.B;
+            D = obj.D;
+            if nwpnew 
+                Ew = full(sparse(ind_w, 1:nwpnew, ones(nwpnew, 1), obj.nw, nwpnew));
+                Bwnew = B(:, obj.index_w) * Ew;
+                Dwnew = D(:, obj.index_w) * Ew;
+            else
+                Bwnew = [];
+                Dwnew = [];
+            end
+            if nzpnew
+                Ez = full(sparse(ind_z, 1:nzpnew, ones(nzpnew, 1), obj.nz, nzpnew));
+                Bznew = B(:, obj.index_w) * Ez;            
+                Dznew = D(:, obj.index_w) * Ez;
+            else
+                Bznew = [];
+                Dznew = [];
+            end
+
+            
+            
+
+            B_left = B(:, [obj.index_w, obj.index_wp]);
+            B_right = B(:, [obj.index_u]);
+            D_left = D(:, [obj.index_w, obj.index_wp]);
+            D_right = D(:, [obj.index_u]);
+
+            Aold = obj.P.A;            
+            Bnew = [B_left, Bwnew, Bznew, B_right];
+            Cold = obj.P.C;
+            Dnew = [D_left, Dwnew, Dznew, D_right];
+
+            obj.P = ss(Aold, Bnew, Cold, Dnew, 1);
+
+            obj.nwp = obj.nwp + nwpnew + nzpnew;           
         end
     end
 end

@@ -85,6 +85,7 @@ classdef alg_plotter
                 if ismember(sig, {'res_w', 'res_z'})
                     set(ax, 'YScale', 'log');
                 end
+                xlim([k(1), k(end)])
             
         end
 
@@ -94,6 +95,10 @@ classdef alg_plotter
                 name_mid = sig;
             elseif strcmp(sig(2), '_')
                 name_mid = [sig(1), '_{', sig(3:end), '}'];
+            elseif strcmp(sig, 'wp')
+                name_mid = 'w_p';
+            elseif strcmp(sig, 'zp')
+                name_mid = 'z_p'
             elseif strcmp(sig, 'xi')
                 name_mid = '\xi';
             elseif strcmp(sig, 'xn')
