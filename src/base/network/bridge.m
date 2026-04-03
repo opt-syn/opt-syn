@@ -7,6 +7,7 @@ classdef bridge
         P;
         
         %indexing [iz, izp, iy], [iw, iwp, iu]
+        s = 0;
         nz = 0; %input to operators (from network)        
         nzp =0; %input to performance channel (from network)
         ny =0;  %input to controller (from network)
@@ -24,7 +25,7 @@ classdef bridge
             %   Detailed explanation goes here
             obj.P = P;
 %             [obj.A, obj.B, obj.C, obj.D] = ssdata(P);            
-
+            obj.s = n.s;
             obj.nz = n.nz;
             obj.nw = n.nw;
             obj.ny = n.ny;
@@ -127,6 +128,8 @@ classdef bridge
         end
 
 
+        %% performance inputs and outputs
+
         function obj = add_oracle_input(obj, ind_w, ind_z)
 
             %ADD_ORACLE_INPUT: add external inputs at the oracle F
@@ -147,14 +150,16 @@ classdef bridge
                 Ew = full(sparse(ind_w, 1:nwpnew, ones(nwpnew, 1), obj.nw, nwpnew));
                 Bwnew = B(:, obj.index_w) * Ew;
                 Dwnew = D(:, obj.index_w) * Ew;
+%                 Bwnew = 0 * [Ew; zeros(nzpnew, nwpnew)];
+%                 Dwnew = 1 * [Ew; zeros(nzpnew, nwpnew)];
             else
                 Bwnew = [];
                 Dwnew = [];
             end
             if nzpnew
                 Ez = full(sparse(ind_z, 1:nzpnew, ones(nzpnew, 1), obj.nz, nzpnew));
-                Bznew = B(:, obj.index_w) * Ez;            
-                Dznew = D(:, obj.index_w) * Ez;
+                Bznew = [];
+                Dznew = 1 * [ Ez; zeros(nzpnew, obj.nz)];
             else
                 Bznew = [];
                 Dznew = [];
@@ -177,6 +182,115 @@ classdef bridge
 
             obj.nwp = obj.nwp + nwpnew + nzpnew;           
         end
+    
+        function obj = perf_output_w(obj, ind_w)
+            %PERF_OUTPUT_W: add performance to track the w output
+            A = obj.P.A;
+            B = obj.P.B;
+            C = obj.P.C;
+            D = obj.P.D;
+            
+            nnew = length(ind_w);
+
+            Ctop = C([obj.index_z(), obj.index_zp()], :);
+            Dtop = D([obj.index_z(), obj.index_zp()], :);
+            Cbot = C([obj.index_y()], :);
+            Dbot = D([obj.index_y()], :);
+
+            n = length(A);
+            Czp = zeros(nnew, n);
+            Ez = full(sparse(ind_w, 1:nnew, ones(nnew, 1), n, nnew));
+
+            Dzp = Ez;
+
+            Cnew = [Ctop; Czp; Cbot];
+            Dnew = [Dtop; Dzp; Dbot];
+
+            obj.P = ss(A, B, Cnew, Dnew, 1);
+
+            obj.nzp = obj.nzp + nnew;
+
+        end
+
+        function obj = perf_output_opt(obj, c)
+            %PERF_OUTPUT_WSUM: add performance to track the optimality
+            %condition: sum(1'w) = 0
+            %
+            if nargin == 1
+                c = 1;
+            end
+            A = obj.P.A;
+            B = obj.P.B;
+            C = obj.P.C;
+            D = obj.P.D;
+
+            ind_w = obj.index_w();
+            
+            nnew = length(ind_w);
+
+            Ctop = C([obj.index_z(), obj.index_zp()], :);
+            Dtop = D([obj.index_z(), obj.index_zp()], :);
+            Cbot = C([obj.index_y()], :);
+            Dbot = D([obj.index_y()], :);
+
+            n = length(A);
+            s = obj.nw/c;
+            Czp = zeros(c, n);
+
+
+            Ezp = kron(ones(1, s), eye(c));
+            Dzp = [Ezp, zeros(size(Ezp, 1), obj.nwp + obj.nu)];
+
+            Cnew = [Ctop; Czp; Cbot];
+            Dnew = [Dtop; Dzp; Dbot];
+
+            obj.P = ss(A, B, Cnew, Dnew, 1);
+
+            obj.nzp = obj.nzp + c;
+
+        end
+
+        function obj = perf_output_z(obj, ind_z)
+            %PERF_OUTPUT_Z: add performance to track the z output
+            A = obj.P.A;
+            B = obj.P.B;
+            C = obj.P.C;
+            D = obj.P.D;
+            
+            nnew = length(ind_z);
+
+            Ctop = C([obj.index_z(), obj.index_zp()], :);
+            Dtop = C([obj.index_z(), obj.index_zp()], :);
+            Cbot = C([obj.index_y()], :);
+            Dbot = D([obj.index_y()], :);
+
+            n = length(A);
+            
+            %TODO: bug here.
+            Ez = full(sparse(ind_z, 1:nnew, ones(nnew, 1), length(ind_z), ...
+                nnew + obj.nw));
+
+
+            Czp = Ez * C;
+            Dzp = Ez * D;
+            
+
+            Cnew = [Ctop; Czp; Cbot];
+            Dnew = [Dtop; Dzp; Dbot];
+
+            obj.P = ss(A, B, Cnew, Dnew, 1);
+
+            obj.nzp = obj.nzp + nnew;
+
+        end
+        
+
+        function obj = perf_output_con(obj)
+            %PERF_OUTPUT_CON: add performance to track the consensus output
+            % norm(z)^2 (with z* = 0 by regulation)
+            obj = obj.perf_output_z(obj.index_z());
+        end
+    
     end
 end
 

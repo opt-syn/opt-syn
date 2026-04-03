@@ -13,6 +13,7 @@ classdef bridge_pass_through < bridge
 
             n = struct;
 
+            n.s = s;
             n.nz = s*c;
             n.nw = s*c;
             n.nu = s*c;
