@@ -32,14 +32,10 @@ classdef bridge
             obj.nu = n.nu;            
 
             if isfield(n, 'zp')
-                obj.nzp = n.nzp;
-            else
-                obj.nzp = 0;
+                obj.nzp = n.nzp;            
             end
             if isfield(n, 'zw')
-                obj.nwp = n.nwp;
-            else
-                obj.nwp = 0;
+                obj.nwp = n.nwp;            
             end
             
         end
@@ -109,6 +105,37 @@ classdef bridge
             P_out= ss2tf(obj.ss());
         end
 
+        %% overloads
+
+        function b_out = blkdiag(obj, b2)
+            %block-diagonal of two bridges
+            %interleave the indices properly
+
+            b_out = obj;
+            b_out.nw = obj.nw + b2.nw;
+            b_out.nwp = obj.nwp + b2.nwp;
+            b_out.nz = obj.nz + b2.nz;
+            b_out.nzp = obj.nzp + b2.nzp;
+            b_out.nu = obj.nu + b2.nu;
+            b_out.ny = obj.ny + b2.ny;
+            b_out.s = obj.s + b2.s;
+
+            P_diag = blkdiag(obj.P, b2.P);
+            nin = obj.nw + obj.nwp + obj.nu;
+            nout = obj.nz + obj.nzp + obj.ny;
+
+
+            ind_in = [1:obj.nw, nin + (1:b2.nw), ...
+                      obj.nw + (1:obj.nwp), nin + b2.nw + (1:b2.nwp), ...
+                      obj.nw + obj.nwp + (1:obj.nu), nin + b2.nw + b2.nwp + (1:b2.nu)];
+
+            ind_out = [1:obj.nz, nout + (1:b2.nz), ...
+                      obj.nz + (1:obj.nzp), nout + b2.nz + (1:b2.nzp), ...
+                      obj.nz + obj.nzp + (1:obj.ny), nout + b2.nz + b2.nzp + (1:b2.ny)];
+
+            b_out.P = P_diag(ind_out, ind_in);
+        end
+
         function obj = lift(obj, d)
             %lift by a kronecker operation with the identity            
             
@@ -128,6 +155,12 @@ classdef bridge
         end
 
 
+        function n = dump_dim(obj)
+            n = struct('nw', obj.nw, 'nwp', obj.nwp, ...
+                'nu', obj.nw, 'ny', obj.ny, ...
+                'nz', obj.nz, 'nzp', obj.nzp, ...
+                's', obj.s);
+        end
         %% performance inputs and outputs
 
         function obj = add_oracle_input(obj, ind_w, ind_z)
@@ -290,7 +323,7 @@ classdef bridge
             %PERF_OUTPUT_CON: add performance to track the consensus output
             % norm(z)^2 (with z* = 0 by regulation)
             if nargin == 1
-                c == 1;
+                c = 1;
             end
             if nargin == 2
                 ind_z = 1:obj.nz;

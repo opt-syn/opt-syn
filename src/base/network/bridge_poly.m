@@ -1,22 +1,176 @@
-classdef bridge_poly < bridge
+classdef bridge_poly 
     %BRIDGE_POLY a network sitting between the oracle F and the controller K
+
     
     properties
-        Property1
+        %plant matrices
+        P;
+        
+        %indexing [iz, izp, iy], [iw, iwp, iu]
+        s = 0;
+        nz = 0; %input to operators (from network)        
+        nzp =0; %input to performance channel (from network)
+        ny =0;  %input to controller (from network)
+
+
+        nw =0;  %output of operators (to network)
+        nwp =0; %output of performance channel (to network)
+        nu =0;  %output of controller (to network)        
+           
     end
-    
+
     methods
-        function obj = bridge_poly(inputArg1,inputArg2)
-            %BRIDGE_POLY Construct an instance of this class
+        function obj = bridge_poly(P, n)
+            %N Construct an instance of this class
             %   Detailed explanation goes here
-            obj.Property1 = inputArg1 + inputArg2;
+            
+            obj.s = n.s;
+            obj.nz = n.nz;
+            obj.nw = n.nw;
+            obj.ny = n.ny;
+            obj.nu = n.nu;            
+
+            if isfield(n, 'zp')
+                obj.nzp = n.nzp;            
+            end
+            if isfield(n, 'zw')
+                obj.nwp = n.nwp;            
+            end
+
+            Nss = length(P);
+            obj.P = cell(Nss, 1);
+            for i = 1:Nss
+                obj.P{i} = bridge(P{i}, n);
+            end
+            
+        end
+        function D = Dyu(obj)
+            %get the direct feedthrough matrix
+            D = cellfun(@Dyu, obj.P);            
+        end
+
+        function Ao = A(obj)
+            Ao = cellfun(@A, obj.P, 'UniformOutput',false);            
+        end
+        function Bo = B(obj)
+            Bo = cellfun(@B, obj.P, 'UniformOutput',false);            
+        end
+        function Co = C(obj)
+            Co = cellfun(@C, obj.P, 'UniformOutput',false);            
+        end
+        function Do = D(obj)
+            Do = cellfun(@D, obj.P, 'UniformOutput',false);            
+        end
+
+        function nxo = nx(obj)
+            nxo = length(obj.P{1}.A);
+        end
+
+        function P_out = ss(obj)
+            %extract the state-space expression
+            P_out = cellfun(@ss, obj.P);
+        end
+
+        function P_out = tf(obj)
+            P_out= ss2tf(obj.ss());
+        end
+
+        %% overloads
+
+        function b_out = blkdiag(obj, b2)
+            %block-diagonal of two bridges
+            %interleave the indices properly
+
+            b_out = obj;
+            b_out.nw = obj.nw + b2.nw;
+            b_out.nwp = obj.nwp + b2.nwp;
+            b_out.nz = obj.nz + b2.nz;
+            b_out.nzp = obj.nzp + b2.nzp;
+            b_out.nu = obj.nu + b2.nu;
+            b_out.ny = obj.ny + b2.ny;
+            b_out.s = obj.s + b2.s;
+
+            for i = 1:obj.Nss
+                b_out.P{i} = blkdiag(obj.P{i}, b2.P{i});
+            end
+        end
+
+        
+        %% performance inputs and outputs
+
+        function obj = add_oracle_input(obj, ind_w, ind_z)
+
+            %ADD_ORACLE_INPUT: add external inputs at the oracle F
+            %
+            %z + dz \in F(w + dz) + dz
+            %ind_w: at the input of the oracle
+            %ind_z: at the output of the oracle
+
+            %
+            %Does not add extra outputs
+            
+            nwpnew = length(ind_w);
+            nzpnew = length(ind_z);
+
+            obj.P = cellfun(@(p) p.add_oracle_input(ind_w, ind_z), obj.P);
+
+            obj.nwp = obj.nwp + nwpnew + nzpnew;           
+        end
+    
+        function obj = perf_output_w(obj, ind_w)
+            %PERF_OUTPUT_W: add performance to track the w output
+            
+            nnew = length(ind_w);
+            obj.P = cellfun(@(p) p.perf_output_w(ind_w), obj.P);
+            obj.nzp = obj.nzp + nnew;
+
+        end
+
+        function obj = perf_output_opt(obj, c)
+            %PERF_OUTPUT_WSUM: add performance to track the optimality
+            %condition: sum(1'w) = 0
+            %
+            if nargin == 1
+                c = 1;
+            end            
+            obj.P = cellfun(@(p) p.perf_output_opt(c), obj.P);
+            
+            obj.nzp = obj.nzp + c;
+
+        end
+
+        function obj = perf_output_z(obj, ind_z)
+            %PERF_OUTPUT_Z: add performance to track the z output
+            
+            nnew = length(ind_z);
+
+            obj.P = cellfun(@(p) p.perf_output_z(ind_z), obj.P);
+
+            obj.nzp = obj.nzp + nnew;
+
         end
         
-        function outputArg = method1(obj,inputArg)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            outputArg = obj.Property1 + inputArg;
+
+        function obj = perf_output_con(obj, c, ind_z)
+            
+            %PERF_OUTPUT_CON: add performance to track the consensus output
+            % norm(z)^2 (with z* = 0 by regulation)
+            if nargin == 1
+                c = 1;
+            end
+            if nargin == 2
+                ind_z = 1:obj.nz;
+            end
+
+
+            
+            nnew = length(ind_z);
+
+            obj.P = cellfun(@(p) p.perf_output_con(c, ind_z), obj.P);
+
+            obj.nzp = obj.nzp + nnew;            
         end
+
     end
 end
 

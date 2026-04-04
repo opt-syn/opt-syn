@@ -13,8 +13,10 @@ classdef  opt_system_periodic < opt_system_switch
                 bind = 1:s;            
             end
             
+            Nss = max(length(P), length(K));
+            G = circshift(eye(Nss), -1);
             obj@opt_system_switch(op, P, K, G, bind)
-            obj.G = circshift(eye(obj.Nss), -1);
+            
         end        
     end
 end

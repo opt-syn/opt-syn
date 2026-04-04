@@ -16,7 +16,7 @@ D_base = [zeros(c), zeros(c); eye(c), zeros(c)];
 
 % delay_curr = ss(A, B, C, D, 1);
 
-n = struct('nz', c, 'nu', c, 'nw', c, 'ny', c);
+n = struct('nz', c, 'nu', c, 'nw', c, 'ny', c, 's', 1);
 
 
 % ind_odd = 2*(0:c-1)+1;
