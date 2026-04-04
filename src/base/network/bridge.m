@@ -260,15 +260,15 @@ classdef bridge
             nnew = length(ind_z);
 
             Ctop = C([obj.index_z(), obj.index_zp()], :);
-            Dtop = C([obj.index_z(), obj.index_zp()], :);
+            Dtop = D([obj.index_z(), obj.index_zp()], :);
             Cbot = C([obj.index_y()], :);
             Dbot = D([obj.index_y()], :);
 
             n = length(A);
             
             %TODO: bug here.
-            Ez = full(sparse(ind_z, 1:nnew, ones(nnew, 1), length(ind_z), ...
-                nnew + obj.nw));
+            Ez = full(sparse(1:nnew, ind_z, ones(nnew, 1), ...
+                length(ind_z), nnew + obj.nzp + obj.ny));
 
 
             Czp = Ez * C;
@@ -285,10 +285,50 @@ classdef bridge
         end
         
 
-        function obj = perf_output_con(obj)
+        function obj = perf_output_con(obj, c, ind_z)
+            
             %PERF_OUTPUT_CON: add performance to track the consensus output
             % norm(z)^2 (with z* = 0 by regulation)
-            obj = obj.perf_output_z(obj.index_z());
+            if nargin == 1
+                c == 1;
+            end
+            if nargin == 2
+                ind_z = 1:obj.nz;
+            end
+
+                        A = obj.P.A;
+            B = obj.P.B;
+            C = obj.P.C;
+            D = obj.P.D;
+            
+            nnew = length(ind_z);
+
+            Ctop = C([obj.index_z(), obj.index_zp()], :);
+            Dtop = D([obj.index_z(), obj.index_zp()], :);
+            Cbot = C([obj.index_y()], :);
+            Dbot = D([obj.index_y()], :);
+
+            n = length(A);
+            
+            %TODO: bug here.
+            Ez = full(sparse(1:nnew, ind_z, ones(nnew, 1), ...
+                length(ind_z), nnew + obj.nzp + obj.ny));
+            
+            Iz = eye(obj.nz);
+            Jz = ones(obj.nz, obj.nz)/ (obj.nz/c);
+
+            Resz = blkdiag((Iz - Jz), eye(obj.nzp + obj.ny));
+            
+            Czp = (Ez * Resz) *  C;
+            Dzp = (Ez * Resz) * D;
+            
+
+            Cnew = [Ctop; Czp; Cbot];
+            Dnew = [Dtop; Dzp; Dbot];
+
+            obj.P = ss(A, B, Cnew, Dnew, 1);
+
+            obj.nzp = obj.nzp + nnew;            
         end
     
     end
