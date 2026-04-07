@@ -39,7 +39,9 @@ classdef  opt_system
             if nargin < 2
                 param = [];
             end
-            sys_alg = lft(obj.get_P(param), obj.get_K(param));
+            Pcurr = obj.get_P(param);
+            Kcurr = obj.get_K(param);
+            sys_alg = lft(Pcurr, Kcurr);
         end
 
         function [y, u] = get_internal_signals(obj, param, x_all, w_all)
@@ -90,7 +92,7 @@ classdef  opt_system
 
         function dimn = n(obj)
             %n: number of states
-            dimn = length(obj.K.A) + length(obj.P.A);
+            dimn = obj.nxn() + obj.nxi();
         end
 
         function dimn = nxn(obj)

@@ -5,7 +5,8 @@ classdef alg_sim
         sys; %system to simulate
         d;   %number of dimensions (kronecker lift)        
         c=1;   %number of partitions of dimension
-        sampler = struct('wp', @(param) [], 'param', @(param) []);
+        sampler = struct('wp', @(param) [], 'param', @(param) [], ...
+            'x0', @() [], 'param0', @() []);
     end
     
     methods 
@@ -24,7 +25,7 @@ classdef alg_sim
             end
         end
         
-        function ssim = sim(obj, T, x0, param0)
+        function ssim = sim(obj, T)
             %SIM: simulate a trajectory execution
 
             %process the input
@@ -35,24 +36,25 @@ classdef alg_sim
             d = obj.d;
             c = obj.c;
             dl = floor(d/c);
-            n=obj.sys.n;            
+            n=obj.sys.nxi;            
 
-%             if nargin >= 3
-%                 if length(x0) == n*d
-%                     x_vec=x0;
-%                 else
-%                     x_vec=kron(x0,ones(d,1));
-%                 end
-%             else
-            if nargin <=2
-                x=zeros(n,dl);
+            xz = zeros(obj.sys.nxn + obj.sys.nxi, dl);
+         
+            if isnumeric(obj.sampler.x0)
+                if isempty(obj.sampler.x0)
+                    x0 = xz;
+                else
+                    x0 = obj.sampler.x0;
+                end
             else
-                x = reshape(x0, n, dl);
+                x0 = obj.sampler.x0();
+                if isempty(x0)
+                    x0 = xz;
+                end
             end
 
-            if nargin < 4
-                param0 = [];
-            end
+            param0 = obj.sampler.param0;
+      
 
             
             
@@ -89,6 +91,7 @@ classdef alg_sim
             u = zeros(obj.sys.P.nu, dl);
             y = zeros(obj.sys.P.ny, dl);
             param = param0;
+            x = x0;
             f = zeros(nf, 1);
 
             %main loop

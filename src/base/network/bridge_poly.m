@@ -1,46 +1,23 @@
-classdef bridge_poly 
+classdef bridge_poly <  bridge & matlab.mixin.indexing.RedefinesBrace
     %BRIDGE_POLY a network sitting between the oracle F and the controller K
 
     
-    properties
-        %plant matrices
-        P;
-        
-        %indexing [iz, izp, iy], [iw, iwp, iu]
-        s = 0;
-        nz = 0; %input to operators (from network)        
-        nzp =0; %input to performance channel (from network)
-        ny =0;  %input to controller (from network)
+    % properties
+    %     %plant matrices
+    % end
 
-
-        nw =0;  %output of operators (to network)
-        nwp =0; %output of performance channel (to network)
-        nu =0;  %output of controller (to network)        
-           
-    end
-
-    methods
+    methods (Access=public)
         function obj = bridge_poly(P, n)
             %N Construct an instance of this class
             %   Detailed explanation goes here
             
-            obj.s = n.s;
-            obj.nz = n.nz;
-            obj.nw = n.nw;
-            obj.ny = n.ny;
-            obj.nu = n.nu;            
-
-            if isfield(n, 'zp')
-                obj.nzp = n.nzp;            
-            end
-            if isfield(n, 'zw')
-                obj.nwp = n.nwp;            
-            end
+           
+            obj@bridge([], n);
 
             Nss = length(P);
             obj.P = cell(Nss, 1);
             for i = 1:Nss
-                obj.P{i} = bridge(P{i}, n);
+                obj.P{i} = P{i};
             end
             
         end
@@ -60,10 +37,15 @@ classdef bridge_poly
         end
         function Do = D(obj)
             Do = cellfun(@D, obj.P, 'UniformOutput',false);            
-        end
+        end       
 
         function nxo = nx(obj)
             nxo = length(obj.P{1}.A);
+        end
+
+        function nss = Nss(obj)
+            %number of subsystems
+            nss = length(obj.P);
         end
 
         function P_out = ss(obj)
@@ -172,5 +154,25 @@ classdef bridge_poly
         end
 
     end
+
+    methods (Access=protected)
+        %https://de.mathworks.com/help/matlab/ref/matlab.mixin.indexing.redefinesbrace-class.html
+        function P_out = braceReference(obj,ind)
+           P_out = obj.P.(ind);
+        end
+
+        function P_out = braceListLength(obj,indexOp,indexContext)
+           P_out = listLength(obj.P,indexOp,indexContext);
+        end
+
+        function obj = braceAssign(obj,indexOp,varargin)
+            if isscalar(indexOp)
+                [obj.P.(indexOp)] = varargin{:};
+                return;
+            end
+            [obj.P(indexOp)] = varargin{:};
+        end
+    end
+
 end
 

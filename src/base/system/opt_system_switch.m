@@ -18,14 +18,14 @@ classdef  opt_system_switch < opt_system
                 bind = 1:s;            
             end
 
-            if ~iscell(P)
-                P = {P};
-            end
+            % if ~iscell(P)
+            %     P = {P};
+            % end
 
             if ~iscell(K)
                 K0 = K;
-                K = cell(size(P));
-                for i = 1:numel(P)
+                K = cell(P.Nss, 1);
+                for i = 1:P.Nss
                     K{i} = K0;
                 end
             end
@@ -37,23 +37,22 @@ classdef  opt_system_switch < opt_system
 
         %TODO: allow for parameterized systems
 
-        function Pcurr = get_P(obj, param)
-            Pcurr = obj.P{param.mode}.ss();
+
+
+        function Scurr = get_P(obj, param)
+            Pcurr = obj.P{param.mode};
+            Scurr = Pcurr.ss();
         end
 
         function Kcurr = get_K(obj, param)
             %TODO: override this with parameters
-            Kcurr = obj.K{param.mode}.ss();
+            Kcurr = obj.K{param.mode};
         end    
         
-        function dimn = n(obj)
-            %n: number of states
-            dimn = length(obj.K{1}.A) + length(obj.P{1}.A);
-        end
-
+        %dimensions
         function dimn = nxn(obj)
             %nxn: number of states in network
-            dimn = length(obj.P{1}.A);
+            dimn = obj.P.nx;
         end
 
         function dimn = nxi(obj)

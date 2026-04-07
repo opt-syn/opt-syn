@@ -4,30 +4,29 @@ classdef bridge_channel_delay < bridge_pass_through
 
     
     methods
-        function obj = bridge_channel_delay(d1, d2, s)
+        function obj = bridge_channel_delay(d1, d2, c)
             %BRIDGE_CHANNEL_DELAY Construct an instance of this class
             %   Detailed explanation goes here
-            if nargin == 2
-                s = length(d1);
-            else
-                if length(d1) ~= s
-                    d1 = kron(d1, ones(s, 1));
-                end
-                if length(d2) ~= s
-                    d2 = kron(d2, ones(s, 1));
-                end
+
+            if nargin < 3
+                c = 1;
             end
 
-            obj@bridge_pass_through(s);
+            s = length(d1);
+            obj@bridge_pass_through(s, c);
 
             
-            G1 = ss(zeros(s)); %from u to z
-            G2 = ss(zeros(s)); %from w to y   
+            G1 = ss(zeros(s*c)); %from u to z
+            G2 = ss(zeros(s*c)); %from w to y   
             
             z = tf('z', 1);
             for i = 1:s
-                G1(i, i) =  z^(-d1(i));
-                G2(i, i) =  z^(-d2(i));
+                for j = 1:c
+
+                    ic = (i-1)*c;
+                    G1(ic + j, ic + j) =  z^(-d1(i));
+                    G2(ic + j, ic + j) =  z^(-d2(i));
+                end
             end
         
             %get the final model
@@ -37,27 +36,27 @@ classdef bridge_channel_delay < bridge_pass_through
                 obj.P.StateName{i} = sprintf('x%d', i);
             end
 
-            [obj.P.InputName, obj.P.OutputName] = obj.P_names(s);
+            % [obj.P.InputName, obj.P.OutputName] = obj.P_names(s);
         end
 
 
-        function [InputName, OutputName] = P_names(obj, s)
+        function [InputName, OutputName] = P_names(obj, s, c)
+            InputName = cell(s*c, 1);
+            OutputName = cell(s*c, 1);
             for i = 1:(2*s)
-                if i <= s
-                    InputName{i} = sprintf('w%d', i);
-                    OutputName{i} = sprintf('z%d', i);
-                else
-                    InputName{i} = sprintf('u%d', i-s);
-                    OutputName{i} = sprintf('y%d', i-(s));
+                for j = 1:c
+                    ic = (i-1)*c;
+                    if i <= s
+                        InputName{ic+j} = sprintf('w%d_%d', i, j);
+                        OutputName{ic+j} = sprintf('z%d_%d', i, j);
+                    else
+                        InputName{ic+j} = sprintf('u%d_%d', i-s, j);
+                        OutputName{ic+j} = sprintf('y%d_%d', i-(s), j);
+                    end
                 end
             end
         end
-        
-        function outputArg = method1(obj,inputArg)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            outputArg = obj.Property1 + inputArg;
-        end
+
     end
 end
 
