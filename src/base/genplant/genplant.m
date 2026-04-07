@@ -300,7 +300,7 @@ classdef genplant
 
             n = length(A);
             
-            %TODO: bug here.
+            
             Ez = full(sparse(1:nnew, ind_z, ones(nnew, 1), ...
                 length(ind_z), nnew + obj.nzp + obj.ny));
 
