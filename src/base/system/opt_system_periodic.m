@@ -22,8 +22,8 @@ classdef  opt_system_periodic < opt_system_switch
 
         function mode_next = next_mode(obj, mode)
             %next mode in the switching sequence
-            Nss = max(length(P), length(K));
-            mode_next = 1+ mod(mode, Nss);
+            nss = obj.P.Nss;
+            mode_next = 1+ mod(mode, nss);
         end
     end
 end

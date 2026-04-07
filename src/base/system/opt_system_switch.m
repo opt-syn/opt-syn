@@ -40,6 +40,7 @@ classdef  opt_system_switch < opt_system
                 mode = 1;
             end
 
+            %TODO: debug this
             g = obj.G(mode, :);
             gc = g/sum(g);
 
