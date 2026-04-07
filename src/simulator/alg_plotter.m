@@ -92,24 +92,27 @@ classdef alg_plotter
         function name = get_name(obj, sig)
             %get the name of the signal in latex-formatted strings
             if length(sig)==1
-                name_mid = sig;
+                name_mid = ['$', sig, '$'];
             elseif strcmp(sig(2), '_')
-                name_mid = [sig(1), '_{', sig(3:end), '}'];
+                name_mid = ['$', sig(1), '_{', sig(3:end), '}$'];
             elseif strcmp(sig, 'wp')
-                name_mid = 'w_p';
+                name_mid = '$w_p$';
             elseif strcmp(sig, 'zp')
-                name_mid = 'z_p'
+                name_mid = '$z_p$';
             elseif strcmp(sig, 'xi')
-                name_mid = '\xi';
+                name_mid = '$\xi$';
             elseif strcmp(sig, 'xn')
-                name_mid = 'x_{N}';
+                name_mid = '$x_{N}$';
+            elseif strcmp(sig, 'mode')
+                name_mid = 'mode';
             elseif strcmp(sig, 'res_w')
-                name_mid = '||1^{\top} w||_2';
+                name_mid = '$||1^{\top} w||_2$';
             elseif strcmp(sig, 'res_z')
-                name_mid = '||z - z_{avg}||_2';
+                name_mid = '$||z - z_{avg}||_2$';
             end
 
-            name = ['$', name_mid, '$'];
+            name = name_mid;
+            % name = ['$', name_mid, '$'];
         end
     end
 end

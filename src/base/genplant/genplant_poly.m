@@ -1,5 +1,5 @@
-classdef bridge_poly <  bridge & matlab.mixin.indexing.RedefinesBrace
-    %BRIDGE_POLY a network sitting between the oracle F and the controller K
+classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
+    %GENPLANT_POLY a generalized plant defined over corners of a polytope
 
     
     % properties
@@ -7,12 +7,12 @@ classdef bridge_poly <  bridge & matlab.mixin.indexing.RedefinesBrace
     % end
 
     methods (Access=public)
-        function obj = bridge_poly(P, n)
+        function obj = genplant_poly(P, n)
             %N Construct an instance of this class
             %   Detailed explanation goes here
             
            
-            obj@bridge([], n);
+            obj@genplant([], n);
 
             Nss = length(P);
             obj.P = cell(Nss, 1);
@@ -94,7 +94,7 @@ classdef bridge_poly <  bridge & matlab.mixin.indexing.RedefinesBrace
             nwpnew = length(ind_w);
             nzpnew = length(ind_z);
 
-            obj.P = cellfun(@(p) p.add_oracle_input(ind_w, ind_z), obj.P);
+            obj.P = cellfun(@(p) p.add_oracle_input(ind_w, ind_z), obj.P, 'UniformOutput', false);
 
             obj.nwp = obj.nwp + nwpnew + nzpnew;           
         end
@@ -115,7 +115,7 @@ classdef bridge_poly <  bridge & matlab.mixin.indexing.RedefinesBrace
             if nargin == 1
                 c = 1;
             end            
-            obj.P = cellfun(@(p) p.perf_output_opt(c), obj.P);
+            obj.P = cellfun(@(p) p.perf_output_opt(c), obj.P, 'UniformOutput', false);
             
             obj.nzp = obj.nzp + c;
 
@@ -126,7 +126,7 @@ classdef bridge_poly <  bridge & matlab.mixin.indexing.RedefinesBrace
             
             nnew = length(ind_z);
 
-            obj.P = cellfun(@(p) p.perf_output_z(ind_z), obj.P);
+            obj.P = cellfun(@(p) p.perf_output_z(ind_z), obj.P, 'UniformOutput', false);
 
             obj.nzp = obj.nzp + nnew;
 
@@ -148,7 +148,7 @@ classdef bridge_poly <  bridge & matlab.mixin.indexing.RedefinesBrace
             
             nnew = length(ind_z);
 
-            obj.P = cellfun(@(p) p.perf_output_con(c, ind_z), obj.P);
+            obj.P = cellfun(@(p) p.perf_output_con(c, ind_z), obj.P, 'UniformOutput', false);
 
             obj.nzp = obj.nzp + nnew;            
         end

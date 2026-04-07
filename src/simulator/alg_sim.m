@@ -67,7 +67,8 @@ classdef alg_sim
             ssim.u = zeros( obj.sys.P.nu, dl, T);
             ssim.y = zeros( obj.sys.P.ny, dl, T);
             ssim.xn = zeros( obj.sys.nxn, dl, T);            
-            ssim.xi = zeros( obj.sys.nxi, dl, T);            
+            ssim.xi = zeros( obj.sys.nxi, dl, T);         
+            ssim.mode = zeros(1, T);
             ssim.param = cell(1, T);
            
 
@@ -190,6 +191,12 @@ classdef alg_sim
                 ssim.u(:, :, k) = u;
                 ssim.y(:, :, k) = y;
                 ssim.f(:, k) = f;
+                if obj.sys.Nss==1
+                    ssim.mode(k) = 1;
+                else
+                    ssim.mode(k) = param.mode;
+                end
+                
                 ssim.param{k} = param;
                 
                 

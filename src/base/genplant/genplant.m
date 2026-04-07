@@ -1,5 +1,5 @@
-classdef bridge
-    %BRIDGE a network sitting between the oracle F and the controller K
+classdef genplant
+    %genplant a generalized plant
     
     
     properties
@@ -20,11 +20,10 @@ classdef bridge
     end
     
     methods
-        function obj = bridge(P, n)
+        function obj = genplant(P, n)
             %N Construct an instance of this class
             %   Detailed explanation goes here
-            obj.P = P;
-%             [obj.A, obj.B, obj.C, obj.D] = ssdata(P);            
+            obj.P = P;       
             obj.s = n.s;
             obj.nz = n.nz;
             obj.nw = n.nw;

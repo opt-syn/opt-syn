@@ -1,4 +1,4 @@
-classdef bridge_pass_through < bridge
+classdef bridge_pass_through < genplant
     %BRIDGE_PASS_THROUGH no network dynamics, no performance channels
     
 
@@ -21,7 +21,7 @@ classdef bridge_pass_through < bridge
 
             G0 = ss([zeros(s*c), eye(s*c); eye(s*c), zeros(s*c)]);
     
-            obj@bridge(G0, n);
+            obj@genplant(G0, n);
 
             
             [obj.P.InputName, obj.P.OutputName] = obj.P_names(s, c);

@@ -32,7 +32,7 @@ for i = 1:c
     D_curr(i, i+c) = 1;
 
     P_curr = ss(A_curr, B_curr, C_curr, D_curr, 1);
-    Plist{i} = bridge(P_curr, n);
+    Plist{i} = genplant(P_curr, n);
 
 end
 

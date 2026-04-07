@@ -6,8 +6,7 @@ classdef  opt_system_switch < opt_system
     
     
     properties        
-        G;    %switching graph
-        Nss;  %number of subsystems
+        G;    %switching graph        
     end
     
     methods
@@ -30,14 +29,26 @@ classdef  opt_system_switch < opt_system
                 end
             end
 
-            obj@opt_system(op, P, K, bind)
-            obj.Nss = length(P);
+            obj@opt_system(op, P, K, bind)            
             obj.G = G;
         end        
 
         %TODO: allow for parameterized systems
 
+        function mode_next = next_mode(obj, mode)
+            if nargin < 2
+                mode = 1;
+            end
 
+            g = obj.G(mode, :);
+            gc = g/sum(g);
+
+            gs = cumsum([0, gc]);
+
+            u = rand(1);
+
+
+        end
 
         function Scurr = get_P(obj, param)
             Pcurr = obj.P{param.mode};
@@ -49,12 +60,16 @@ classdef  opt_system_switch < opt_system
             Kcurr = obj.K{param.mode};
         end    
         
+
         %dimensions
         function dimn = nxn(obj)
             %nxn: number of states in network
             dimn = obj.P.nx;
         end
 
+        function nss = Nss(obj)
+            nss = obj.P.Nss;
+        end
         function dimn = nxi(obj)
             %nxi: number of states in controller
             dimn = length(obj.K{1}.A);

@@ -6,7 +6,7 @@ classdef  opt_system
         op; %a cell of operators (op_sim for simulation, op_? for analysis/synthesis)
         P;  %network
         K;  %controller
-        bind; %which operators go to which output ports        
+        bind; %which operators go to which output ports            
     end
     
     methods
@@ -21,14 +21,19 @@ classdef  opt_system
             else
                 obj.bind = bind;
             end
+            
         end        
 
         %TODO: allow for parameterized systems
+        function nss = Nss(obj)
+            nss = 1;
+        end
+        
 
         function Pcurr = get_P(obj, param)
             Pcurr = obj.P.ss();
         end
-
+        
         function Kcurr = get_K(obj, param)
             %TODO: override this with parameters
             Kcurr = obj.K;
@@ -88,6 +93,12 @@ classdef  opt_system
 
             y = revert(1:ny, :);
             u = revert((ny+1):end, :);
+        end
+
+
+        function mode_next = next_mode(obj, mode)
+            %next mode in switching
+            mode_next = 1;
         end
 
         function dimn = n(obj)

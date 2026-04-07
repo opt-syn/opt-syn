@@ -18,6 +18,13 @@ classdef  opt_system_periodic < opt_system_switch
             obj@opt_system_switch(op, P, K, G, bind)
             
         end        
+
+
+        function mode_next = next_mode(obj, mode)
+            %next mode in the switching sequence
+            Nss = max(length(P), length(K));
+            mode_next = 1+ mod(mode, Nss);
+        end
     end
 end
 
