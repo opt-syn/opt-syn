@@ -44,11 +44,12 @@ classdef  opt_system_switch < opt_system
             g = obj.G(mode, :);
             gc = g/sum(g);
 
-            gs = cumsum([0, gc]);
+            gs = cumsum(gc);
 
             u = rand(1);
 
-
+            % mode_next = [];
+            mode_next = find(u <= gs, 1, 'first');
         end
 
         function Scurr = get_P(obj, param)

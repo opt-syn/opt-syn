@@ -110,6 +110,8 @@ classdef genplant
             %block-diagonal of two bridges
             %interleave the indices properly
 
+         
+             
             b_out = obj;
             b_out.nw = obj.nw + b2.nw;
             b_out.nwp = obj.nwp + b2.nwp;
