@@ -1,4 +1,4 @@
-function j = jordan(n)
+function j = jordanb(n)
 %determines upper Jordan block of dimension n with eigenvalue zero
 if n==0;
     j=[];
