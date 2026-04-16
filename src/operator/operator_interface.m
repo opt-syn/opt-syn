@@ -7,6 +7,9 @@ classdef (Abstract) operator_interface
         id;   %the ID of the operator in the problem (index)
         iqc;  %IQC descring relations satisfied by the operator
         %monotone = true; %can the operator be bounded using monotonicity?
+
+
+        LMILAB = 1;
     end
     
     methods
@@ -22,7 +25,7 @@ classdef (Abstract) operator_interface
     methods (Abstract)
         %constructor
         create_vars(obj, order, reps)
-        create_iqc(obj, order, reps)
+        create_iqc(obj, order, reps)        
         %recovery
 %         factor_iqc(obj)        
     end

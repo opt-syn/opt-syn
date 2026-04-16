@@ -42,7 +42,7 @@ classdef iqc_loop_split
             end
         end
 
-        function sys = psi(obj)
+        function sys = get_psi(obj)
             %get the multiplier by block diagonalization
             sys = blkdiag(obj.Psi1, obj.Psi2);
         end

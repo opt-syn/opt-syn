@@ -1,6 +1,6 @@
 classdef op_quad < op_sml
-    %OP_QUAD Summary of this class goes here
-    %   Detailed explanation goes here
+    %OP_QUAD quadratic function 1/2 x' Q x, with eigenvalues of Q between
+    %  m and L.
     
  
     
