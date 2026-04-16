@@ -67,23 +67,30 @@ classdef iqc_loop_factored
             [~, nu1] = size(obj.Psi1.D);                               
             [~, nu2] = size(obj.Psi2.D);    
 
-            psi_out = blkdiag(obj.Psi1, eye(nu2));
+            % psi_out = blkdiag(obj.Psi1, eye(nu2));
 
-            
+            Af = blkdiag(obj.Psi1.A, obj.Psi2.A);
+            Bf = blkdiag(obj.Psi1.B, obj.Psi2.B);            
 
-            psi_out.C(1:ny1, nx1 + (1:nx2)) = obj.C3;
-            psi_out.D(1:ny1, nu1 + (1:nu2)) = obj.D3;
+            Cf1 = [obj.Psi1.C, obj.C3];
+            Df1 = [obj.Psi1.D, obj.D3];
 
-            % C13(1: ny1+1) ;
+            Cf2 = zeros(nu2, nx1 + nx2);
+            Df2 = [zeros(nu2, nu1), eye(nu2)];
 
-            %TODO: finish this
-            psi_out = [];
+            Cf = [Cf1; Cf2];
+            Df = [Df1; Df2];
+
+            psi_out = ss(Af, Bf, Cf, Df, 1);
             
         end
 
         function psi_inv = psi2_inv(obj)
             %PSI2_INV inverse of the parameter psi2
             psi_inv = inv(obj.Psi2);
+            %TODO: figure out clever conjugation
+            %
+            %how this should play with the zeros
         end
     end
 end
