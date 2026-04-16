@@ -47,9 +47,10 @@ classdef iqc_loop_factored
             psi_out = blkdiag(obj.Psi1, obj.Psi2);
 
             [ny1, nx1] = size(obj.Psi1.C);
+            [~, nx2] = size(obj.Psi2.C);
             [~, nu1] = size(obj.Psi1.D);
             [~, nu2] = size(obj.Psi2.D);
-            [~, nx2] = size(obj.Psi2.C);
+            
 
             psi_out.C(1:ny1, nx1 + (1:nx2)) = obj.C3;
             psi_out.D(1:ny1, nu1 + (1:nu2)) = obj.D3;
@@ -59,12 +60,20 @@ classdef iqc_loop_factored
 
         function  psi_out = get_psi_13(obj)
             %GET_PSI form the triangular multiplier
-            %only [psi1, psi3; 0, I]
+            %only [psi1, psi3; 0, I]          
 
-            psi_tri = obj.get_psi();
+            [ny1, nx1] = size(obj.Psi1.C);   
+            [~, nx2] = size(obj.Psi2.C);
+            [~, nu1] = size(obj.Psi1.D);                               
+            [~, nu2] = size(obj.Psi2.D);    
 
-            [A, B, C, D] = ssdata(psi_tri);
-            [ny1, nx1] = size(obj.Psi1.C);
+            psi_out = blkdiag(obj.Psi1, eye(nu2));
+
+            
+
+            psi_out.C(1:ny1, nx1 + (1:nx2)) = obj.C3;
+            psi_out.D(1:ny1, nu1 + (1:nu2)) = obj.D3;
+
             % C13(1: ny1+1) ;
 
             %TODO: finish this
