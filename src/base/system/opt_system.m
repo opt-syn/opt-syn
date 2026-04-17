@@ -7,11 +7,14 @@ classdef  opt_system
         P;  %network
         K;  %controller
         bind; %which operators go to which output ports            
+        tracking; %tracking of optimal solution (struct (S, R) by default)
+                  %tracking of varying gradients requires LPV/periodic/switched
+                  % methods, is a TODO
     end
     
     methods
-        function obj = opt_system(op, P, K, bind)
-            %OPT_SYSTEM constructor
+        function obj = opt_system(op, P, K, bind, tracking)
+            %OPT_SYSTEM constructor for the system
             obj.op = op;
             obj.P = P;
             obj.K = K;
@@ -21,21 +24,42 @@ classdef  opt_system
             else
                 obj.bind = bind;
             end
+            if nargin >= 5
+                obj.tracking = tracking;
+            end
             
-        end        
+        end    
 
-        %TODO: allow for parameterized systems
+        %% Dimension Counters
         function nss = Nss(obj)
+            %NSS: number of subsystems
             nss = 1;
+        end
+       
+        function dimn = n(obj)
+            %n: number of states
+            dimn = obj.nxn() + obj.nxi();
+        end
+
+        function dimn = nxn(obj)
+            %nxn: number of states in network
+            dimn = length(obj.P.A);
+        end
+
+        function dimn = nxi(obj)
+            %nxi: number of states in controller
+            dimn = length(obj.K.A);
         end
         
 
+        %% getters
         function Pcurr = get_P(obj, param)
+            %GET_P get the network P
             Pcurr = obj.P.ss();
         end
         
         function Kcurr = get_K(obj, param)
-            %TODO: override this with parameters
+            %GET_K get the controller K
             Kcurr = obj.K;
         end
 
@@ -48,6 +72,13 @@ classdef  opt_system
             Kcurr = obj.get_K(param);
             sys_alg = lft(Pcurr, Kcurr);
         end
+
+        function op_out = get_op(obj, i)
+            %get the operator at index i
+            op_out = obj.op{obj.bind(i)};
+        end
+        
+        %% for simulation
 
         function [y, u] = get_internal_signals(obj, param, x_all, w_all)
             %extract the internal signals from the interconnection (y, u) 
@@ -85,9 +116,6 @@ classdef  opt_system
             Cxi = Kcurr.C * xi;
 
             sig_rhs = [Cx + Dw; Cxi];
-%             Cblock = [CyP; Kcurr.C] * x_all;
-%             Dblock = [D21P * w_all; Kcurr.D * 0];
-
             revert = well_posed_mat \ sig_rhs;
 
 
@@ -98,28 +126,24 @@ classdef  opt_system
 
         function mode_next = next_mode(obj, mode)
             %next mode in switching
+
+            %TODO: is this actually used?
             mode_next = 1;
         end
 
-        function dimn = n(obj)
-            %n: number of states
-            dimn = obj.nxn() + obj.nxi();
-        end
 
-        function dimn = nxn(obj)
-            %nxn: number of states in network
-            dimn = length(obj.P.A);
-        end
 
-        function dimn = nxi(obj)
-            %nxi: number of states in controller
-            dimn = length(obj.K.A);
-        end
+        %% Regulation check and internal models
 
-        function op_out = get_op(obj, i)
-            %get the operator at index i
-            op_out = obj.op{obj.bind(i)};
-        end
+        %solve the regulator equation for the network (Pi, Gamma, Phi)
+        %   used for verification and internal model control
+        %   find a parameterization of solutions of the regulator equation
+
+        %construct the internal model
+
+        %solve the regulator equation for the controller (Theta) given
+        %(Gamma, Phi): this is verification
+
 
     end
 end

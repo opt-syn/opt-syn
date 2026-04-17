@@ -40,6 +40,15 @@ classdef op_sml_causal < op_sml_interface
             cons = elem_nonneg(vars.c, cons);
         end
 
+        function [iqc, vars, cons] = create_iqc(obj, cons, order, reps)
+            %create the IQC
+            if length(order)>1
+                order = sum(order);
+            end
+
+            [iqc, vars, cons] = create_iqc@op_sml_interface(obj, cons, order, reps);
+        end
+
 
 
         %% subsidiary creation routines
