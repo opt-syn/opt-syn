@@ -35,42 +35,22 @@ classdef op_gen  < operator_interface
         function pc = prop_count(obj)
               pc = size(obj.prop, 1);
         end
-        
-     
+             
+        function loop_out = build_loop(obj, reps)
+            %BUILD_LOOP construct the loop transformation
+            loop_out = [zeros(reps), eye(reps); eye(reps), zeros(reps)];
+        end
 
-        function [iqc, vars, cons] = create_iqc(obj, cons, order, reps)
-            %CREATE_VARS form the IQC for the general operator
-
-            %Input: 
-            %   order:  order of the IQC [number of lags]
-            %   rep:    number of repetitions of the operator (non-frugal)
-            %
-            %Output:
-            %   vars:   variables of the problem
-            %   cons:   constraints in the problem (in terms of the
-            %           variables directly)
-
-            [vars, cons] = obj.create_vars(cons, order, reps);
-
-
-    
-            %form the IQC
-
-            M = obj.build_cost((order+1)* reps, vars.cM);
-            X = obj.build_cost(order * reps, vars.cX);
-
+        function [psi1, psi2] = build_psi(obj, vars, order, reps)
+            %BUILD_PSI construct the filter for the general operator
+            
             psi_base = obj.build_psi_fir(order, reps);
 
             psi1 = psi_base;
             psi2 = psi_base;
-
-            orep = order*reps;
-            loop = [zeros(orep), eye(orep); eye(orep), zeros(orep)];
-
-
-            iqc = iqc_loop_split(psi1, M, loop, psi2, X);
-
         end
+
+
 
         function psi = build_psi_fir(obj, order, reps)
             %BUILD_PSI_FIR form the fir filter [1; z^-1; z^-2; z^-3..] 
@@ -86,6 +66,16 @@ classdef op_gen  < operator_interface
 
             psi = ss(Af_all, Bf_all, Cf_all, Df_all, 1);
 
+        end
+
+        function M_out = build_M(obj, vars, order, reps)
+            %BUILD_M create the running cost M
+            M_out = obj.build_cost((order+1)* reps, vars.cM);
+        end
+
+        function X_out = build_X(obj, vars, order, reps)
+            %BUILD_X create the terminal cost X
+            X_out = obj.build_cost(order*reps, vars.cX);
         end
 
         function cost = build_cost(obj, sz, var_curr)
@@ -158,7 +148,16 @@ classdef op_gen  < operator_interface
             cost = [M11, M12; M12', M22];
         end
 
-        function [vars, cons] = create_vars(obj, cons, order, reps)
+
+        function cons = filter_constraints(obj, cons, vars, iqc_out)
+            %constraints on the filter coefficients
+
+            cons = elem_nonneg(vars.cM, cons);
+            cons = elem_nonneg(vars.cX, cons); 
+        end
+
+
+        function [vars] = create_vars(obj, order, reps)
             %CREATE_VARS form the variables in an IQC
             %
             %Input: 
@@ -170,14 +169,11 @@ classdef op_gen  < operator_interface
             %   cons:   constraints in the problem (in terms of the
             %           variables directly)
 
-            if nargin < 2
-                cons = [];
-            end
 
-            if nargin < 3
+            if nargin < 2
                 order = 0;
             end
-            if nargin < 4
+            if nargin < 3
                 reps = 1;
             end
 
@@ -193,14 +189,13 @@ classdef op_gen  < operator_interface
             pc = obj.prop_count;
 
 
-            cM = lmim('cM', N, pc, 'full');
-            cX= lmim('cX', NX, pc, 'full');
+            cM = lmim(['cM', obj.sid], N, pc, 'full');
+            cX= lmim(['cX', obj.sid], NX, pc, 'full');
             
             vars = struct('cM', cM, 'cX', cX);
 
             %declare the constraints            
-            cons = elem_nonneg(cM, cons);
-            cons = elem_nonneg(cX, cons);          
+         
 
         end
     end

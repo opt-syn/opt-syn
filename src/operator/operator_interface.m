@@ -24,14 +24,45 @@ classdef (Abstract) operator_interface
         function strid = sid(obj)
             strid = num2str(obj.id);
         end
+
+        function [iqc, vars, cons] = create_iqc(obj, cons, order, reps)
+            %CREATE_VARS form the IQC for the general operator
+
+            %Input: 
+            %   order:  order of the IQC [number of lags]
+            %   rep:    number of repetitions of the operator (non-frugal)
+            %
+            %Output:
+            %   vars:   variables of the problem
+            %   cons:   constraints in the problem (in terms of the
+            %           variables directly)
+
+            [vars] = obj.create_vars(order, reps);
+  
+            %form the IQC            
+            M = build_M(obj, vars, order, reps);
+            X = build_X(obj, vars, order, reps);
+
+            loop = obj.build_loop(reps);            
+
+            [psi1, psi2] = obj.build_psi(vars, order, reps);
+
+            iqc = iqc_loop_split(psi1, M, loop, psi2, X);
+
+            cons = obj.filter_constraints(cons, vars, iqc);
+        end
     end
 
     methods (Abstract)
         %constructor
-        create_vars(obj, order, reps)
-        create_iqc(obj, order, reps)    
+        create_vars(obj, order, reps);        
+        
+        build_psi(obj, vars, order, reps);
+        build_M(obj, vars, reps);
+        build_X(obj, vars, order, reps);
+        build_loop(obj, reps);
+
         filter_constraints(obj, cons, vars, iqc)
-        build_psi(obj, vars, order, reps)
         %recovery
 %         factor_iqc(obj)        
     end

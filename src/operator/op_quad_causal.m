@@ -69,7 +69,7 @@ classdef op_quad_causal < op_sml_causal
 
         end
 
-         function [Psi1] = build_psi(obj, vars, order, reps)
+         function [Psi1, Psi2] = build_psi(obj, vars, order, reps)
             %BUILD_PSI construct the filter for the SML function
             %
             %use Positive-Real multipliers to do this
@@ -81,6 +81,7 @@ classdef op_quad_causal < op_sml_causal
             Df = vars.Df;
             
             Psi1 = sdpss(Af, Bf, Cf, Df);
+            Psi2 = ss(eye(reps));
         end
     end
 end

@@ -39,50 +39,23 @@ classdef op_sml_causal < operator_interface
             %SIGMA used to define all IQCs
             sig = 1/(obj.L - obj.m);
         end
+               
 
-        function loop = get_loop(obj, reps)
-            %GET_LOOP loop transformation matrix
+        function loop = build_loop(obj, reps)
+            %BUILD_LOOP construct the loop transformation
             loop_base = [-obj.sigma, 1; 1, obj.m];
 
             loop = kron(loop_base, eye(reps));
         end
 
-      
-        
-        function [iqc_out, vars, cons] = create_iqc(obj, cons, order, reps)
-            %CREATE_IQC form the valid IQC for the operator          
-            if nargin < 2
-                cons = [];
-            end
+        function M = build_M(obj, vars, order, reps);
+            %BUILD_M create the running cost M
+            M = kron([0, 1; 1, 0], eye(reps));
+        end
 
-            if nargin < 3
-                order = 0;
-            end
-            
-            if nargin < 4
-                reps = 1;
-            end
-            
-            if obj.same
-                loop = obj.m * eye(reps);
-                iqc_out = iqc_loop_split([], [], loop, [], []);
-                vars = {};
-            else
-                [vars] = obj.create_vars(order, reps);
-                
-                %build the cost
-                M = kron([0, 1; 1, 0], eye(reps));
-                X = 0;
-    
-                %build the filter
-                Psi1 = obj.build_psi(vars, order, reps);
-                Psi2 = eye(reps);
-                loop = obj.get_loop(reps);
-    
-                iqc_out = iqc_loop_split(Psi1, M, loop, Psi2, X);
-
-                cons = obj.filter_constraints(cons, vars, iqc_out);
-            end
+        function X_out = build_X(obj, vars, order, reps)
+            %BUILD_X create the terminal cost X
+            X_out = 0;
         end
 
         function cons = filter_constraints(obj, cons, vars, iqc_out)
@@ -120,7 +93,7 @@ classdef op_sml_causal < operator_interface
             
         end         
 
-        function [Psi1] = build_psi(obj, vars, order, reps)
+        function [Psi1, Psi2] = build_psi(obj, vars, order, reps)
             %BUILD_PSI construct the filter for the SML function
             %
             %use Zames-Falb multipliers to do so
@@ -160,6 +133,7 @@ classdef op_sml_causal < operator_interface
             end
 
             Psi1 = sdpss(Af, Bf, Cf, Df);
+            Psi2 = ss(eye(reps));
         end
     end
 end
