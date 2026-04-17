@@ -33,8 +33,10 @@ classdef op_sml_causal < op_sml_interface
         end
 
         function cons = filter_constraints(obj, cons, order, vars, iqc)
-            %constraints on the filter coefficients
+            %FILTER_CONSTRAINTS constraints on the filter coefficients            
 
+            %Zames-Falb constraints without terminal cost, polytopic
+            %definition of the multiplier
             cons = elem_nonneg(vars.c, cons);
         end
 

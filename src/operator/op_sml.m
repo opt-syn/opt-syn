@@ -105,16 +105,16 @@ classdef op_sml < op_sml_interface
         end
 
         function cons = filter_constraints(obj, cons, order, vars, iqc)
-            %TODO: include Zames-Falb constraint
-            % con = [];
+            %FILTER_CONSTRAINTS constraints on the filter coefficients            
 
-            %Zames-Falb DHD constraints
+            %Zames-Falb DHD constraints with terminal cost
 
             h = sum(order) + 1;
 
+            %get the lifted system
             reps = dim(iqc.Psi1.D, 2);
             [Psi1_red, Psi2_red] = build_psi_reduced(obj, vars, order, reps);
-            
+                        
             Psi1_lift = sdpsslift(Psi1_red, h);
             Psi2_lift = sdpsslift(Psi2_red, h);
 
@@ -124,18 +124,16 @@ classdef op_sml < op_sml_interface
             Bh1 = Psi1_lift.B;
             Bh2 = Psi2_lift.B;
 
+            %form the DHD constraint
             E = vars.E;
 
             BE = Bh2'*E*Bh1;
 
-            Psing = Dh1 + Dh2' + BE;
-
-            P = Psing + Psing'; 
+            P = Dh1 + Dh2' + BE;           
 
 
-            [cons] = dhd_impose(P, cons, obj.LMILAB);
-
-            % e = 3;
+            [cons] = dhd_impose_half(P, cons, obj.LMILAB);
+            [cons] = dhd_impose_half(P', cons, obj.LMILAB);
         end
 
         function M = build_M(obj, vars, order, reps);

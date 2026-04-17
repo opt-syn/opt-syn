@@ -1,4 +1,4 @@
-function [cons] = dhd_impose(M, cons, LMILAB)
+function [cons] = dhd_impose_half(M, cons, LMILAB)
 %DHD_IMPOSE: impose that a symmetric matrix M is doubly hyper dominant
 %(DHD)
 
