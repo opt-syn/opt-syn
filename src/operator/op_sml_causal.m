@@ -27,6 +27,12 @@ classdef op_sml_causal < operator_interface
             obj.m = m;
             obj.L = L;
         end
+
+        function se = same(obj)
+            %SAME no loop transformation or IQC required
+            %perfectly known oracle
+            se = obj.L == obj.m;
+        end
         
         function sig = sigma(obj)            
             %SIGMA used to define all IQCs
@@ -69,7 +75,7 @@ classdef op_sml_causal < operator_interface
         end       
         
         function [iqc_out, vars, cons] = create_iqc(obj, cons, order, reps)
-            %CREATE_IQC form the variables in an IQC            
+            %CREATE_IQC form the valid IQC for the operator          
             if nargin < 2
                 cons = [];
             end
@@ -81,20 +87,68 @@ classdef op_sml_causal < operator_interface
             if nargin < 4
                 reps = 1;
             end
-
-            [vars, cons] = obj.create_vars(cons, order, reps);
-
             
-            %build the cost
-            M = kron([0, 1; 1, 0], eye(reps));
-            X = 0;
+            if obj.same
+                loop = obj.m * eye(reps);
+                iqc_out = iqc_loop_split([], [], loop, [], []);
+                vars = {};
+            else
+                [vars, cons] = obj.create_vars(cons, order, reps);
+                
+                %build the cost
+                M = kron([0, 1; 1, 0], eye(reps));
+                X = 0;
+    
+                %build the filter
+                Psi1 = obj.build_psi(vars, order, reps);
+                Psi2 = eye(reps);
+                loop = obj.get_loop(reps);
+    
+                iqc_out = iqc_loop_split(Psi1, M, loop, Psi2, X);
+            end
+        end
 
-            %build the filter
-            Psi1 = obj.build_psi(vars, order, reps);
-            Psi2 = eye(reps);
-            loop = obj.get_loop();
 
-            iqc_out = iqc_loop_split(Psi1, M, loop, Psi2, X);
+        function [Psi1] = build_psi(obj, vars, order, reps)
+            %BUILD_PSI construct the filter for the SML function
+            %
+            %use Zames-Falb multipliers to do so
+
+            c = vars.c;
+
+            [Af0, Bf0] = block_fir(order);
+            Af = kron(eye(reps), Af0 );
+            Bf = kron(eye(reps), Bf0);                      
+            Cf = zeros(reps, order*reps);
+            Df = zeros(reps);
+            % Cf = [];
+            % Df = [];
+
+            %now fill in the terms
+
+            %these are the zames-falb offsets
+            %add them all up
+            C_center = [zeros(reps, order*reps); -eye(order*reps)];
+            D_off = [zeros(1, reps-1); -eye(reps-1); zeros(order*reps, reps-1)];
+            D_main = ones((order+1)*reps, 1);
+
+            C_right = C_center;
+            D_right = [D_main, D_off];
+            
+            for i = 1:reps
+                ccurr = lmim_index(c, [], i)';
+                Cf_curr = ccurr * C_right;
+                
+                D_right_curr = circshift(D_right, i-1, 2);
+                Df_curr = ccurr * D_right_curr;
+
+                E_curr = zeros(reps, 1);
+                E_curr(i) = 1;
+                Cf = Cf + E_curr*Cf_curr;
+                Df= Df + E_curr*Df_curr;
+            end
+
+            Psi1 = sdpss(Af, Bf, Cf, Df);
         end
     end
 end
