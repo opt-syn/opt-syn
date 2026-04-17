@@ -20,12 +20,18 @@ classdef (Abstract) operator_interface
                 obj.id = 0;
             end
         end 
+
+        function strid = sid(obj)
+            strid = num2str(obj.id);
+        end
     end
 
     methods (Abstract)
         %constructor
         create_vars(obj, order, reps)
-        create_iqc(obj, order, reps)        
+        create_iqc(obj, order, reps)    
+        filter_constraints(obj, cons, vars, iqc)
+        build_psi(obj, vars, order, reps)
         %recovery
 %         factor_iqc(obj)        
     end

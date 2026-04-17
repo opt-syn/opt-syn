@@ -26,6 +26,7 @@ classdef op_sml_causal < operator_interface
 
             obj.m = m;
             obj.L = L;
+            obj.id = id;
         end
 
         function se = same(obj)
@@ -46,33 +47,7 @@ classdef op_sml_causal < operator_interface
             loop = kron(loop_base, eye(reps));
         end
 
-        function [vars, cons]= create_vars(obj, cons, order, reps)
-            %CREATE_VARS form the variables in an IQC
-            %
-            %Input: 
-            %   order:  order of the IQC [causal, noncausal]
-            %   rep:    number of repetitions of the operator
-            
-            if nargin < 2
-                cons = [];
-            end
-
-            if nargin < 3
-                order = 0;
-            end
-            
-            if nargin < 4
-                reps = 1;
-            end
-
-            %nonnegative weights for the multipliers
-            c = lmim('c', (order+1)*reps, reps);
-
-            vars = struct('c', c);
-
-            cons = elem_nonneg(c, cons);
-            
-        end       
+      
         
         function [iqc_out, vars, cons] = create_iqc(obj, cons, order, reps)
             %CREATE_IQC form the valid IQC for the operator          
@@ -93,7 +68,7 @@ classdef op_sml_causal < operator_interface
                 iqc_out = iqc_loop_split([], [], loop, [], []);
                 vars = {};
             else
-                [vars, cons] = obj.create_vars(cons, order, reps);
+                [vars] = obj.create_vars(order, reps);
                 
                 %build the cost
                 M = kron([0, 1; 1, 0], eye(reps));
@@ -105,9 +80,45 @@ classdef op_sml_causal < operator_interface
                 loop = obj.get_loop(reps);
     
                 iqc_out = iqc_loop_split(Psi1, M, loop, Psi2, X);
+
+                cons = obj.filter_constraints(cons, vars, iqc_out);
             end
         end
 
+        function cons = filter_constraints(obj, cons, vars, iqc_out)
+            %constraints on the filter coefficients
+
+            cons = elem_nonneg(vars.c, cons);
+        end
+
+
+
+        %% subsidiary creation routines
+        function [vars]= create_vars(obj, order, reps)
+            %CREATE_VARS form the variables in an IQC
+            %
+            %Input: 
+            %   order:  order of the IQC [causal, noncausal]
+            %   rep:    number of repetitions of the operator
+            
+    
+
+            if nargin < 2
+                order = 0;
+            end
+            
+            if nargin < 3
+                reps = 1;
+            end
+
+            %nonnegative weights for the multipliers
+            c = lmim(['c', obj.sid], (order+1)*reps, reps);
+
+            vars = struct('c', c);
+
+            
+            
+        end         
 
         function [Psi1] = build_psi(obj, vars, order, reps)
             %BUILD_PSI construct the filter for the SML function

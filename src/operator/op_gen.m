@@ -27,6 +27,7 @@ classdef op_gen  < operator_interface
             if nargin > 0
                 obj.prop = prop;
             end
+            obj.id = id;
 
 
         end
