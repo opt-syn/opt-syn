@@ -37,7 +37,7 @@ classdef op_gen  < operator_interface
         
      
 
-        function [iqc, vars, cons] = create_iqc(obj, order, reps)
+        function [iqc, vars, cons] = create_iqc(obj, cons, order, reps)
             %CREATE_VARS form the IQC for the general operator
 
             %Input: 
@@ -49,7 +49,7 @@ classdef op_gen  < operator_interface
             %   cons:   constraints in the problem (in terms of the
             %           variables directly)
 
-            [vars, cons] = obj.create_vars(order, reps);
+            [vars, cons] = obj.create_vars(cons, order, reps);
 
 
     
@@ -157,7 +157,7 @@ classdef op_gen  < operator_interface
             cost = [M11, M12; M12', M22];
         end
 
-        function [vars, cons] = create_vars(obj, order, reps)
+        function [vars, cons] = create_vars(obj, cons, order, reps)
             %CREATE_VARS form the variables in an IQC
             %
             %Input: 
@@ -170,12 +170,17 @@ classdef op_gen  < operator_interface
             %           variables directly)
 
             if nargin < 2
+                cons = [];
+            end
+
+            if nargin < 3
                 order = 0;
             end
-            if nargin < 3
+            if nargin < 4
                 reps = 1;
             end
 
+     
             %declare the variables
             n = (order+1) * reps;
             N = n + n*(n-1)/2;
@@ -192,8 +197,7 @@ classdef op_gen  < operator_interface
             
             vars = struct('cM', cM, 'cX', cX);
 
-            %declare the constraints
-            cons = [];
+            %declare the constraints            
             cons = elem_nonneg(cM, cons);
             cons = elem_nonneg(cX, cons);          
 
