@@ -1,4 +1,4 @@
-classdef op_sml_causal < operator_interface
+classdef op_sml_causal < op_sml_interface
     %OP_SML_CAUSAL An operator which is the subdifferential of a function in SmL:
     %
     %F = partial f, where f(x) - m norm(x, 2)^2 and L norm(x, 2)^2 - f(x)
@@ -9,12 +9,7 @@ classdef op_sml_causal < operator_interface
     %
     %
     % TODO: generalize to matrices m and L?
-    
-    properties
-        m;
-        L;
-    end
-    
+ 
     methods
         function obj = op_sml_causal(m, L, id)
             %OP_SML Construct an instance of this class
@@ -22,31 +17,10 @@ classdef op_sml_causal < operator_interface
             if nargin < 3
                 id = 0;
             end
-            obj@operator_interface(id)            
-
-            obj.m = m;
-            obj.L = L;
-            obj.id = id;
+            obj@op_sml_interface(m ,L, id)            
         end
 
-        function se = same(obj)
-            %SAME no loop transformation or IQC required
-            %perfectly known oracle
-            se = obj.L == obj.m;
-        end
-        
-        function sig = sigma(obj)            
-            %SIGMA used to define all IQCs
-            sig = 1/(obj.L - obj.m);
-        end
-               
 
-        function loop = build_loop(obj, reps)
-            %BUILD_LOOP construct the loop transformation
-            loop_base = [-obj.sigma, 1; 1, obj.m];
-
-            loop = kron(loop_base, eye(reps));
-        end
 
         function M = build_M(obj, vars, order, reps);
             %BUILD_M create the running cost M
@@ -58,7 +32,7 @@ classdef op_sml_causal < operator_interface
             X_out = 0;
         end
 
-        function cons = filter_constraints(obj, cons, vars, iqc_out)
+        function cons = filter_constraints(obj, cons, order, vars, iqc)
             %constraints on the filter coefficients
 
             cons = elem_nonneg(vars.c, cons);
@@ -73,9 +47,7 @@ classdef op_sml_causal < operator_interface
             %Input: 
             %   order:  order of the IQC [causal, noncausal]
             %   rep:    number of repetitions of the operator
-            
-    
-
+ 
             if nargin < 2
                 order = 0;
             end
@@ -85,12 +57,10 @@ classdef op_sml_causal < operator_interface
             end
 
             %nonnegative weights for the multipliers
-            c = lmim(['c', obj.sid], (order+1)*reps, reps);
+            c = lmim(['c_', obj.sid], (order+1)*reps, reps);
 
             vars = struct('c', c);
-
-            
-            
+ 
         end         
 
         function [Psi1, Psi2] = build_psi(obj, vars, order, reps)

@@ -34,18 +34,18 @@ classdef op_quad_causal < op_sml_causal
 
 
             %filter coefficients
-            Cf = lmim(['Cf', obj.sid], reps, order*reps, 'full');
-            Df = lmim(['Df', obj.sid], reps, reps, 'full');
+            Cf = lmim(['Cf_', obj.sid], reps, order*reps, 'full');
+            Df = lmim(['Df_', obj.sid], reps, reps, 'full');
 
             %certificate of positive-realness of filter
-            Pf = lmim(['Pf', obj.sid], order*reps, order*reps, 'sym');
+            Pf = lmim(['Pf_', obj.sid], order*reps, order*reps, 'sym');
 
 
             vars = struct('Cf', Cf, 'Df', Df, 'Pf', Pf);
 
         end       
 
-        function cons = filter_constraints(obj, cons, vars, iqc)
+        function cons = filter_constraints(obj, cons, order, vars, iqc)
             %constraints on the filter coefficients
 
             [n, m] = size(iqc.Psi1.B);
@@ -69,7 +69,7 @@ classdef op_quad_causal < op_sml_causal
 
         end
 
-         function [Psi1, Psi2] = build_psi(obj, vars, order, reps)
+        function [Psi1, Psi2] = build_psi(obj, vars, order, reps)
             %BUILD_PSI construct the filter for the SML function
             %
             %use Positive-Real multipliers to do this

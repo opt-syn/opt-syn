@@ -14,8 +14,8 @@ classdef op_gen  < operator_interface
     
     methods
         function obj = op_gen(prop, id)
-            %OP_GEN Construct an instance of this class
-            %   Detailed explanation goes here
+            %OP_GEN Construct a general operator (possibly a set-valued
+            %map that does not have a potential function)            
             
         
             
@@ -149,7 +149,7 @@ classdef op_gen  < operator_interface
         end
 
 
-        function cons = filter_constraints(obj, cons, vars, iqc_out)
+        function cons = filter_constraints(obj, cons, order, vars, iqc_out)
             %constraints on the filter coefficients
 
             cons = elem_nonneg(vars.cM, cons);
@@ -189,8 +189,8 @@ classdef op_gen  < operator_interface
             pc = obj.prop_count;
 
 
-            cM = lmim(['cM', obj.sid], N, pc, 'full');
-            cX= lmim(['cX', obj.sid], NX, pc, 'full');
+            cM = lmim(['cM_', obj.sid], N, pc, 'full');
+            cX= lmim(['cX_', obj.sid], NX, pc, 'full');
             
             vars = struct('cM', cM, 'cX', cX);
 

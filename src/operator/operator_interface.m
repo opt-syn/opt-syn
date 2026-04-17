@@ -3,12 +3,12 @@ classdef (Abstract) operator_interface
     % container for the variables, IQCs, and relations    
     
     properties
-        vars; %variables in the analysis/synthesis programs
-        id;   %the ID of the operator in the problem (index)
-        iqc;  %IQC descring relations satisfied by the operator
+        % vars; %variables in the analysis/synthesis programs
+        id=0;   %the ID of the operator in the problem (index)
+        % iqc;  %IQC descring relations satisfied by the operator
         %monotone = true; %can the operator be bounded using monotonicity?
 
-
+        EQUALITY = 0;
         LMILAB = 1;
     end
     
@@ -16,8 +16,9 @@ classdef (Abstract) operator_interface
         function obj = operator_interface(id)
             %OPERATOR_INTERFACE Construct an instance of this class
             %   Detailed explanation goes here
-            if nargin < 2
-                obj.id = 0;
+            if nargin  > 0
+                
+                obj.id = id;
             end
         end 
 
@@ -49,7 +50,7 @@ classdef (Abstract) operator_interface
 
             iqc = iqc_loop_split(psi1, M, loop, psi2, X);
 
-            cons = obj.filter_constraints(cons, vars, iqc);
+            cons = obj.filter_constraints(cons, order, vars, iqc);
         end
     end
 
@@ -62,7 +63,7 @@ classdef (Abstract) operator_interface
         build_X(obj, vars, order, reps);
         build_loop(obj, reps);
 
-        filter_constraints(obj, cons, vars, iqc)
+        filter_constraints(obj, cons, order, vars, iqc)
         %recovery
 %         factor_iqc(obj)        
     end
