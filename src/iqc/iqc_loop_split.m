@@ -46,6 +46,20 @@ classdef iqc_loop_split
             %get the multiplier by block diagonalization
             sys = blkdiag(obj.Psi1, obj.Psi2);
         end
+
+
+        function iqc_lift = lift(obj, c)
+            %LIFT: kronecker by c (coordinates)
+
+
+            Psi1_lift = ss_kron_eye(obj.Psi1, c);
+            Psi2_lift = ss_kron_eye(obj.Psi2, c);
+            loop_lift = kron(obj.loop, eye(c));
+            M_lift = kron_eye(obj.M, c);
+            X_lift = kron_eye(obj.X, c);
+            
+            iqc_lift = iqc_loop_split(Psi1_lift, M_lift, loop_lift, Psi2_lift, X_lift);
+        end
     end
 end
 

@@ -92,6 +92,22 @@ classdef iqc_loop_factored
             %
             %how this should play with the zeros
         end
+
+
+        function iqc_lift = lift(obj, c)
+            %LIFT: kronecker by c (coordinates)
+
+
+            Psi1_lift = ss_kron_eye(obj.Psi1, c);
+            Psi2_lift = ss_kron_eye(obj.Psi2, c);
+            C3_lift = kron_eye(obj.C3, c);
+            D3_lift = kron_eye(obj.D3, c);
+            loop_lift = kron(obj.loop, eye(c));
+            M_lift = kron_eye(obj.M, c);
+            X_lift = kron_eye(obj.X, c);
+            
+            iqc_lift = iqc_loop_split(Psi1_lift, M_lift, C3_lift, D3_lift, Psi2_lift, X_lift, loop_lift);
+        end
     end
 end
 
