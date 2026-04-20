@@ -55,9 +55,17 @@ classdef op_gen  < operator_interface
         function psi = build_psi_fir(obj, order, reps)
             %BUILD_PSI_FIR form the fir filter [1; z^-1; z^-2; z^-3..] 
             % repeated by reps 
+            if order > 0
             [Af, Bf] = block_fir(order);
-            Cf = Af;
-            Df = Bf;
+            
+            Cf = [Af; [zeros(1, order-1), 1]];
+            Df = [Bf; 0];
+            else
+                Af = zeros(0, 0);
+                Bf = zeros(0, 1);
+                Cf = zeros(1, 0);
+                Df = 1;
+            end
 
             Af_all = kron(eye(reps), Af);
             Bf_all = kron(eye(reps), Bf);
@@ -75,7 +83,11 @@ classdef op_gen  < operator_interface
 
         function X_out = build_X(obj, vars, order, reps)
             %BUILD_X create the terminal cost X
-            X_out = obj.build_cost(order*reps, vars.cX);
+            if order > 0
+                X_out = obj.build_cost(order*reps, vars.cX);
+            else
+                X_out = [];
+            end
         end
 
         function cost = build_cost(obj, sz, var_curr)
@@ -179,18 +191,24 @@ classdef op_gen  < operator_interface
 
      
             %declare the variables
-            n = (order+1) * reps;
-            N = n + n*(n-1)/2;
+            nM = (order+1) * reps;
+            NM = nM + nM*(nM-1)/2;
 
 
-            nX = order * reps;
-            NX = nX + nX*(nX-1)/2;
-
+         
             pc = obj.prop_count;
 
 
-            cM = lmim(['cM_', obj.sid], N, pc, 'full');
-            cX= lmim(['cX_', obj.sid], NX, pc, 'full');
+            cM = lmim(['cM_', obj.sid], NM, pc, 'full');
+               
+          if order > 0
+                nX = order * reps;
+                NX = nX + nX*(nX-1)/2;
+
+                cX= lmim(['cX_', obj.sid], NX, pc, 'full');
+            else
+                cX = [];
+            end
             
             vars = struct('cM', cM, 'cX', cX);
 

@@ -25,15 +25,18 @@ classdef iqc_e2e < iqc_loop_split
 
             M = blkdiag(My, Mu);
             
-            obj@iqc_loop_split(1, M, 1, 1, []);
-            obj.gamma = gamma;
+            loop = [zeros(nu, ny), eye(ny);
+                eye(nu), zeros(ny, nu)];
+
+            obj@iqc_loop_split(eye(ny), M, loop, eye(nu), []);
+            obj.gamma2 = gamma2;
         end
         
-        function outputArg = method1(obj,inputArg)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            outputArg = obj.Property1 + inputArg;
-        end
+        % function outputArg = method1(obj,inputArg)
+        %     %METHOD1 Summary of this method goes here
+        %     %   Detailed explanation goes here
+        %     outputArg = obj.Property1 + inputArg;
+        % end
     end
 end
 

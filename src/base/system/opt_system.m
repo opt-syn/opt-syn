@@ -272,10 +272,6 @@ classdef  opt_system
 
 
             sys_cl = lft(obj.P, obj.K);
-            % sys_cl = obj.get_alg([]);
-
-          
-            % [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P.ss_zy_wu();
 
             A = sys_cl.A;
             B = sys_cl.Bw;

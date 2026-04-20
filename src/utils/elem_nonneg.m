@@ -11,6 +11,8 @@ if nargin < 3
     LMILAB = 1;
 end
 
+if ~isempty(M)
+    
 %used for the LMILAB interface
 
 if LMILAB
@@ -33,3 +35,4 @@ end
 
 end
 
+end

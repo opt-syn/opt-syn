@@ -3,25 +3,48 @@ classdef (Abstract) opt_manager_interface
     %optimization/fixed point algorithms
     
     properties
-        system;
+        sys;  %system (opt_system type)
+        cons = [];
+        vars = {}; %specifications
+        iqc_op = {};
+        specs = {};
+
+        %numerics
+        LMILAB = true;
+        tol = struct('G', 1e-4, 'M', 1e-7, 'X', 1e-7);
     end
     
     methods
-        function obj = opt_manager_interface(op, network, bind)
+        function obj = opt_manager_interface(sys)
             %OPT_MANAGER_INTERFACE
-            obj.op = op;
-            obj.network = network;
-            if nargin < 3
-                s = length(obj.op);
-                obj.bind = 1:s;
-            end
+            obj.sys = sys;
+            nop = length(obj.sys.op);
+            obj.iqc_op = cell(nop, 1);
+            obj.vars = struct('op', []);
+            obj.vars.op =cell(nop, 1);
+
+        end
+
+
+        function obj = purge(obj);
+            %PURGE: get rid of problem description
+            obj.cons = [];
+            obj.vars = {};
+            obj.iqc = {};
+            obj.specs = {};
         end
         
-        function outputArg = method1(obj,inputArg)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            outputArg = obj.Property1 + inputArg;
+        function obj = add_specifications(obj, varargin)
+            %concatenate the new performance specifications
+            obj.specs = [obj.specs, varargin];
         end
+        
+    end
+
+    methods (Abstract)
+        build_dissipation(obj)
+        build_program(obj)
+        build_plant(obj)
     end
 end
 

@@ -266,7 +266,7 @@ classdef genplant
         end
         %% performance inputs and outputs
 
-        function obj = add_oracle_input(obj, ind_w, ind_z)
+        function [obj, iwp] = add_oracle_input(obj, ind_w, ind_z)
 
             %ADD_ORACLE_INPUT: add external inputs at the oracle F
             %
@@ -316,10 +316,11 @@ classdef genplant
 
             obj.P = ss(Aold, Bnew, Cold, Dnew, 1);
 
+            iwp = obj.nwp + (1:(nwpnew + nzpnew));           
             obj.nwp = obj.nwp + nwpnew + nzpnew;           
         end
     
-        function obj = perf_output_w(obj, ind_w)
+        function [obj, izp] = perf_output_w(obj, ind_w)
             %PERF_OUTPUT_W: add performance to track the w output
             A = obj.P.A;
             B = obj.P.B;
@@ -344,11 +345,13 @@ classdef genplant
 
             obj.P = ss(A, B, Cnew, Dnew, 1);
 
+            izp = obj.nzp + (1:nnew);
             obj.nzp = obj.nzp + nnew;
+            
 
         end
 
-        function obj = perf_output_opt(obj, c)
+        function [obj, izp] = perf_output_opt(obj, c)
             %PERF_OUTPUT_WSUM: add performance to track the optimality
             %condition: sum(1'w) = 0
             %
@@ -382,11 +385,12 @@ classdef genplant
 
             obj.P = ss(A, B, Cnew, Dnew, 1);
 
+            izp = obj.nzp + (1:c);
             obj.nzp = obj.nzp + c;
 
         end
 
-        function obj = perf_output_z(obj, ind_z)
+        function [obj, izp] = perf_output_z(obj, ind_z)
             %PERF_OUTPUT_Z: add performance to track the z output
             A = obj.P.A;
             B = obj.P.B;
@@ -416,12 +420,13 @@ classdef genplant
 
             obj.P = ss(A, B, Cnew, Dnew, 1);
 
+            izp = obj.nzp + (1:nnew);
             obj.nzp = obj.nzp + nnew;
 
         end
         
 
-        function obj = perf_output_con(obj, c, ind_z)
+        function [obj, izp] = perf_output_con(obj, c, ind_z)
             
             %PERF_OUTPUT_CON: add performance to track the consensus output
             % norm(z)^2 (with z* = 0 by regulation)
@@ -464,6 +469,7 @@ classdef genplant
 
             obj.P = ss(A, B, Cnew, Dnew, 1);
 
+            izp = obj.nzp + (1:nnew);
             obj.nzp = obj.nzp + nnew;            
         end
     

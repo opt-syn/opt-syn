@@ -9,7 +9,11 @@ for j=1:n
     
     
     if ~isempty(s1.D)
-        nD1 = dim(s1.D,1);
+        if isnumeric(s1.D)
+            nD1 = size(s1.D,1);
+        else
+            nD1 = dim(s1.D,1);
+        end
         s.D=blkdiag(s1.D,s2.D);
     else
         nD1 = 0;
