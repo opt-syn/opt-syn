@@ -24,11 +24,13 @@ classdef bridge_pass_through < genplant
             obj@genplant(G0, n);
 
             
-            [obj.P.InputName, obj.P.OutputName] = obj.P_names(s, c);
+            % [obj.P.InputName, obj.P.OutputName] = obj.P_names(s, c);
         end
 
 
         function [InputName, OutputName] = P_names(obj, s, c)
+            InputName = cell(2*s, 1);
+            OutputName = cell(2*s, 1);
             for i = 1:(2*s)
                 for j = 1:c
                     indcurr = c*(i-1) + j;

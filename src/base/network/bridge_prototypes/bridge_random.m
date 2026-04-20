@@ -5,7 +5,7 @@ classdef bridge_random < bridge_pass_through
     
     methods
         function obj = bridge_random(nconn, s, eigset)
-            %BRIDGE_CHANNEL_DELAY Construct an instance of this class
+            %BRIDGE_RANDOM Construct an instance of this class
             %   Detailed explanation goes here
          
 
@@ -18,11 +18,11 @@ classdef bridge_random < bridge_pass_through
                 obj.P.A = eigset* obj.P.A / max(abs(eig(Gd.A)));
             end
 
-            for i = 1:length(p.P.A)
+            for i = 1:length(obj.P.A)
                 obj.P.StateName{i} = sprintf('x%d', i);
             end
 
-            [obj.P.InputName, obj.P.OutputName] = obj.P_names(s);
+            % [obj.P.InputName, obj.P.OutputName] = obj.P_names(s);
         end
 
 

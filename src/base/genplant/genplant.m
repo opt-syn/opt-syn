@@ -23,18 +23,24 @@ classdef genplant
         function obj = genplant(P, n)
             %N Construct an instance of this class
             %   Detailed explanation goes here
-            obj.P = P;       
-            obj.s = n.s;
-            obj.nz = n.nz;
-            obj.nw = n.nw;
-            obj.ny = n.ny;
-            obj.nu = n.nu;            
 
-            if isfield(n, 'zp')
-                obj.nzp = n.nzp;            
-            end
-            if isfield(n, 'zw')
-                obj.nwp = n.nwp;            
+            obj.P = P;
+            if isnumeric(P)
+                %static system
+                [obj.ny, obj.nu] = size(P);
+            else                     
+                obj.s = n.s;
+                obj.nz = n.nz;
+                obj.nw = n.nw;
+                obj.ny = n.ny;
+                obj.nu = n.nu;            
+    
+                if isfield(n, 'zp')
+                    obj.nzp = n.nzp;            
+                end
+                if isfield(n, 'zw')
+                    obj.nwp = n.nwp;            
+                end
             end
             
         end
@@ -95,7 +101,7 @@ classdef genplant
         function D = Dzw(obj)
             %oracle output to oracle input
             iw = obj.index_w();
-            iz = obj.index_y();
+            iz = obj.index_z();
 
             D0 = obj.P.D;
             D = D0(iz, iw);

@@ -159,18 +159,52 @@ classdef  opt_system
             
             [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P.ss_zy_wu();
 
-            N = obj.get_consensus();
+            
+            Npre = obj.get_consensus(obj.op, obj.bind);
+            c = size(D11, 1)/length(obj.bind); %coordinate lifts: change this later?
+            N = kron(Npre, eye(c));
+
+            S = eye(size(N, 2));
+            R = S;
+
+            
+            [sN, dN] = size(N);
             if isempty(obj.tracking)
                 %constant tracking
-                if obj.P.nx == 0
-                    %no network dynamics
+                n = obj.P.nx;
+
+                reg_ans = [zeros(n, 1), -B1*N;  -ones(sN, 1), -D11*N];
+                reg_mat = [A - eye(n), B2; C1, D12];
+
+
+                sol_basis = null(reg_mat, 'rational');
+                
+                sol0 = reg_mat \ reg_ans;
+                nnull = size(sol_basis, 2);
+
+                Pi0 = sol0(1:n, :);
+                Gam0 = sol0(n+1:end, :);        
+                Phi0 = D21 * [zeros(sN, 1), N] + D22*Gam0 + C2*Pi0;
+
+                if nnull
+                    Pi_basis_pre = sol_basis(1:n, :);
+                    Gam_basis_pre = sol_basis(n+1:end, :);
+                    Phi_basis_pre = D22*Gam_basis_pre + C2*Pi_basis_pre;
+    
+                    Pi_basis = kron(Pi_basis_pre, eye(nnull));
+                    Gam_basis = kron(Gam_basis_pre, eye(nnull));
+                    Phi_basis = kron(Phi_basis_pre, eye(nnull));
                 else
-
+                    Pi_basis = [];
+                    Gam_basis = [];
+                    Phi_basis = [];
                 end
-
 
             else
             end
+
+            regulator = struct('S', S, 'R', R, 'Pi', Pi0, 'Gam', Gam0, 'Phi', Phi0, ...
+                'Pi_basis', Pi_basis, 'Gam_basis', Gam_basis, 'Phi_basis',Phi_basis);
 
 
         end
