@@ -164,31 +164,37 @@ classdef  opt_system
             c = size(D11, 1)/length(obj.bind); %coordinate lifts: change this later?
             N = kron(Npre, eye(c));
 
-            S = eye(size(N, 2));
-            R = S;
+
 
             
             [sN, dN] = size(N);
+            n = obj.P.nx;
+
             if isempty(obj.tracking)
                 %constant tracking
-                n = obj.P.nx;
+                S = eye(size(N, 2));
+                R = S;
+
 
                 reg_ans = [zeros(n, 1), -B1*N;  -ones(sN, 1), -D11*N];
                 reg_mat = [A - eye(n), B2; C1, D12];
 
 
-                sol_basis = null(reg_mat, 'rational');
-                
-                sol0 = reg_mat \ reg_ans;
-                nnull = size(sol_basis, 2);
+                null_basis = null(reg_mat, 'rational');
+                try                    
+                    sol0 = reg_mat \ reg_ans;
+                catch
+                    warning('Regulator equation cannot be solved')
+                end
+                nnull = size(null_basis, 2);
 
                 Pi0 = sol0(1:n, :);
                 Gam0 = sol0(n+1:end, :);        
                 Phi0 = D21 * [zeros(sN, 1), N] + D22*Gam0 + C2*Pi0;
 
                 if nnull
-                    Pi_basis_pre = sol_basis(1:n, :);
-                    Gam_basis_pre = sol_basis(n+1:end, :);
+                    Pi_basis_pre = null_basis(1:n, :);
+                    Gam_basis_pre = null_basis(n+1:end, :);
                     Phi_basis_pre = D22*Gam_basis_pre + C2*Pi_basis_pre;
     
                     Pi_basis = kron(Pi_basis_pre, eye(nnull));
@@ -201,11 +207,182 @@ classdef  opt_system
                 end
 
             else
+                %dynamical tracking, complicated Rbetalvester
+                Sbeta = kron(obj.tracking.Sbeta, eye(c));
+                Rbeta = kron(obj.tracking.Rbeta, eye(c));
+
+
+
+                S = blkdiag(Sbeta, eye(dN));
+                R = blkdiag(Rbeta, eye(dN));
+                ns = size(S, 1);
+                nr = size(Rbeta, 2);
+
+                %use kronecker structure to explicitly solve the sylvester
+                %equation
+                reg_ans_mat = [zeros(n, size(Rbeta, 2)), -B1*N; -ones(sN, 1)*Rbeta, -D11*N];
+    
+                reg_ans = reshape(reg_ans_mat, [], 1);
+                
+                reg_mat_L = [A, B2; C1, D12];
+                reg_mat_RR = S;
+                reg_mat_RL = blkdiag(speye(size(A, 1)), sparse(sN, sN));
+
+                reg_mat = kron(speye(ns), reg_mat_L) - kron(reg_mat_RR', reg_mat_RL);
+                
+                null_basis = null(reg_mat, 'rational');
+                nnull = size(null_basis, 2);
+                try                    
+                    reg_sol_vec = reg_mat \ reg_ans;
+                catch
+                    warning('Regulator equation cannot be solved')
+                end
+
+                reg_sol = reshape(reg_sol_vec, size(reg_mat_L, 1), []);
+
+                Pi0 = reg_sol(1:n, :);
+                Gam0 = reg_sol(n+1:end, :);        
+                Phi0 = D21 * [zeros(sN, nr), N] + D22*Gam0 + C2*Pi0;
+
+                if nnull
+                    Pi_basis = null_basis(1:n, :);
+                    Gam_basis = null_basis(n+1:end, :);
+                    Phi_basis = D22*Gam_basis + C2*Pi_basis;
+    
+
+                else
+                    Pi_basis = [];
+                    Gam_basis = [];
+                    Phi_basis = [];
+                end
+
             end
 
             regulator = struct('S', S, 'R', R, 'Pi', Pi0, 'Gam', Gam0, 'Phi', Phi0, ...
                 'Pi_basis', Pi_basis, 'Gam_basis', Gam_basis, 'Phi_basis',Phi_basis);
 
+
+        end
+
+        function [regulator_closed] = check_regulator(obj)
+            %CHECK_REGULATOR does the closed-loop system obey the regulator
+            %equation? (direct interconnection)
+
+            % regulator = obj.form_internal_model();
+
+
+            sys_cl = lft(obj.P, obj.K);
+            % sys_cl = obj.get_alg([]);
+
+          
+            % [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P.ss_zy_wu();
+
+            A = sys_cl.A;
+            B = sys_cl.Bw;
+            C = sys_cl.Cz;
+            D = sys_cl.Dzw;
+
+            n = length(A);                
+
+            
+            Npre = obj.get_consensus(obj.op, obj.bind);
+            c = size(D, 1)/length(obj.bind); %coordinate lifts: change this later?
+            N = kron(Npre, eye(c));
+
+            S = eye(size(N, 2));
+            R = S;
+
+            
+            [sN, dN] = size(N);
+            if isempty(obj.tracking)
+                %constant tracking
+                
+
+                reg_ans = [zeros(n, 1), -B*N;  -ones(sN, 1), -D*N];
+                reg_mat = [A - eye(n); C];
+
+
+                null_basis = null(reg_mat, 'rational');
+                
+                sol0 = reg_mat \ reg_ans;
+                nnull = size(null_basis, 2);
+
+                nx = obj.P.nx;
+                Pi0 = sol0(1:nx, :);
+                Th0 = sol0(nx+1:end, :);        
+
+                if nnull
+                    Pi_basis_pre = null_basis(1:nx, :);
+                    Th_basis_pre = null_basis(nx+1:end, :);
+    
+                    Pi_basis = kron(Pi_basis_pre, eye(nnull));
+                    Th_basis = kron(Th_basis_pre, eye(nnull));
+                else
+                    Pi_basis = [];
+                    Th_basis = [];
+                end
+
+                S = eye(size(N, 2));
+                R = S;
+
+            else
+
+                %dynamical tracking, complicated Rbetalvester
+                Sbeta = kron(obj.tracking.Sbeta, eye(c));
+                Rbeta = kron(obj.tracking.Rbeta, eye(c));
+
+
+
+                S = blkdiag(Sbeta, eye(dN));
+                R = blkdiag(Rbeta, eye(dN));
+                ns = size(S, 1);
+                nr = size(Rbeta, 2);
+
+                reg_ans_mat = [zeros(n, size(Rbeta, 2)), -B*N; -ones(sN, 1)*Rbeta, -D*N];
+    
+                reg_ans = reshape(reg_ans_mat, [], 1);
+                
+                reg_mat_L = [A; C];
+                reg_mat_RR = S;
+                reg_mat_RL = [speye(size(A, 1)); zeros(size(C))];
+
+
+                reg_mat = kron(speye(ns), reg_mat_L) - kron(reg_mat_RR', reg_mat_RL);
+                
+                null_basis = null(reg_mat, 'rational');
+                nnull = size(null_basis, 2);
+                try                    
+                    reg_sol_vec = reg_mat \ reg_ans;
+                catch
+                    warning('Regulator equation cannot be solved')
+                end
+
+                reg_sol = reshape(reg_sol_vec, [], ns);
+
+                nx = obj.P.nx;
+                Pi0 = reg_sol(1:nx, :);
+                Th0 = reg_sol(nx+1:end, :);        
+
+                if nnull
+                    Pi_basis_pre = null_basis(1:nx, :);
+                    Th_basis_pre = null_basis(nx+1:end, :);
+    
+                    Pi_basis = kron(Pi_basis_pre, eye(nnull));
+                    Th_basis = kron(Th_basis_pre, eye(nnull));
+                else
+                    Pi_basis = [];
+                    Th_basis = [];
+                end
+            end
+
+
+            
+            % regulator_closed = regulator;
+          regulator_closed = struct('S', S, 'R', R, 'Pi', Pi0, ...
+              'Pi_basis', Pi_basis,...
+              'Th', Th0,  'Th_basis', Th_basis);
+
+            
 
         end
 
@@ -233,8 +410,6 @@ classdef  opt_system
             end
 
             %index based on the bind 
-
-            bind_op = bind(~EQ);
             nbind = length(bind);
             Bind = full(sparse(1:nbind, bind, ~EQ(bind), nbind, nop));
 
@@ -242,10 +417,7 @@ classdef  opt_system
             N = Bind * N0;
         end
 
-        function [regulator_closed] = check_regulator(obj)
 
-            regulator_closed = obj.form_internal_model();
-        end
 
     end
 end

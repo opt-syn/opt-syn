@@ -209,6 +209,36 @@ classdef genplant
             b_out.P = P_diag(ind_out, ind_in);
         end
 
+
+
+        function b_out = lft(obj, b2)
+            %LFT feedback interconnection of obj and plant bt
+            %along common channels (u, y)
+
+            b_out = obj;
+            if isa(b2, 'genplant')
+             
+                
+                b_out.nw = obj.nw;
+                b_out.nwp = obj.nwp + b2.nwp;
+                b_out.nz = obj.nz;
+                b_out.nzp = obj.nzp + b2.nzp;
+                b_out.nu = b2.nu;
+                b_out.ny = b2.ny;
+                b_out.s = obj.s + b2.s;
+    
+    
+                b_out.P = lft(obj.P, b2.P, obj.nu, obj.ny);
+            else
+                [nu2, ny2] = size(b2.D);
+                b_out.P = lft(obj.P, b2, nu2, ny2);
+                b_out.nu = b_out.nu - nu2;
+                b_out.ny = b_out.ny - ny2;
+            end
+
+            
+        end
+
         function obj = lift(obj, d)
             %lift by a kronecker operation with the identity            
             
