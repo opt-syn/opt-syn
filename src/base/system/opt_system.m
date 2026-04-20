@@ -24,6 +24,7 @@ classdef  opt_system
             else
                 obj.bind = bind;
             end
+            
             if nargin >= 5
                 obj.tracking = tracking;
             end
@@ -144,6 +145,73 @@ classdef  opt_system
         %solve the regulator equation for the controller (Theta) given
         %(Gamma, Phi): this is verification
 
+        function regulator = form_internal_model(obj)
+            %FORM_INTERNAL_MODEL create the internal model by solving the regulator
+            %equation. Inputs are the system (P, bind, tracking, op)
+            %
+            %op is important for which oracles are equaltiy constarints and
+            %which are inequality constraints
+
+
+            %% break down the plant structure
+
+            regulator = [];
+            
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P.ss_zy_wu();
+
+            N = obj.get_consensus();
+            if isempty(obj.tracking)
+                %constant tracking
+                if obj.P.nx == 0
+                    %no network dynamics
+                else
+
+                end
+
+
+            else
+            end
+
+
+        end
+
+        function N = get_consensus(obj, op, bind)
+            %GET_CONSENSUS create the consensus matrix
+            %for the regulation condition
+
+            %which operators are equality constraints
+            % EQ = cellfun(@(e) e.EQUALITY, op);
+            nop = length(op);
+            EQ = zeros(1, nop, 'logical');
+            for i = 1:nop
+                EQ(i) = op{i}.EQUALITY;
+            end
+
+            
+            if all(~EQ)
+                s = length(op);
+                N0 = [eye(s-1); -ones(1, s-1)];
+                
+            else  
+                s = sum(~EQ);
+                N0 = full(sparse(1:s, find(~EQ), ones(s, 1), nop, s));
+                % N0 = [eye(s)];
+            end
+
+            %index based on the bind 
+
+            bind_op = bind(~EQ);
+            nbind = length(bind);
+            Bind = full(sparse(1:nbind, bind, ~EQ(bind), nbind, nop));
+
+
+            N = Bind * N0;
+        end
+
+        function [regulator_closed] = check_regulator(obj)
+
+            regulator_closed = obj.form_internal_model();
+        end
 
     end
 end

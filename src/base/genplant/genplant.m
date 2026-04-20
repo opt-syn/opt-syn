@@ -69,13 +69,63 @@ classdef genplant
             wr_ind = 1:(obj.nw + obj.nwp);
         end
 
-        %extract matrices       
+        %% extract matrices       
+        function B = Bw(obj)
+            B0 = obj.B;
+            B = B0(:, obj.index_w());
+        end
+        
+        function B = Bu(obj)
+            B0 = obj.B;
+            B = B0(:, obj.index_u());
+        end
+
+        function C = Cz(obj)
+            C0 = obj.C;
+            C = C0(obj.index_z(), :);
+        end
+        
+        function C = Cy(obj)
+            C0 = obj.C;
+            C = C0(obj.index_y(), :);
+        end
+
+
+
+        function D = Dzw(obj)
+            %oracle output to oracle input
+            iw = obj.index_w();
+            iz = obj.index_y();
+
+            D0 = obj.P.D;
+            D = D0(iz, iw);
+        end
+
+        function D = Dzu(obj)
+            %controller output to oracle input
+            iu = obj.index_u();
+            iz = obj.index_z();
+            
+            D0 = obj.P.D;
+            D = D0(iz, iu);
+        end
+
+        function D = Dyw(obj)
+            %oracle output to controller input
+            iw = obj.index_w();
+            iy = obj.index_y();
+
+            D0 = obj.P.D;
+            D = D0(iy, iw);
+        end
+
         function D = Dyu(obj)
-            %get the direct feedthrough matrix
+            %controller output to controller input
             iu = obj.index_u();
             iy = obj.index_y();
 
-            D = obj.D(iy, iu);
+            D0 = obj.P.D;
+            D = D0(iy, iu);
         end
 
         function Ao = A(obj)
@@ -89,6 +139,22 @@ classdef genplant
         end
         function Do = D(obj)
             Do = obj.P.D;
+        end
+
+        function [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj)
+            %get plant matrices for the [wu] -> [zy] subsytsem
+            
+            Aa = obj.A;
+            B1 = obj.Bw;
+            B2 = obj.Bu;
+            C1 = obj.Cz;
+            C2 = obj.Cy;
+            D11 = obj.Dzw;
+            D12 = obj.Dzu;
+            D21 = obj.Dyw;
+            D22 = obj.Dyu;
+
+            
         end
 
         function nxo = nx(obj)

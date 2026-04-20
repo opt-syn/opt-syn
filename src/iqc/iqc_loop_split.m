@@ -5,7 +5,7 @@ classdef iqc_loop_split
     properties
         Psi1 = 1; %primal filter (output of nonlinearity)
         Psi2 = 1; %dual filter   (input of nonlinearity)
-        loop = 1; %loop transformation (in lft/star product form)
+        loop = []; %loop transformation (in lft/star product form)
         M=0;    %running cost
         X=0;    %terminal cost
     end

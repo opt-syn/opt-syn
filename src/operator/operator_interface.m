@@ -8,8 +8,8 @@ classdef (Abstract) operator_interface
         % iqc;  %IQC descring relations satisfied by the operator
         %monotone = true; %can the operator be bounded using monotonicity?
 
-        EQUALITY = 0;
-        LMILAB = 1;
+        EQUALITY = false;
+        LMILAB = true;
     end
     
     methods
