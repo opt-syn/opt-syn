@@ -52,7 +52,7 @@ classdef opt_analysis < opt_manager_interface
             P = kron(P, eye(c));
 
             Pwp = blkdiag(P', eye(obj.sys.P.nwp));
-            Pzp = blkdiag(P', eye(obj.sys.P.nzp));
+            Pzp = blkdiag(P, eye(obj.sys.P.nzp));
 
             alg_perm = Pzp * alg * Pwp; 
             
