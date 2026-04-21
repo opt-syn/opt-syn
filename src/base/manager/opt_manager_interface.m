@@ -11,10 +11,11 @@ classdef (Abstract) opt_manager_interface
 
         %numerics
         LMILAB = true;
-        tol = struct('G', 1e-4, ...     %lower bound on eigenvalue for G
-                     'G_max', 100, ...  %upper bound on eigenvalue for G
-                    'M', 1e-7, ...
+        tol = struct('M', 1e-7, ...
                     'X', 1e-7);
+
+        %other options
+        opts = struct('impose_X', true)
     end
     
     methods
@@ -33,7 +34,9 @@ classdef (Abstract) opt_manager_interface
             sol = struct;
             %run the program
             if obj.LMILAB
-                lmis(cons, objective, 'c');
+                if ~isnumeric(objective)
+                    cons = lmis(cons, objective, 'c');
+                end
                 [lmi_out,info_out]=lmisolve(cons);
                 
                 STATUS = lmi_out.status;

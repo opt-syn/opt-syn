@@ -28,8 +28,11 @@ end
             ej = zeros(m, 1);
             ej(j) = 1;
         
+            
             vc = e * M * ej;
-            cons = append_lmi(cons, vc + vc', 1);
+            if ~isnumeric(vc)
+                cons = append_lmi(cons, vc + vc', 1);
+            end
         end
     end
 

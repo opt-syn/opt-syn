@@ -50,8 +50,12 @@ classdef op_sml < op_sml_interface
                 Cf2 = [];
             end
 
-            Df1 = lmim(['Df1_', obj.sid], reps, reps, 'full');           
-            Df2 = lmim(['Df2_', obj.sid], reps, reps, 'full');           
+            Df1 = lmim(['Df1_', obj.sid], reps, reps, 'full');    
+
+
+            %TODO: allow for general Df2?
+            % Df2 = lmim(['Df2_', obj.sid], reps, reps, 'full');           
+            Df2 = zeros(reps);
 
             
             % orep = order(2)*reps;
@@ -69,7 +73,8 @@ classdef op_sml < op_sml_interface
 
         function cs = csum_psi(obj, vars)
             %a normalization term for the multipliers
-            cs = trace(vars.Df1) + trace(vars.Df2);
+            % cs = trace(vars.Df1) + trace(vars.Df2);
+            cs = trace(vars.Df1);
         end
 
         function [Psi1, Psi2] = build_psi(obj, vars, order, reps)
@@ -133,15 +138,16 @@ classdef op_sml < op_sml_interface
 
         end
 
-        function cons = filter_constraints(obj, cons, order, vars, iqc)
-            %FILTER_CONSTRAINTS constraints on the filter coefficients            
-
-            %Zames-Falb DHD constraints with terminal cost
-
+        function P = dhd_lift(obj, order, vars, iqc)
+            %get the lifted system for the DHD expression in Zames-Falb
+            %guarantees
+            if ~isnumeric(iqc.Psi1.D)
+                reps = dim(iqc.Psi1.D, 2);
+            else
+                reps = size(iqc.Psi1.D, 2);
+            end
             h = sum(order) + 1;
 
-            %get the lifted system
-            reps = dim(iqc.Psi1.D, 2);
             [Psi1_red, Psi2_red] = build_psi_reduced(obj, vars, order, reps);
                         
             Psi1_lift = sdpsslift(Psi1_red, h);
@@ -158,20 +164,28 @@ classdef op_sml < op_sml_interface
 
             BE = Bh2'*E*Bh1;
 
-            P = Dh1 + Dh2' + BE;           
+            P = Dh1 + Dh2' + BE;      
 
+        end
 
-            [cons] = dhd_impose_half(P, cons, obj.LMILAB);
-            [cons] = dhd_impose_half(P', cons, obj.LMILAB);
+        function cons = filter_constraints(obj, cons, order, vars, iqc)
+            %FILTER_CONSTRAINTS constraints on the filter coefficients            
 
+            %Zames-Falb DHD constraints with terminal cost
+
+            
+                
+            P = obj.dhd_lift(order, vars, iqc);
+            [cons] = dhd_impose(P, cons, obj.LMILAB);
+            
             nu = dim(vars.Df1, 1);
-            for i = 1:nu
-                %TODO: normalization of the multipliers
-                e = zeros(nu, 1);
-                e(i) = 1;
-                cons = append_lmi(cons, e'*vars.Df1*e, obj.LMILAB);
-                cons = append_lmi(cons, e'*vars.Df2*e, obj.LMILAB);
-            end
+            % for i = 1:nu
+            %     %TODO: normalization of the multipliers
+            %     e = zeros(nu, 1);
+            %     e(i) = 1;
+            %     cons = append_lmi(cons, e'*vars.Df1*e, obj.LMILAB);
+            %     cons = append_lmi(cons, e'*vars.Df2*e, obj.LMILAB);
+            % end
         end
 
         function M = build_M(obj, vars, order, reps);

@@ -159,7 +159,9 @@ classdef opt_analysis < opt_manager_interface
             %GET_OBJECTIVE determine the objective for optimization
             %TODO: fill in specification
 
-            objective = vars.diss.gam;
+            % objective = vars.diss.ga;
+            % objective = -trace(vars.diss.G);
+            objective = 0;
         end
 
         function [vars, cons] = build_program(obj)
@@ -179,8 +181,10 @@ classdef opt_analysis < opt_manager_interface
             for i = 1:ndiss
                 [con_M, con_X] = build_dissipation(obj, vars_diss, diss{i}, param);
 
-                cons = append_lmi(cons, con_M, obj.LMILAB);
-                cons = append_lmi(cons, con_X, obj.LMILAB);
+                % cons = append_lmi(cons, con_M, obj.LMILAB);
+                if obj.opts.impose_X
+                    cons = append_lmi(cons, con_X, obj.LMILAB);
+                end
             end
 
             vars = obj.vars;
@@ -193,20 +197,26 @@ classdef opt_analysis < opt_manager_interface
 
             n = length(diss{1}.plant.A);
             G = lmim('G', n, n, 'sym');
-            gam = lmim('gam', 1, 1, 'sym');
+            % ga = lmim('ga', 1, 1);
 
-            vars_diss= struct('G', G, 'gam', gam);
-
+            vars_diss= struct('G', G);
+            % vars_diss= struct('G', G, 'ga', ga);
             
-            cons  = append_lmi(cons, gam, obj.LMILAB);
+            % cons  = append_lmi(cons, ga, obj.LMILAB);
 
-            cons = append_lmi(cons, G - obj.tol.G*eye(n), obj.LMILAB);
 
-            %norm bound 
-            if obj.tol.G_max < Inf
-                cons  = append_lmi(cons, obj.tol.G_max - gam, obj.LMILAB);
-                cons = append_lmi(cons, gam - trace(G), obj.LMILAB);
-            end
+                        %norm bound 
+                                    % cons = append_lmi(cons, ga - trace(G), obj.LMILAB);
+% 
+            % if obj.tol.G_max < Inf
+            %     % cons  = append_lmi(cons, - ga, obj.LMILAB);
+            %     cons = append_lmi(cons, obj.tol.G_max  - trace(G), obj.LMILAB);
+            % 
+            % end
+
+            % cons = append_lmi(cons, G - obj.tol.G*eye(n), obj.LMILAB);
+        
+
             
             
         end
@@ -220,7 +230,7 @@ classdef opt_analysis < opt_manager_interface
             iqc_rec = cell(size(obj.iqc_op));
             for i = 1:length(obj.iqc_op)
                 iqc_rec{i} = obj.iqc_op{i}.recover(lmi_out);
-                
+
             end
 
             sol.iqc = iqc_rec;
@@ -239,23 +249,35 @@ classdef opt_analysis < opt_manager_interface
 
             G = vars_diss.G;
 
-            [n, m] = size(diss.plant.B);
-            % p = dim(diss.plant.C, 1);
-                   
+            [n, m] = size(diss.plant.B);                               
 
             Ablock = [eye(n), zeros(n, m);
                 diss.plant.A, diss.plant.B];
-
-            Gblock = blkdiag(diss.rho^2 * G, -G);
-
-            store_block = Ablock' * Gblock * Ablock;
-            % Cblock = [diss.plant.C, diss.plant.D;
-                      % zeros(diss.np, n + m-diss.np), eye(diss.np)];
+            
             Cblock = [diss.plant.C, diss.plant.D];
 
-            supply_block = Cblock' * diss.M * Cblock;
+
+            G_current = G;
+            G_next = G;
+
+            Gblock = blkdiag(-diss.rho^2 * G_current, G_next);
+
+           
+            Center_block = blkdiag(Gblock, diss.M);
+            Outer_block = [Ablock; Cblock];
+
+            con_M = -(Outer_block' * Center_block * Outer_block);
+            % Cblock = [diss.plant.C, diss.plant.D;
+                      % zeros(diss.np, n + m-diss.np), eye(diss.np)];
+
             
-            con_M = store_block - supply_block;
+            
+            
+            % supply_block = 0*supply_block;
+            % con_M = store_block - supply_block;
+
+
+
 
             %terminal cost constraint
             if isnumeric(diss.X)
@@ -265,7 +287,7 @@ classdef opt_analysis < opt_manager_interface
             end
             Ef = [eye(nf); zeros(n-nf, nf)];
 
-            con_X = Ef' * G * Ef - diss.X;
+            con_X = G - Ef * diss.X*Ef';
             
         end
     

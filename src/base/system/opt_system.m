@@ -316,14 +316,15 @@ classdef  opt_system
             c = size(D, 1)/length(obj.bind); %coordinate lifts: change this later?
             N = kron(Npre, eye(c));
 
-            S = eye(size(N, 2));
-            R = S;
+
 
             
             [sN, dN] = size(N);
             if isempty(obj.tracking)
                 %constant tracking
                 
+                S = eye(1+size(N, 2));
+                R = S;
 
                 reg_ans = [zeros(n, 1), -B*N;  -ones(sN, 1), -D*N];
                 reg_mat = [A - eye(n); C];
@@ -349,8 +350,7 @@ classdef  opt_system
                     Th_basis = [];
                 end
 
-                S = eye(size(N, 2));
-                R = S;
+               
 
             else
 
@@ -359,6 +359,7 @@ classdef  opt_system
                 Rbeta = kron(obj.tracking.Rbeta, eye(c));
 
 
+                
 
                 S = blkdiag(Sbeta, eye(dN));
                 R = blkdiag(Rbeta, eye(dN));

@@ -9,22 +9,27 @@ Gl=sdpss;
 
 [A,B,C,D]=sdpssdata(G);
 if isempty(A)
-    if isnumeric(D)
-        [ny, nu] =size(D);
-    else
-        [ny, nu] =dim(D);
-    end
+    [ny, nu] =ssize(D);
+   
     Al = [];
     Bl = zeros(0, nu*N);
     Cl = zeros(ny*N, 0);
-    Dl = drep(D,N);
+    if isnumeric(D)
+        Dl = kron(D, eye(N));
+    else
+        Dl = drep(D,N);
+    end
 
 else
     Al=A;Bl=B;Cl=C;Dl=D;
     for j=2:N;
     
         
-        Dl=[Dl zeros(dim(Dl,1),dim(D,2))];
+        
+        Dl=[Dl zeros(ssize(Dl,1),ssize(D,2))];
+        
+        
+        
         Dl=[Dl;C*Bl D];
         Al=A*Al;
         Bl=[A*Bl B];
