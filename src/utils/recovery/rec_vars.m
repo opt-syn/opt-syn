@@ -28,6 +28,8 @@ for i = 1:length(field)
                     for j = 1:length(fc)
                         if isnumeric(fc{j})
                             fcrec{j} = fc{j};
+                        elseif isstruct(fc{j})
+                            fcrec{j} = rec_vars(fc{j}, lmi_out);
                         else
                             fcrec{j} = double(double(fc{j}, lmi_out));
                         end

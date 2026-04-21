@@ -21,7 +21,7 @@ end
 
     
     
-    M1 = M*ones(n);
+    M1 = M*ones(n, 1);
     for i =1:n
         e = zeros(1, n);
         e(i) = 1;

@@ -10,6 +10,7 @@ classdef op_gen  < operator_interface
             % lipschitz = [];
             % inv_lipschitz = [];
         %other properties of an operator?
+        tol_cX = 1000; %tolerance for the terminal cost
     end
     
     methods
@@ -48,6 +49,15 @@ classdef op_gen  < operator_interface
 
             psi1 = psi_base;
             psi2 = psi_base;
+        end
+
+        function cs = csum_psi(obj, vars)
+            %A proxy to normalize the multipliers
+            % cs = 1;
+
+            [n, m] = dim(vars.cM);
+            cs = ones(1, n) * vars.cM * ones(m, 1);
+
         end
 
 
@@ -138,9 +148,9 @@ classdef op_gen  < operator_interface
                                 M22 = M22 - cDBM * mu; 
                         
                             case 'cocoercive'
-                                beta_inv = 1/obj.prop{p, 2};
+                                beta = obj.prop{p, 2};
                                 M12 = M12 + cDBM;
-                                M11 = M11 - cDBM * beta_inv; 
+                                M11 = M11 - cDBM * beta; 
     
                             case 'lipschitz'
                                 L2 = obj.prop{p, 2}^2;
@@ -166,6 +176,10 @@ classdef op_gen  < operator_interface
 
             cons = elem_nonneg(vars.cM, cons);
             cons = elem_nonneg(vars.cX, cons); 
+
+            [dx1, dx2] = dim(vars.cX);
+            cXtop = ones(1, dx1)*vars.cX*ones(dx2, 1);
+            cons = elem_nonneg(obj.tol_cX - cXtop, cons); 
         end
 
 
@@ -185,6 +199,11 @@ classdef op_gen  < operator_interface
             if nargin < 2
                 order = 0;
             end
+
+            if length(order) > 1
+                order = sum(order);
+            end
+
             if nargin < 3
                 reps = 1;
             end

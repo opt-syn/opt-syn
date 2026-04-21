@@ -67,6 +67,10 @@ classdef op_sml < op_sml_interface
         end  
         
 
+        function cs = csum_psi(obj, vars)
+            %a normalization term for the multipliers
+            cs = trace(vars.Df1) + trace(vars.Df2);
+        end
 
         function [Psi1, Psi2] = build_psi(obj, vars, order, reps)
             %BUILD_PSI construct the filter for the SML function
@@ -159,6 +163,15 @@ classdef op_sml < op_sml_interface
 
             [cons] = dhd_impose_half(P, cons, obj.LMILAB);
             [cons] = dhd_impose_half(P', cons, obj.LMILAB);
+
+            nu = dim(vars.Df1, 1);
+            for i = 1:nu
+                %TODO: normalization of the multipliers
+                e = zeros(nu, 1);
+                e(i) = 1;
+                cons = append_lmi(cons, e'*vars.Df1*e, obj.LMILAB);
+                cons = append_lmi(cons, e'*vars.Df2*e, obj.LMILAB);
+            end
         end
 
         function M = build_M(obj, vars, order, reps);

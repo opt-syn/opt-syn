@@ -29,7 +29,7 @@ end
             ej(j) = 1;
         
             vc = e * M * ej;
-            cons = append_lmi(cons, vc, 1);
+            cons = append_lmi(cons, vc + vc', 1);
         end
     end
 

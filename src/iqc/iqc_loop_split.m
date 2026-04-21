@@ -30,7 +30,7 @@ classdef iqc_loop_split
             end
 
             if nargin > 3
-                obj.Psi2 = Psi2;
+                obj.Psi2 = sdpss(Psi2);
                 obj.X = X;
             end
 
@@ -47,12 +47,20 @@ classdef iqc_loop_split
 
         function nw_out = nw(obj)
             %number of inputs (channel two)
-            nw_out = size(obj.Psi1.B, 2);            
+            if isnumeric(obj.Psi2.D)                
+                nw_out = size(obj.Psi2.D, 2);
+            else
+                nw_out = dim(obj.Psi2.D, 2);
+            end        
         end
 
         function nz_out = nz(obj)
-            %number of inputs (channel two)
-            nz_out = size(obj.Psi2.B, 2);            
+            %number of inputs (channel one)
+            if isnumeric(obj.Psi1.D)                
+                nz_out = size(obj.Psi1.D, 2);
+            else
+                nz_out = dim(obj.Psi1.D, 2);
+            end
         end
 
         function np_out = np(obj)
@@ -128,6 +136,29 @@ classdef iqc_loop_split
             X_lift = kron_eye(obj.X, c);
             
             iqc_lift = iqc_loop_split(Psi1_lift, M_lift, loop_lift, Psi2_lift, X_lift);
+        end
+
+
+        function iqc_rec = recover(obj, lmi_out)
+            %RECOVER: recover the numerical values of an IQC from an LMI
+            %solution
+
+            M_rec = double(double(obj.M, lmi_out));
+            X_rec = double(double(obj.X, lmi_out));
+            loop_rec = obj.loop;
+
+            Cf1 = double(double(obj.Psi1.C, lmi_out));
+            Cf2 = double(double(obj.Psi2.C, lmi_out));
+            Df1 = double(double(obj.Psi1.D, lmi_out));
+            Df2 = double(double(obj.Psi2.D, lmi_out));
+
+            Psi1_rec = ss(obj.Psi1.A, obj.Psi1.B, Cf1, Df1, 1);
+            Psi2_rec = ss(obj.Psi2.A, obj.Psi2.B, Cf2, Df2, 1);
+
+            iqc_rec = iqc_loop_split(Psi1_rec, M_rec, loop_rec, Psi2_rec, X_rec);
+
+            iqc_rec.Psi1 = Psi1_rec;
+            iqc_rec.Psi2 = Psi2_rec;
         end
     end
 end

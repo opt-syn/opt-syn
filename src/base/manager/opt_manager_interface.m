@@ -39,6 +39,7 @@ classdef (Abstract) opt_manager_interface
                 STATUS = lmi_out.status;
                 sol.dia = lmi_out.dia;
                 sol.info = info_out;
+                
             else %YALMIP
                 opt = sdpsettings('verbose', p.opts.verbose, 'solver', p.opts.solver);
             
@@ -57,7 +58,7 @@ classdef (Abstract) opt_manager_interface
 
                 sol.vars = vrec;
 
-                sol = obj.process_recovery(obj, sol);
+                sol = obj.process_recovery(sol, lmi_out);
             end
             
         end
@@ -82,6 +83,7 @@ classdef (Abstract) opt_manager_interface
         build_dissipation(obj)
         build_program(obj)
         build_plant(obj)
+        process_recovery(obj, sol);
     end
 end
 

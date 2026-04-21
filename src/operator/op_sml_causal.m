@@ -55,6 +55,11 @@ classdef op_sml_causal < op_sml_interface
             sm = (obj.m == obj.L);
         end
 
+        function cs = csum_psi(obj, vars)
+            [m, d] = dim(vars.c);
+            cs = ones( 1, m) * vars.c * ones(m, 1);
+        end
+
         %% subsidiary creation routines
         function [vars]= create_vars(obj, order, reps)
             %CREATE_VARS form the variables in an IQC

@@ -8,16 +8,29 @@ G=sdpss(G);
 Gl=sdpss;
 
 [A,B,C,D]=sdpssdata(G);
-Al=A;Bl=B;Cl=C;Dl=D;
-for j=2:N;
+if isempty(A)
+    if isnumeric(D)
+        [ny, nu] =size(D);
+    else
+        [ny, nu] =dim(D);
+    end
+    Al = [];
+    Bl = zeros(0, nu*N);
+    Cl = zeros(ny*N, 0);
+    Dl = drep(D,N);
 
+else
+    Al=A;Bl=B;Cl=C;Dl=D;
+    for j=2:N;
     
-    Dl=[Dl zeros(dim(Dl,1),dim(D,2))];
-    Dl=[Dl;C*Bl D];
-    Al=A*Al;
-    Bl=[A*Bl B];
-    Cl=[C;Cl*A];    
-end;
+        
+        Dl=[Dl zeros(dim(Dl,1),dim(D,2))];
+        Dl=[Dl;C*Bl D];
+        Al=A*Al;
+        Bl=[A*Bl B];
+        Cl=[C;Cl*A];    
+    end;
+end
 Gl.A=Al;
 Gl.B=Bl;
 Gl.C=Cl;

@@ -12,6 +12,6 @@ P_loop(:, ind_perm) = P_loop;
 % P_loop = eye(Y
 
 % [E1, E2] = outer_diag_indexer(n1, m1, n2, m2);
-M_outer = P_loop'* M_diag * P_loop;
+M_outer = P_loop* M_diag * P_loop';
 
 end

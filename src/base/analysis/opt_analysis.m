@@ -16,7 +16,7 @@ classdef opt_analysis < opt_manager_interface
             if nargin < 3
                 ind = 1:nop;
             end
-
+            
             for i = 1:nop
                 if ismember(i, ind)
                     rep_curr = nnz(obj.sys.bind==i);
@@ -30,6 +30,22 @@ classdef opt_analysis < opt_manager_interface
         end
 
 
+        function cons = coeff_normalize(obj, cons)
+            %COEFF_NORMALIZE add constraint to normalize the psi multipliers
+            
+            nop = length(obj.sys.op);
+            cs = 0;
+            for i = 1:nop
+                cs_curr = obj.sys.op{i}.csum_psi(obj.vars.op{i});
+                cs = cs + cs_curr;
+
+            end
+
+            cons = append_lmi(cons, cs - nop*0.9, obj.LMILAB);
+            cons = append_lmi(cons, -cs + nop*1.1, obj.LMILAB);
+
+
+        end
         
 
         function [diss] = build_plant(obj)
@@ -118,14 +134,14 @@ classdef opt_analysis < opt_manager_interface
             same_count = 0;
 
             for i = 1:length(obj.iqc_op)
-                if ~obj.sys.P.op{i}.same
+                if ~obj.sys.op{i}.same
                     %block diagonal of the iqc
                     if isempty(iqc)
                         iqc = obj.iqc_op{i};
                     else
                         iqc = blkdiag(iqc, obj.iqc_op{i});
                     end
-                    same_count = same_count + iqc.nw + iqc.nz;
+                    same_count = same_count + obj.iqc_op{i}.nw;
                     
                 else
                     %treat the m=L case separately
@@ -143,7 +159,7 @@ classdef opt_analysis < opt_manager_interface
             %GET_OBJECTIVE determine the objective for optimization
             %TODO: fill in specification
 
-            objective = trace(vars.diss.gam);
+            objective = vars.diss.gam;
         end
 
         function [vars, cons] = build_program(obj)
@@ -151,6 +167,8 @@ classdef opt_analysis < opt_manager_interface
             diss = obj.build_plant();
             ndiss = length(diss);
             cons = obj.cons;
+
+            cons = obj.coeff_normalize(cons);
 
            
             [vars_diss, cons] = obj.create_vars_diss(diss, cons);
@@ -175,20 +193,44 @@ classdef opt_analysis < opt_manager_interface
 
             n = length(diss{1}.plant.A);
             G = lmim('G', n, n, 'sym');
-            gam = lmim('gam', 1, 1);
+            gam = lmim('gam', 1, 1, 'sym');
 
             vars_diss= struct('G', G, 'gam', gam);
+
+            
+            cons  = append_lmi(cons, gam, obj.LMILAB);
 
             cons = append_lmi(cons, G - obj.tol.G*eye(n), obj.LMILAB);
 
             %norm bound 
             if obj.tol.G_max < Inf
-                cons = append_lmi(cons, -G + gam*eye(n), obj.LMILAB);
+                cons  = append_lmi(cons, obj.tol.G_max - gam, obj.LMILAB);
+                cons = append_lmi(cons, gam - trace(G), obj.LMILAB);
             end
             
-            cons  = append_lmi(cons, obj.tol.G_max - gam, obj.LMILAB);
+            
         end
 
+
+        function  sol = process_recovery(obj, sol, lmi_out);
+            %PROCESS_RECOVERY post-process the solution
+            
+            %TODO: fill this in
+
+            iqc_rec = cell(size(obj.iqc_op));
+            for i = 1:length(obj.iqc_op)
+                iqc_rec{i} = obj.iqc_op{i}.recover(lmi_out);
+                
+            end
+
+            sol.iqc = iqc_rec;
+            
+            
+
+
+
+
+        end
         function [con_M, con_X] = build_dissipation(obj, vars_diss, diss, param)
             %FORM_DISSIPATION: the dissipation relation for IQC synthesis
 

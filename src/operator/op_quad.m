@@ -57,10 +57,11 @@ classdef op_quad < op_sml
             Mblock = blkdiag(vars.Pf, -vars.Pf);
 
             [p, ~] = dim(Psi.D);
-            sp = [zeros(n, n+p);
-            (-0.5)*Psi.C, (-0.5)*(Psi.D)];
+            sp = [zeros(n), (-0.5)*Psi.C';
+            (-0.5)*Psi.C, (-0.5)*(Psi.D + Psi.D')];
 
-            supply_block = sp + sp';
+            % supply_block = sp + sp';
+            supply_block = sp;
             % supply_block = sp*2;
             sys_block = Ablock'*Mblock*Ablock;
             
