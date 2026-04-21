@@ -32,21 +32,21 @@ for j=1:n
         %static second system
         
         if isnumeric(s2.D)
-            nD = size(s2.D, 1);
+            [ny2, nu2] = size(s2.D);
         else
-            nD = dim(s2.D, 1);
+            [ny2, nu2] = dim(s2.D);
         end
 
         [~,m1]=size(s1.A);
         s.A=s1.A;
-        ZB = zeros(m1, nD);
+        ZB = zeros(m1, nu2);
         s.B = [s1.B, ZB];
 
 
         if isnumeric(s2.C)
-            ZC = (zeros(nD, m1));
+            ZC = (zeros(ny2, m1));
         else
-            ZC = lmim(zeros(nD, m1));
+            ZC = lmim(zeros(ny2, m1));
         end
         s.C = [s1.C; ZC];
 

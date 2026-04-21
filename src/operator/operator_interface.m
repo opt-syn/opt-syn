@@ -38,19 +38,36 @@ classdef (Abstract) operator_interface
             %   cons:   constraints in the problem (in terms of the
             %           variables directly)
 
-            [vars] = obj.create_vars(order, reps);
-  
-            %form the IQC            
-            M = build_M(obj, vars, order, reps);
-            X = build_X(obj, vars, order, reps);
+            if obj.same
+                iqc = obj.get_same(reps);
+                vars = [];
+            else
+                [vars] = obj.create_vars(order, reps);
+      
+                %form the IQC            
+                M = build_M(obj, vars, order, reps);
+                X = build_X(obj, vars, order, reps);
+    
+                loop = obj.build_loop(reps);            
+    
+                [psi1, psi2] = obj.build_psi(vars, order, reps);
+    
+                iqc = iqc_loop_split(psi1, M, loop, psi2, X);
+    
+                cons = obj.filter_constraints(cons, order, vars, iqc);
+            end
+        end
 
-            loop = obj.build_loop(reps);            
+        function sm = same(obj)
+            %SAME: is there any uncertainty in this oracle?
+            %Overriden by class Sml
+            sm = false;
+        end
 
-            [psi1, psi2] = obj.build_psi(vars, order, reps);
-
-            iqc = iqc_loop_split(psi1, M, loop, psi2, X);
-
-            cons = obj.filter_constraints(cons, order, vars, iqc);
+        function sm = get_same(obj)
+            %GET_SAME: is there any uncertainty in this oracle?
+            %Overriden by class Sml
+            sm = [];
         end
     end
 

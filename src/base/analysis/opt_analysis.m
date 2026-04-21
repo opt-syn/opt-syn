@@ -29,6 +29,9 @@ classdef opt_analysis < opt_manager_interface
             end
         end
 
+
+        
+
         function [diss] = build_plant(obj)
             %BUILD_PLANT: form the plant to be used for analysis           
 
@@ -45,16 +48,18 @@ classdef opt_analysis < opt_manager_interface
             nop = length(obj.sys.bind);
             [~, perm] = sort(obj.sys.bind);
             
-            %TODO: make sure that the permutation is correct
             c = obj.sys.P.nw/length(obj.sys.op);
             P = eye(nop);
             P(:, perm) = P;
             P = kron(P, eye(c));
 
+            %TODO: allow for dynamical uncertainties in the w channel
             Pwp = blkdiag(P', eye(obj.sys.P.nwp));
             Pzp = blkdiag(P, eye(obj.sys.P.nzp));
 
-            alg_perm = Pzp * alg * Pwp; 
+            alg_perm = Pzp * alg * Pwp;
+
+            %TODO: get rid of the same (m=L) oracles
             
             iqc_op = obj.iqc_op_all();
 
@@ -94,7 +99,8 @@ classdef opt_analysis < opt_manager_interface
 
                 psi = iqc.get_psi();
 
-                alg_psi = psi * blkdiag(alg_screen, eye(nop + length(sp.iwp)));
+                GI = blkdiag(alg_screen, eye(nop + length(sp.iwp)));
+                alg_psi = psi * GI;
     
                 diss{i} = struct('plant', alg_psi, 'M', iqc.M, 'X', iqc.X, 'rho', sp.rho, 'np', iqc.np);
 
@@ -104,15 +110,41 @@ classdef opt_analysis < opt_manager_interface
 
         end
 
-        function iqc = iqc_op_all(obj)
+        function [iqc, m_same, ind_same] = iqc_op_all(obj)
             %IQC_OP_ALL: all iqcs for the operators
-            iqc = obj.iqc_op{1};
-            for i = 2:length(obj.iqc_op)
-                iqc = blkdiag(iqc, obj.iqc_op{i});
+            iqc = {};
+            m_same = [];
+            ind_same = [];
+            same_count = 0;
+
+            for i = 1:length(obj.iqc_op)
+                if ~obj.sys.P.op{i}.same
+                    %block diagonal of the iqc
+                    if isempty(iqc)
+                        iqc = obj.iqc_op{i};
+                    else
+                        iqc = blkdiag(iqc, obj.iqc_op{i});
+                    end
+                    same_count = same_count + iqc.nw + iqc.nz;
+                    
+                else
+                    %treat the m=L case separately
+                    m_same = blkdiag(m_same, obj.iqc_op{i});
+
+                    ind_same = [ind_same, same_count + (1:length(m_same))];
+                    same_count = same_count + length(m_same);
+                end            
             end
 
         end
 
+        function objective = get_objective(obj, vars)
+
+            %GET_OBJECTIVE determine the objective for optimization
+            %TODO: fill in specification
+
+            objective = trace(vars.diss.gam);
+        end
 
         function [vars, cons] = build_program(obj)
             %BUILD_PROGRAM set up the analysis problem
@@ -120,29 +152,53 @@ classdef opt_analysis < opt_manager_interface
             ndiss = length(diss);
             cons = obj.cons;
 
-            n = length(diss{1}.plant.A);
-            G = lmim('G', n, n, 'sym');
+           
+            [vars_diss, cons] = obj.create_vars_diss(diss, cons);
 
-            cons = append_lmi(cons, G - obj.tol.G*eye(n), obj.LMILAB);
+            
+            %incorporate parameters afterwards
+            param = [];
             for i = 1:ndiss
-                [con_M, con_X] = build_dissipation(obj, G, diss{i});
+                [con_M, con_X] = build_dissipation(obj, vars_diss, diss{i}, param);
 
                 cons = append_lmi(cons, con_M, obj.LMILAB);
                 cons = append_lmi(cons, con_X, obj.LMILAB);
             end
 
             vars = obj.vars;
-            vars.diss = {'G', G};
+            vars.diss = vars_diss;
         end
 
-        function [con_M, con_X] = build_dissipation(obj, G, diss)
+        function [vars_diss, cons]= create_vars_diss(obj, diss, cons)
+            %CREATE_VARS_DISS create variables for the dissipation
+            %constraints
+
+            n = length(diss{1}.plant.A);
+            G = lmim('G', n, n, 'sym');
+            gam = lmim('gam', 1, 1);
+
+            vars_diss= struct('G', G, 'gam', gam);
+
+            cons = append_lmi(cons, G - obj.tol.G*eye(n), obj.LMILAB);
+
+            %norm bound 
+            if obj.tol.G_max < Inf
+                cons = append_lmi(cons, -G + gam*eye(n), obj.LMILAB);
+            end
+            
+            cons  = append_lmi(cons, obj.tol.G_max - gam, obj.LMILAB);
+        end
+
+        function [con_M, con_X] = build_dissipation(obj, vars_diss, diss, param)
             %FORM_DISSIPATION: the dissipation relation for IQC synthesis
 
             %TODO: special calls for the h infinity and h2 structures
             %for convexification
 
+            G = vars_diss.G;
+
             [n, m] = size(diss.plant.B);
-            p = dim(diss.plant.C, 1);
+            % p = dim(diss.plant.C, 1);
                    
 
             Ablock = [eye(n), zeros(n, m);

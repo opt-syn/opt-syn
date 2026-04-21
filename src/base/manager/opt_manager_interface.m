@@ -11,7 +11,10 @@ classdef (Abstract) opt_manager_interface
 
         %numerics
         LMILAB = true;
-        tol = struct('G', 1e-4, 'M', 1e-7, 'X', 1e-7);
+        tol = struct('G', 1e-4, ...     %lower bound on eigenvalue for G
+                     'G_max', 100, ...  %upper bound on eigenvalue for G
+                    'M', 1e-7, ...
+                    'X', 1e-7);
     end
     
     methods
@@ -23,6 +26,40 @@ classdef (Abstract) opt_manager_interface
             obj.vars = struct('op', []);
             obj.vars.op =cell(nop, 1);
 
+        end
+
+        function [sol] = run(obj,  vars, cons, objective)
+
+            sol = struct;
+            %run the program
+            if obj.LMILAB
+                lmis(cons, objective, 'c');
+                [lmi_out,info_out]=lmisolve(cons);
+                
+                STATUS = lmi_out.status;
+                sol.dia = lmi_out.dia;
+                sol.info = info_out;
+            else %YALMIP
+                opt = sdpsettings('verbose', p.opts.verbose, 'solver', p.opts.solver);
+            
+                t = optimize(lmi, objective, opt);
+                
+                STATUS = t.problem;
+            end
+            sol.status = STATUS;
+
+            if STATUS == 0
+                if obj.LMILAB
+                    [vrec] = rec_vars(vars, lmi_out);
+                else
+                    [vrec] = rec_vars(vars);
+                end
+
+                sol.vars = vrec;
+
+                sol = obj.process_recovery(obj, sol);
+            end
+            
         end
 
 

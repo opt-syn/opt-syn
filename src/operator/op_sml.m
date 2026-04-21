@@ -38,14 +38,29 @@ classdef op_sml < op_sml_interface
 
 
             %filter coefficients
-            Cf1 = lmim(['Cf1_', obj.sid], reps, order(1)*reps, 'full');
-            Cf2 = lmim(['Cf2_', obj.sid], reps, order(2)*reps, 'full');
+            if order(1)
+                Cf1 = lmim(['Cf1_', obj.sid], reps, order(1)*reps, 'full');
+            else
+                Cf1 = [];
+            end
+
+            if order(2)
+                Cf2 = lmim(['Cf2_', obj.sid], reps, order(2)*reps, 'full');
+            else
+                Cf2 = [];
+            end
+
             Df1 = lmim(['Df1_', obj.sid], reps, reps, 'full');           
             Df2 = lmim(['Df2_', obj.sid], reps, reps, 'full');           
 
             
             % orep = order(2)*reps;
-            E = lmim(['E_', obj.sid], order(2)*reps, order(1)*reps, 'full');           
+            if (order(1) > 0) && (order(2) > 0)
+                E = lmim(['E_', obj.sid], order(2)*reps, order(1)*reps, 'full');           
+            else
+                %get the right empty dimensions
+                E = zeros(order(2)*reps, order(1)*reps);
+            end
 
             vars = struct('Cf1', Cf1, 'Cf2', Cf2, 'Df1', Df1, 'Df2', Df2, 'E', E);
 
@@ -76,6 +91,16 @@ classdef op_sml < op_sml_interface
             Psi1 = sdpss(Af1, Bf1, Cf1, Df1);
             Psi2 = sdpss(Af2, Bf2, Cf2, Df2);    
 
+        end
+
+        function sm = same(obj)
+            %SAME: is there any uncertainty in this oracle?
+            sm = (obj.m == obj.L);
+        end
+
+        function sm = get_same(obj, reps)
+            %GET_SAME: is there any uncertainty in this oracle?
+            sm = kron(obj.m, eye(reps));
         end
 
 
@@ -149,11 +174,17 @@ classdef op_sml < op_sml_interface
 
             %X = [0, E; E', 0];
 
-            [nE, mE] = dim(vars.E);
-
-            znE = zeros(nE);
-            zmE = zeros(mE);
-            X_out = [znE, vars.E; vars.E', zmE];
+            
+            if isempty(vars.E)
+                [nE, mE] = size(vars.E);
+                X_out = zeros(max(nE, mE));
+            else
+                [nE, mE] = dim(vars.E);
+    
+                znE = zeros(nE);
+                zmE = zeros(mE);
+                X_out = [znE, vars.E; vars.E', zmE];
+            end
         end
 
         

@@ -50,6 +50,10 @@ classdef op_sml_causal < op_sml_interface
         end
 
 
+        function sm = same(obj)
+            %SAME: is there any uncertainty in this oracle?
+            sm = (obj.m == obj.L);
+        end
 
         %% subsidiary creation routines
         function [vars]= create_vars(obj, order, reps)

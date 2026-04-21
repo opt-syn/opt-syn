@@ -171,6 +171,14 @@ classdef  opt_system
             n = obj.P.nx;
 
             if isempty(obj.tracking)
+                Sbeta = 1;
+                Rbeta = 1;
+            else
+                Sbeta = obj.tracking.Sbeta;
+                Rbeta = obj.tracking.Rbeta;
+            end
+
+            if isempty(obj.tracking)
                 %constant tracking
                 S = eye(size(N, 2));
                 R = S;
@@ -196,7 +204,7 @@ classdef  opt_system
                     Pi_basis_pre = null_basis(1:n, :);
                     Gam_basis_pre = null_basis(n+1:end, :);
                     Phi_basis_pre = D22*Gam_basis_pre + C2*Pi_basis_pre;
-    
+
                     Pi_basis = kron(Pi_basis_pre, eye(nnull));
                     Gam_basis = kron(Gam_basis_pre, eye(nnull));
                     Phi_basis = kron(Phi_basis_pre, eye(nnull));
@@ -208,8 +216,8 @@ classdef  opt_system
 
             else
                 %dynamical tracking, complicated Rbetalvester
-                Sbeta = kron(obj.tracking.Sbeta, eye(c));
-                Rbeta = kron(obj.tracking.Rbeta, eye(c));
+                Sbeta = kron(Sbeta, eye(c));
+                Rbeta = kron(Rbeta, eye(c));
 
 
 
@@ -263,6 +271,29 @@ classdef  opt_system
 
 
         end
+
+        % 
+        % function [regulator_closed] = verify_regulator(obj)
+        %     %CHECK_REGULATOR does the closed-loop system obey the regulator
+        %     %equation? (direct interconnection)
+        % 
+        %     regulator = obj.form_internal_model();
+        % 
+        %     [Ac, Bc, Cc, Dc] = ssdata(obj.K);
+        % 
+        %     %[Ac, Bc; Cc, Dc][Th; Gam] = [S; 0]Th'
+        % 
+        % 
+        %                 reg_ans_mat = [zeros(n, size(Rbeta, 2)), -B1*N; -ones(sN, 1)*Rbeta, -D11*N];
+        % 
+        %         reg_ans = reshape(reg_ans_mat, [], 1);
+        % 
+        %         reg_mat_L = [A, B2; C1, D12];
+        %         reg_mat_RR = S;
+        %         reg_mat_RL = blkdiag(speye(size(A, 1)), sparse(sN, sN));
+        % 
+        % 
+        % end
 
         function [regulator_closed] = check_regulator(obj)
             %CHECK_REGULATOR does the closed-loop system obey the regulator
