@@ -54,8 +54,8 @@ classdef op_sml < op_sml_interface
 
 
             %TODO: allow for general Df2?
-            % Df2 = lmim(['Df2_', obj.sid], reps, reps, 'full');           
-            Df2 = zeros(reps);
+            Df2 = lmim(['Df2_', obj.sid], reps, reps, 'full');           
+            % Df2 = zeros(reps);
 
             
             % orep = order(2)*reps;

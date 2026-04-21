@@ -115,7 +115,11 @@ classdef opt_analysis < opt_manager_interface
 
                 psi = iqc.get_psi();
 
-                GI = blkdiag(alg_screen, eye(nop + length(sp.iwp)));
+                I = ss(eye(nop + length(sp.iwp)));
+
+                %VERY IMPORTANT: [G; I], not blkdiag(G, I) (like I
+                %previously had, embarassing bug was here, 21.04.2026)
+                GI = [alg_screen; I];
                 alg_psi = psi * GI;
     
                 diss{i} = struct('plant', alg_psi, 'M', iqc.M, 'X', iqc.X, 'rho', sp.rho, 'np', iqc.np);
@@ -181,7 +185,7 @@ classdef opt_analysis < opt_manager_interface
             for i = 1:ndiss
                 [con_M, con_X] = build_dissipation(obj, vars_diss, diss{i}, param);
 
-                % cons = append_lmi(cons, con_M, obj.LMILAB);
+                cons = append_lmi(cons, con_M, obj.LMILAB);
                 if obj.opts.impose_X
                     cons = append_lmi(cons, con_X, obj.LMILAB);
                 end
@@ -287,7 +291,8 @@ classdef opt_analysis < opt_manager_interface
             end
             Ef = [eye(nf); zeros(n-nf, nf)];
 
-            con_X = G - Ef * diss.X*Ef';
+            X_f = Ef * diss.X * Ef';
+            con_X = G + X_f;
             
         end
     

@@ -1,5 +1,5 @@
-classdef op_sml_causal < op_sml_interface
-    %OP_SML_CAUSAL An operator which is the subdifferential of a function in SmL:
+classdef op_sml_causal_lam < op_sml_causal
+    %OP_SML_CAUSAL_lam An operator which is the subdifferential of a function in SmL:
     %
     %F = partial f, where f(x) - m norm(x, 2)^2 and L norm(x, 2)^2 - f(x)
     %are both proper, convex, and closed with -Inf < m <= L < inf
@@ -9,15 +9,19 @@ classdef op_sml_causal < op_sml_interface
     %
     %
     % TODO: generalize to matrices m and L?
+    %
+    %
+    %_lam: uses a different parameterization for the zames-falb
+    %coefficients
  
     methods
-        function obj = op_sml_causal(m, L, id)
+        function obj = op_sml_causal_lam(m, L, id)
             %OP_SML Construct an instance of this class
             %   Detailed explanation goes here
             if nargin < 3
                 id = 0;
             end
-            obj@op_sml_interface(m ,L, id)            
+            obj@op_sml_causal(m ,L, id)            
         end
 
 
@@ -30,14 +34,6 @@ classdef op_sml_causal < op_sml_interface
         function X_out = build_X(obj, vars, order, reps)
             %BUILD_X create the terminal cost X
             X_out = 0;
-        end
-
-        function cons = filter_constraints(obj, cons, order, vars, iqc)
-            %FILTER_CONSTRAINTS constraints on the filter coefficients            
-
-            %Zames-Falb constraints without terminal cost, polytopic
-            %definition of the multiplier
-            cons = elem_nonneg(vars.c, cons);
         end
 
         function [iqc, vars, cons] = create_iqc(obj, cons, order, reps)
@@ -56,12 +52,11 @@ classdef op_sml_causal < op_sml_interface
         end
 
         function cs = csum_psi(obj, vars)
-            [m, d] = dim(vars.c);
-            cs = ones( 1, m) * vars.c * ones(d, 1);
+            cs = trace(vars.Df);
         end
 
         %% subsidiary creation routines
-        function [vars]= create_vars(obj, order, reps)
+        function [vars] = create_vars(obj, order, reps)
             %CREATE_VARS form the variables in an IQC
             %
             %Input: 
@@ -76,52 +71,41 @@ classdef op_sml_causal < op_sml_interface
                 reps = 1;
             end
 
-            %nonnegative weights for the multipliers
-            c = lmim(['c_', obj.sid], (order+1)*reps, reps);
 
-            vars = struct('c', c);
- 
-        end         
+            %filter coefficients
+            Cf = lmim(['Cf_', obj.sid], reps, order*reps, 'full');
+            Df = lmim(['Df_', obj.sid], reps, reps, 'full');
+
+           
+
+            vars = struct('Cf', Cf, 'Df', Df);
+
+        end    
+
+        function cons = filter_constraints(obj, cons, order, vars, iqc)
+            %constraints on the filter coefficients
+
+
+            cons = elem_nonneg(-vars.Cf, cons, obj.LMILAB);
+            r = ssize(vars.Df, 2);
+            M1 = [vars.Cf, vars.Df]*ones(r, 1);
+            cons = elem_nonneg(M1, cons, obj.LMILAB);
+
+            cons = elem_nonneg_offdiag(-vars.Df, cons, obj.LMILAB);            
+
+        end
 
         function [Psi1, Psi2] = build_psi(obj, vars, order, reps)
             %BUILD_PSI construct the filter for the SML function
             %
-            %use Zames-Falb multipliers to do so
-
-            c = vars.c;
+            %use Zames-Falb multipliers to do this
 
             [Af0, Bf0] = block_fir(order);
             Af = kron(eye(reps), Af0 );
             Bf = kron(eye(reps), Bf0);                      
-            Cf = zeros(reps, order*reps);
-            Df = zeros(reps);
-            % Cf = [];
-            % Df = [];
-
-            %now fill in the terms
-
-            %these are the zames-falb offsets
-            %add them all up
-            C_center = [zeros(reps, order*reps); -eye(order*reps)];
-            D_off = [zeros(1, reps-1); -eye(reps-1); zeros(order*reps, reps-1)];
-            D_main = ones((order+1)*reps, 1);
-
-            C_right = C_center;
-            D_right = [D_main, D_off];
+            Cf = vars.Cf;
+            Df = vars.Df;
             
-            for i = 1:reps
-                ccurr = lmim_index(c, [], i)';
-                Cf_curr = ccurr * C_right;
-                
-                D_right_curr = circshift(D_right, i-1, 2);
-                Df_curr = ccurr * D_right_curr;
-
-                E_curr = zeros(reps, 1);
-                E_curr(i) = 1;
-                Cf = Cf + E_curr*Cf_curr;
-                Df= Df + E_curr*Df_curr;
-            end
-
             Psi1 = sdpss(Af, Bf, Cf, Df);
             Psi2 = ss(eye(reps));
         end

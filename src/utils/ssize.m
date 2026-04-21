@@ -1,4 +1,4 @@
-function [sz] = ssize(M, ind)
+function [sz1, sz2] = ssize(M, ind)
 %SSIZE size for lmim types is dim. this is a hack.
 
 if isnumeric(M)
@@ -8,9 +8,10 @@ else
 end
 
 if nargin == 1
-    sz = f(M)
+    [sz1, sz2] = f(M);
 else
-    sz = f(M, ind)
+    sz1 = f(M, ind);
+    sz2 = [];
 end
 
 
