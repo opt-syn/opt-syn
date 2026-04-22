@@ -135,10 +135,12 @@ classdef (Abstract) opt_manager_interface
             if ~iscell(order)
                 order = {order};               
             end
-            if nargin < 3
+            if nargin < 4
                 b_opts = bisect_opts;
             end
 
+            sol_best = [];
+            vr = [];
             %base relations
             
             obj = obj.oracle_order(order);
@@ -211,7 +213,7 @@ classdef (Abstract) opt_manager_interface
             if b_opts.bisect_rho
                 data_new{i}.rho = pcurr;
             else
-                data_new{i}.bound = pcurr;
+                data_new{i}.bound = pcurr;                
             end
 
 

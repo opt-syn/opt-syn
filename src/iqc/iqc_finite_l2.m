@@ -1,4 +1,4 @@
-classdef iqc_e2e < iqc_loop_split
+classdef iqc_finite_l2 < iqc_loop_split
     %IQC_e2e Energy to Energy: Hinfinity gain for a linear system
     %
     % l2 -> l2 norm    
@@ -6,22 +6,22 @@ classdef iqc_e2e < iqc_loop_split
     % norm(y)^2/norm(u)^2 <= gamma^2
 
     properties
-        gamma = 1;
+        mu = 1;
     end
     
     methods
-        function obj = iqc_e2e(nu, ny, gamma)
+        function obj = iqc_finite_l2(nu, ny, mu)
             %IQC_HINF Construct an instance of this class
             %   Detailed explanation goes here
 
             if nargin < 3
-                gamma = 1;
+                mu = 1;
             end
 
            
             %TODO: check signs
-            Mu = -eye(nu)*gamma;
-            My = eye(ny)/(gamma);
+            Mu = -eye(nu)*mu;
+            My = eye(ny);
 
             M = blkdiag(My, Mu);
             
@@ -29,7 +29,7 @@ classdef iqc_e2e < iqc_loop_split
                 eye(nu), zeros(ny, nu)];
 
             obj@iqc_loop_split(eye(ny), M, loop, eye(nu), []);
-            obj.gamma = gamma;
+            obj.mu = mu;
         end       
     end
 end

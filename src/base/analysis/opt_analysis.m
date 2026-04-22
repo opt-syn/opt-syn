@@ -111,7 +111,9 @@ classdef opt_analysis < opt_manager_interface
 
             iqc_all = iqc_op;            
             
-            count_iqc_out = 0;
+            count_iqc_in = (iqc_op.nw);
+            count_iqc_out = (iqc_op.np);
+
             data_spec = cell(length(specs), 1);
             
             for i = 1:length(specs)
@@ -123,13 +125,26 @@ classdef opt_analysis < opt_manager_interface
                 iqc_curr = blkdiag(iqc_op, iqc_spec);
 
 
+                iwp_iqc = (1:(iqc_op.nw))';
+                ir_iqc_first = (1:(iqc_op.np))';
+                
                 if isempty(iqc_spec)
-                    ind_iqc_out =[];
+                    ir_iqc_first_r =[];
+                    iw_iqc_first_r = [];
                 else
-                    ind_iqc_out = count_iqc_out  + 1:(iqc_spec.np );
-                    count_iqc_out = count_iqc_out  + (iqc_spec.np);
+                    iw_iqc_first_r = count_iqc_in + specs{i}.iwp ;
+                    count_iqc_out = count_iqc_in + specs{i}.iwp;
+
+                    ir_iqc_first_r = count_iqc_out  + specs{i}.izp ;
+                    count_iqc_out = count_iqc_out + specs{i}.izp;
                 end
-                data_spec{i} = struct('ind_spec', ind_iqc_out, 'iqc', iqc_spec, ...
+                iwp_iqc = [iwp_iqc; iw_iqc_first_r];
+
+                ir_iqc = [ir_iqc_first; ir_iqc_first_r];
+                ir_iqc = [ir_iqc; ir_iqc + (iqc_op.np + obj.sys.P.nwp )];
+                
+                %TODO: improve the export, the IQC needs to be updated
+                data_spec{i} = struct('ir_iqc', ir_iqc, 'iwp_iqc', iwp_iqc, 'iqc', iqc_spec, ...
                     'vars', vars, 'rho', sp.rho, 'n_same', n_same, 'iqc_with_op', iqc_curr);
             end
 
@@ -143,8 +158,6 @@ classdef opt_analysis < opt_manager_interface
             
             I = ss(eye(nloop));
 
-            %VERY IMPORTANT: [G; I], not blkdiag(G, I) (like I
-            %previously had, embarassing bug was here, 21.04.2026)
             GI = [alg_all; I];
             alg_psi = psi * GI;           
         end
@@ -164,18 +177,21 @@ classdef opt_analysis < opt_manager_interface
                 % iqc_spec = sp.iqc;
                 n_same = data_spec{i}.n_same;
 
-                sp_ind = data_spec{i}.ind_spec;
-                nwp = length(sp_ind);
-                %enforce squareness in the performanc specs?
-                E_wp = full(sparse(1:length(sp_ind), sp_ind, ones(1, length(sp_ind)), length(sp_ind), nwp));
-                E_zp = full(sparse(1:length(sp_ind), sp_ind, ones(1, length(sp_ind)), length(sp_ind), nwp));
+                sp_ind_w = data_spec{i}.iwp_iqc;
+                sp_ind_r = data_spec{i}.ir_iqc;
+                % nww = length(sp_ind_w);
+                % nwr = length(sp_ind_r);
+                [nwr, nww] = ssize(alg_psi.D);
+                %enforce squareness in the performance specs?
+                E_w = full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww));
+                E_r = full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr));
 
-                E_w = blkdiag(eye(obj.sys.P.nw - n_same), E_wp, eye(obj.sys.P.nw - n_same), E_wp);
-                E_z = blkdiag(eye(obj.sys.P.nz- n_same), E_zp);
+                % E_w = blkdiag(eye(obj.sys.P.nw - n_same), E_wp, eye(obj.sys.P.nw - n_same), E_wp);
+                % E_z = blkdiag(eye(obj.sys.P.nz- n_same), E_zp);
                 
                  
                 %nonminimal representation
-                alg_screen = E_w * alg_psi * E_z;
+                alg_screen = E_r * alg_psi * E_w;
 
                 iqc = data_spec{i}.iqc_with_op;
 
@@ -221,12 +237,13 @@ classdef opt_analysis < opt_manager_interface
             %TODO: fill in specification
 
             % objective = vars.diss.ga;
-            % objective = -trace(vars.diss.G);
-            % objective = 0;
+            % objective = trace(vars.diss.G);
             objective = 0;
+            % objective = 0;
+
             % for i = 1:length(obj.specs)
             %     if strcmp(obj.specs{i}.type, 'finite_l2')
-            %         objective = -vars.specs{i}.mu_l2;
+            %         objective = vars.specs{i}.mu_l2;
             %     end
             % end
         end
@@ -290,13 +307,22 @@ classdef opt_analysis < opt_manager_interface
             n = length(alg_psi.A);
             G = lmim('G', n, n, 'sym');
 
+            %ga
+            % ga = lmim('ga', 1, 1, 'sym');
+
             vars_diss= struct('G', G);
+            % vars_diss= struct('G', G, 'ga', ga);
+
+            
 
             if obj.tol.G_max < Inf    
                 %issue in the bounding?
                 cons = append_lmi(cons, obj.tol.G_max*eye(n)  - G, obj.LMILAB);
                 cons = append_lmi(cons, obj.tol.G_max*eye(n)  + G, obj.LMILAB);
 
+                %lmim complains that the dimensions are wrong here.
+                % cons = append_lmi(cons, ga*eye(n)  - G, obj.LMILAB);
+                % cons = append_lmi(cons, ga*eye(n)  + G, obj.LMILAB);
             end
 
 
