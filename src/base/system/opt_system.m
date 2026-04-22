@@ -185,7 +185,7 @@ classdef  opt_system
 
             if isempty(obj.tracking)
                 %constant tracking
-                S = eye(size(N, 2));
+                S = eye(size(N, 2)+1);
                 R = S;
 
 

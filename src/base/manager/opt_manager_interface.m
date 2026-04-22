@@ -32,6 +32,24 @@ classdef (Abstract) opt_manager_interface
 
         end
 
+        function [sol] = solve_single(obj, order, specs)
+            %SOLVE_SINGLE Solve the program once
+
+            if ~iscell(order)
+                order = {order};               
+            end
+
+            obj = obj.oracle_order(order);
+            obj = obj.add_specifications(specs);
+
+            [vars, cons] = obj.build_program(); 
+
+            objective = obj.get_objective(vars);
+            
+            [sol] = obj.run(vars, cons, objective);
+
+        end
+
         function [sol] = run(obj,  vars, cons, objective)
 
             sol = struct;
@@ -87,7 +105,11 @@ classdef (Abstract) opt_manager_interface
         
         function obj = add_specifications(obj, varargin)
             %concatenate the new performance specifications
-            obj.specs = [obj.specs, varargin];
+            if iscell(varargin{1})
+                obj.specs = [obj.specs, varargin{1}];
+            else
+                obj.specs = [obj.specs, varargin];
+            end
         end
         
     end

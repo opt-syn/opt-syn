@@ -9,6 +9,7 @@ classdef op_sim
         fw= @(z, param) []; %forward evaluation (e.g. gradient)
         bw = @(z, param) []; %backward evaluation (e.g. proximal operator)        
         f = @(z, param) [];  %function value (or function values in a game)
+        id = 0;
     end
     
     methods

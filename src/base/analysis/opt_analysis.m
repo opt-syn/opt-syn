@@ -64,7 +64,7 @@ classdef opt_analysis < opt_manager_interface
             nop = length(obj.sys.bind);
             [~, perm] = sort(obj.sys.bind);
             
-            c = obj.sys.P.nw/length(obj.sys.op);
+            c = obj.sys.op{1}.c;
             P = eye(nop);
             P(:, perm) = P;
             P = kron(P, eye(c));
@@ -75,15 +75,17 @@ classdef opt_analysis < opt_manager_interface
 
             alg_perm = Pzp * alg * Pwp;
 
-            %TODO: get rid of the same (m=L) oracles
-            
+            %TODO: get rid of the same (m=L) oracles   
+
+            same = cellfun(@same, obj.sys.op)
+
             iqc_op = obj.iqc_op_all();
 
             alg_loop = lft(iqc_op.loop, alg_perm, nop, nop);
 
 
             if isempty(obj.specs)
-                specs = opt_performance('stab', 1 - 1e-4);
+                specs = {opt_performance('stab', 1 - 1e-4)};
             else
                 specs = obj.specs;
             end

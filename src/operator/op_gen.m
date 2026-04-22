@@ -5,10 +5,6 @@ classdef op_gen  < operator_interface
     
     properties
         prop = {'monotone', 0};
-            % cocoercive = [];
-            % monotone = [];
-            % lipschitz = [];
-            % inv_lipschitz = [];
         %other properties of an operator?
         tol_cX = 1000; %tolerance for the terminal cost
     end

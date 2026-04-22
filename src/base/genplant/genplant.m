@@ -408,13 +408,19 @@ classdef genplant
 
        
 
-        function [obj, izp] = perf_output_opt(obj, c)
+        function [obj, izp] = perf_output_opt(obj, c, bind)
             %PERF_OUTPUT_WSUM: add performance to track the optimality
             %condition: sum(1'w) = 0
             %
-            if nargin == 1
+            if nargin < 2
                 c = 1;
             end
+            if nargin < 3
+                bind = (1:obj.nw/c);
+            end
+
+            [u, uind] = unique(bind);
+
             A = obj.P.A;
             B = obj.P.B;
             C = obj.P.C;
@@ -434,7 +440,8 @@ classdef genplant
             Czp = zeros(c, n);
 
 
-            Ezp = kron(ones(1, s), eye(c));
+            w_ind_keep = double(ismember(1:s, uind));
+            Ezp = kron(w_ind_keep, eye(c));
             Dzp = [Ezp, zeros(size(Ezp, 1), obj.nwp + obj.nu)];
 
             Cnew = [Ctop; Czp; Cbot];
