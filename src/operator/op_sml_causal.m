@@ -55,9 +55,18 @@ classdef op_sml_causal < op_sml_interface
             sm = (obj.m == obj.L);
         end
 
+        function sm = get_same(obj, reps)
+            %GET_SAME: is there any uncertainty in this oracle?
+            sm = kron(obj.m, eye(reps));
+        end
+
         function cs = csum_psi(obj, vars)
-            [m, d] = dim(vars.c);
-            cs = ones( 1, m) * vars.c * ones(d, 1);
+            if isempty(vars)
+                cs = 0;
+            else
+                [m, d] = dim(vars.c);
+                cs = ones( 1, m) * vars.c * ones(d, 1);
+            end
         end
 
         %% subsidiary creation routines

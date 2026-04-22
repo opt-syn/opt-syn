@@ -60,7 +60,8 @@ classdef opt_analysis < opt_manager_interface
             %       rho:    scaling/discount factor
             alg = obj.sys.get_alg;
 
-            %sort based on the bind
+            %sort oracles based on the bind (exposure of repeated
+            %nonlinearities)
             nop = length(obj.sys.bind);
             [~, perm] = sort(obj.sys.bind);
             
@@ -68,20 +69,31 @@ classdef opt_analysis < opt_manager_interface
             P = eye(nop);
             P(:, perm) = P;
             P = kron(P, eye(c));
-
-            %TODO: allow for dynamical uncertainties in the w channel
+            
             Pwp = blkdiag(P', eye(obj.sys.P.nwp));
             Pzp = blkdiag(P, eye(obj.sys.P.nzp));
 
             alg_perm = Pzp * alg * Pwp;
 
-            %TODO: get rid of the same (m=L) oracles   
+            
+            %identify and get rid of the same (m=L) oracles   
 
-            same = cellfun(@same, obj.sys.op)
+            %use an explicit substitution
 
-            iqc_op = obj.iqc_op_all();
+            [iqc_op, m_same, ind_same] = obj.iqc_op_all();
 
-            alg_loop = lft(iqc_op.loop, alg_perm, nop, nop);
+            ind_diff = setdiff(1:obj.sys.P.nw, ind_same);
+            Pd = eye(nop);
+            Pd(:, [ind_same, ind_diff]) = Pd;
+            n_same = length(ind_same);
+
+            Pwp2 = blkdiag(Pd', eye(obj.sys.P.nwp));
+            Pzp2 = blkdiag(Pd, eye(obj.sys.P.nzp));
+            alg_perm_same = Pzp2 * alg_perm * Pwp2;
+
+            alg_perm_m = lft(m_same, alg_perm_same, n_same, n_same);
+            
+            alg_loop = lft(iqc_op.loop, alg_perm_m, nop-n_same, nop-n_same);
 
 
             if isempty(obj.specs)
@@ -99,14 +111,14 @@ classdef opt_analysis < opt_manager_interface
                 [vars, cons, iqc_spec] = sp.create_iqc(cons);
 
                 %selector matrices
-                sp_w_ind = obj.sys.P.nw + sp.iwp;
-                sp_z_ind = obj.sys.P.nz + sp.izp;
-                
+                % sp_w_ind = obj.sys.P.nw - n_same + sp.iwp;
+                % sp_z_ind = obj.sys.P.nz - n_same + sp.izp;
+                % 
                 E_wp = full(sparse(1:length(sp.iwp), sp.iwp, ones(1, length(sp.iwp)), length(sp.iwp), obj.sys.P.nwp));
                 E_zp = full(sparse(1:length(sp.izp), sp.izp, ones(1, length(sp.izp)), length(sp.izp), obj.sys.P.nzp));
 
-                E_w = blkdiag(eye(obj.sys.P.nw), E_wp);
-                E_z = blkdiag(eye(obj.sys.P.nz), E_zp);
+                E_w = blkdiag(eye(obj.sys.P.nw - n_same), E_wp);
+                E_z = blkdiag(eye(obj.sys.P.nz- n_same), E_zp);
                 
                 % TODO: allow for performance IQCs with general loop
                 % transformations, right now performance doesn't allow for
@@ -119,7 +131,7 @@ classdef opt_analysis < opt_manager_interface
 
                 psi = iqc.get_psi();
 
-                I = ss(eye(nop + length(sp.iwp)));
+                I = ss(eye(nop - n_same + length(sp.iwp)));
 
                 %VERY IMPORTANT: [G; I], not blkdiag(G, I) (like I
                 %previously had, embarassing bug was here, 21.04.2026)
@@ -265,7 +277,12 @@ classdef opt_analysis < opt_manager_interface
 
             iqc_rec = cell(size(obj.iqc_op));
             for i = 1:length(obj.iqc_op)
-                iqc_rec{i} = obj.iqc_op{i}.recover(lmi_out);
+                if isnumeric(obj.iqc_op{i})
+                    %the Same oracle (m=L, known linear transformation)
+                    iqc_rec{i} = obj.iqc_op{i};
+                else
+                    iqc_rec{i} = obj.iqc_op{i}.recover(lmi_out);
+                end
 
             end
 

@@ -51,6 +51,12 @@ classdef op_sml_causal_lam < op_sml_causal
             sm = (obj.m == obj.L);
         end
 
+
+        function sm = get_same(obj, reps)
+            %GET_SAME: is there any uncertainty in this oracle?
+            sm = kron(obj.m, eye(reps));
+        end
+
         function cs = csum_psi(obj, vars)
             cs = trace(vars.Df);
         end
