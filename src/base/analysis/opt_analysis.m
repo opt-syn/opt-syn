@@ -197,10 +197,13 @@ classdef opt_analysis < opt_manager_interface
             for i = 1:ndiss
                 [con_M, con_X] = build_dissipation(obj, vars_diss, diss{i}, param);
 
-                cons = append_lmi(cons, con_M, obj.LMILAB);
+                
                 if obj.opts.impose_X && (i==1)
-                    cons = append_lmi(cons, con_X, obj.LMILAB);
+                    sx = ssize(con_X, 1);
+                    cons = append_lmi(cons, con_X - eye(sx)*obj.tol.X, obj.LMILAB);
                 end
+                sm = ssize(con_M, 1);
+                cons = append_lmi(cons, con_M - eye(sm)*obj.tol.M, obj.LMILAB);
             end
 
             vars = obj.vars;
@@ -218,6 +221,10 @@ classdef opt_analysis < opt_manager_interface
 
             n = length(diss{1}.plant.A);
             G = lmim('G', n, n, 'sym');
+            %TODO: TESTING
+         %    G = [1.0000         0
+         % 0    6.0500];
+
             % ga = lmim('ga', 1, 1);
 
             vars_diss= struct('G', G);
@@ -229,9 +236,15 @@ classdef opt_analysis < opt_manager_interface
                         %norm bound 
                                     % cons = append_lmi(cons, ga - trace(G), obj.LMILAB);
 % 
-            if obj.tol.G_max < Inf                
+            if obj.tol.G_max < Inf    
+                %issue in the bounding?
+                % cons = append_lmi(cons, obj.tol.G_max*eye(2*n) + [zeros(n), G; G', zeros(n)], obj.LMILAB);
+
+                % cons = append_lmi(cons, obj.tol.G_max*eye(n)  - G, obj.LMILAB);
+                % cons = append_lmi(cons, obj.tol.G_max*eye(n)  + G, obj.LMILAB);
+
                 cons = append_lmi(cons, obj.tol.G_max*eye(n)  - G, obj.LMILAB);
-                cons = append_lmi(cons, -obj.tol.G_max*eye(n)  + G, obj.LMILAB);
+                cons = append_lmi(cons, obj.tol.G_max*eye(n)  + G, obj.LMILAB);
 
             end
 
@@ -273,30 +286,53 @@ classdef opt_analysis < opt_manager_interface
 
             G = vars_diss.G;
 
-            [n, m] = size(diss.plant.B);                               
-
-            Ablock = [eye(n), zeros(n, m);
-                diss.plant.A, diss.plant.B];
-            
-            Cblock = [diss.plant.C, diss.plant.D];
-
-
+            %storage routines
+            % 
+            G0 = [1.0000         0
+            0    6.0500];
             G_current = G;
             G_next = G;
 
             Gblock = blkdiag(diss.rho^2 * G_current, -G_next);
 
-           
-            Center_block = blkdiag(Gblock, -diss.M);
-            Outer_block = [Ablock; Cblock];
 
-            %Test with stability
-            Ablock = [eye(n);
-                diss.plant.A];
-            Center_block = Gblock;          
-            Outer_block = [Ablock];
+            [n, m] = size(diss.plant.B);  
 
-            con_M = (Outer_block' * Center_block * Outer_block);
+            % %The true routines
+            % STAB_TEST = false;
+
+            % if  STAB_TEST
+                
+                % 
+                % Ablock = [eye(n);
+                % diss.plant.A];
+                % Cblock = [diss.plant.C, diss.plant.D];
+                % 
+                % Center_block = Gblock;          
+                % Outer_block = [Ablock];
+                % 
+                % 
+                % % con_M = 10*eye(n) - G;
+                % % con_M = eye(n);
+                % % con_M = -G + 50*eye(n);
+                % 
+                % sys_block = Ablock' * Gblock * Ablock;
+                
+                % supp_block = -Cblock' * diss.M * Cblock;
+            % else
+                Ablock = [eye(n), zeros(n, m);
+                    diss.plant.A, diss.plant.B];
+    
+                Cblock = [diss.plant.C, diss.plant.D];
+               
+                Center_block = blkdiag(Gblock, -diss.M);
+                Outer_block = [Ablock; Cblock];
+
+                con_M = (Outer_block' * Center_block * Outer_block);
+            
+            % end
+            
+            
             % con_M = diss.rho^2 * G_current - diss.plant.A' * G_next * diss.plant.A;
 
             %terminal cost constraint

@@ -5,14 +5,18 @@ function [lmi_new] = append_lmi(lmi_old,lmi_add, LMILAB)
 %YALMIP: this is ok
 %LMIPARSER: need to flip the sign to produce -lmi_add <= 0.
 
-if LMILAB
-    if isempty(lmi_old)
-        lmi_new = lmis(-lmi_add);
-    else
-        lmi_new = lmis(lmi_old, -lmi_add);
-    end   
+if isnumeric(lmi_add)   
+    lmi_new = lmi_old;
 else
-    lmi_new = [lmi_old; lmi_add >= 0];
+    if LMILAB
+        if isempty(lmi_old)
+            lmi_new = lmis(-lmi_add);
+        else
+            lmi_new = lmis(lmi_old, -lmi_add);
+        end   
+    else
+        lmi_new = [lmi_old; lmi_add >= 0];
+    end
 end
 
 end
