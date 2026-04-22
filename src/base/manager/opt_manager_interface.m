@@ -45,13 +45,13 @@ classdef (Abstract) opt_manager_interface
                 STATUS = lmi_out.status;
                 sol.dia = lmi_out.dia;
                 sol.info = info_out;
-                ncons = length(cons.lmim);
-                sol.blocks = cell(ncons, 1);
-                sol.eb = zeros(ncons, 1);
-                for i = 1:length(cons.lmim)
-                    sol.blocks{i} = -double(double(cons.lmim(i), lmi_out));
-                    sol.eb(i) = min(eig(sol.blocks{i}));
-                end
+                % ncons = length(cons.lmim);
+                % sol.blocks = cell(ncons, 1);
+                % sol.eb = zeros(ncons, 1);
+                % for i = 1:length(cons.lmim)
+                %     sol.blocks{i} = -double(double(cons.lmim(i), lmi_out));
+                %     sol.eb(i) = min(eig(sol.blocks{i}));
+                % end
                 
             else %YALMIP
                 opt = sdpsettings('verbose', p.opts.verbose, 'solver', p.opts.solver);
