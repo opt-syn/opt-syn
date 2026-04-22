@@ -27,6 +27,9 @@ classdef opt_analysis < opt_manager_interface
                     obj.cons = cons_curr;
                 end
             end
+
+            %normalize the coefficients for the filters
+            obj.cons = obj.coeff_normalize(obj.cons);
         end
 
 
@@ -46,9 +49,10 @@ classdef opt_analysis < opt_manager_interface
 
 
         end
-        
 
-        function [diss, cons] = build_plant(obj, cons)
+
+
+        function [alg_psi, alg_all, data_spec] = build_plant(obj, cons)
             %BUILD_PLANT: form the plant to be used for analysis           
 
             %
@@ -93,7 +97,10 @@ classdef opt_analysis < opt_manager_interface
 
             alg_perm_m = lft(m_same, alg_perm_same, n_same, n_same);
             
-            alg_loop = lft(iqc_op.loop, alg_perm_m, nop-n_same, nop-n_same);
+
+
+            %we now have the loop terms for the operators. now go through 
+            %the loop terms for the performance specifications
 
 
             if isempty(obj.specs)
@@ -102,47 +109,82 @@ classdef opt_analysis < opt_manager_interface
                 specs = obj.specs;
             end
 
+            iqc_all = iqc_op;            
             
-            diss = cell(length(specs), 1);
+            count_iqc_out = 0;
+            data_spec = cell(length(specs), 1);
+            
             for i = 1:length(specs)
                 sp = specs{i};
                 % iqc_spec = sp.iqc;
                 
                 [vars, cons, iqc_spec] = sp.create_iqc(cons);
+                iqc_all = blkdiag(iqc_all, iqc_spec);
+                iqc_curr = blkdiag(iqc_op, iqc_spec);
 
-                %selector matrices
-                % sp_w_ind = obj.sys.P.nw - n_same + sp.iwp;
-                % sp_z_ind = obj.sys.P.nz - n_same + sp.izp;
-                % 
-                E_wp = full(sparse(1:length(sp.iwp), sp.iwp, ones(1, length(sp.iwp)), length(sp.iwp), obj.sys.P.nwp));
-                E_zp = full(sparse(1:length(sp.izp), sp.izp, ones(1, length(sp.izp)), length(sp.izp), obj.sys.P.nzp));
 
-                E_w = blkdiag(eye(obj.sys.P.nw - n_same), E_wp);
-                E_z = blkdiag(eye(obj.sys.P.nz- n_same), E_zp);
-                
-                % TODO: allow for performance IQCs with general loop
-                % transformations, right now performance doesn't allow for
-                % this. Only loop transformations on the oracles are
-                % permitted.
-                 
-                alg_screen = E_w * alg_loop * E_z;
-
-                iqc = blkdiag(iqc_op, iqc_spec);
-
-                psi = iqc.get_psi();
-
-                I = ss(eye(nop - n_same + length(sp.iwp)));
-
-                %VERY IMPORTANT: [G; I], not blkdiag(G, I) (like I
-                %previously had, embarassing bug was here, 21.04.2026)
-                GI = [alg_screen; I];
-                alg_psi = psi * GI;
-    
-                diss{i} = struct('plant', alg_psi, 'M', iqc.M, 'X', iqc.X, 'rho', sp.rho, 'np', iqc.np, 'vars', vars);
-
+                if isempty(iqc_spec)
+                    ind_iqc_out =[];
+                else
+                    ind_iqc_out = count_iqc_out  + 1:(iqc_spec.np );
+                    count_iqc_out = count_iqc_out  + (iqc_spec.np);
+                end
+                data_spec{i} = struct('ind_spec', ind_iqc_out, 'iqc', iqc_spec, ...
+                    'vars', vars, 'rho', sp.rho, 'n_same', n_same, 'iqc_with_op', iqc_curr);
             end
 
+            %generate the entire system
+            loop = iqc_all.loop;
+            nloop = length(loop)/2;
+            psi = iqc_all.get_psi();
             
+            alg_all = lft(loop, alg_perm_m, nloop, nloop);
+
+            
+            I = ss(eye(nloop));
+
+            %VERY IMPORTANT: [G; I], not blkdiag(G, I) (like I
+            %previously had, embarassing bug was here, 21.04.2026)
+            GI = [alg_all; I];
+            alg_psi = psi * GI;           
+        end
+
+        function [diss] = index_specs(obj, alg_psi, data_spec )
+
+            if isempty(obj.specs)
+                specs = {opt_performance('stab', 1 - 1e-4)};
+            else
+                specs = obj.specs;
+            end
+
+            %now index alg_psi into its performance specifications
+            diss = cell(length(specs), 1);
+            for i = 1:length(specs)
+                
+                % iqc_spec = sp.iqc;
+                n_same = data_spec{i}.n_same;
+
+                sp_ind = data_spec{i}.ind_spec;
+                nwp = length(sp_ind);
+                %enforce squareness in the performanc specs?
+                E_wp = full(sparse(1:length(sp_ind), sp_ind, ones(1, length(sp_ind)), length(sp_ind), nwp));
+                E_zp = full(sparse(1:length(sp_ind), sp_ind, ones(1, length(sp_ind)), length(sp_ind), nwp));
+
+                E_w = blkdiag(eye(obj.sys.P.nw - n_same), E_wp, eye(obj.sys.P.nw - n_same), E_wp);
+                E_z = blkdiag(eye(obj.sys.P.nz- n_same), E_zp);
+                
+                 
+                %nonminimal representation
+                alg_screen = E_w * alg_psi * E_z;
+
+                iqc = data_spec{i}.iqc_with_op;
+
+                %TODO: this may run into trouble if one entry has an X.
+                %performance with dynamic multipliers?
+            
+                diss{i} = struct('plant', alg_screen, 'M', iqc.M, 'X', iqc.X, ...
+                    'rho', data_spec{i}.rho, 'np', iqc.np, 'vars', data_spec{i}.vars);
+            end
 
         end
 
@@ -190,29 +232,41 @@ classdef opt_analysis < opt_manager_interface
         end
 
         function [vars, cons] = build_program(obj)
-            %BUILD_PROGRAM set up the analysis problem
+            %BUILD_PROGRAM set up the algorithm analysis problem
             
             
             cons = obj.cons;
 
           
-            [diss, cons] = obj.build_plant(cons);
+            % [diss, cons] = obj.build_plant(cons);
+            %alg_all: used for debugging. The algorithm after signal 
+            % transformationsbefore, but before cascade by the filters            
+            [alg_psi, alg_all, data_spec] = obj.build_plant(cons);
+            [vars.diss, cons] = obj.create_vars_storage(alg_psi, cons);
+            
+
+            
+            [vars, cons] = build_dissipation(obj, vars, cons, alg_psi, data_spec);
+
+        end
+
+        function [vars, cons] = build_dissipation(obj, vars, cons, alg_psi, data_spec)
+            %BUILD_DISSIPATION: form the dissipation relations for the
+            %system (at the current set of specifications)
+           
+            [diss] = obj.index_specs(alg_psi, data_spec);
             ndiss = length(diss);
-            
-            [vars_diss, cons] = obj.create_vars_diss(diss, cons);
 
-            cons = obj.coeff_normalize(cons);
-
-           
-           
-            
-            %incorporate parameters afterwards
-            param = [];
             for i = 1:ndiss
-                [con_M, con_X] = build_dissipation(obj, vars_diss, diss{i}, param);
+                [con_M, con_X] = con_dissipation(obj, vars, diss{i});
 
                 
                 if obj.opts.impose_X && (i==1)
+                    %for infinite-horizon performance measures (l2 norm, h2
+                    %norm), terminal costs and sign constraints on the
+                    %storage function are not required. For finite-horizon
+                    %specifications (e.g. invariance, peak-to-peak), they
+                    %are needed.
                     sx = ssize(con_X, 1);
                     cons = append_lmi(cons, con_X - eye(sx)*obj.tol.X, obj.LMILAB);
                 end
@@ -220,50 +274,31 @@ classdef opt_analysis < opt_manager_interface
                 cons = append_lmi(cons, con_M - eye(sm)*obj.tol.M, obj.LMILAB);
             end
 
-            vars = obj.vars;
-            vars.diss = vars_diss;
+
 
             vars.specs = cell(1, length(obj.specs));
             for i = 1:length(obj.specs)
                 vars.specs{i} = diss{i}.vars;
             end
+
         end
 
-        function [vars_diss, cons]= create_vars_diss(obj, diss, cons)
-            %CREATE_VARS_DISS create variables for the dissipation
+        function [vars_diss, cons]= create_vars_storage(obj, alg_psi, cons)
+            %create_vars_storage create variables for the dissipation
             %constraints
 
-            n = length(diss{1}.plant.A);
+            n = length(alg_psi.A);
             G = lmim('G', n, n, 'sym');
-            %TODO: TESTING
-         %    G = [1.0000         0
-         % 0    6.0500];
-
-            % ga = lmim('ga', 1, 1);
 
             vars_diss= struct('G', G);
-            % vars_diss= struct('G', G, 'ga', ga);
-            
-            % cons  = append_lmi(cons, ga, obj.LMILAB);
 
-
-                        %norm bound 
-                                    % cons = append_lmi(cons, ga - trace(G), obj.LMILAB);
-% 
             if obj.tol.G_max < Inf    
                 %issue in the bounding?
-                % cons = append_lmi(cons, obj.tol.G_max*eye(2*n) + [zeros(n), G; G', zeros(n)], obj.LMILAB);
-
-                % cons = append_lmi(cons, obj.tol.G_max*eye(n)  - G, obj.LMILAB);
-                % cons = append_lmi(cons, obj.tol.G_max*eye(n)  + G, obj.LMILAB);
-
                 cons = append_lmi(cons, obj.tol.G_max*eye(n)  - G, obj.LMILAB);
                 cons = append_lmi(cons, obj.tol.G_max*eye(n)  + G, obj.LMILAB);
 
             end
 
-            % cons = append_lmi(cons, G - obj.tol.G*eye(n), obj.LMILAB);
-        
 
             
             
@@ -287,28 +322,23 @@ classdef opt_analysis < opt_manager_interface
             end
 
             sol.iqc = iqc_rec;
-            
-            
-
-
-
-
         end
         
         
         
-        function [con_M, con_X] = build_dissipation(obj, vars_diss, diss, param)
-            %FORM_DISSIPATION: the dissipation relation for IQC synthesis
+        function [con_M, con_X] = con_dissipation(obj, vars, diss, param)
+            %CON_DISSIPATION: the dissipation relation for IQC synthesis
 
             %TODO: special calls for the h infinity and h2 structures
             %for convexification
 
-            G = vars_diss.G;
+            if nargin < 4
+                param = [];
+            end
+
+            G = vars.diss.G;
 
             %storage routines
-            % 
-            G0 = [1.0000         0
-            0    6.0500];
             G_current = G;
             G_next = G;
 

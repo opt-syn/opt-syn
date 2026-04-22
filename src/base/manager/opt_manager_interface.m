@@ -7,7 +7,7 @@ classdef (Abstract) opt_manager_interface
         cons = [];
         vars = {}; %specifications
         iqc_op = {};
-        specs = {};
+        specs = {};        
 
         %numerics
         LMILAB = true;
@@ -32,36 +32,20 @@ classdef (Abstract) opt_manager_interface
 
         end
 
-        function [sol] = solve_single(obj, order, specs)
-            %SOLVE_SINGLE Solve the program once
-
-            if ~iscell(order)
-                order = {order};               
-            end
-
-            obj = obj.oracle_order(order);
-            obj = obj.add_specifications(specs);
-
-            [vars, cons] = obj.build_program(); 
-
-            objective = obj.get_objective(vars);
-            
-            [sol] = obj.run(vars, cons, objective);
-
-        end
-
+        %% acquire solutions
         function [sol] = run(obj,  vars, cons, objective)
-
+            %RUN: run the program
             sol = struct;
-            %run the program
+            
             if obj.LMILAB
                 if ~isnumeric(objective)
                     lmis(cons, objective, 'c');
                 end
                 [lmi_out,info_out]=lmisolve(cons);
                 
-                STATUS = lmi_out.status;
+                
                 sol.dia = lmi_out.dia;
+                STATUS = (lmi_out.status || (sol.dia > obj.tol.dia));
                 sol.info = info_out;
                 % ncons = length(cons.lmim);
                 % sol.blocks = cell(ncons, 1);
@@ -111,13 +95,150 @@ classdef (Abstract) opt_manager_interface
                 obj.specs = [obj.specs, varargin];
             end
         end
+
+        function [sol] = solve_single(obj, order, specs)
+            %SOLVE_SINGLE Solve the program once
+
+            if ~iscell(order)
+                order = {order};               
+            end
+
+            obj = obj.oracle_order(order);
+            obj = obj.add_specifications(specs);
+
+            [vars, cons] = obj.build_program(); 
+
+            objective = obj.get_objective(vars);
+            
+            [sol] = obj.run(vars, cons, objective);
+
+        end
+
+        %% Bisection routines
+        function [sol_best, vr] = bisect(obj, order, specs, b_opts)
+            %BISECT: perform bisection on a parameter. Minimization target
+            %
+            %sweep in options structure? 
+            %
+            %Input
+            %
+            % (b_opts): bisection options (bisect_opts)
+            %   param_range:    upper and lower bound for the parameter
+            %   sweep_rho:      True:  sweep rho for the specification
+            %                   False: sweep the bound for the specification
+            %   spec_ind:       which specification in the list to sweep                   
+            %
+            %Output:
+            %   sol_best: the best solution
+            %   vr:       the range of the value at the optimal bisection
+
+            if ~iscell(order)
+                order = {order};               
+            end
+            if nargin < 3
+                b_opts = bisect_opts;
+            end
+
+            %base relations
+            
+            obj = obj.oracle_order(order);
+            obj = obj.add_specifications(specs);
+            cons = obj.cons;
+
+            vars = obj.vars;
+            [alg_psi, alg_all, data_spec] = obj.build_plant(cons);
+            [vars.diss, cons] = obj.create_vars_storage(alg_psi, cons);            
+            
+            
+            
+            
+            %take the initial step
+            
+            % if isempty(b_opts.val_init)
+                v = max(b_opts.val_range);
+                vr = b_opts.val_range;
+                WARM = false;
+            % else
+            %     v = b_opts.val_init;
+            %     vr = [1 - b_opts.warm_factor, 1 + b_opts.warm_factor] * v;
+            %     WARM = true;
+            % end
+
+
+            
+            %modify the specification use an oracle to do this
+            
+            f = @(pcurr) bisect_inner(obj, pcurr, vars, cons, alg_psi, data_spec, b_opts);
+
+            found_bound = [0, 0];
+            sol0 = f(v);
+            if sol0.status
+                sol = sol0;
+                v_best = [];
+            else
+
+                %TODO: implement warm starts
+
+                % if WARM
+                %     %search for upper bound
+                % end
+
+                while diff(vr) > b_opts.tol
+                    %select midpoint (narrowing search)
+                    v= sum(vr)/2;
+                    sol = f(v);
+                    valid_sol = (sol.status == 0);
+                    if valid_sol;
+                        %if successful, proceed with left interval 
+                        vr(2) = v;
+                        sol_best = sol;
+                        v_best = v;
+                    else
+                        %if not successful, proceed with right interval
+                        vr(1) = v;
+                    end
+                end
+            end
+
+                        
+        end
+
+        function [data_new] = modify_spec(obj, pcurr, data_spec, b_opts)
+            %MODIFY_SPEC modify a specification in the bisection loop
+
+            data_new = data_spec;
+            i = b_opts.spec_ind;
+            if b_opts.bisect_rho
+                data_new{i}.rho = pcurr;
+            else
+                data_new{i}.bound = pcurr;
+            end
+
+
+        end
+
+        function [sol] = bisect_inner(obj, pcurr, vars, cons, alg_psi, data_spec, b_opts)
+            %BISECT_INNER: inner loop for bisection
+            %run the program and process the solution
+            objective = obj.get_objective(vars);
+
+            data_curr = obj.modify_spec(pcurr, data_spec, b_opts);
+
+            [vars, cons] = build_dissipation(obj, vars, cons, alg_psi, data_curr);
+            [sol] = obj.run(vars, cons, objective);
+            
+        end
+
+        
         
     end
 
     methods (Abstract)
+        oracle_order(obj)
         build_dissipation(obj)
         build_program(obj)
-        build_plant(obj)
+        build_plant(obj, cons)
+        get_objective(obj)
         process_recovery(obj, sol);
     end
 end
