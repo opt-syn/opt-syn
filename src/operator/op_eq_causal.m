@@ -8,13 +8,13 @@ classdef op_eq_causal < op_quad_causal
  
     
     methods
-        function obj = op_eq_causal(smin, smax, id)
+        function obj = op_eq_causal(smin, smax, c)
             %OP_QUAD Construct an instance of this class
             %   Detailed explanation goes here
             if nargin < 3
-                id = 0;
+                c = 1;
             end
-            obj@op_quad_causal(smin^2 , smax^2, id)            
+            obj@op_quad_causal(smin^2 , smax^2, c)            
 
             obj.EQUALITY = true;
         end

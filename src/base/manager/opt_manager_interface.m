@@ -11,8 +11,10 @@ classdef (Abstract) opt_manager_interface
 
         %numerics
         LMILAB = true;
-        tol = struct('M', 1e-7, ...
-                    'X', 1e-7);
+        tol = struct('G_max', 100, ...
+            'M', 1e-7, ...
+            'X', 1e-7, ...
+            'finite_l2', 1e3);
 
         %other options
         opts = struct('impose_X', true)
@@ -35,13 +37,20 @@ classdef (Abstract) opt_manager_interface
             %run the program
             if obj.LMILAB
                 if ~isnumeric(objective)
-                    cons = lmis(cons, objective, 'c');
+                    lmis(cons, objective, 'c');
                 end
                 [lmi_out,info_out]=lmisolve(cons);
                 
                 STATUS = lmi_out.status;
                 sol.dia = lmi_out.dia;
                 sol.info = info_out;
+                ncons = length(cons.lmim);
+                sol.blocks = cell(ncons, 1);
+                sol.eb = zeros(ncons, 1);
+                for i = 1:length(cons.lmim)
+                    sol.blocks{i} = -double(double(cons.lmim(i), lmi_out));
+                    sol.eb(i) = min(eig(sol.blocks{i}));
+                end
                 
             else %YALMIP
                 opt = sdpsettings('verbose', p.opts.verbose, 'solver', p.opts.solver);

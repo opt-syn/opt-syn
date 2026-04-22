@@ -14,16 +14,16 @@ classdef op_gen  < operator_interface
     end
     
     methods
-        function obj = op_gen(prop, id)
+        function obj = op_gen(prop, c)
             %OP_GEN Construct a general operator (possibly a set-valued
             %map that does not have a potential function)            
             
         
             
-             if nargin < 2
-                id = 0;
+            if nargin < 2
+                c = 1;
             end
-            obj@operator_interface(id)   
+            obj@operator_interface(c)   
             
             if nargin > 0
                 obj.prop = prop;

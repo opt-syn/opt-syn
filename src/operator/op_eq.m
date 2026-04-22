@@ -9,13 +9,13 @@ classdef op_eq < op_quad
     %
    
     methods
-        function obj = op_eq(smin, smax, id)
+        function obj = op_eq(smin, smax, c)
             %OP_EQ Construct an instance of this class
             %   Detailed explanation goes here
             if nargin < 3
-                id = 0;
+                c = 1;
             end
-            obj@op_quad(smin^2 , smax^2, id)            
+            obj@op_quad(smin^2 , smax^2, c)            
 
             obj.EQUALITY = true;
         end

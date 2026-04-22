@@ -4,21 +4,22 @@ classdef (Abstract) operator_interface
     
     properties
         % vars; %variables in the analysis/synthesis programs
-        id=0;   %the ID of the operator in the problem (index)
+        id=1;   %the ID of the operator in the problem (index)
         % iqc;  %IQC descring relations satisfied by the operator
         %monotone = true; %can the operator be bounded using monotonicity?
 
+        c = 1; %coordinate dimension for the operator
         EQUALITY = false;
         LMILAB = true;
     end
     
     methods
-        function obj = operator_interface(id)
+        function obj = operator_interface(c)
             %OPERATOR_INTERFACE Construct an instance of this class
             %   Detailed explanation goes here
             if nargin  > 0
                 
-                obj.id = id;
+                obj.c = c;
             end
         end 
 

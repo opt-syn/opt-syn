@@ -48,7 +48,7 @@ classdef opt_analysis < opt_manager_interface
         end
         
 
-        function [diss] = build_plant(obj)
+        function [diss, cons] = build_plant(obj, cons)
             %BUILD_PLANT: form the plant to be used for analysis           
 
             %
@@ -92,7 +92,9 @@ classdef opt_analysis < opt_manager_interface
             diss = cell(length(specs), 1);
             for i = 1:length(specs)
                 sp = specs{i};
-                iqc_spec = sp.iqc;
+                % iqc_spec = sp.iqc;
+                
+                [vars, cons, iqc_spec] = sp.create_iqc(cons);
 
                 %selector matrices
                 sp_w_ind = obj.sys.P.nw + sp.iwp;
@@ -122,7 +124,7 @@ classdef opt_analysis < opt_manager_interface
                 GI = [alg_screen; I];
                 alg_psi = psi * GI;
     
-                diss{i} = struct('plant', alg_psi, 'M', iqc.M, 'X', iqc.X, 'rho', sp.rho, 'np', iqc.np);
+                diss{i} = struct('plant', alg_psi, 'M', iqc.M, 'X', iqc.X, 'rho', sp.rho, 'np', iqc.np, 'vars', vars);
 
             end
 
@@ -159,26 +161,36 @@ classdef opt_analysis < opt_manager_interface
         end
 
         function objective = get_objective(obj, vars)
-
             %GET_OBJECTIVE determine the objective for optimization
             %TODO: fill in specification
 
             % objective = vars.diss.ga;
             % objective = -trace(vars.diss.G);
+            % objective = 0;
             objective = 0;
+            % for i = 1:length(obj.specs)
+            %     if strcmp(obj.specs{i}.type, 'finite_l2')
+            %         objective = -vars.specs{i}.mu_l2;
+            %     end
+            % end
         end
 
         function [vars, cons] = build_program(obj)
             %BUILD_PROGRAM set up the analysis problem
-            diss = obj.build_plant();
-            ndiss = length(diss);
+            
+            
             cons = obj.cons;
+
+          
+            [diss, cons] = obj.build_plant(cons);
+            ndiss = length(diss);
+            
+            [vars_diss, cons] = obj.create_vars_diss(diss, cons);
 
             cons = obj.coeff_normalize(cons);
 
            
-            [vars_diss, cons] = obj.create_vars_diss(diss, cons);
-
+           
             
             %incorporate parameters afterwards
             param = [];
@@ -186,13 +198,18 @@ classdef opt_analysis < opt_manager_interface
                 [con_M, con_X] = build_dissipation(obj, vars_diss, diss{i}, param);
 
                 cons = append_lmi(cons, con_M, obj.LMILAB);
-                if obj.opts.impose_X
+                if obj.opts.impose_X && (i==1)
                     cons = append_lmi(cons, con_X, obj.LMILAB);
                 end
             end
 
             vars = obj.vars;
             vars.diss = vars_diss;
+
+            vars.specs = cell(1, length(obj.specs));
+            for i = 1:length(obj.specs)
+                vars.specs{i} = diss{i}.vars;
+            end
         end
 
         function [vars_diss, cons]= create_vars_diss(obj, diss, cons)
@@ -212,11 +229,11 @@ classdef opt_analysis < opt_manager_interface
                         %norm bound 
                                     % cons = append_lmi(cons, ga - trace(G), obj.LMILAB);
 % 
-            % if obj.tol.G_max < Inf
-            %     % cons  = append_lmi(cons, - ga, obj.LMILAB);
-            %     cons = append_lmi(cons, obj.tol.G_max  - trace(G), obj.LMILAB);
-            % 
-            % end
+            if obj.tol.G_max < Inf                
+                cons = append_lmi(cons, obj.tol.G_max*eye(n)  - G, obj.LMILAB);
+                cons = append_lmi(cons, -obj.tol.G_max*eye(n)  + G, obj.LMILAB);
+
+            end
 
             % cons = append_lmi(cons, G - obj.tol.G*eye(n), obj.LMILAB);
         
@@ -245,6 +262,9 @@ classdef opt_analysis < opt_manager_interface
 
 
         end
+        
+        
+        
         function [con_M, con_X] = build_dissipation(obj, vars_diss, diss, param)
             %FORM_DISSIPATION: the dissipation relation for IQC synthesis
 
@@ -264,24 +284,20 @@ classdef opt_analysis < opt_manager_interface
             G_current = G;
             G_next = G;
 
-            Gblock = blkdiag(-diss.rho^2 * G_current, G_next);
+            Gblock = blkdiag(diss.rho^2 * G_current, -G_next);
 
            
-            Center_block = blkdiag(Gblock, diss.M);
+            Center_block = blkdiag(Gblock, -diss.M);
             Outer_block = [Ablock; Cblock];
 
-            con_M = -(Outer_block' * Center_block * Outer_block);
-            % Cblock = [diss.plant.C, diss.plant.D;
-                      % zeros(diss.np, n + m-diss.np), eye(diss.np)];
+            %Test with stability
+            Ablock = [eye(n);
+                diss.plant.A];
+            Center_block = Gblock;          
+            Outer_block = [Ablock];
 
-            
-            
-            
-            % supply_block = 0*supply_block;
-            % con_M = store_block - supply_block;
-
-
-
+            con_M = (Outer_block' * Center_block * Outer_block);
+            % con_M = diss.rho^2 * G_current - diss.plant.A' * G_next * diss.plant.A;
 
             %terminal cost constraint
             if isnumeric(diss.X)

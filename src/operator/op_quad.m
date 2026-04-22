@@ -5,13 +5,13 @@ classdef op_quad < op_sml
  
     
     methods
-        function obj = op_quad(m, L, id)
+        function obj = op_quad(m, L, c)
             %OP_QUAD Construct an instance of this class
             %   Detailed explanation goes here
             if nargin < 3
-                id = 0;
+                c = 0;
             end
-            obj@op_sml(m , L, id)            
+            obj@op_sml(m , L, c)            
 
         end
         

@@ -24,6 +24,11 @@ classdef  opt_system
             else
                 obj.bind = bind;
             end
+
+            %assign identifiers to the operators
+            for i = 1:length(op)
+                obj.op{i}.id = i;
+            end
             
             if nargin >= 5
                 obj.tracking = tracking;

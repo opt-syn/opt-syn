@@ -11,13 +11,13 @@ classdef op_sml_causal < op_sml_interface
     % TODO: generalize to matrices m and L?
  
     methods
-        function obj = op_sml_causal(m, L, id)
+        function obj = op_sml_causal(m, L, c)
             %OP_SML Construct an instance of this class
             %   Detailed explanation goes here
             if nargin < 3
-                id = 0;
+                c =1;
             end
-            obj@op_sml_interface(m ,L, id)            
+            obj@op_sml_interface(m ,L, c)            
         end
 
 

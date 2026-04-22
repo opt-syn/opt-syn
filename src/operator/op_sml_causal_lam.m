@@ -15,13 +15,13 @@ classdef op_sml_causal_lam < op_sml_causal
     %coefficients
  
     methods
-        function obj = op_sml_causal_lam(m, L, id)
+        function obj = op_sml_causal_lam(m, L, c)
             %OP_SML Construct an instance of this class
             %   Detailed explanation goes here
             if nargin < 3
-                id = 0;
+                c = 1;
             end
-            obj@op_sml_causal(m ,L, id)            
+            obj@op_sml_causal(m ,L, c)            
         end
 
 
@@ -73,7 +73,11 @@ classdef op_sml_causal_lam < op_sml_causal
 
 
             %filter coefficients
-            Cf = lmim(['Cf_', obj.sid], reps, order*reps, 'full');
+            if order > 0
+                Cf = lmim(['Cf_', obj.sid], reps, order*reps, 'full');
+            else
+                Cf = zeros(reps, 0);
+            end
             Df = lmim(['Df_', obj.sid], reps, reps, 'full');
 
            

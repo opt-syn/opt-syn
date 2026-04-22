@@ -5,13 +5,13 @@ classdef op_quad_causal < op_sml_causal
  
     
     methods
-        function obj = op_quad_causal(m, L, id)
+        function obj = op_quad_causal(m, L, c)
             %OP_QUAD Construct an instance of this class
             %   Detailed explanation goes here
             if nargin < 3
-                id = 0;
+                c = 1;
             end
-            obj@op_sml_causal(m , L, id)            
+            obj@op_sml_causal(m , L, c)            
 
         end
         

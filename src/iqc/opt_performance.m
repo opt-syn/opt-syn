@@ -16,6 +16,8 @@ classdef opt_performance
         vars;
         type;
         bound;
+        LMILAB = 1;
+        finite_l2_bound = 1e4;
     end
     
     methods
@@ -41,10 +43,8 @@ classdef opt_performance
             end
             obj.bound = bound;
 
-            if strcmp(type, 'stab') || strcmp(type, 'stability')
+            if strcmp(type, 'stab') || strcmp(type, 'stability') || strcmp(type, 'finite_l2')
                 obj.rho = bound;
-            else
-                [obj.vars, obj.iqc] = obj.create_iqc();
             end
             
             
@@ -52,7 +52,7 @@ classdef opt_performance
 
         end
         
-        function [vars, iqc] = create_iqc(obj)
+        function [vars, cons, iqc] = create_iqc(obj, cons)
             %CREATE_IQC Summary of this method goes here
             %   Detailed explanation goes here
 
@@ -61,6 +61,16 @@ classdef opt_performance
             switch obj.type
                 case 'e2e'
                     vars = []; iqc = iqc_e2e(nwp, nzp, obj.bound^2);
+                case 'finite_l2'
+                    mu_l2 = lmim('mu_l2', 1, 1);
+                    cons = append_lmi(cons, mu_l2, obj.LMILAB);
+                    cons = append_lmi(cons, obj.finite_l2_bound - mu_l2, obj.LMILAB);
+                    vars = struct('mu_l2', mu_l2); iqc = iqc_e2e(nwp, nzp, mu_l2);
+                otherwise
+                    vars = []; iqc = [];
+                    
+                    
+
 
             end
         end

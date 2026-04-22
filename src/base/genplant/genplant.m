@@ -270,7 +270,7 @@ classdef genplant
 
             %ADD_ORACLE_INPUT: add external inputs at the oracle F
             %
-            %z + dz \in F(w + dz) + dz
+            %w + dw \in F(z + dz)
             %ind_w: at the input of the oracle
             %ind_z: at the output of the oracle
 
@@ -304,6 +304,7 @@ classdef genplant
             
             
 
+           
             B_left = B(:, [obj.index_w, obj.index_wp]);
             B_right = B(:, [obj.index_u]);
             D_left = D(:, [obj.index_w, obj.index_wp]);
@@ -318,6 +319,60 @@ classdef genplant
 
             iwp = obj.nwp + (1:(nwpnew + nzpnew));           
             obj.nwp = obj.nwp + nwpnew + nzpnew;           
+        end
+
+        function [obj, iwp] = add_oracle_shift(obj, c)
+
+            %ADD_ORACLE_INPUT: add external inputs at the oracle F
+            %
+            %w \in F(w + dz*1_s)
+            %ind_w: at the input of the oracle
+            %ind_z: at the output of the oracle
+
+            %
+            %Does not add extra outputs
+            
+            if nargin == 1
+                c = 1;
+            end
+            
+            dl = obj.nz/c;
+
+            nzpnew = dl;
+            ind_z = 1:dl;
+
+            % Ind = kron(ones(1, dl), eye(c));
+
+
+            B = obj.B;
+            D = obj.D;
+
+            if nzpnew
+                Ez = kron(ones(dl, 1), eye(c));
+                Bznew = [];
+                Dznew = 1 * [ Ez; zeros(nzpnew, c)];
+            else
+                Bznew = [];
+                Dznew = [];
+            end
+
+            
+            
+
+            B_left = B(:, [obj.index_w, obj.index_wp]);
+            B_right = B(:, [obj.index_u]);
+            D_left = D(:, [obj.index_w, obj.index_wp]);
+            D_right = D(:, [obj.index_u]);
+
+            Aold = obj.P.A;            
+            Bnew = [B_left, Bznew, B_right];
+            Cold = obj.P.C;
+            Dnew = [D_left, Dznew, D_right];
+
+            obj.P = ss(Aold, Bnew, Cold, Dnew, 1);
+
+            iwp = obj.nwp + (1:( c));           
+            obj.nwp = obj.nwp +  c;           
         end
     
         function [obj, izp] = perf_output_w(obj, ind_w)
@@ -350,6 +405,8 @@ classdef genplant
             
 
         end
+
+       
 
         function [obj, izp] = perf_output_opt(obj, c)
             %PERF_OUTPUT_WSUM: add performance to track the optimality

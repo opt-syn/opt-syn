@@ -7,13 +7,13 @@ classdef op_sml < op_sml_interface
     %
     % noncausal multipliers    
     methods
-        function obj = op_sml(m, L, id)
+        function obj = op_sml(m, L, c)
             %OP_SML Construct an instance of this class
             %   Detailed explanation goes here
             if nargin < 3
-                id = 0;
+                c = 1;
             end
-            obj@op_sml_interface(m ,L, id)      
+            obj@op_sml_interface(m ,L, c)      
 
         end
         
@@ -54,8 +54,8 @@ classdef op_sml < op_sml_interface
 
 
             %TODO: allow for general Df2?
-            Df2 = lmim(['Df2_', obj.sid], reps, reps, 'full');           
-            % Df2 = zeros(reps);
+            % Df2 = lmim(['Df2_', obj.sid], reps, reps, 'full');           
+            Df2 = zeros(reps);
 
             
             % orep = order(2)*reps;
