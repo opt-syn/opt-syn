@@ -6,22 +6,22 @@ classdef iqc_e2e < iqc_loop_split
     % norm(y)^2/norm(u)^2 <= gamma^2
 
     properties
-        gamma2
+        gamma = 1;
     end
     
     methods
-        function obj = iqc_e2e(nu, ny, gamma2)
+        function obj = iqc_e2e(nu, ny, gamma)
             %IQC_HINF Construct an instance of this class
             %   Detailed explanation goes here
 
             if nargin < 3
-                gamma2 = 1;
+                gamma = 1;
             end
 
            
             %TODO: check signs
-            Mu = -eye(nu)*gamma2;
-            My = eye(ny);
+            Mu = -eye(nu)*gamma;
+            My = eye(ny)/(gamma);
 
             M = blkdiag(My, Mu);
             
@@ -29,7 +29,7 @@ classdef iqc_e2e < iqc_loop_split
                 eye(nu), zeros(ny, nu)];
 
             obj@iqc_loop_split(eye(ny), M, loop, eye(nu), []);
-            obj.gamma2 = gamma2;
+            obj.gamma = gamma;
         end
         
         % function outputArg = method1(obj,inputArg)

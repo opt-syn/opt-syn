@@ -60,7 +60,7 @@ classdef opt_performance
             nzp = length(obj.izp);
             switch obj.type
                 case 'e2e'
-                    vars = []; iqc = iqc_e2e(nwp, nzp, obj.bound^2);
+                    vars = []; iqc = iqc_e2e(nwp, nzp, obj.bound);
                 case 'finite_l2'
                     mu_l2 = lmim('mu_l2', 1, 1);
                     cons = append_lmi(cons, mu_l2, obj.LMILAB);
