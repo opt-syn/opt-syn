@@ -430,22 +430,24 @@ classdef opt_analysis < opt_manager_interface
                 % % con_M = eye(n);
                 % % con_M = -G + 50*eye(n);
                 % 
-                % sys_block = Ablock' * Gblock * Ablock;
                 
-                % supp_block = -Cblock' * diss.M * Cblock;
             % else
                 Ablock = [eye(n), zeros(n, m);
                     diss.plant.A, diss.plant.B];
     
                 Cblock = [diss.plant.C, diss.plant.D];
                
-                sM = size(diss.M)/2;
+                
                 % Center_block = blkdiag(Gblock, zeros(sM), ones(sM));
                 Center_block = blkdiag(Gblock, -diss.M);
                 Outer_block = [Ablock; Cblock];
 
                 con_M = (Outer_block' * Center_block * Outer_block);
             
+
+                sys_block = Ablock' * Gblock * Ablock;
+                
+                supp_block = -Cblock' * diss.M * Cblock;
             % end
             
             
