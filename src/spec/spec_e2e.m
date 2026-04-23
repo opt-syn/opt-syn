@@ -26,6 +26,17 @@ classdef spec_e2e < spec_interface
 
             M = blkdiag(My, Mu);
         end
+
+       function [obj] = set_p(obj, p)
+            %SET_P set a parameter when performing bisection
+            %
+            %
+            %Example: Peak-to-Peak norm certifier
+            %or l2 Gain bound
+
+            obj.gain = p;
+            
+        end
     end
 end
 

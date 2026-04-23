@@ -57,10 +57,20 @@ classdef spec_interface
             vars = [];            
         end
 
-    function [M] = supply(obj)
+        function [M] = supply(obj)
             %SUPPLY quadratic performance specification
             M = [];
         end
+
+        function [obj] = set_p(obj, p)
+            %SET_P set a parameter when performing bisection
+            %
+            %
+            %Example: Peak-to-Peak norm certifier
+            %or l2 Gain bound
+            
+        end
+
     end
 
     methods (Abstract)

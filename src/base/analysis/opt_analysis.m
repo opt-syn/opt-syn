@@ -234,8 +234,17 @@ classdef opt_analysis < opt_manager_interface
                 alg_screen = E_r * alg_psi * E_w;
 
 
-                
-                M = blkdiag(iqc_op.M, sp.supply);
+                %need to permute the entries of Mdiag for the partition
+                n1 = iqc_op.np;
+                m1 = iqc_op.nq;
+                n2 = length(sp.iwp);
+                m2 = length(sp.izp);
+                [M] = outer_blkdiag(iqc_op.M, sp.supply, n1, m1, n2, m2);
+                % Mdiag = blkdiag(iqc_op.M, sp.supply);
+
+
+
+
                 %TODO: this may run into trouble if one entry has an X.
                 %performance with dynamic multipliers?
             

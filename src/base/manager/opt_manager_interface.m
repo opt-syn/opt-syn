@@ -215,15 +215,15 @@ classdef (Abstract) opt_manager_interface
                         
         end
 
-        function [data_new] = modify_spec(obj, pcurr, data_spec, b_opts)
+        function [spec_new] = modify_spec(obj, pcurr, spec_old, b_opts)
             %MODIFY_SPEC modify a specification in the bisection loop
 
-            data_new = data_spec;
+            spec_new = spec_old;
             i = b_opts.spec_ind;
             if b_opts.bisect_rho
-                data_new{i}.rho = pcurr;
+                spec_new{i}.rho = pcurr;
             else
-                data_new{i}.bound = pcurr;                
+                spec_new{i} = spec_new{i}.set_p(pcurr);                
             end
 
 
