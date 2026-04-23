@@ -212,13 +212,32 @@ classdef alg_sim
 
             end
             
+            %identify equality constraints
+            EQ_mask = logical(cellfun(@(q) q.EQUALITY, obj.sys.op));
+            EQ_sum = sum(EQ_mask);         
+            nop = length(EQ_mask);
+            % sel_z = kron(sparse(1:(nop-EQ_sum), find(~EQ_mask), ones((nop-EQ_sum), 1), (nop-EQ_sum), nop), speye(c));
+
+            sel_w_EQ_pre = kron(sparse(1:EQ_sum, find(EQ_mask), ones(EQ_sum, 1), EQ_sum, nop), speye(c));
+            sel_w_EQ = full(sel_w_EQ_pre(:, obj.sys.bind));
+
             %get the residuals
             %optimality residual: sum(w) = 0            
-            wsum2 = pagemtimes(repmat(kron(ones(1, s), eye(c)), 1, 1, T),  ssim.w);
+            wsum2 = pagemtimes(repmat(kron(ones(1, s), eye(c)), 1, 1, T),  ssim.w);                       
             ssim.res_w = sqrt(squeeze(sum(wsum2.^2, [1, 2])))';
 
-            %consensus residual: z - zavg = 0
+            % p_res = pagemtimes(full(sel_w_EQ), ssim.w);
+            if EQ_sum 
+                w_eq = pagemtimes(repmat(kron(sel_w_EQ, eye(c)), 1, 1, T),  ssim.w);                       
+                ssim.eq = sqrt(squeeze(sum(w_eq.^2, [2])))';
+            else
+                ssim.eq = [];
+            end
+
+            %consensus residual: z - zavg = 0           
+            % z_sel = pagemtimes(full(sel_z),  ssim.z);
             zavg = pagemtimes(repmat(kron(ones(1, s), eye(c)/s), 1, 1, T),  ssim.z);
+            
             ssim.res_z = sqrt(squeeze(sum((ssim.z - repmat(zavg, s, 1, 1)).^2, [1, 2])))';
 
             ssim.k = 0:(T-1);

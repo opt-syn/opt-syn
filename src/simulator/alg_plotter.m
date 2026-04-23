@@ -103,6 +103,8 @@ classdef alg_plotter
                 name_mid = '$\xi$';
             elseif strcmp(sig, 'xn')
                 name_mid = '$x_{N}$';
+            elseif strcmp(sig, 'eq')
+                name_mid = '$E^\top (E z - b)$';
             elseif strcmp(sig, 'mode')
                 name_mid = 'mode';
             elseif strcmp(sig, 'res_w')
