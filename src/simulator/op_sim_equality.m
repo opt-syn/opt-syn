@@ -36,7 +36,7 @@ classdef op_sim_equality < op_sim
             if nargin < 2
                 obj.b = 0;
             end
-            obj.EQUALITY = 1;
+            obj.EQUALITY = true;
         end               
     end
 end

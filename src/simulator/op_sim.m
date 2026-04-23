@@ -10,7 +10,7 @@ classdef op_sim
         bw = @(z, param) []; %backward evaluation (e.g. proximal operator)        
         f = @(z, param) [];  %function value (or function values in a game)
         id = 0;
-        EQUALITY = 0;
+        EQUALITY = false;
     end
     
     methods
