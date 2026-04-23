@@ -96,6 +96,16 @@ classdef (Abstract) opt_manager_interface
             end
         end
 
+        function [vars_spec, cons] = create_vars_spec(obj, specs, cons)
+            %CREATE_VARS_SPEC declare variables for the specifications
+            nspec = length(specs);
+            vars_spec = cell(nspec, 1);
+            for i = 1:nspec
+                [vars_spec{i}, cons] = specs{i}.create_vars(cons);
+            end
+
+        end
+
         function [sol] = solve_single(obj, order, specs)
             %SOLVE_SINGLE Solve the program once
 
@@ -148,9 +158,9 @@ classdef (Abstract) opt_manager_interface
             cons = obj.cons;
 
             vars = obj.vars;
-            [alg_psi, alg_all, data_spec] = obj.build_plant(cons);
+            [alg_psi, iqc_op, alg_loop]  = obj.build_plant(cons);
             [vars.diss, cons] = obj.create_vars_storage(alg_psi, cons);            
-            
+            [vars.spec, cons] = obj.create_vars_spec(specs, cons);
             
             
             
@@ -170,7 +180,7 @@ classdef (Abstract) opt_manager_interface
             
             %modify the specification use an oracle to do this
             
-            f = @(pcurr) bisect_inner(obj, pcurr, vars, cons, alg_psi, data_spec, b_opts);
+            f = @(pcurr) bisect_inner(obj, pcurr, vars, cons, alg_psi, iqc_op, specs, b_opts);
 
             found_bound = [0, 0];
             sol0 = f(v);
@@ -205,28 +215,28 @@ classdef (Abstract) opt_manager_interface
                         
         end
 
-        function [data_new] = modify_spec(obj, pcurr, data_spec, b_opts)
+        function [spec_new] = modify_spec(obj, pcurr, spec_old, b_opts)
             %MODIFY_SPEC modify a specification in the bisection loop
 
-            data_new = data_spec;
+            spec_new = spec_old;
             i = b_opts.spec_ind;
             if b_opts.bisect_rho
-                data_new{i}.rho = pcurr;
+                spec_new{i}.rho = pcurr;
             else
-                data_new{i}.bound = pcurr;                
+                spec_new{i} = spec_new{i}.set_p(pcurr);                
             end
 
 
         end
 
-        function [sol] = bisect_inner(obj, pcurr, vars, cons, alg_psi, data_spec, b_opts)
+        function [sol] = bisect_inner(obj, pcurr, vars, cons, alg_psi, iqc_op, spec, b_opts)
             %BISECT_INNER: inner loop for bisection
             %run the program and process the solution
             objective = obj.get_objective(vars);
 
-            data_curr = obj.modify_spec(pcurr, data_spec, b_opts);
+            spec_curr = obj.modify_spec(pcurr, spec, b_opts);
 
-            [vars, cons] = build_dissipation(obj, vars, cons, alg_psi, data_curr);
+            [vars, cons] = build_dissipation(obj, vars, cons, alg_psi, iqc_op, spec_curr);
             [sol] = obj.run(vars, cons, objective);
             
         end

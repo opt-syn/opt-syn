@@ -448,8 +448,7 @@ classdef  opt_system
 
 
             N = Bind * N0;
-        end
-
+        end        
 
 
     end

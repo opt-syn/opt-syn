@@ -1,5 +1,5 @@
-classdef opt_performance
-    %OPT_PERFORMANCE performance specification for a system
+classdef opt_spec_inteface
+    %OPT_SPEC performance specification for a system
     %
     %default: stability
     %others include:
@@ -11,13 +11,11 @@ classdef opt_performance
     properties
         rho=1; %exponential discounting
         iwp = [];    %indices for performance input
-        izp = [];    %indices for performance output
-        iqc;
+        izp = [];    %indices for performance output        
         vars;
         type;
         bound;
-        LMILAB = 1;
-        finite_l2_bound = 1e4;
+        LMILAB = 1;        
     end
     
     methods
@@ -46,10 +44,10 @@ classdef opt_performance
             if strcmp(type, 'stab') || strcmp(type, 'stability') || strcmp(type, 'finite_l2')
                 obj.rho = bound;
             end
-            
-            
 
+        end
 
+        function [vars, cons] = create_vars(obj, cons)
         end
         
         function [vars, cons, iqc] = create_iqc(obj, cons)
