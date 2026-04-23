@@ -20,8 +20,11 @@ classdef iqc_finite_l2 < iqc_loop_split
 
            
             %TODO: check signs
+            % Mu = -eye(nu)*mu;
+            % My = eye(ny);
+
             Mu = -eye(nu)*mu;
-            My = eye(ny);
+            % My = eye(ny)/mu;
 
             M = blkdiag(My, Mu);
             
