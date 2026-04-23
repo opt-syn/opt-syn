@@ -74,7 +74,11 @@ classdef op_sml < op_sml_interface
         function cs = csum_psi(obj, vars)
             %a normalization term for the multipliers
             % cs = trace(vars.Df1) + trace(vars.Df2);
-            cs = trace(vars.Df1);
+            if obj.same
+                cs = 0;
+            else
+                cs = trace(vars.Df1);
+            end
         end
 
         function [Psi1, Psi2] = build_psi(obj, vars, order, reps)
