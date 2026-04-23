@@ -191,6 +191,7 @@ classdef opt_analysis < opt_manager_interface
             end
 
 
+            diss = cell(length(specs), 1);
             %determine the indices for each performance specification
             for i = 1:length(specs)
                 
@@ -438,6 +439,8 @@ classdef opt_analysis < opt_manager_interface
     
                 Cblock = [diss.plant.C, diss.plant.D];
                
+                sM = size(diss.M)/2;
+                % Center_block = blkdiag(Gblock, zeros(sM), ones(sM));
                 Center_block = blkdiag(Gblock, -diss.M);
                 Outer_block = [Ablock; Cblock];
 
