@@ -1,22 +1,23 @@
-classdef spec_e2e < spec_interface
-    %SPEC_E2E specification for an energy to energy gain
+classdef spec_e2e_free < spec_e2e
+    %SPEC_E2E_FREE specification for an energy to energy gain
     %
     %sum_k^T norm(zp_k)/norm(wp_k) < gain
-    %   Detailed explanation goes here
+    %
+    %uses a Schur complement parameterization to allow for optimization
     
     properties
-        type='e2e';
+        type='e2e_schur';
         gain = 1;
     end
     
     methods
-        function obj = spec_e2e(GAIN, iwp, izp, rho)
+        function obj = spec_e2e_free(GAIN, iwp, izp, rho)
             %SPEC_QUAD Construct an instance of this class
             %   Detailed explanation goes here
             if nargin > 3
                 rho = 1;
             end            
-            obj@spec_interface(iwp, izp, rho);
+            obj@spec_e2e(GAIN, iwp, izp, rho);
             obj.gain = GAIN;
         end
         
@@ -38,12 +39,6 @@ classdef spec_e2e < spec_interface
 
             obj.gain = p;
             
-       end
-
-       function [vars, cons] = create_vars(obj, cons)
-            %CREATE_VARS form the variables for the problem                        
-            vars = lmim('mu_l2', 1, 1);            
-            cons = append_lmi(cons, obj.gain - vars, obj.LMILAB);
         end
     end
 end

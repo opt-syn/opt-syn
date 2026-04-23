@@ -118,66 +118,10 @@ classdef opt_analysis < opt_manager_interface
             I_wp = eye(obj.sys.P.nwp);
 
             psi = blkdiag(Psi1, I_zp, Psi2, I_wp);
-
-            
-            % psi = iqc_op.get_psi();
+           
 
             alg_psi = psi * GI;           
-
-
-            %we now have the loop terms for the operators. now go through 
-            %the loop terms for the performance specifications
-
-            % 
-            % if isempty(obj.specs)
-            %     specs = {opt_performance('stab', 1 - 1e-4)};
-            % else
-            %     specs = obj.specs;
-            % end
-            % 
-            % iqc_all = iqc_op;            
-            % 
-            % count_iqc_in = (iqc_op.nw);
-            % count_iqc_out = (iqc_op.np);
-            % 
-            % data_spec = cell(length(specs), 1);
-            % 
-            % for i = 1:length(specs)
-            %     sp = specs{i};
-            %     % iqc_spec = sp.iqc;
-            % 
-            %     [vars, cons, iqc_spec] = sp.create_iqc(cons);
-            %     iqc_all = blkdiag(iqc_all, iqc_spec);
-            %     iqc_curr = blkdiag(iqc_op, iqc_spec);
-            % 
-            % 
-            %     iwp_iqc = (1:(iqc_op.nw))';
-            %     ir_iqc_first = (1:(iqc_op.np))';
-            % 
-            %     if isempty(iqc_spec)
-            %         ir_iqc_first_r =[];
-            %         iw_iqc_first_r = [];
-            %     else
-            %         iw_iqc_first_r = count_iqc_in + specs{i}.iwp ;
-            %         count_iqc_out = count_iqc_in + specs{i}.iwp;
-            % 
-            %         ir_iqc_first_r = count_iqc_out  + specs{i}.izp ;
-            %         count_iqc_out = count_iqc_out + specs{i}.izp;
-            %     end
-            %     iwp_iqc = [iwp_iqc; iw_iqc_first_r];
-            % 
-            %     ir_iqc = [ir_iqc_first; ir_iqc_first_r];
-            %     ir_iqc = [ir_iqc; ir_iqc + (iqc_op.np + obj.sys.P.nwp )];
-            % 
-            %     %TODO: improve the export, the IQC needs to be updated
-            %     data_spec{i} = struct('ir_iqc', ir_iqc, 'iwp_iqc', iwp_iqc, 'iqc', iqc_spec, ...
-            %         'vars', vars, 'rho', sp.rho, 'n_same', n_same, 'iqc_with_op', iqc_curr);
-            % end
-
-            %generate the entire system
-            
-            % nloop = length(loop)/2;
-            % psi = iqc_all.get_psi();            
+          
         end
 
         function [diss] = index_specs(obj, alg_psi, iqc_op, specs)
@@ -329,22 +273,27 @@ classdef opt_analysis < opt_manager_interface
             [diss] = obj.index_specs(alg_psi, iqc_op, specs);
             ndiss = length(diss);
 
+            %dissipation relations
             for i = 1:ndiss
-                [con_M, con_X] = con_dissipation(obj, vars, diss{i});
+                con_M = con_dissipation(obj, vars, diss{i});                                 
+                    
+                                    
+                sm = ssize(con_M, 1);
+                cons = append_lmi(cons, con_M - eye(sm)*obj.tol.M, obj.LMILAB);
+            end
 
-                
-                if obj.opts.impose_X && (i==1)
-                    %for infinite-horizon performance measures (l2 norm, h2
+            %terminal cost/sign constraints
+            if obj.opts.impose_X
+                %for infinite-horizon performance measures (l2 norm, h2
                     %norm), terminal costs and sign constraints on the
                     %storage function are not required. For finite-horizon
                     %specifications (e.g. invariance, peak-to-peak), they
                     %are needed.
 
-                    sx = ssize(con_X, 1);
-                    cons = append_lmi(cons, con_X - eye(sx)*obj.tol.X, obj.LMILAB);
-                end
-                sm = ssize(con_M, 1);
-                cons = append_lmi(cons, con_M - eye(sm)*obj.tol.M, obj.LMILAB);
+                
+                con_X = obj.con_terminal(vars, iqc_op);
+                sx = ssize(con_X, 1);
+                cons = append_lmi(cons, con_X - eye(sx)*obj.tol.X, obj.LMILAB);
             end
 
         end
@@ -398,9 +347,23 @@ classdef opt_analysis < opt_manager_interface
             sol.iqc = iqc_rec;
         end
         
+        function con_X = con_terminal(obj, vars, iqc_op)
+            
+            %terminal cost constraint (nonnegativity on G)
+            X = iqc_op.X;
+            G = vars.diss.G;
+
+            nf = ssize(X);
+            n = ssize(G, 1);
+            Ef = [eye(nf); zeros(n-nf, nf)];
+
+            X_f = Ef * X * Ef';
+            con_X = G + X_f;
+            
+        end
         
         
-        function [con_M, con_X] = con_dissipation(obj, vars, diss, param)
+        function [con_M] = con_dissipation(obj, vars, diss, param)
             %CON_DISSIPATION: the dissipation relation for IQC synthesis
 
             %TODO: special calls for the h infinity and h2 structures
@@ -421,33 +384,13 @@ classdef opt_analysis < opt_manager_interface
 
             [n, m] = size(diss.plant.B);  
 
-            % %The true routines
-            % STAB_TEST = false;
 
-            % if  STAB_TEST
-                
-                % 
-                % Ablock = [eye(n);
-                % diss.plant.A];
-                % Cblock = [diss.plant.C, diss.plant.D];
-                % 
-                % Center_block = Gblock;          
-                % Outer_block = [Ablock];
-                % 
-                % 
-                % % con_M = 10*eye(n) - G;
-                % % con_M = eye(n);
-                % % con_M = -G + 50*eye(n);
-                % 
-                
-            % else
                 Ablock = [eye(n), zeros(n, m);
                     diss.plant.A, diss.plant.B];
     
                 Cblock = [diss.plant.C, diss.plant.D];
                
-                
-                % Center_block = blkdiag(Gblock, zeros(sM), ones(sM));
+                                
                 Center_block = blkdiag(Gblock, -diss.M);
                 Outer_block = [Ablock; Cblock];
 
@@ -457,22 +400,6 @@ classdef opt_analysis < opt_manager_interface
                 sys_block = Ablock' * Gblock * Ablock;
                 
                 supp_block = -Cblock' * diss.M * Cblock;
-            % end
-            
-            
-            % con_M = diss.rho^2 * G_current - diss.plant.A' * G_next * diss.plant.A;
-
-            %terminal cost constraint
-            if isnumeric(diss.X)
-                nf = length(diss.X);
-            else
-                nf = dim(diss.X, 1);
-            end
-            Ef = [eye(nf); zeros(n-nf, nf)];
-
-            X_f = Ef * diss.X * Ef';
-            con_X = G + X_f;
-            
         end
     
     end
