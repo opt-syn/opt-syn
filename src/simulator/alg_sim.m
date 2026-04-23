@@ -218,8 +218,13 @@ classdef alg_sim
             ssim.res_w = sqrt(squeeze(sum(wsum2.^2, [1, 2])))';
 
             %consensus residual: z - zavg = 0
-            zavg = pagemtimes(repmat(kron(ones(1, s), eye(c)/s), 1, 1, T),  ssim.z);
-            ssim.res_z = sqrt(squeeze(sum((ssim.z - repmat(zavg, s, 1, 1)).^2, [1, 2])))';
+            EQ_mask = cellfun(@(q) q.EQUALITY, obj.sys.op);
+            EQ_sum = sum(EQ_mask);
+            sparse_sel = kron(sparse(1:EQ_sum, find(EQ_mask), ones(EQ_sum, 1), EQ_sum, length(EQ_mask)), speye(c));
+            z_sel = pagemtimes(full(sparse_sel),  ssim.z);
+            zavg = pagemtimes(repmat(kron(ones(1, EQ_sum), eye(c)/EQ_sum), 1, 1, T),  z_sel);
+            
+            ssim.res_z = sqrt(squeeze(sum((z_sel - repmat(zavg, EQ_sum, 1, 1)).^2, [1, 2])))';
 
             ssim.k = 0:(T-1);
         end
