@@ -1,38 +1,20 @@
 classdef  opt_system < opt_system_interface
     %OPT_SYSTEM interconnection of network and operators
     %by default is LTI (linear time invariant)
-    
-    properties
-        op; %a cell of operators (op_sim for simulation, op_? for analysis/synthesis)
-        P;  %network
-        K;  %controller
-        bind; %which operators go to which output ports            
-        tracking; %tracking of optimal solution (struct (S, R) by default)
-                  %tracking of varying gradients requires LPV/periodic/switched
-                  % methods, is a TODO
-    end
+ 
     
     methods
         function obj = opt_system(op, P, K, bind, tracking)
             %OPT_SYSTEM constructor for the system
-            obj.op = op;
-            obj.P = P;
-            obj.K = K;
             if nargin < 4
-                s = length(obj.op);
-                obj.bind = 1:s;
-            else
-                obj.bind = bind;
-            end
-
-            %assign identifiers to the operators
-            for i = 1:length(op)
-                obj.op{i}.id = i;
+                bind = 1:length(op);
             end
             
-            if nargin >= 5
-                obj.tracking = tracking;
+            if nargin < 5
+                 tracking = [];
             end
+
+            obj@opt_system_interface(op, P, K, bind, tracking)
             
         end    
 
@@ -40,12 +22,7 @@ classdef  opt_system < opt_system_interface
         function nss = Nss(obj)
             %NSS: number of subsystems
             nss = 1;
-        end
-       
-        function dimn = n(obj)
-            %n: number of states
-            dimn = obj.nxn() + obj.nxi();
-        end
+        end      
 
         function dimn = nxn(obj)
             %nxn: number of states in network
@@ -68,76 +45,6 @@ classdef  opt_system < opt_system_interface
             %GET_K get the controller K
             Kcurr = obj.K;
         end
-
-        function sys_alg = get_alg(obj, param)
-            %close the loop of the algorithm
-            if nargin < 2
-                param = [];
-            end
-            Pcurr = obj.get_P(param);
-            Kcurr = obj.get_K(param);
-            sys_alg = lft(Pcurr, Kcurr);
-        end
-
-        function op_out = get_op(obj, i)
-            %get the operator at index i
-            op_out = obj.op{obj.bind(i)};
-        end
-        
-        %% for simulation
-
-        function [y, u] = get_internal_signals(obj, param, x_all, w_all)
-            %extract the internal signals from the interconnection (y, u) 
-            %using the well-posedness expression
-
-            %Input:
-            %   x_all:      all states of network and controller
-            %   w_all:      all inputs to the network (except u)
-            %   y_all:      all outputs to the network
-
-            Kcurr = obj.get_K(param);
-            Pcurr = obj.get_P(param);
-
-            [nu, ny] = size(Kcurr.D);
-
-            DK = Kcurr.D;
-            DP = Pcurr.D((end-ny+1):end, (end-nu+1):end);
-
-
-            nxi = length(Kcurr.A);
-            nx = length(Pcurr.A);
-            CyP = Pcurr.C((end-ny+1):end, :);            
-            D21P = Pcurr.D((end-ny+1):end, 1:(end-nu));
-            well_posed_mat = [eye(nu), -DP;
-                              -DK, eye(ny)];
-            
-
-            nx = size(Pcurr.A, 1);
-            nxi = size(Kcurr.A, 1);
-            xN = x_all(1:(nx), :);
-            xi = x_all((end-nxi+1):end, :);
-
-            Cx = CyP*xN;
-            Dw = D21P*w_all;
-            Cxi = Kcurr.C * xi;
-
-            sig_rhs = [Cx + Dw; Cxi];
-            revert = well_posed_mat \ sig_rhs;
-
-
-            y = revert(1:ny, :);
-            u = revert((ny+1):end, :);
-        end
-
-
-        function mode_next = next_mode(obj, mode)
-            %next mode in switching
-
-            %TODO: is this actually used?
-            mode_next = 1;
-        end
-
-
 
         %% Regulation check and internal models
 
@@ -172,13 +79,7 @@ classdef  opt_system < opt_system_interface
             [sN, dN] = size(N);
             n = obj.P.nx;
 
-            if isempty(obj.tracking)
-                Sbeta = 1;
-                Rbeta = 1;
-            else
-                Sbeta = obj.tracking.Sbeta;
-                Rbeta = obj.tracking.Rbeta;
-            end
+            [Sbeta, Rbeta] = obj.get_tracked_opt();
 
             if isempty(obj.tracking)
                 %constant tracking
@@ -274,7 +175,7 @@ classdef  opt_system < opt_system_interface
 
         end
 
-        % 
+        
         % function [regulator_closed] = verify_regulator(obj)
         %     %CHECK_REGULATOR does the closed-loop system obey the regulator
         %     %equation? (direct interconnection)
