@@ -29,7 +29,7 @@ Operators w \in F(z) can satisfy combinations of the following constraints:
 - Inverse Lipschitz
 
 To describe an operator that is 1-strongly-monotone and 4-Lipschitz, use
-op = op_gen({'monotone', 1, 'lipschitz', 4}).
+`op = op_gen({'monotone', 1, 'lipschitz', 4})`.
 
 ### Subdifferentials
 
@@ -44,11 +44,8 @@ include indicator functions over convex sets.
 The log-sum-exp function f(z) = log(sum(e^(b z)) has a subdifferential described by (0, b).
 
 
-An operator characterized by (m, L) can be invoked by 
-op = op_sml(m, L)
-
-To restrict the set of IQCs to causal (simpler computation, possible conservatism), use
-op = op_sml_causal(m, L)
+An operator characterized by (m, L) can be invoked by  `op = op_sml(m, L)`. To restrict the set of IQCs to causal (simpler computation, possible conservatism), use
+`op = op_sml_causal(m, L)`.
 
 ### Quadratics
 
@@ -61,7 +58,7 @@ Quadratics arise in least squares problems.
 
 Prior knowledge of the quadratic nature of an operator can reduce conservatism as compared to using a general (m, L) description.
 
-To invoke quadratics, use op = op_quad(m, L) or op = op_quad_causal(m, L).
+To invoke quadratics, use `op = op_quad(m, L)` or `op = op_quad_causal(m, L)`.
 
 ### Equality constraints
 
@@ -71,6 +68,6 @@ It is assumed that the matrix E has full row rank
 
 Equality constraints will be abstracted using the minimal and maximal singular values of E (smin, smax)
 
-An equality constrained operator can be called by op = op_eq(smin, smax) or op = op_eq_causal(smin, smax)
+An equality constrained operator can be called by `op = op_eq(smin, smax)` or `op = op_eq_causal(smin, smax)`
 
-Equality constraints can be used to analyze and generate primal-dual algorithms
+Equality constraints can be used to analyze and generate primal-dual algorithms.
