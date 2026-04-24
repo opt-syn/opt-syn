@@ -4,11 +4,17 @@ contains the lmi routines for analysis and synthesis
 
 
 # System types (from opt_system):
-- LTI
+
+Implemented:
+- Linear Time Invariant (LTI)
 - Switched (robust)
 - Switched (stochastic: Markov Jump Linear System)
 
+Periodic is a special case of Switched Robust
 
+Future:
+- LPV (polytopic)
+- LPV (linear fractional)
 
 # Performance Specifications (from spec):
 
@@ -24,5 +30,15 @@ Future:
 - e2p:            energy to peak  gain (generalized h2)
 
 
-# Pairings
+# Implemented Pairs
+
+| **System Type**         | **Analysis** | **Synthesis** |
+|-------------------------|--------------|---------------|
+| LTI                     |              |               |
+| Stochastic (robust)     |              |               |
+| Switched (stochastic)   |              |               |
+| LPV (polytopic)         |              |               |
+| LPV (linear fractional) |              |               |
+
+
 
