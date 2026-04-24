@@ -56,8 +56,6 @@ classdef opt_analysis < opt_manager_interface
 
             cons = append_lmi(cons, cs - nop*0.9, obj.LMILAB);
             cons = append_lmi(cons, -cs + nop*1.1, obj.LMILAB);
-
-
         end
 
         function [iqc, m_same, ind_same] = iqc_op_all(obj)
@@ -90,7 +88,7 @@ classdef opt_analysis < opt_manager_interface
 
 
         %% build the system
-        function [alg_psi, iqc_op, alg_loop] = build_plant(obj, cons)
+        function [alg_psi, iqc_op, alg_loop] = build_plant(obj, cons, param)
             %BUILD_PLANT: form the plant to be used for analysis           
 
             %
@@ -99,7 +97,12 @@ classdef opt_analysis < opt_manager_interface
             %   alg_loop:   plant without filters, but after loop
             %               transformation (should be stable)
             %   iqc_op:     iqcs for the robust uncertainties
-            alg = obj.sys.get_alg;
+            
+            if nargin < 3
+                param = [];
+            end
+
+            alg = obj.sys.get_alg(param);
 
             %sort oracles based on the bind (exposure of repeated
             %nonlinearities)
@@ -115,10 +118,8 @@ classdef opt_analysis < opt_manager_interface
             Pzp = blkdiag(P, eye(obj.sys.P.nzp));
 
             alg_perm = Pzp * alg * Pwp;
-
             
             %identify and get rid of the same (m=L) oracles   
-
             %use an explicit substitution
 
             [iqc_op, m_same, ind_same] = obj.iqc_op_all();
@@ -155,80 +156,6 @@ classdef opt_analysis < opt_manager_interface
 
             alg_psi = psi * GI;           
           
-        end
-
-        function [diss] = index_specs(obj, alg_psi, iqc_op, specs)
-
-            %INDEX_SPECS:  index into the performance specifications
-            %
-            %
-            %now index alg_psi into its performance specifications
-            if nargin < 4
-                specs = obj.specs;
-            end
-
-
-            diss = cell(length(specs), 1);
-            %determine the indices for each performance specification
-            for i = 1:length(specs)
-                
-                      
-                sp = specs{i};
-                iwp_iqc = (1:(iqc_op.nw))';
-                ir_iqc_first = (1:(iqc_op.np))';
-
-
-                count_iqc_in = (iqc_op.nw);
-                count_iqc_out = (iqc_op.np);
-
-                if isempty(sp.izp) || isempty(sp.iwp)
-                    ir_iqc_first_r =[];
-                    iw_iqc_first_r = [];
-                else
-                    iw_iqc_first_r = count_iqc_in + (1:sp.iwp);
-                    count_iqc_in = count_iqc_in + sp.iwp;
-
-                    ir_iqc_first_r = count_iqc_out  + (1:sp.izp);
-                    count_iqc_out = count_iqc_out + sp.izp;
-                end
-
-                iwp_iqc = [iwp_iqc; iw_iqc_first_r];
-
-                ir_iqc = [ir_iqc_first; ir_iqc_first_r];
-                ir_iqc = [ir_iqc; ir_iqc + (iqc_op.np + obj.sys.P.nwp )];
-
-                sp_ind_w = iwp_iqc;
-                sp_ind_r = ir_iqc;
-                % nww = length(sp_ind_w);
-                % nwr = length(sp_ind_r);
-                [nwr, nww] = ssize(alg_psi.D);
-                %enforce squareness in the performance specs?
-                E_w = full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww));
-                E_r = full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr));
-
-
-                %nonminimal representation
-                alg_screen = E_r * alg_psi * E_w;
-
-
-                %need to permute the entries of Mdiag for the partition
-                n1 = iqc_op.np;
-                m1 = iqc_op.nq;
-                n2 = length(sp.iwp);
-                m2 = length(sp.izp);
-                [M] = outer_blkdiag(iqc_op.M, sp.supply, n1, m1, n2, m2);
-                % Mdiag = blkdiag(iqc_op.M, sp.supply);
-
-
-
-
-                %TODO: this may run into trouble if one entry has an X.
-                %performance with dynamic multipliers?
-            
-                diss{i} = struct('plant', alg_screen, 'M', M, 'X', iqc_op.X, ...
-                    'spec', sp);
-            end
-
         end
 
         function con_X = con_terminal(obj, vars, iqc_op)

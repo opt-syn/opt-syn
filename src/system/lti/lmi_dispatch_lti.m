@@ -3,9 +3,7 @@ classdef lmi_dispatch_lti < lmi_dispatch_interface
     %linear-time-invariant (LTI) networks and controllers
     %
     %
-    properties
-        Property1
-    end
+
     
     methods
         function obj = lmi_dispatch_lti(sys)

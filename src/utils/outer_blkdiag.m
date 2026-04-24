@@ -3,6 +3,28 @@ function [M_outer] = outer_blkdiag(M1, M2, n1, m1, n2, m2)
 %utility function for the loop transformation and running cost, allowing
 %for flexibility in the lmim routines
 
+if iscell(M1) || iscell(M2)
+    
+    if isnumeric(M2)
+        M2_orig = M2;
+        M2 = cell(size(M1));
+        for i = 1:numel(M2)
+            M2{i} = M2_orig;
+        end
+    elseif isnumeric(M1)
+        M1_orig = M1;
+        M1 = cell(size(M2));
+        for i = 1:numel(M1)
+            M1{i} = M1_orig;
+        end
+    end
+    M_outer = cell(size(M1));
+    for i = 1:numel(M1)
+        M_outer{i} = outer_blkdiag(M1{i}, M2{i}, n1, m1, n2, m2);
+    end
+
+end
+
 M_diag = blkdiag(M1, M2);
 P_loop = eye(n1+m1+n2+m2);
 
