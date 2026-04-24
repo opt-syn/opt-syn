@@ -17,6 +17,7 @@ classdef (Abstract) opt_manager_interface
             'finite_l2', 1e3,...
             'dia', 1e-11);
 
+        dispatch = [];
         %other options
         opts = struct('impose_X', true)
     end
@@ -29,6 +30,40 @@ classdef (Abstract) opt_manager_interface
             obj.iqc_op = cell(nop, 1);
             obj.vars = struct('op', []);
             obj.vars.op =cell(nop, 1);
+
+        end
+
+        function dis = select_dispatch(obj, sys)
+            %SELECT_DISPATCH select the lmi dispatch routines
+            %
+            % dispatch: handlers for the LMIs
+            %
+            %classify the type of the system
+
+            %TODO: need to implement this
+            if isa(sys, 'opt_system')
+                dis = lmi_dispatch_lti(sys);
+            elseif isa(sys, 'opt_system_periodic')
+                %TODO: not yet implemented
+                dis = lmi_dispatch_periodic(sys);
+            elseif isa(sys, 'opt_system_switched')
+                
+                if all((sys.adj==0) + (sys.adj==1), 'all')
+                    %robust switching
+                    %TODO: not yet implemented
+                    dis = lmi_dispatch_switched(sys);
+                else
+                    %TODO: not yet implemented
+                    %stochastic: markof jump linear system
+                    dis = lmi_dispatch_mjls(sys);
+                end                
+            elseif isa(sys, 'opt_system_lpv_poly')
+                %maybe? or go to switched system
+                dis = lmi_dispatch_lpv_poly(sys);
+            elseif isa(sys, 'opt_system_lpv')
+                dis = lmi_dispatch_lpv_lfr(sys);
+                %TODO: not yet implemented
+            end
 
         end
 

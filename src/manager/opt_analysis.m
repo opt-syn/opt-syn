@@ -1,15 +1,20 @@
 classdef opt_analysis < opt_manager_interface
     %OPT_ANALYSIS  analysis of optimization algorithms
     %
+    % iterative procedure to find a point beta satisfying
+    % the fixed-point equation 
+    %               0 \in sum_i F_i(\beta).
     %
-    
+       
     methods
         function obj = opt_analysis(sys)
             %OPT_ANALYSIS Construct an instance of this class            
            
             obj@opt_manager_interface(sys);
+
         end
         
+        %% define IQCs for the operators
         function [obj, vars, cons] = oracle_order(obj,order, ind)
             %ORACLE_ORDER: set the orders of the IQCs
             nop = length(obj.sys.op);
@@ -55,8 +60,36 @@ classdef opt_analysis < opt_manager_interface
 
         end
 
+        function [iqc, m_same, ind_same] = iqc_op_all(obj)
+            %IQC_OP_ALL: all iqcs for the operators
+            iqc = {};
+            m_same = [];
+            ind_same = [];
+            same_count = 0;
+
+            for i = 1:length(obj.iqc_op)
+                if ~obj.sys.op{i}.same
+                    %block diagonal of the iqc
+                    if isempty(iqc)
+                        iqc = obj.iqc_op{i};
+                    else
+                        iqc = blkdiag(iqc, obj.iqc_op{i});
+                    end
+                    same_count = same_count + obj.iqc_op{i}.nw;
+                    
+                else
+                    %treat the m=L case separately
+                    m_same = blkdiag(m_same, obj.iqc_op{i});
+
+                    ind_same = [ind_same, same_count + (1:length(m_same))];
+                    same_count = same_count + length(m_same);
+                end            
+            end
+
+        end
 
 
+        %% build the system
         function [alg_psi, iqc_op, alg_loop] = build_plant(obj, cons)
             %BUILD_PLANT: form the plant to be used for analysis           
 
@@ -198,33 +231,61 @@ classdef opt_analysis < opt_manager_interface
 
         end
 
-        function [iqc, m_same, ind_same] = iqc_op_all(obj)
-            %IQC_OP_ALL: all iqcs for the operators
-            iqc = {};
-            m_same = [];
-            ind_same = [];
-            same_count = 0;
+        function con_X = con_terminal(obj, vars, iqc_op)
+            
+            %terminal cost constraint (nonnegativity on G)
+            X = iqc_op.X;
+            G = vars.diss.G;
 
-            for i = 1:length(obj.iqc_op)
-                if ~obj.sys.op{i}.same
-                    %block diagonal of the iqc
-                    if isempty(iqc)
-                        iqc = obj.iqc_op{i};
-                    else
-                        iqc = blkdiag(iqc, obj.iqc_op{i});
-                    end
-                    same_count = same_count + obj.iqc_op{i}.nw;
-                    
-                else
-                    %treat the m=L case separately
-                    m_same = blkdiag(m_same, obj.iqc_op{i});
+            nf = ssize(X);
+            n = ssize(G, 1);
+            Ef = [eye(nf); zeros(n-nf, nf)];
 
-                    ind_same = [ind_same, same_count + (1:length(m_same))];
-                    same_count = same_count + length(m_same);
-                end            
+            X_f = Ef * X * Ef';
+            con_X = G + X_f;
+            
+        end
+        
+        
+        function [con_M] = con_dissipation(obj, vars, diss, param)
+            %CON_DISSIPATION: the dissipation relation for IQC synthesis
+
+            %TODO: special calls for the h infinity and h2 structures
+            %for convexification
+
+            if nargin < 4
+                param = [];
             end
 
+            G = vars.diss.G;
+
+            %storage routines
+            G_current = G;
+            G_next = G;
+
+            Gblock = blkdiag(diss.spec.rho^2 * G_current, -G_next);
+
+            [n, m] = size(diss.plant.B);  
+
+
+                Ablock = [eye(n), zeros(n, m);
+                    diss.plant.A, diss.plant.B];
+    
+                Cblock = [diss.plant.C, diss.plant.D];
+               
+                                
+                Center_block = blkdiag(Gblock, -diss.M);
+                Outer_block = [Ablock; Cblock];
+
+                con_M = (Outer_block' * Center_block * Outer_block);
+            
+
+                sys_block = Ablock' * Gblock * Ablock;
+                
+                supp_block = -Cblock' * diss.M * Cblock;
         end
+
+
 
         function objective = get_objective(obj, vars)
             %GET_OBJECTIVE determine the objective for optimization
@@ -347,60 +408,7 @@ classdef opt_analysis < opt_manager_interface
             sol.iqc = iqc_rec;
         end
         
-        function con_X = con_terminal(obj, vars, iqc_op)
-            
-            %terminal cost constraint (nonnegativity on G)
-            X = iqc_op.X;
-            G = vars.diss.G;
 
-            nf = ssize(X);
-            n = ssize(G, 1);
-            Ef = [eye(nf); zeros(n-nf, nf)];
-
-            X_f = Ef * X * Ef';
-            con_X = G + X_f;
-            
-        end
-        
-        
-        function [con_M] = con_dissipation(obj, vars, diss, param)
-            %CON_DISSIPATION: the dissipation relation for IQC synthesis
-
-            %TODO: special calls for the h infinity and h2 structures
-            %for convexification
-
-            if nargin < 4
-                param = [];
-            end
-
-            G = vars.diss.G;
-
-            %storage routines
-            G_current = G;
-            G_next = G;
-
-            Gblock = blkdiag(diss.spec.rho^2 * G_current, -G_next);
-
-
-            [n, m] = size(diss.plant.B);  
-
-
-                Ablock = [eye(n), zeros(n, m);
-                    diss.plant.A, diss.plant.B];
-    
-                Cblock = [diss.plant.C, diss.plant.D];
-               
-                                
-                Center_block = blkdiag(Gblock, -diss.M);
-                Outer_block = [Ablock; Cblock];
-
-                con_M = (Outer_block' * Center_block * Outer_block);
-            
-
-                sys_block = Ablock' * Gblock * Ablock;
-                
-                supp_block = -Cblock' * diss.M * Cblock;
-        end
     
     end
 end
