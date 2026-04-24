@@ -2,14 +2,20 @@ classdef op_sml_interface < operator_interface
     %OP_SML An operator which is the subdifferential of a function in SmL:
     %
     %F = partial f, where f(x) - m norm(x, 2)^2 and L norm(x, 2)^2 - f(x)
-    %are both proper, convex, and closed with -Inf < m <= L < inf
+    %are both proper, convex, and closed with -Inf < m <= L <= Inf
+    %
+    % if m=0, L=inf: convex
+    % if m>0:        m-strongly convex
+    % if m<0:        (-m)-weakly convex
+    % if m>0, L<inf: m-strongly convex and L-smooth (L-Lipschitz gradients)
     %
     %
     % TODO: generalize to matrices m and L?
     
     properties
-        m;
-        L;
+        m; %convexity parameter
+        L; %smoothness parameter
+        L_top = true; %should the L term be filtered (Lz - w)?
     end
     
     methods
@@ -42,7 +48,11 @@ classdef op_sml_interface < operator_interface
 
         function loop = build_loop(obj, reps)
             %BUILD_LOOP construct the loop transformation
-            loop_base = [-obj.sigma, 1; 1, obj.m];
+            if obj.L_top
+                loop_base = [-obj.sigma, 1; 1, obj.m];
+            else
+                loop_base = [-obj.sigma, 1; -1, obj.L];
+            end
 
             loop = kron(loop_base, eye(reps));
         end

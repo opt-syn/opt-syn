@@ -2,7 +2,7 @@ classdef op_sml_causal < op_sml_interface
     %OP_SML_CAUSAL An operator which is the subdifferential of a function in SmL:
     %
     %F = partial f, where f(x) - m norm(x, 2)^2 and L norm(x, 2)^2 - f(x)
-    %are both proper, convex, and closed with -Inf < m <= L < inf
+    %are both proper, convex, and closed with -Inf < m <= L < Inf
     %
     %
     %causal multipliers only (in accordance with the AR paper)
@@ -10,6 +10,8 @@ classdef op_sml_causal < op_sml_interface
     %
     % TODO: generalize to matrices m and L?
  
+    %TODO: coordinate lift c
+
     methods
         function obj = op_sml_causal(m, L, c)
             %OP_SML Construct an instance of this class
