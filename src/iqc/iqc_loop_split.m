@@ -73,7 +73,7 @@ classdef iqc_loop_split
         end
 
         function nq_out = nq(obj)
-            %number of outputs (channel one)
+            %number of outputs (channel two)
             if isnumeric(obj.Psi2.D)
                 nq_out = size(obj.Psi2.D, 1);
             else                
@@ -159,6 +159,45 @@ classdef iqc_loop_split
 
             iqc_rec.Psi1 = Psi1_rec;
             iqc_rec.Psi2 = Psi2_rec;
+        end        
+
+        %% factorization routine
+        function iqc_factored = factor(obj)
+            %FACTOR spectral factorization of the IQC for synthesis
+            %
+            %
+            
+
+            %Do we need to factor at all?
+            need_to_factor = true;
+            dim_check = (obj.nw == obj.nq) && (obj.nz == obj.np) ;
+            
+            
+            if dim_check
+                %both filters should be stable, and Psi2 should have a
+                %stable inverse
+                e1 = eig(obj.Psi1);
+                e2 = eig(obj.Psi2);
+                P2inv = inv(obj.Psi2);
+                e2inv = eig(P2inv);
+
+                eall = [e1; e2; e2inv];
+                %TODO: check the comparator: >= or >?
+                stab_check = any(abs(eall) > 1);
+
+                need_to_factor = stab_check;
+            end
+
+            if need_to_factor
+                %TODO: implement the spectral factorization
+                iqc_factored = [];
+            else
+                %the filter is already factored. fill in the information.
+                C3 = zeros(obj.nf, obj.nz);
+                D3 = zeros(obj.nw, obj.nz);
+                iqc_factored = iqc_loop_factored(obj.Psi1, obj.Psi2,...
+                    C3, D3, obj.M, obj.X, obj.loop);
+            end
         end
     end
 end

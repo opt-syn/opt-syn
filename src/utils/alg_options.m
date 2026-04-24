@@ -1,6 +1,12 @@
+%OLD CODE OLD CODE OLD CODE OLD CODE
+%
+%This should be used as a reference for future implementation
+%
 classdef alg_options
     %ALG_PROBLEM configuration options for algorithm analysis and synthesis
     
+    %
+    %
     properties
         %problem definitions
         m = [];

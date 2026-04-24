@@ -1,11 +1,11 @@
 classdef opt_analysis < opt_manager_interface
-    %OPT_ANALYSIS Summary of this class goes here
-    %   Detailed explanation goes here
+    %OPT_ANALYSIS  analysis of optimization algorithms
+    %
+    %
     
     methods
         function obj = opt_analysis(sys)
-            %OPT_ANALYSIS Construct an instance of this class
-            %   Detailed explanation goes here
+            %OPT_ANALYSIS Construct an instance of this class            
            
             obj@opt_manager_interface(sys);
         end
