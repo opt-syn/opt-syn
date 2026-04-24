@@ -1,6 +1,6 @@
-classdef  opt_system
+classdef  opt_system < opt_system_interface
     %OPT_SYSTEM interconnection of network and operators
-    %TODO: may be abstracted into an interface
+    %by default is LTI (linear time invariant)
     
     properties
         op; %a cell of operators (op_sim for simulation, op_? for analysis/synthesis)
@@ -168,10 +168,7 @@ classdef  opt_system
             Npre = obj.get_consensus(obj.op, obj.bind);
             c = size(D11, 1)/length(obj.bind); %coordinate lifts: change this later?
             N = kron(Npre, eye(c));
-
-
-
-            
+    
             [sN, dN] = size(N);
             n = obj.P.nx;
 

@@ -72,10 +72,12 @@ classdef (Abstract) opt_manager_interface
             %RUN: run the program
             sol = struct;
             
+            
             if obj.LMILAB
                 if ~isnumeric(objective)
                     lmis(cons, objective, 'c');
                 end
+
                 [lmi_out,info_out]=lmisolve(cons);
                 
                 
@@ -221,7 +223,7 @@ classdef (Abstract) opt_manager_interface
             sol0 = f(v);
             if sol0.status
                 sol = sol0;
-                v_best = [];
+                vr = [vr(2), Inf];
             else
 
                 %TODO: implement warm starts
