@@ -6,20 +6,16 @@ classdef  opt_system_switch < opt_system
     
     
     properties        
-        G;    %switching graph        
+        adj;    %switching graph  (adjacency matrix)      
     end
     
     methods
-        function obj = opt_system_switch(op, P, K, G, bind)
+        function obj = opt_system_switch(op, P, K, adj, bind)
             %OPT_SYSTEM constructor            
             if nargin < 5
                 s = length(op);
                 bind = 1:s;            
             end
-
-            % if ~iscell(P)
-            %     P = {P};
-            % end
 
             if ~iscell(K)
                 K0 = K;
@@ -30,7 +26,7 @@ classdef  opt_system_switch < opt_system
             end
 
             obj@opt_system(op, P, K, bind)            
-            obj.G = G;
+            obj.adj = adj;
         end        
 
         %TODO: allow for parameterized systems
@@ -41,7 +37,7 @@ classdef  opt_system_switch < opt_system
             end
 
             %TODO: debug this
-            g = obj.G(mode, :);
+            g = obj.adj(mode, :);
             gc = g/sum(g);
 
             gs = cumsum(gc);
@@ -76,6 +72,10 @@ classdef  opt_system_switch < opt_system
             %nxi: number of states in controller
             dimn = length(obj.K{1}.A);
         end
+
+        %TODO: implement regulator equation
+
+        %TODO: implement LMIs
 
     end
 end

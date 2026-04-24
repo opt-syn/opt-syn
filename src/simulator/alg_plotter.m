@@ -5,7 +5,8 @@ classdef alg_plotter
     properties
         sim;      %data in the simulation
         FS = 16;  %fontsize for axes
-        FST = 20; %fontsize for title
+        FST = 20; %fontsize for title  
+        EQUALITY;
     end
     
     methods
@@ -13,6 +14,7 @@ classdef alg_plotter
             %ALG_PLOTTER Construct an instance of this class
             %   Detailed explanation goes here
             obj.sim = sim;
+            obj.EQUALITY = ~isempty(sim.eq);
         end
         
         function fig = plot(obj,traces, fignum)
@@ -104,11 +106,16 @@ classdef alg_plotter
             elseif strcmp(sig, 'xn')
                 name_mid = '$x_{N}$';
             elseif strcmp(sig, 'eq')
-                name_mid = '$E^\top (E z - b)$';
+                name_mid = '$|| E z - b||_2$';
             elseif strcmp(sig, 'mode')
                 name_mid = 'mode';
             elseif strcmp(sig, 'res_w')
-                name_mid = '$||1^{\top} w||_2$';
+                if obj.EQUALITY
+                    % name_mid = '$||\text{Proj}_{\text{null} \ E} (1^{\top} w)||_2$';
+                    name_mid = '$||$ Proj $_{null(E)} [1^{\top} w] ||_2$';
+                else
+                    name_mid = '$||1^{\top} w||_2$';
+                end
             elseif strcmp(sig, 'res_z')
                 name_mid = '$||z - z_{avg}||_2$';
             end

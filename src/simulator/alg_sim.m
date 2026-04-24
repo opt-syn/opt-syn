@@ -7,6 +7,7 @@ classdef alg_sim
         c=1;   %number of partitions of dimension
         sampler = struct('wp', @(param) [], 'param', @(param) [], ...
             'x0', @() [], 'param0', @() []);
+        EQUALITY = 0;
     end
     
     methods 
@@ -23,6 +24,8 @@ classdef alg_sim
             if nargin >= 4
                 obj.sampler = sampler;
             end
+
+            obj.EQUALITY = any(logical(cellfun(@(q) q.EQUALITY, obj.sys.op)));
         end
         
         function ssim = sim(obj, T)
@@ -211,6 +214,8 @@ classdef alg_sim
                 param = paramnext;
 
             end
+
+            %% postprocess the run
             
             %identify equality constraints
             EQ_mask = logical(cellfun(@(q) q.EQUALITY, obj.sys.op));
@@ -218,24 +223,51 @@ classdef alg_sim
             nop = length(EQ_mask);
             % sel_z = kron(sparse(1:(nop-EQ_sum), find(~EQ_mask), ones((nop-EQ_sum), 1), (nop-EQ_sum), nop), speye(c));
 
-            sel_w_EQ_pre = kron(sparse(1:EQ_sum, find(EQ_mask), ones(EQ_sum, 1), EQ_sum, nop), speye(c));
-            sel_w_EQ = full(sel_w_EQ_pre(:, obj.sys.bind));
 
+
+            %only one group of equality constraints is permitted
             %get the residuals
             %optimality residual: sum(w) = 0            
-            wsum2 = pagemtimes(repmat(kron(ones(1, s), eye(c)), 1, 1, T),  ssim.w);                       
-            ssim.res_w = sqrt(squeeze(sum(wsum2.^2, [1, 2])))';
-
-            % p_res = pagemtimes(full(sel_w_EQ), ssim.w);
+            %or in equality constraints: sum(w) \in ran(E'):
             if EQ_sum 
-                w_eq = pagemtimes(repmat(kron(sel_w_EQ, eye(c)), 1, 1, T),  ssim.w);                       
-                ssim.eq = sqrt(squeeze(sum(w_eq.^2, [2])))';
+                %TODO: multistep equality constraint methods
+                %indices with equality constraints
+                sel_EQ_pre = kron(sparse(1:EQ_sum, find(EQ_mask), ones(EQ_sum, 1), EQ_sum, nop), speye(c));
+                sel_EQ = full(sel_EQ_pre(:, obj.sys.bind));
+
+                %indices without equality constraints
+                sel_std_pre = kron(sparse(1:(nop-EQ_sum), find(~EQ_mask), ones((nop-EQ_sum), 1), (nop-EQ_sum), nop), speye(c));
+                sel_std = full(sel_std_pre(:, obj.sys.bind));
+
+                %find the equality constraints
+                w_std = pagemtimes(repmat(kron(sel_std, eye(c)), 1, 1, T),  ssim.w);  
+                w_perm = squeeze(reshape(permute(w_std, [3, 1, 2]), T, [], 1))';
+                op_eq = find(EQ_mask);
+
+                %evaluate the optimality condition sum(w) \in ran(E')
+                E = obj.sys.op{op_eq}.E;
+                b = obj.sys.op{op_eq}.b;
+                lam_rec = E' \ w_perm;
+                eq_err = w_perm - E' * lam_rec;
+                ssim.res_w = sqrt(squeeze(sum(eq_err.^2, [1])))';
+
+                %evaluate the primal feasibility condition Ez = b
+                z_EQ = pagemtimes(repmat(kron(sel_EQ, eye(c)), 1, 1, T),  ssim.w);  
+                z_EQ_perm = squeeze(reshape(permute(z_EQ, [3, 1, 2]), T, [], 1))';
+                
+                eq_res = E * z_EQ_perm - b;
+                
+                ssim.eq = sqrt(squeeze(sum(eq_res.^2, 1)))';
             else
                 ssim.eq = [];
+                %TODO: sums over binds
+                wsum2 = pagemtimes(repmat(kron(ones(1, s), eye(c)), 1, 1, T),  ssim.w);                       
+                ssim.res_w = sqrt(squeeze(sum(wsum2.^2, [1, 2])))';
             end
 
             %consensus residual: z - zavg = 0           
-            % z_sel = pagemtimes(full(sel_z),  ssim.z);
+            %same in all oracles, regardless of equalities
+            %TODO: generalize to different consensus constraints
             zavg = pagemtimes(repmat(kron(ones(1, s), eye(c)/s), 1, 1, T),  ssim.z);
             
             ssim.res_z = sqrt(squeeze(sum((ssim.z - repmat(zavg, s, 1, 1)).^2, [1, 2])))';

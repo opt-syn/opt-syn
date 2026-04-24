@@ -25,7 +25,7 @@ classdef genplant
             %   Detailed explanation goes here
 
             obj.P = P;
-            if isnumeric(P)
+            if isnumeric(P) && ~isempty(P)
                 %static system
                 [obj.ny, obj.nu] = size(P);
             else                     
@@ -33,8 +33,8 @@ classdef genplant
                 obj.nz = n.nz;
                 obj.nw = n.nw;
                 obj.ny = n.ny;
-                obj.nu = n.nu;            
-    
+                obj.nu = n.nu;      
+
                 if isfield(n, 'zp')
                     obj.nzp = n.nzp;            
                 end

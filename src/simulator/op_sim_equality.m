@@ -11,7 +11,7 @@ classdef op_sim_equality < op_sim
     
     properties        
         E= []; %forward evaluation (e.g. gradient)        
-        b = [];  %function value (or function values in a game)        
+        b = 0;  %function value (or function values in a game)        
         
     end
     
