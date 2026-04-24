@@ -8,7 +8,8 @@ function [so,info]=lmisolve(lmis,opt)
 %lmis is system of LMIs object
 %defines lmi for matlab solver and solves it
 
-warning('on')
+% warning('on')
+warning('off', 'Robust:lmi:NonSymmetricTerm1')
 
 
 if ~isa(lmis,'lmis')
