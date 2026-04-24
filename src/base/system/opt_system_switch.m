@@ -17,10 +17,6 @@ classdef  opt_system_switch < opt_system
                 bind = 1:s;            
             end
 
-            % if ~iscell(P)
-            %     P = {P};
-            % end
-
             if ~iscell(K)
                 K0 = K;
                 K = cell(P.Nss, 1);

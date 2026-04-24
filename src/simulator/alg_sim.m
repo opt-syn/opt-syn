@@ -235,7 +235,8 @@ classdef alg_sim
             end
 
             %consensus residual: z - zavg = 0           
-            % z_sel = pagemtimes(full(sel_z),  ssim.z);
+            %same in all oracles, regardless of equalities
+            %TODO: generalize to different consensus constraints
             zavg = pagemtimes(repmat(kron(ones(1, s), eye(c)/s), 1, 1, T),  ssim.z);
             
             ssim.res_z = sqrt(squeeze(sum((ssim.z - repmat(zavg, s, 1, 1)).^2, [1, 2])))';
