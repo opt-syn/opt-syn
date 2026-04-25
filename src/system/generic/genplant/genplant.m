@@ -349,8 +349,9 @@ classdef genplant
 
             if nzpnew
                 Ez = kron(ones(dl, 1), eye(c));
-                Bznew = [];
+                
                 Dznew = 1 * [ Ez; zeros(nzpnew, c)];
+                Bznew = zeros(size(B, 1), size(Dznew, 2));
             else
                 Bznew = [];
                 Dznew = [];
