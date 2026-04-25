@@ -17,6 +17,9 @@ classdef spec_interface
         izp = [];    %indices for performance output        
         vars;                
         LMILAB = 1;            
+        id = 0;
+        target = false; %should this be the target of optimization (within 
+                        %bisection iterations)?
     end
     
     methods

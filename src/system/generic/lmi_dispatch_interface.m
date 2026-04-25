@@ -20,6 +20,7 @@ classdef lmi_dispatch_interface
             obj.sys = sys;
         end
         
+
         
         %KYP lemma terms, commonly found matrices
         
@@ -114,7 +115,12 @@ classdef lmi_dispatch_interface
         
         
         %supported operators
-        stability(obj, vars, cons, diss)
+        stability(obj, vars, cons, diss)  
+
+        %should allow for:
+            %quad
+            %e2e
+        % stability(obj, vars, cons, diss)
         
         
     end

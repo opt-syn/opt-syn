@@ -220,7 +220,7 @@ classdef opt_analysis < opt_manager_interface
             % end
         end
 
-        function [vars, cons] = build_program(obj, specs)
+        function [vars, cons, objective] = build_program(obj, specs)
             %BUILD_PROGRAM set up the algorithm analysis problem
             
             if nargin < 2
@@ -239,7 +239,7 @@ classdef opt_analysis < opt_manager_interface
             [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);
             
             %the dissipation can change
-            [vars, cons] = build_dissipation(obj, vars, cons, alg_psi, iqc_op, specs);
+            [vars, cons, objective] = build_dissipation(obj, vars, cons, alg_psi, iqc_op, specs);
 
         end
 

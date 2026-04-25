@@ -83,18 +83,8 @@ classdef (Abstract) opt_manager_interface
                 STATUS = t.problem;
             end
             sol.status = STATUS;
+            sol.lmi_out = lmi_out;
 
-            if STATUS == 0
-                if obj.LMILAB
-                    [vrec] = rec_vars(vars, lmi_out);
-                else
-                    [vrec] = rec_vars(vars);
-                end
-
-                sol.vars = vrec;
-
-                sol = obj.process_recovery(sol, lmi_out);
-            end
             
         end
 
@@ -109,10 +99,17 @@ classdef (Abstract) opt_manager_interface
         
         function obj = add_specifications(obj, varargin)
             %concatenate the new performance specifications
-            if iscell(varargin{1})
+            if iscell(varargin{1}) && length(varargin)==1
                 obj.specs = [obj.specs, varargin{1}];
-            else
+            elseif length(varargin)>1
                 obj.specs = [obj.specs, varargin];
+            else
+                obj.specs = [obj.specs, {varargin{1}}];
+            end
+
+            %assign indices to the specifications
+            for i = 1:numel(obj.specs)
+                obj.specs{i}.id = i;
             end
         end
 
@@ -128,11 +125,27 @@ classdef (Abstract) opt_manager_interface
             obj = obj.oracle_order(order);
             obj = obj.add_specifications(specs);
 
-            [vars, cons] = obj.build_program(); 
+            [vars, cons, objective] = obj.build_program(); 
 
-            objective = obj.get_objective(vars);
+            % objective = obj.get_objective(vars);
             
+            % objective = 0;
             [sol] = obj.run(vars, cons, objective);
+
+
+            
+            if sol.status == 0
+                if obj.LMILAB
+                    [vrec] = rec_vars(vars, sol.lmi_out);
+                else
+                    [vrec] = rec_vars(vars);
+                end
+
+                sol.vars = vrec;
+
+                sol = obj.process_recovery(sol, sol.lmi_out);
+                sol.objective = double(double(objective, sol.lmi_out));
+            end
 
         end
 
@@ -168,6 +181,7 @@ classdef (Abstract) opt_manager_interface
             obj = obj.oracle_order(order);
             obj = obj.add_specifications(specs);
             cons = obj.cons;
+            specs = obj.specs;
 
             vars = obj.vars;
             [alg_psi, iqc_op, alg_loop]  = obj.build_plant(cons);
@@ -198,7 +212,7 @@ classdef (Abstract) opt_manager_interface
             sol0 = f(v);
             if sol0.status
                 sol = sol0;
-                vr = [vr(2), Inf];
+                vr = [vr(2), Inf];                
             else
 
                 %TODO: implement warm starts
@@ -210,7 +224,7 @@ classdef (Abstract) opt_manager_interface
                 while diff(vr) > b_opts.tol
                     %select midpoint (narrowing search)
                     v= sum(vr)/2;
-                    sol = f(v);
+                    [sol] = f(v);
                     valid_sol = (sol.status == 0);
                     if valid_sol;
                         %if successful, proceed with left interval 
@@ -222,6 +236,19 @@ classdef (Abstract) opt_manager_interface
                         vr(1) = v;
                     end
                 end
+            end
+
+            if sol.status == 0
+                if obj.LMILAB
+                    [vrec] = rec_vars(vars, sol.lmi_out);
+                else
+                    [vrec] = rec_vars(vars);
+                end
+
+                sol.vars = vrec;
+
+                sol = obj.process_recovery(sol, sol.lmi_out);
+                sol.objective = double(double(sol.objective, sol.lmi_out));
             end
 
                         
@@ -241,20 +268,30 @@ classdef (Abstract) opt_manager_interface
 
         end
 
+        function obj = set_tol(obj, key, val)
+            % SET_TOL set the tolerance of the LMI routines
+            %
+            % example: obj = obj.set_tol('G_max', 10)
+
+            obj.lmi.tol = setfield(obj.lmi.tol, key, val);
+        end
+
         function [sol] = bisect_inner(obj, pcurr, vars, cons, alg_psi, iqc_op, spec, b_opts)
             %BISECT_INNER: inner loop for bisection
             %run the program and process the solution
-            objective = obj.get_objective(vars);
+            
 
             spec_curr = obj.modify_spec(pcurr, spec, b_opts);
 
-            [vars, cons] = build_dissipation(obj, vars, cons, alg_psi, iqc_op, spec_curr);
+            [vars, cons, objective] = build_dissipation(obj, vars, cons, alg_psi, iqc_op, spec_curr);
             [sol] = obj.run(vars, cons, objective);
+            sol.objective = double(double(objective, sol.lmi_out));
+            
             
         end
 
         %% Indexing routines for systems
-        function [diss] = index_specs(obj, alg_psi, iqc_op, specs, target_ind)
+        function [diss] = index_specs(obj, alg_psi, iqc_op, specs)
 
             %INDEX_SPECS:  index into the performance specifications
             %
@@ -323,7 +360,7 @@ classdef (Abstract) opt_manager_interface
 
 
                 diss{i} = struct('plant', alg_screen, 'iqc_rob', iqc_op, ...
-                    'spec', sp, 'target', target_ind==i);
+                    'spec', sp);
                 % %need to permute the entries of Mdiag for the partition
 
 

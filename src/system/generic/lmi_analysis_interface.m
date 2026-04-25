@@ -145,7 +145,7 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
         function [cons, objective, con_M] = e2e(obj, vars, cons, diss)
             %E2E: energy to energy gain
 
-            if diss.target
+            if diss.spec.target
                 [cons, objective, con_M] = obj.e2e_target(vars, cons, diss);
             else
                 %is a special case of quadratic performance
@@ -157,7 +157,7 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
 
     methods (Abstract)
         %variable creation routines        
-        quad(obj, vars, cons, diss)
+        quad(obj, vars, cons, diss)               
     end
 end
 
