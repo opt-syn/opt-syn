@@ -15,7 +15,7 @@ classdef  opt_system_periodic < opt_system_switch
             Nss = max(length(P), length(K));
             adj = circshift(eye(Nss), -1);
             obj@opt_system_switch(op, P, K, adj, bind)
-            
+            obj.type = 'periodic';
         end        
 
 

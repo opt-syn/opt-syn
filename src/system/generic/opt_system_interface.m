@@ -10,6 +10,7 @@ classdef  opt_system_interface
         tracking; %tracking of optimal solution (struct (S, R) by default)
                   %tracking of varying gradients requires LPV/periodic/switched
                   % methods, is a TODO
+        type=[];   %type of system: (e.g. lti, periodic, switched, mjls, lpv)
     end
     
     methods
@@ -46,6 +47,10 @@ classdef  opt_system_interface
         function dimn = n(obj)
             %n: number of states
             dimn = obj.nxn() + obj.nxi();
+        end
+
+        function tp = get_type(obj)
+            tp = obj.type;
         end
         
 

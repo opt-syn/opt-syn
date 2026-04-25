@@ -16,6 +16,7 @@ classdef  opt_system < opt_system_interface
 
             obj@opt_system_interface(op, P, K, bind, tracking)
             
+            obj.type = 'lti';
         end    
 
         %% Dimension Counters

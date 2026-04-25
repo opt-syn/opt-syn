@@ -12,6 +12,8 @@ classdef opt_analysis < opt_manager_interface
            
             obj@opt_manager_interface(sys);
 
+            obj.lmi = obj.select_lmi(sys, 'analysis');
+
         end
         
         %% define IQCs for the operators
@@ -86,40 +88,7 @@ classdef opt_analysis < opt_manager_interface
 
         end
 
-        function dis = select_dispatch(obj, sys)
-            %SELECT_DISPATCH select the lmi dispatch routines
-            %
-            % dispatch: handlers for the LMIs
-            %
-            %classify the type of the system
-
-            %TODO: need to implement this
-            if isa(sys, 'opt_system')
-                %TODO: working on it
-                dis = lmi_analysis_lti(sys);
-            elseif isa(sys, 'opt_system_periodic')
-                %TODO: not yet implemented
-                dis = lmi_analysis_periodic(sys);
-            elseif isa(sys, 'opt_system_switched')
-                
-                if all((sys.adj==0) + (sys.adj==1), 'all')
-                    %robust switching
-                    %TODO: not yet implemented
-                    dis = lmi_analysis_switched(sys);
-                else
-                    %TODO: not yet implemented
-                    %stochastic: markof jump linear system
-                    dis = lmi_analysis_mjls(sys);
-                end                
-            elseif isa(sys, 'opt_system_lpv_poly')
-                %maybe? or go to switched system
-                dis = lmi_analysis_lpv_poly(sys);
-            elseif isa(sys, 'opt_system_lpv')
-                dis = lmi_analysis_lpv_lfr(sys);
-                %TODO: not yet implemented
-            end
-
-        end
+        
 
         %% build the system
         function [alg_psi, iqc_op, alg_loop] = build_plant(obj, cons, param)
@@ -190,21 +159,6 @@ classdef opt_analysis < opt_manager_interface
 
             alg_psi = psi * GI;           
           
-        end
-
-        function con_X = con_terminal(obj, vars, iqc_op)
-            
-            %terminal cost constraint (nonnegativity on G)
-            X = iqc_op.X;
-            G = vars.diss.G;
-
-            nf = ssize(X);
-            n = ssize(G, 1);
-            Ef = [eye(nf); zeros(n-nf, nf)];
-
-            X_f = Ef * X * Ef';
-            con_X = G + X_f;
-            
         end
         
         
@@ -303,7 +257,8 @@ classdef opt_analysis < opt_manager_interface
                     
                                     
                 sm = ssize(con_M, 1);
-                cons = append_lmi(cons, con_M - eye(sm)*obj.tol.M, obj.LMILAB);
+                % cons = append_lmi(cons, con_M - eye(sm)*obj.tol.M, obj.LMILAB);
+                cons = append_lmi(cons, con_M , obj.LMILAB);
             end
 
             %terminal cost/sign constraints
@@ -311,13 +266,10 @@ classdef opt_analysis < opt_manager_interface
                 %for infinite-horizon performance measures (l2 norm, h2
                     %norm), terminal costs and sign constraints on the
                     %storage function are not required. For finite-horizon
-                    %specifications (e.g. invariance, peak-to-peak), they
-                    %are needed.
-
+                    %specifications (e.g. Invariance, peak-to-peak), they
+                    %are needed.                
+                cons = obj.lmi.con_terminal(vars, cons, iqc_op);
                 
-                con_X = obj.con_terminal(vars, iqc_op);
-                sx = ssize(con_X, 1);
-                cons = append_lmi(cons, con_X - eye(sx)*obj.tol.X, obj.LMILAB);
             end
 
         end

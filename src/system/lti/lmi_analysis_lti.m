@@ -30,9 +30,9 @@ classdef lmi_analysis_lti < lmi_analysis_interface
         %function [vars_diss, cons]= create_vars_storage(obj, alg_psi, cons, name)
         %is the default
         
-        function [con_X] = con_terminal(obj, vars, iqc_op)
+        
             %CON_TERMINAL terminal constraint
-        end
+        
 
         function [vars, cons] = method1(obj,inputArg)
             %METHOD1 Summary of this method goes here

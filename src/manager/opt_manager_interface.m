@@ -11,9 +11,7 @@ classdef (Abstract) opt_manager_interface
         
         %numerics
         LMILAB = true;
-        tol = struct('M', 1e-7, ... %tolerance for dissipation constraints
-            'X', 1e-7, ...          %tolerance for sign/terminal cost constraints 
-            'dia', 1e-11);          %tolerance for acceptable solution 
+        tol = struct('dia', 1e-11);          %tolerance for acceptable solution 
 
         lmi = [];
         %other options
@@ -27,13 +25,24 @@ classdef (Abstract) opt_manager_interface
             nop = length(obj.sys.op);
             obj.iqc_op = cell(nop, 1);
             obj.vars = struct('op', []);
-            obj.vars.op =cell(nop, 1);
-
-            obj.lmi = obj.select_dispatch(sys);
+            obj.vars.op =cell(nop, 1);            
 
         end
 
-        
+        function lmi_handler = select_lmi(obj, sys, routine)
+            %SELECT_LMI select the lmi routines based on teh system type
+            %
+            %Input:
+            %   sys:    type of system (e.g. opt_system_switched)
+            %   routine:    'analysis' or 'synthesis'
+            
+            tp = sys.get_type();
+            clname = ['lmi_', routine, '_', tp];
+            lmi_hand = str2func(clname);
+
+            lmi_handler = lmi_hand(sys);
+
+        end
 
         %% acquire solutions
         function [sol] = run(obj,  vars, cons, objective)
@@ -52,6 +61,12 @@ classdef (Abstract) opt_manager_interface
                 sol.dia = lmi_out.dia;
                 STATUS = (lmi_out.status || (sol.dia > obj.tol.dia));
                 sol.info = info_out;
+
+
+                %explicitly forming the blocks in recovery takes a long
+                %time. Why is this the case?
+
+                
                 % ncons = length(cons.lmim);
                 % sol.blocks = cell(ncons, 1);
                 % sol.eb = zeros(ncons, 1);
@@ -319,8 +334,7 @@ classdef (Abstract) opt_manager_interface
         
     end
 
-    methods (Abstract)
-        select_dispatch(obj, specs)
+    methods (Abstract)        
         oracle_order(obj)
         build_dissipation(obj)
         build_program(obj)

@@ -7,6 +7,10 @@ classdef lmi_dispatch_interface
     %  
     properties
         sys;
+        LMILAB = 1;
+        tol = struct('M', 1e-7, ... %tolerance for dissipation constraints
+            'X', 1e-7, ...          %tolerance for sign/terminal cost constraints 
+            'G_max', 100)           %upper bound on norm of storage matrix
     end
     
     methods

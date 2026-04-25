@@ -6,7 +6,7 @@ classdef  opt_system_switch < opt_system_interface
     
     
     properties        
-        adj;    %switching graph  (adjacency matrix)      
+        adj;    %switching graph  (adjacency matrix)              
     end
     
     methods
@@ -31,9 +31,23 @@ classdef  opt_system_switch < opt_system_interface
 
             obj@opt_system_interface(op, P, K, bind, tracking)            
             obj.adj = adj;
+            obj.type = 'switched';
         end        
 
         %TODO: allow for parameterized systems
+
+        function tp = get_type(obj)
+            %get the type of the switched system
+            if all((obj.adj==0) + (obj.adj==1), 'all')
+                %robust switching
+                %TODO: not yet implemented
+                tp = 'switched';
+            else
+                %TODO: not yet implemented
+                %stochastic: markov jump linear system
+                tp = 'mjls';
+            end   
+        end
 
         function mode_next = next_mode(obj, mode)
             if nargin < 2

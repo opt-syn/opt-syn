@@ -10,11 +10,10 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
     %   switched robust
     %   switched jump
     
-    properties
-        tol = struct('G_max', 100 ... %upper bound on norm of storage matrix
-            );
-        LMILAB = 1;
-    end
+    % properties
+        
+        
+    % end
     
     methods
         function obj = lmi_analysis_interface(sys)
@@ -68,6 +67,25 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
             for i = 1:nspec
                 [vars_spec{i}, cons] = specs{i}.create_vars(cons);
             end
+        end
+
+        %% terminal constraints
+        function [cons, con_X] = con_terminal(obj, vars, cons, iqc_op)
+            %CON_TERMINAL
+            %terminal cost constraint (nonnegativity for the storage function G)
+            %coupled positivity if the IQC has a terminal cost
+            X = iqc_op.X;
+            G = vars.diss.G;
+
+            nf = ssize(X);
+            n = ssize(G, 1);
+            Ef = [eye(nf); zeros(n-nf, nf)];
+
+            X_f = Ef * X * Ef';
+            con_X = G + X_f;
+
+            sx = ssize(con_X, 1);
+            cons = append_lmi(cons, con_X - eye(sx)*obj.tol.X, obj.LMILAB);
 
         end
 
