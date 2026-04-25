@@ -34,11 +34,43 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             %CON_TERMINAL terminal constraint
         
 
-        function [vars, cons] = method1(obj,inputArg)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            outputArg = obj.Property1 + inputArg;
+
+
+        function [cons, objective, con_M] = quad(obj, vars, cons, diss)
+            %QUAD: certificate of quadratic performance
+
+            G = vars.diss.G;
+
+            sysb = obj.sys_block(diss.plant, G, G, diss.spec.rho);
+
+
+            M_quad = obj.merge_spec_M(diss.iqc_rob, diss.spec);
+            suppb = obj.supply_block(diss.plant, M_quad);
+
+
+            %wrap it all together
+            objective = 0;
+
+            con_M = sysb + suppb;
+
+
+            sM = ssize(con_M,1);
+            cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB); 
+
         end
+
+
+
+
+
+        function [cons, objective, con_M] = e2e_target(obj, vars, cons, diss)
+            %E2E_TARGET: use a Schur complement to minimize the energy to
+            %energy gain of the transfer function
+        end
+
+
+
+
     end
 end
 

@@ -162,7 +162,7 @@ classdef opt_analysis < opt_manager_interface
         end
         
         
-        function [con_M] = con_dissipation(obj, vars, diss, param)
+        function [con_M, objective] = con_dissipation(obj, vars, diss, param)
             %CON_DISSIPATION: the dissipation relation for IQC synthesis
 
             %TODO: special calls for the h infinity and h2 structures
@@ -198,6 +198,8 @@ classdef opt_analysis < opt_manager_interface
                 sys_block = Ablock' * Gblock * Ablock;
                 
                 supp_block = -Cblock' * diss.M * Cblock;
+
+                objective = 0;
         end
 
 
@@ -244,35 +246,7 @@ classdef opt_analysis < opt_manager_interface
 
 
 
-        function [vars, cons] = build_dissipation(obj, vars, cons, alg_psi, iqc_op, specs)
-            %BUILD_DISSIPATION: form the dissipation relations for the
-            %system (at the current set of specifications)
-           
-            [diss] = obj.index_specs(alg_psi, iqc_op, specs);
-            ndiss = length(diss);
 
-            %dissipation relations
-            for i = 1:ndiss
-                con_M = con_dissipation(obj, vars, diss{i});                                 
-                    
-                                    
-                sm = ssize(con_M, 1);
-                % cons = append_lmi(cons, con_M - eye(sm)*obj.tol.M, obj.LMILAB);
-                cons = append_lmi(cons, con_M , obj.LMILAB);
-            end
-
-            %terminal cost/sign constraints
-            if obj.opts.impose_X
-                %for infinite-horizon performance measures (l2 norm, h2
-                    %norm), terminal costs and sign constraints on the
-                    %storage function are not required. For finite-horizon
-                    %specifications (e.g. Invariance, peak-to-peak), they
-                    %are needed.                
-                cons = obj.lmi.con_terminal(vars, cons, iqc_op);
-                
-            end
-
-        end
 
         function  sol = process_recovery(obj, sol, lmi_out);
             %PROCESS_RECOVERY post-process the solution

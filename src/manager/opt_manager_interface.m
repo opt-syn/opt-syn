@@ -254,16 +254,28 @@ classdef (Abstract) opt_manager_interface
         end
 
         %% Indexing routines for systems
-                function [diss] = index_specs(obj, alg_psi, iqc_op, specs)
+        function [diss] = index_specs(obj, alg_psi, iqc_op, specs, target_ind)
 
             %INDEX_SPECS:  index into the performance specifications
             %
             %
-            %now index alg_psi into its performance specifications
+            %   diss:   structure describing the problem
+            %       plant:  system to control
+            %       spec:   performance specification           
+            %       target: whether the performance measure should be optimized
+            %               true:  soft constraint (e.g. Schur complement
+            %                                       formulation)
+            %               false: hard constraint
+            
+            %TODO: figure out synthesis here
+            
             if nargin < 4
                 specs = obj.specs;
             end
 
+            if nargin < 5
+                target_ind = 0;
+            end
 
             diss = cell(length(specs), 1);
             %determine the indices for each performance specification
@@ -310,13 +322,10 @@ classdef (Abstract) opt_manager_interface
                 alg_screen = E_r * alg_psi * E_w;
 
 
-                %need to permute the entries of Mdiag for the partition
-                n1 = iqc_op.np;
-                m1 = iqc_op.nq;
-                n2 = length(sp.iwp);
-                m2 = length(sp.izp);
-                [M] = outer_blkdiag(iqc_op.M, sp.supply, n1, m1, n2, m2);
-                % Mdiag = blkdiag(iqc_op.M, sp.supply);
+                diss{i} = struct('plant', alg_screen, 'iqc_rob', iqc_op, ...
+                    'spec', sp, 'target', target_ind==i);
+                % %need to permute the entries of Mdiag for the partition
+
 
 
 
@@ -324,10 +333,43 @@ classdef (Abstract) opt_manager_interface
                 %TODO: this may run into trouble if one entry has an X.
                 %performance with dynamic multipliers?
             
-                diss{i} = struct('plant', alg_screen, 'M', M, 'X', iqc_op.X, ...
-                    'spec', sp);
+                % diss{i} = struct('plant', alg_screen, 'M', M, 'X', iqc_op.X, ...
+                    % 'spec', sp);
             end
 
+        end
+
+
+        function [vars, cons, objective] = build_dissipation(obj, vars, cons, alg_psi, iqc_op, specs)
+            %BUILD_DISSIPATION: form the dissipation relations for the
+            %system (at the current set of specifications)
+            %
+            %Output
+
+            [diss] = obj.index_specs(alg_psi, iqc_op, specs);
+            ndiss = length(diss);
+
+            %dissipation relations
+            objective = 0;
+            for i = 1:ndiss
+                [cons, objective_curr] = obj.lmi.con_dissipation(vars, cons, diss{i});                                 
+
+                objective = objective + objective_curr;
+
+                % sm = ssize(con_M, 1);
+                % cons = append_lmi(cons, con_M - eye(sm)*obj.tol.M, obj.LMILAB);
+                % cons = append_lmi(cons, con_M , obj.LMILAB);
+            end
+
+            %terminal cost/sign constraints
+            if obj.opts.impose_X
+                %for infinite-horizon performance measures (l2 norm, h2
+                %norm), terminal costs and sign constraints on the
+                %storage function are not required. For finite-horizon
+                %specifications (e.g. Invariance, peak-to-peak), they
+                %are needed.                
+                cons = obj.lmi.con_terminal(vars, cons, iqc_op);               
+            end
         end
 
 
@@ -335,8 +377,7 @@ classdef (Abstract) opt_manager_interface
     end
 
     methods (Abstract)        
-        oracle_order(obj)
-        build_dissipation(obj)
+        oracle_order(obj)        
         build_program(obj)
         build_plant(obj, cons)
         get_objective(obj)

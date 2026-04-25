@@ -3,7 +3,7 @@ classdef spec_stability < spec_interface
     %interconnection
     
     properties
-        type = 'stab';
+        type = 'stability';
     end
     
     methods
