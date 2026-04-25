@@ -45,6 +45,14 @@ classdef op_quad_causal < op_sml_causal
 
         end       
 
+        function cs = csum_psi(obj, vars)
+            if isempty(vars)
+                cs = 0;
+            else                
+                cs = trace(vars.Df);
+            end
+        end
+
         function cons = filter_constraints(obj, cons, order, vars, iqc)
             %constraints on the filter coefficients
 
