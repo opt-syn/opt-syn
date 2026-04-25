@@ -85,9 +85,9 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
 
             %wrap it all together           
-            con_M_top = sysb + suppb;
+            con_M_corner = sysb + suppb;
             nzp = ssize(CDp, 1);
-            con_M = [con_M_top, CDp'; CDp, mu*eye(nzp)];
+            con_M = [con_M_corner, CDp'; CDp, mu*eye(nzp)];
 
 
             sM = ssize(con_M,1);
@@ -120,11 +120,9 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
             
 
-            %variable to optimize
+            %variables in the problem
             vars_spec = vars.spec{diss.spec.id};
-            mu = vars_spec.mu_p2p;
-
-            objective = 0;      
+            mu = vars_spec.mu_p2p;            
 
             %form the plant
             [plant_no_p, CDp] = obj.separate_performance_output(diss);
@@ -143,17 +141,53 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
             %Block 2: with performance (and terminal constraint)
 
-            sysb_2 = obj.sys_block(diss.plant, G, X_f, diss.spec.rho);
-            
+            sysb_2 = obj.sys_block(diss.plant, X_f, G, diss.spec.rho);
 
-            %remember to take proper block diagonals and indexes!
-            M_quad = obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
-            
 
+            if diss.spec.target
+                
+
+                %optimize over the gain
+
+                %hardcode the supply function
+
+                rho = diss.spec.rho;
+                rrecip = rho/(1-rho);
+                gam = vars_spec.gam_p2p;
+                M_u = -eye(diss.spec.nwp) * rrecip * (gam - mu);                
+
+                
+
+                
+                M_p2p = blkdiag(diss.iqc_rob.M, M_u);
+                suppb_2 = obj.supply_block(plant_no_p, M_p2p);
+
+                nzp = ssize(CDp, 1);
+
+                %reciprocal by Schur complement
+                M_yr =  (gam)*eye(nzp) *  (rrecip)^(-1);                
+
+                con_M_2_corner = suppb_2 + sysb_2;
+
+                %expand out the Schur complement
+                con_M_2 = [con_M_2_corner, CDp'; CDp, M_yr];
+
+                objective = gam;
+            else
+                
             
-            suppb_2 = obj.supply_block(diss.plant, M_quad);
-            
-            con_M_2 = sysb_2 + suppb_2;
+                
+    
+                %remember to take proper block diagonals and indexes!
+                M_p2p = obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
+                
+                
+                suppb_2 = obj.supply_block(diss.plant, M_p2p);
+                
+                con_M_2 = sysb_2 + suppb_2;
+
+                objective = 0;
+            end
 
             %wrap it all together           
 

@@ -51,12 +51,18 @@ classdef spec_p2p < spec_interface
         function [vars, cons] = create_vars(obj, cons)
             %CREATE_VARS form the variables for the problem                        
             mu_p2p = lmim('mu_p2p', 1, 1);
-            gam_p2p = lmim('gam_p2p', 1, 1);
-            vars = struct('mu_p2p', mu_p2p, 'gam_p2p', gam_p2p);
-            if ~obj.target
+            
+            
+            if obj.target
+                gam_p2p = lmim('gam_p2p', 1, 1);
                 cons = append_lmi(cons, obj.gain - gam_p2p, obj.LMILAB);
+            else
+                gam_p2p = obj.gain;
             end
+
+            vars = struct('mu_p2p', mu_p2p, 'gam_p2p', gam_p2p);
             cons = append_lmi(cons, gam_p2p - mu_p2p, obj.LMILAB);
+            cons = append_lmi(cons,  mu_p2p, obj.LMILAB);
         end
     end
 end
