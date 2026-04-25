@@ -151,6 +151,7 @@ classdef (Abstract) opt_manager_interface
                 order = {order};               
             end
 
+            % warning('all', 'off')
             obj = obj.oracle_order(order);
             obj = obj.add_specifications(specs);
 

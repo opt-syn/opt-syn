@@ -9,7 +9,8 @@ function [so,info]=lmisolve(lmis,opt)
 %defines lmi for matlab solver and solves it
 
 % warning('on')
-warning('off', 'Robust:lmi:NonSymmetricTerm1')
+% warning('off', 'Robust:lmi:NonSymmetricTerm1')
+warning('off', 'all')
 
 
 if ~isa(lmis,'lmis')

@@ -1,6 +1,10 @@
 classdef lmi_dispatch_interface
-    %LMI_DISPATCH_INTERFACE store the LMI routines for each system type
-        
+    %LMI_DISPATCH_INTERFACE analysis and synthesis LMIs for the
+    %algorithmic interconnections
+    %
+    %This contains generic routines common among both analysis and
+    %synthesis for every system type
+    %  
     properties
         sys;
     end

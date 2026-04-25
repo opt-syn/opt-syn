@@ -20,17 +20,19 @@ An algorithmic interconnection is described by five attributes:
 4. Performance (optional)
 5. Tracking (optional)
 
+
+## Operators
 The operators are the oracles F in the optimization problem.
 
 
-## Operator
-
-## LMI_DISPATCH: 
 
 contains the lmi routines for analysis and synthesis
 
 
-# System types (from opt_system):
+## Networks and Controllers 
+
+
+System types (from opt_system):
 
 Implemented:
 - Linear Time Invariant (LTI)
@@ -43,7 +45,7 @@ Future:
 - LPV (polytopic)
 - LPV (linear fractional)
 
-# Performance Specifications (from spec):
+## Performance Specifications (from spec):
 
 Implemented:
 - stability:      exponential stability of interconnection
@@ -66,3 +68,5 @@ Future:
 | Switched (stochastic)   |              |               |
 | LPV (polytopic)         |              |               |
 | LPV (linear fractional) |              |               |
+
+## Tracking

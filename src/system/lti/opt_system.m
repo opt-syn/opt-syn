@@ -317,36 +317,7 @@ classdef  opt_system < opt_system_interface
 
         end
 
-        function N = get_consensus(obj, op, bind)
-            %GET_CONSENSUS create the consensus matrix
-            %for the regulation condition
-
-            %which operators are equality constraints
-            % EQ = cellfun(@(e) e.EQUALITY, op);
-            nop = length(op);
-            EQ = zeros(1, nop, 'logical');
-            for i = 1:nop
-                EQ(i) = op{i}.EQUALITY;
-            end
-
-            
-            if all(~EQ)
-                s = length(op);
-                N0 = [eye(s-1); -ones(1, s-1)];
-                
-            else  
-                s = sum(~EQ);
-                N0 = full(sparse(1:s, find(~EQ), ones(s, 1), nop, s));
-                % N0 = [eye(s)];
-            end
-
-            %index based on the bind 
-            nbind = length(bind);
-            Bind = full(sparse(1:nbind, bind, ~EQ(bind), nbind, nop));
-
-
-            N = Bind * N0;
-        end        
+        
 
 
     end
