@@ -86,6 +86,40 @@ classdef opt_analysis < opt_manager_interface
 
         end
 
+        function dis = select_dispatch(obj, sys)
+            %SELECT_DISPATCH select the lmi dispatch routines
+            %
+            % dispatch: handlers for the LMIs
+            %
+            %classify the type of the system
+
+            %TODO: need to implement this
+            if isa(sys, 'opt_system')
+                %TODO: working on it
+                dis = lmi_analysis_lti(sys);
+            elseif isa(sys, 'opt_system_periodic')
+                %TODO: not yet implemented
+                dis = lmi_analysis_periodic(sys);
+            elseif isa(sys, 'opt_system_switched')
+                
+                if all((sys.adj==0) + (sys.adj==1), 'all')
+                    %robust switching
+                    %TODO: not yet implemented
+                    dis = lmi_analysis_switched(sys);
+                else
+                    %TODO: not yet implemented
+                    %stochastic: markof jump linear system
+                    dis = lmi_analysis_mjls(sys);
+                end                
+            elseif isa(sys, 'opt_system_lpv_poly')
+                %maybe? or go to switched system
+                dis = lmi_analysis_lpv_poly(sys);
+            elseif isa(sys, 'opt_system_lpv')
+                dis = lmi_analysis_lpv_lfr(sys);
+                %TODO: not yet implemented
+            end
+
+        end
 
         %% build the system
         function [alg_psi, iqc_op, alg_loop] = build_plant(obj, cons, param)
@@ -245,14 +279,16 @@ classdef opt_analysis < opt_manager_interface
             % transformationsbefore, but before cascade by the filters    
 
             [alg_psi, iqc_op, alg_loop] = obj.build_plant(cons);
-            [vars.diss, cons] = obj.create_vars_storage(alg_psi, cons);
-            [vars.spec, cons] = obj.create_vars_spec(specs, cons);
 
+            [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);
             
             %the dissipation can change
             [vars, cons] = build_dissipation(obj, vars, cons, alg_psi, iqc_op, specs);
 
         end
+
+
+
 
         function [vars, cons] = build_dissipation(obj, vars, cons, alg_psi, iqc_op, specs)
             %BUILD_DISSIPATION: form the dissipation relations for the
@@ -284,36 +320,6 @@ classdef opt_analysis < opt_manager_interface
                 cons = append_lmi(cons, con_X - eye(sx)*obj.tol.X, obj.LMILAB);
             end
 
-        end
-
-        function [vars_diss, cons]= create_vars_storage(obj, alg_psi, cons)
-            %create_vars_storage create variables for the dissipation
-            %constraints
-
-            n = length(alg_psi.A);
-            G = lmim('G', n, n, 'sym');
-
-            %ga
-            % ga = lmim('ga', 1, 1, 'sym');
-
-            vars_diss= struct('G', G);
-            % vars_diss= struct('G', G, 'ga', ga);
-
-            
-
-            if obj.tol.G_max < Inf    
-                %issue in the bounding?
-                cons = append_lmi(cons, obj.tol.G_max*eye(n)  - G, obj.LMILAB);
-                cons = append_lmi(cons, obj.tol.G_max*eye(n)  + G, obj.LMILAB);
-
-                %lmim complains that the dimensions are wrong here.
-                % cons = append_lmi(cons, ga*eye(n)  - G, obj.LMILAB);
-                % cons = append_lmi(cons, ga*eye(n)  + G, obj.LMILAB);
-            end
-
-
-            
-            
         end
 
         function  sol = process_recovery(obj, sol, lmi_out);

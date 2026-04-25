@@ -26,6 +26,9 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             %   Detailed explanation goes here
             obj@lmi_analysis_interface(sys);
         end
+
+        %function [vars_diss, cons]= create_vars_storage(obj, alg_psi, cons, name)
+        %is the default
         
         function [con_X] = con_terminal(obj, vars, iqc_op)
             %CON_TERMINAL terminal constraint

@@ -8,16 +8,14 @@ classdef (Abstract) opt_manager_interface
         vars = {}; %specifications
         iqc_op = {};
         specs = {};        
-
+        
         %numerics
         LMILAB = true;
-        tol = struct('G_max', 100, ...
-            'M', 1e-7, ...
-            'X', 1e-7, ...
-            'finite_l2', 1e3,...
-            'dia', 1e-11);
+        tol = struct('M', 1e-7, ... %tolerance for dissipation constraints
+            'X', 1e-7, ...          %tolerance for sign/terminal cost constraints 
+            'dia', 1e-11);          %tolerance for acceptable solution 
 
-        dispatch = [];
+        lmi = [];
         %other options
         opts = struct('impose_X', true)
     end
@@ -31,42 +29,11 @@ classdef (Abstract) opt_manager_interface
             obj.vars = struct('op', []);
             obj.vars.op =cell(nop, 1);
 
-        end
-
-        function dis = select_dispatch(obj, sys)
-            %SELECT_DISPATCH select the lmi dispatch routines
-            %
-            % dispatch: handlers for the LMIs
-            %
-            %classify the type of the system
-
-            %TODO: need to implement this
-            if isa(sys, 'opt_system')
-                %TODO: working on it
-                dis = lmi_dispatch_lti(sys);
-            elseif isa(sys, 'opt_system_periodic')
-                %TODO: not yet implemented
-                dis = lmi_dispatch_periodic(sys);
-            elseif isa(sys, 'opt_system_switched')
-                
-                if all((sys.adj==0) + (sys.adj==1), 'all')
-                    %robust switching
-                    %TODO: not yet implemented
-                    dis = lmi_dispatch_switched(sys);
-                else
-                    %TODO: not yet implemented
-                    %stochastic: markof jump linear system
-                    dis = lmi_dispatch_mjls(sys);
-                end                
-            elseif isa(sys, 'opt_system_lpv_poly')
-                %maybe? or go to switched system
-                dis = lmi_dispatch_lpv_poly(sys);
-            elseif isa(sys, 'opt_system_lpv')
-                dis = lmi_dispatch_lpv_lfr(sys);
-                %TODO: not yet implemented
-            end
+            obj.lmi = obj.select_dispatch(sys);
 
         end
+
+        
 
         %% acquire solutions
         function [sol] = run(obj,  vars, cons, objective)
@@ -134,15 +101,6 @@ classdef (Abstract) opt_manager_interface
             end
         end
 
-        function [vars_spec, cons] = create_vars_spec(obj, specs, cons)
-            %CREATE_VARS_SPEC declare variables for the specifications
-            nspec = length(specs);
-            vars_spec = cell(nspec, 1);
-            for i = 1:nspec
-                [vars_spec{i}, cons] = specs{i}.create_vars(cons);
-            end
-
-        end
 
         function [sol] = solve_single(obj, order, specs)
             %SOLVE_SINGLE Solve the program once
@@ -198,8 +156,8 @@ classdef (Abstract) opt_manager_interface
 
             vars = obj.vars;
             [alg_psi, iqc_op, alg_loop]  = obj.build_plant(cons);
-            [vars.diss, cons] = obj.create_vars_storage(alg_psi, cons);            
-            [vars.spec, cons] = obj.create_vars_spec(specs, cons);
+            [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);            
+            
             
             
             
@@ -362,6 +320,7 @@ classdef (Abstract) opt_manager_interface
     end
 
     methods (Abstract)
+        select_dispatch(obj, specs)
         oracle_order(obj)
         build_dissipation(obj)
         build_program(obj)

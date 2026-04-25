@@ -64,6 +64,8 @@ classdef  opt_system < opt_system_interface
             %op is important for which oracles are equaltiy constarints and
             %which are inequality constraints
 
+            %TODO: break this up into common routines
+
 
             %% break down the plant structure
 
