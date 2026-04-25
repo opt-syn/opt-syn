@@ -72,9 +72,18 @@ classdef lmi_dispatch_interface
     
             %need to look up the right constraint            
     
-            lmi_handle = str2func(diss.spec.type);
+            
     
-            [cons, objective, con_M] = lmi_handle(obj, vars, cons, diss);
+            if ismember(diss.spec.type, methods(obj))
+                lmi_handle = str2func(diss.spec.type);
+                [cons, objective, con_M] = lmi_handle(obj, vars, cons, diss);
+            else
+                spt = obj.sys.type;
+                msg = ['The performance specification ', diss.spec.type, ...
+                    ' is not supported for ', spt, 'systems.'];
+                error('msg', 'OPT:spec_unsupported');
+
+            end
     
         end
 
