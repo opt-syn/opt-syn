@@ -283,7 +283,7 @@ classdef (Abstract) opt_manager_interface
 
             spec_curr = obj.modify_spec(pcurr, spec, b_opts);
 
-            [vars, cons, objective] = build_dissipation(obj, vars, cons, alg_psi, iqc_op, spec_curr);
+            [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_op, spec_curr);
             [sol] = obj.run(vars, cons, objective);
             sol.objective = double(double(objective, sol.lmi_out));
             

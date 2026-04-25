@@ -1,8 +1,12 @@
 classdef spec_e2e < spec_interface
     %SPEC_E2E specification for an energy to energy gain
     %
-    %sum_k^T norm(zp_k)/norm(wp_k) < gain
-    %   Detailed explanation goes here
+    %limsup_{T -> inf} sum_{k=0}^T norm(zp_k, 2)/norm(wp_k, 2) < gain
+    %
+    %
+    % For a linear system, this is the H infinity gain 
+
+    
     
     properties
         type='e2e';
@@ -11,16 +15,16 @@ classdef spec_e2e < spec_interface
     
     methods
         function obj = spec_e2e(GAIN, iwp, izp, rho)
-            %SPEC_QUAD Construct an instance of this class
+            %SPEC_E2E Construct an instance of this class
             %   Detailed explanation goes here
-            if nargin > 3
+            if nargin < 4
                 rho = 1;
             end            
             obj@spec_interface(iwp, izp, rho);
             obj.gain = GAIN;
         end
         
-        function M = supply(obj)
+        function M = supply(obj, vars_spec)
             %SUPPLY quadratic performance specification
             gamma = obj.gain;
             Mu = -eye(obj.nwp)*gamma;
@@ -44,7 +48,9 @@ classdef spec_e2e < spec_interface
             %CREATE_VARS form the variables for the problem                        
             mu_l2 = lmim('mu_l2', 1, 1);            
             vars = struct('mu_l2', mu_l2);
-            cons = append_lmi(cons, obj.gain - mu_l2, obj.LMILAB);
+            if ~obj.target
+                cons = append_lmi(cons, obj.gain - mu_l2, obj.LMILAB);
+            end
         end
     end
 end

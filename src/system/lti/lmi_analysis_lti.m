@@ -55,9 +55,9 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             sM = ssize(con_M,1);
             cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB); 
 
-        end
-
-        
+            %impose sign constraint
+            cons = obj.con_terminal(G, cons, diss.iqc_rob);
+        end        
 
 
 
@@ -68,78 +68,106 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             G = vars.diss.G;
 
             
+           
             sysb = obj.sys_block(diss.plant, G, G, diss.spec.rho);
 
             %variable to optimize
             mu = vars.spec{diss.spec.id}.mu_l2;
 
-            %separate the performance outputs   
-            nzp = length(diss.spec.izp);
-            ind_sep = (diss.iqc_rob.np) + (1:nzp);
-            nz = ssize(diss.plant.D, 1);
-
-            ind_diff_sep = setdiff(1:nz, ind_sep);
-            Iz = eye(nz);
-            Izp = Iz(ind_diff_sep, :);
-
-            %the plant without the schur-complemented-out performance input
-            alg_screen = Izp*diss.plant;
-
-
-            Ezp = sparse(1:length(ind_sep), ind_sep, ones(length(ind_sep)), ...
-                length(ind_sep), ssize(diss.plant.C, 1));
-
-
-            CDp = Ezp * [diss.plant.C, diss.plant.D];
-                       
+            [plant_no_p, CDp] = obj.separate_performance_output(diss);
 
             %form the supply
             nwp = length(diss.spec.iwp);
             M_base = blkdiag(diss.iqc_rob.M, -mu * eye(nwp));
             
             objective = mu;            
-            suppb = obj.supply_block(alg_screen, M_base);
+            suppb = obj.supply_block(plant_no_p, M_base);
 
 
             %wrap it all together           
             con_M_top = sysb + suppb;
+            nzp = ssize(CDp, 1);
             con_M = [con_M_top, CDp'; CDp, mu*eye(nzp)];
 
 
             sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB);             
+            cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB);   
+            
+            
+            %impose sign constraint
+            cons = obj.con_terminal(G, cons, diss.iqc_rob);
         end
 
-        %% Peak-to-Peak norm (finite horizon)
+        %% Peak-to-Peak norm (at each finite horizon)
 
         function [cons, objective, con_M] = p2p(obj, vars, cons, diss)
-            %QUAD: certificate of infinite-horizon quadratic performance
+            %p2p: certificate of peak to peak induced norm
+            %
+            % sup norm(zp, 2) / norm(wp, 2) <= objective
 
+            % verification by Theorem 4 of https://www.sciencedirect.com/science/article/pii/S2405896323008194
 
-            cons = obj.con_terminal(vars, cons, diss.iqc_rob);
-
+            %storage matrix
             G = vars.diss.G;
+                      
+            %terminal constraint
+            X = diss.iqc_rob.X;
+            nf = ssize(X);
+            n = ssize(G, 1);
+            Ef = [eye(nf); zeros(n-nf, nf)];
 
-            sysb = obj.sys_block(diss.plant, G, G, diss.spec.rho);
+            X_f = Ef * X * Ef';
+
+            
+
+            %variable to optimize
+            vars_spec = vars.spec{diss.spec.id};
+            mu = vars_spec.mu_p2p;
+
+            objective = 0;      
+
+            %form the plant
+            [plant_no_p, CDp] = obj.separate_performance_output(diss);
 
 
-            M_quad = obj.merge_spec_M(diss.iqc_rob, diss.spec);
-            suppb = obj.supply_block(diss.plant, M_quad);
+            %Block 1: without performance
+            
+            nwp = length(diss.spec.iwp);
+            M_base = blkdiag(diss.iqc_rob.M, -mu * eye(nwp));
+            
+            sysb_1 = obj.sys_block(diss.plant, G, G, diss.spec.rho);
+            suppb_1 = obj.supply_block(plant_no_p, M_base);
 
 
-            %wrap it all together
-            objective = 0;
+            con_M_1 = sysb_1 + suppb_1;
 
-            con_M = sysb + suppb;
+            %Block 2: with performance (and terminal constraint)
 
+            sysb_2 = obj.sys_block(diss.plant, G, X_f, diss.spec.rho);
+            
 
-            sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB); 
+            %remember to take proper block diagonals and indexes!
+            M_quad = obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
+            
 
+            
+            suppb_2 = obj.supply_block(diss.plant, M_quad);
+            
+            con_M_2 = sysb_2 + suppb_2;
+
+            %wrap it all together           
+
+            sM1 = ssize(con_M_1,1);  sM2 = ssize(con_M_2,1);
+
+            cons = append_lmi(cons, con_M_1 - obj.tol.M*eye(sM1), obj.LMILAB);   
+            cons = append_lmi(cons, con_M_2 - obj.tol.M*eye(sM2), obj.LMILAB);                         
+
+            con_M = {con_M_1, con_M_2};
         end
 
     end
 
     
 end
+
 

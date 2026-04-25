@@ -89,19 +89,26 @@ classdef lmi_dispatch_interface
         end
 
         %% helper functions
-        function M = merge_spec_M(obj, iqc_rob, sp)
+        function M = merge_spec_M(obj, iqc_rob, sp,  vars_spec)
             %MERGE_SPEC_M merge the running cost of the robustness and the 
             %performance specification
             %
             %Input:
             %   iqc_rob: robust IQC 
             %   sp:      performance specification
+            %   vars_spec: variables in the specification
 
+            if nargin > 2
+                supp =sp.supply(vars_spec);
+            else
+                supp = sp.supply();
+            end
             n1 = iqc_rob.np;
             m1 = iqc_rob.nq;
             n2 = length(sp.iwp);
             m2 = length(sp.izp);
-            [M] = outer_blkdiag(iqc_rob.M, sp.supply, n1, m1, n2, m2);
+            
+            [M] = outer_blkdiag(iqc_rob.M, supp, n1, m1, n2, m2);
             % Mdiag = blkdiag(iqc_op.M, sp.supply);
         end
         

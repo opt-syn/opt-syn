@@ -60,7 +60,7 @@ classdef spec_interface
             vars = [];            
         end
 
-        function [M] = supply(obj)
+        function [M] = supply(obj, vars_spec)
             %SUPPLY quadratic performance specification
             M = [];
         end

@@ -70,12 +70,15 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
         end
 
         %% terminal constraints
-        function [cons, con_X] = con_terminal(obj, vars, cons, iqc_op)
+        function [cons, con_X] = con_terminal(obj, G, cons, iqc_op)
             %CON_TERMINAL
             %terminal cost constraint (nonnegativity for the storage function G)
             %coupled positivity if the IQC has a terminal cost
+            %
+            %
+            %
             X = iqc_op.X;
-            G = vars.diss.G;
+            
 
             nf = ssize(X);
             n = ssize(G, 1);
@@ -122,6 +125,41 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
             Cblock = [plant.C, plant.D];   
             
             sb = Cblock' * (-M) * Cblock;
+
+        end
+
+
+        function [plant_no_p, CDp] = separate_performance_output(obj, diss)
+
+            %SEPARATE_PERFORMANCE_OUTPUT
+            %extract the performance output from the plant
+            %
+            %plant_no_p:    the plant with the performance output removed
+            %CDp:           the entries of [Cp, Dp] matrix for the
+            %               performance output
+            %
+            %
+            %This routine is used in the computation of l2 norms via Schur
+            %complements            
+            
+            %separate the performance outputs   
+            nzp = length(diss.spec.izp);
+            ind_sep = (diss.iqc_rob.np) + (1:nzp);
+            nz = ssize(diss.plant.D, 1);
+
+            ind_diff_sep = setdiff(1:nz, ind_sep);
+            Iz = eye(nz);
+            Izp = Iz(ind_diff_sep, :);
+
+            %the plant without the schur-complemented-out performance input
+            plant_no_p = Izp*diss.plant;
+
+
+            Ezp = sparse(1:length(ind_sep), ind_sep, ones(length(ind_sep)), ...
+                length(ind_sep), ssize(diss.plant.C, 1));
+
+
+            CDp = Ezp * [diss.plant.C, diss.plant.D];
 
         end
 
