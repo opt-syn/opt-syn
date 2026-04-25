@@ -159,66 +159,9 @@ classdef opt_analysis < opt_manager_interface
 
             alg_psi = psi * GI;           
           
-        end
-        
-        
-        function [con_M, objective] = con_dissipation(obj, vars, diss, param)
-            %CON_DISSIPATION: the dissipation relation for IQC synthesis
-
-            %TODO: special calls for the h infinity and h2 structures
-            %for convexification
-
-            if nargin < 4
-                param = [];
-            end
-
-            G = vars.diss.G;
-
-            %storage routines
-            G_current = G;
-            G_next = G;
-
-            Gblock = blkdiag(diss.spec.rho^2 * G_current, -G_next);
-
-            [n, m] = size(diss.plant.B);  
+        end             
 
 
-                Ablock = [eye(n), zeros(n, m);
-                    diss.plant.A, diss.plant.B];
-    
-                Cblock = [diss.plant.C, diss.plant.D];
-               
-                                
-                Center_block = blkdiag(Gblock, -diss.M);
-                Outer_block = [Ablock; Cblock];
-
-                con_M = (Outer_block' * Center_block * Outer_block);
-            
-
-                sys_block = Ablock' * Gblock * Ablock;
-                
-                supp_block = -Cblock' * diss.M * Cblock;
-
-                objective = 0;
-        end
-
-
-
-        function objective = get_objective(obj, vars)
-            %GET_OBJECTIVE determine the objective for optimization
-            %TODO: fill in specification
-
-            % objective = vars.diss.ga;
-            % objective = trace(vars.diss.G);
-            objective = 0;
-            % objective = 0;
-
-            % for i = 1:length(obj.specs)
-            %     if strcmp(obj.specs{i}.type, 'finite_l2')
-            %         objective = vars.specs{i}.mu_l2;
-            %     end
-            % end
-        end
 
         function [vars, cons, objective] = build_program(obj, specs)
             %BUILD_PROGRAM set up the algorithm analysis problem
@@ -239,7 +182,7 @@ classdef opt_analysis < opt_manager_interface
             [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);
             
             %the dissipation can change
-            [vars, cons, objective] = build_dissipation(obj, vars, cons, alg_psi, iqc_op, specs);
+            [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_op, specs);
 
         end
 

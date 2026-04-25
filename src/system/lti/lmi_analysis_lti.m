@@ -31,13 +31,11 @@ classdef lmi_analysis_lti < lmi_analysis_interface
         %is the default
         
         
-            %CON_TERMINAL terminal constraint
-        
 
 
-
+        %% Quadratic performance (infinite horizon)
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
-            %QUAD: certificate of quadratic performance
+            %QUAD: certificate of infinite-horizon quadratic performance
 
             G = vars.diss.G;
 
@@ -59,7 +57,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
         end
 
-
+        
 
 
 
@@ -112,8 +110,33 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB);             
         end
 
+        %% Peak-to-Peak norm (finite horizon)
+
+        function [cons, objective, con_M] = p2p(obj, vars, cons, diss)
+            %QUAD: certificate of infinite-horizon quadratic performance
 
 
+            cons = obj.con_terminal(vars, cons, diss.iqc_rob);
+
+            G = vars.diss.G;
+
+            sysb = obj.sys_block(diss.plant, G, G, diss.spec.rho);
+
+
+            M_quad = obj.merge_spec_M(diss.iqc_rob, diss.spec);
+            suppb = obj.supply_block(diss.plant, M_quad);
+
+
+            %wrap it all together
+            objective = 0;
+
+            con_M = sysb + suppb;
+
+
+            sM = ssize(con_M,1);
+            cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB); 
+
+        end
 
     end
 

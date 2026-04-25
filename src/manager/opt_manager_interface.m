@@ -377,11 +377,15 @@ classdef (Abstract) opt_manager_interface
         end
 
 
-        function [vars, cons, objective] = build_dissipation(obj, vars, cons, alg_psi, iqc_op, specs)
-            %BUILD_DISSIPATION: form the dissipation relations for the
+        function [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_op, specs)
+            %CONS_DYNAMIC: form the dynamical dissipation relations for the
             %system (at the current set of specifications)
             %
-            %Output
+            %Output:
+            %   vars:       variables
+            %   cons:       accumulated constraints
+            %   objective:  single value to be minimized in inner loop (not
+            %               the outer loop of bisection)
 
             [diss] = obj.index_specs(alg_psi, iqc_op, specs);
             ndiss = length(diss);
@@ -389,7 +393,7 @@ classdef (Abstract) opt_manager_interface
             %dissipation relations
             objective = 0;
             for i = 1:ndiss
-                [cons, objective_curr] = obj.lmi.con_dissipation(vars, cons, diss{i});                                 
+                [cons, objective_curr] = obj.lmi.cons_dynamic(vars, cons, diss{i});                                 
 
                 objective = objective + objective_curr;
 
@@ -399,14 +403,14 @@ classdef (Abstract) opt_manager_interface
             end
 
             %terminal cost/sign constraints
-            if obj.opts.impose_X
-                %for infinite-horizon performance measures (l2 norm, h2
-                %norm), terminal costs and sign constraints on the
-                %storage function are not required. For finite-horizon
-                %specifications (e.g. Invariance, peak-to-peak), they
-                %are needed.                
-                cons = obj.lmi.con_terminal(vars, cons, iqc_op);               
-            end
+            % if obj.opts.impose_X
+            %     %for infinite-horizon performance measures (l2 norm, h2
+            %     %norm), terminal costs and sign constraints on the
+            %     %storage function are not required. For finite-horizon
+            %     %specifications (e.g. Invariance, peak-to-peak), they
+            %     %are needed.                
+            % 
+            % end
         end
 
 
@@ -417,7 +421,7 @@ classdef (Abstract) opt_manager_interface
         oracle_order(obj)        
         build_program(obj)
         build_plant(obj, cons)
-        get_objective(obj)
+        % get_objective(obj)
         process_recovery(obj, sol);
     end
 end

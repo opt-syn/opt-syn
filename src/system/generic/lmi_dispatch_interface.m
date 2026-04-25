@@ -8,6 +8,7 @@ classdef lmi_dispatch_interface
     properties
         sys;
         LMILAB = 1;
+        impose_X = false;           %impose the sign constraint on the terminal cost
         tol = struct('M', 1e-7, ... %tolerance for dissipation constraints
             'X', 1e-7, ...          %tolerance for sign/terminal cost constraints 
             'G_max', 100)           %upper bound on norm of storage matrix
@@ -24,8 +25,8 @@ classdef lmi_dispatch_interface
         
         %KYP lemma terms, commonly found matrices
         
-        function [cons, objective, con_M] = con_dissipation(obj, vars, cons, diss)
-            %CON_DISSIPATION form the dissipation constraint
+        function [cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
+            %CONS form the dissipation and sign constraints
             %
             %Input:
             %   vars:   variables of the problem        
@@ -46,15 +47,15 @@ classdef lmi_dispatch_interface
             %need to look up the right constraint            
 
             %Upper-levels: iterate over the systems
-            [cons, objective, con_M] = obj.con_dissipation_single(vars, cons, diss);
+            [cons, objective, con_M] = obj.con_dynamic_single(vars, cons, diss);
 
             
                       
         end
     
 
-        function [cons, objective, con_M] = con_dissipation_single(obj,  vars, cons, diss)
-            %CON_DISSIPATION form a single dissipation constraint
+        function [cons, objective, con_M] = con_dynamic_single(obj,  vars, cons, diss)
+            %CON form a single dissipation and sign constraint
             %
             %Input:
             %   vars:   variables of the problem            
@@ -83,7 +84,6 @@ classdef lmi_dispatch_interface
                 msg = ['The performance specification ', diss.spec.type, ...
                     ' is not supported for ', spt, 'systems.'];
                 error('msg', 'OPT:spec_unsupported');
-
             end
     
         end
@@ -114,8 +114,10 @@ classdef lmi_dispatch_interface
         create_vars(obj, vars, cons, alg, specs)
         
         
-        %supported operators
+        %supported performance measures
         stability(obj, vars, cons, diss)  
+        e2e(obj, vars, cons, diss)  
+        e2e_target(obj, vars, cons, diss)  
 
         %should allow for:
             %quad
