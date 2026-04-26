@@ -1,6 +1,11 @@
 classdef (Abstract) opt_manager_interface
     %OPT_MANAGER_INTERFACE interface for the analysis and synthesis of
     %optimization/fixed point algorithms
+
+    %
+    %inheritance:
+    % opt_analysis  < opt_manager_interface 
+    % opt_synthesis < opt_manager_interface 
     
     properties
         sys;  %system (opt_system type)
@@ -8,6 +13,9 @@ classdef (Abstract) opt_manager_interface
         vars = {}; %specifications
         iqc_op = {};
         specs = {};        
+
+        %task: 'analysis' or 'synthesis': determined by subclass
+        
         
         %numerics
         LMILAB = true;
@@ -29,18 +37,44 @@ classdef (Abstract) opt_manager_interface
 
         end
 
-        function lmi_handler = select_lmi(obj, sys, routine)
-            %SELECT_LMI select the lmi routines based on teh system type
+        function lmi_handler = select_lmi(obj, sys)
+            %SELECT_LMI select the lmi routines based on the system type
             %
             %Input:
             %   sys:    type of system (e.g. opt_system_switched)
             %   routine:    'analysis' or 'synthesis'
             
             tp = sys.get_type();
-            clname = ['lmi_', routine, '_', tp];
+            clname = ['lmi_', obj.task, '_', tp];
             lmi_hand = str2func(clname);
 
             lmi_handler = lmi_hand(sys);
+
+        end
+
+
+
+        function [vars, cons, objective] = build_program(obj, specs)
+            %BUILD_PROGRAM set up the algorithm analysis problem
+
+            if nargin < 2
+                specs = obj.specs;
+            end
+
+            cons = obj.cons;
+            vars = obj.vars;
+
+            % [diss, cons] = obj.build_plant(cons);
+            %alg_loop: used for debugging. The algorithm after signal 
+            % transformationsbefore, but before cascade by the filters    
+
+            [iqc_data] = obj.iqc_op_all();
+            [alg_psi, iqc_op, alg_loop] = obj.sys.build_plant(iqc_data);
+
+            [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);
+
+            %the dissipation can change
+            [vars, cons, objective] = obj.cons_dynamic(vars, cons, alg_psi, iqc_op, specs);
 
         end
 
@@ -184,7 +218,8 @@ classdef (Abstract) opt_manager_interface
             specs = obj.specs;
 
             vars = obj.vars;
-            [alg_psi, iqc_op, alg_loop]  = obj.build_plant(cons);
+            [iqc_data] = obj.iqc_op_all();
+            [alg_psi, iqc_op, alg_loop]  = obj.sys.build_plant(iqc_data);
             [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);            
             
             
@@ -290,7 +325,44 @@ classdef (Abstract) opt_manager_interface
             
         end
 
-        %% Indexing routines for systems
+        %% Constraint optimization
+
+        %TODO: fmincon for the p2p objective
+
+        %% Formation of Constraints and Plants
+        function [iqc_data] = iqc_op_all(obj)
+            %IQC_OP_ALL: all iqcs for the operators
+            %
+            %
+            %useful for the build_plant routines
+            iqc = {};
+            m_same = [];
+            ind_same = [];
+            same_count = 0;
+
+            for i = 1:length(obj.iqc_op)
+                if ~obj.sys.op{i}.same
+                    %block diagonal of the iqc
+                    if isempty(iqc)
+                        iqc = obj.iqc_op{i};
+                    else
+                        iqc = blkdiag(iqc, obj.iqc_op{i});
+                    end
+                    same_count = same_count + obj.iqc_op{i}.nw;
+
+                else
+                    %treat the m=L case separately
+                    m_same = blkdiag(m_same, obj.iqc_op{i});
+
+                    ind_same = [ind_same, same_count + (1:length(m_same))];
+                    same_count = same_count + length(m_same);
+                end            
+            end
+
+            iqc_data =struct('iqc', iqc, 'm_same', m_same, 'ind_same', ind_same, 'task', obj.task);
+
+        end
+
         function [diss] = index_specs(obj, alg_psi, iqc_op, specs)
 
             %INDEX_SPECS:  index into the performance specifications
@@ -418,10 +490,7 @@ classdef (Abstract) opt_manager_interface
     end
 
     methods (Abstract)        
-        oracle_order(obj)        
-        build_program(obj)
-        build_plant(obj, cons)
-        % get_objective(obj)
+        oracle_order(obj)                        
         process_recovery(obj, sol);
     end
 end

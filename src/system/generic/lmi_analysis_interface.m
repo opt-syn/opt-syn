@@ -28,35 +28,28 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
         function [vars, cons] = create_vars(obj, vars, cons, alg_psi, specs)
             %CREATE_VARS create the variables for the problem
 
-            [vars.diss, cons] = obj.create_vars_storage(alg_psi, cons);
-            [vars.spec, cons] = obj.create_vars_spec(specs, cons);
+            [vars.diss, cons] = obj.create_vars_storage(cons, alg_psi);
+            [vars.spec, cons] = obj.create_vars_spec(cons, specs);
         end
 
-        function [vars_diss, cons]= create_vars_storage(obj, alg_psi, cons, name)
-            %create_vars_storage create variables for the dissipation
-            %constraints
 
-            if nargin < 4
-                name = [];
-            end
 
-            n = length(alg_psi.A);
+
+        function G = define_storage_G(obj, cons, alg_psi,  name)
+            %DEFINE_STORAGE_G storage function for a specific subsystem
+            n = ssize(alg_psi.A, 1);
             G = lmim(['G', name], n, n, 'sym');
 
-            vars_diss= struct('G', G);
- 
+            
+
             if obj.tol.G_max < Inf    
                 %issue in the bounding?
                 cons = append_lmi(cons, obj.tol.G_max*eye(n)  - G, obj.LMILAB);
-                cons = append_lmi(cons, obj.tol.G_max*eye(n)  + G, obj.LMILAB);
-
-                %lmim complains that the dimensions are wrong here.
-                % cons = append_lmi(cons, ga*eye(n)  - G, obj.LMILAB);
-                % cons = append_lmi(cons, ga*eye(n)  + G, obj.LMILAB);
-            end
+                cons = append_lmi(cons, obj.tol.G_max*eye(n)  + G, obj.LMILAB);                
+            end            
         end
 
-        function [vars_spec, cons] = create_vars_spec(obj, specs, cons)
+        function [vars_spec, cons] = create_vars_spec(obj, cons, specs)
             %CREATE_VARS_SPEC declare variables for the specifications
 
             %maybe put this somewhere else?

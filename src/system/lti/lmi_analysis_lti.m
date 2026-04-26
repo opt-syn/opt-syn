@@ -11,13 +11,14 @@ classdef lmi_analysis_lti < lmi_analysis_interface
     % performance specification: wp -> zp from (spec)
     %
     %   Implemented
-    %
+    %       stability
+    %       e2e
+    %       p2p
     %
     %   TODO:
-    %       stability
-    %       h2
+    %       h2      
     %       e2p
-    %       p2p
+    %       
     %
     
     methods
@@ -25,24 +26,44 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             %LMI_DISPATCH_LTI Construct an instance of this class
             %   Detailed explanation goes here
             obj@lmi_analysis_interface(sys);
-        end
+        end       
+        
+        
+        %% definition of variables
+        function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
+            %create_vars_storage create variables for the dissipation
+            %constraints
+            %
+            %Input:
+            %   cons:       accumulated constraints
+            %   alg_psi:    the filtered algorithmic interconnection
+            %   name:       a name for the variable
 
-        %function [vars_diss, cons]= create_vars_storage(obj, alg_psi, cons, name)
-        %is the default
-        
-        
+            if nargin < 4
+                name = [];
+            end
+
+            G = obj.define_storage_G(cons, alg_psi, name);
+            vars_diss= struct('G', G);
+
+        end
 
 
         %% Quadratic performance (infinite horizon)
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
             %QUAD: certificate of infinite-horizon quadratic performance
 
+
             G = vars.diss.G;
 
+
+            %system block with {A, B, G}
             sysb = obj.sys_block(diss.plant, G, G, diss.spec.rho);
 
 
-            M_quad = obj.merge_spec_M(diss.iqc_rob, diss.spec);
+            %supply block with {C, D, M}
+            vars_spec = vars.spec{diss.spec.id};
+            M_quad = obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
             suppb = obj.supply_block(diss.plant, M_quad);
 
 

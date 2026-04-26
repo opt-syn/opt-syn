@@ -5,6 +5,9 @@ classdef opt_analysis < opt_manager_interface
     % the fixed-point equation 
     %               0 \in sum_i F_i(\beta).
     %
+    properties
+        task = 'analysis';
+    end
        
     methods
         function obj = opt_analysis(sys)
@@ -12,13 +15,17 @@ classdef opt_analysis < opt_manager_interface
            
             obj@opt_manager_interface(sys);
 
-            obj.lmi = obj.select_lmi(sys, 'analysis');
+            obj.lmi = obj.select_lmi(sys);
 
         end
         
         %% define IQCs for the operators
         function [obj, vars, cons] = oracle_order(obj,order, ind)
             %ORACLE_ORDER: set the orders of the IQCs
+            %Example: order 3 for monotone operators (op_gen) or for SmL
+            %causal (op_sml_causal)
+            %
+            %         order [2, 1] for SmL noncausal (op_sml)
             nop = length(obj.sys.op);
             if nargin < 3
                 ind = 1:nop;
@@ -60,142 +67,15 @@ classdef opt_analysis < opt_manager_interface
             cons = append_lmi(cons, -cs + nop*1.1, obj.LMILAB);
         end
 
-        function [iqc, m_same, ind_same] = iqc_op_all(obj)
-            %IQC_OP_ALL: all iqcs for the operators
-            iqc = {};
-            m_same = [];
-            ind_same = [];
-            same_count = 0;
 
-            for i = 1:length(obj.iqc_op)
-                if ~obj.sys.op{i}.same
-                    %block diagonal of the iqc
-                    if isempty(iqc)
-                        iqc = obj.iqc_op{i};
-                    else
-                        iqc = blkdiag(iqc, obj.iqc_op{i});
-                    end
-                    same_count = same_count + obj.iqc_op{i}.nw;
-                    
-                else
-                    %treat the m=L case separately
-                    m_same = blkdiag(m_same, obj.iqc_op{i});
-
-                    ind_same = [ind_same, same_count + (1:length(m_same))];
-                    same_count = same_count + length(m_same);
-                end            
-            end
-
-        end
 
         
 
-        %% build the system
-        function [alg_psi, iqc_op, alg_loop] = build_plant(obj, cons, param)
-            %BUILD_PLANT: form the plant to be used for analysis           
-
-            %
-            %Output:
-            %   alg_psi:    plant with filters (psi)
-            %   alg_loop:   plant without filters, but after loop
-            %               transformation (should be stable)
-            %   iqc_op:     iqcs for the robust uncertainties
-            
-            if nargin < 3
-                param = [];
-            end
-
-            alg = obj.sys.get_alg(param);
-
-            %sort oracles based on the bind (exposure of repeated
-            %nonlinearities)
-            nop = length(obj.sys.bind);
-            [~, perm] = sort(obj.sys.bind);
-            
-            c = obj.sys.op{1}.c;
-            P = eye(nop);
-            P(:, perm) = P;
-            P = kron(P, eye(c));
-            
-            Pwp = blkdiag(P', eye(obj.sys.P.nwp));
-            Pzp = blkdiag(P, eye(obj.sys.P.nzp));
-
-            alg_perm = Pzp * alg * Pwp;
-            
-            %identify and get rid of the same (m=L) oracles   
-            %use an explicit substitution
-
-            [iqc_op, m_same, ind_same] = obj.iqc_op_all();
-
-            ind_diff = setdiff(1:obj.sys.P.nw, ind_same);
-            Pd = eye(nop);
-            Pd(:, [ind_same, ind_diff]) = Pd;
-            n_same = length(ind_same);
-
-            Pwp2 = blkdiag(Pd', eye(obj.sys.P.nwp));
-            Pzp2 = blkdiag(Pd, eye(obj.sys.P.nzp));
-            alg_perm_same = Pzp2 * alg_perm * Pwp2;
-
-            alg_perm_m = lft(m_same, alg_perm_same, n_same, n_same);
-            
-            %no loop transformations in performance
-            loop = iqc_op.loop;
-            nloop = length(loop)/2;
-            alg_loop = lft(loop, alg_perm_m, nloop, nloop);
-
-            %form the system
-            I = ss(eye(size(alg_loop.D, 2)));
-            GI = [alg_loop; I];
-
-            obj.sys.P.nwp;
-            
-            Psi1 = iqc_op.Psi1;
-            Psi2 = iqc_op.Psi2;
-            I_zp = eye(obj.sys.P.nzp);
-            I_wp = eye(obj.sys.P.nwp);
-
-            psi = blkdiag(Psi1, I_zp, Psi2, I_wp);
-           
-
-            alg_psi = psi * GI;           
-          
-        end             
-
-
-
-        function [vars, cons, objective] = build_program(obj, specs)
-            %BUILD_PROGRAM set up the algorithm analysis problem
-            
-            if nargin < 2
-                specs = obj.specs;
-            end
-            
-            cons = obj.cons;
-            vars = obj.vars;
-          
-            % [diss, cons] = obj.build_plant(cons);
-            %alg_loop: used for debugging. The algorithm after signal 
-            % transformationsbefore, but before cascade by the filters    
-
-            [alg_psi, iqc_op, alg_loop] = obj.build_plant(cons);
-
-            [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);
-            
-            %the dissipation can change
-            [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_op, specs);
-
-        end
-
-
-
-
-
-
+        %% extract the solution                   
         function  sol = process_recovery(obj, sol, lmi_out);
-            %PROCESS_RECOVERY post-process the solution
+            %PROCESS_RECOVERY recover the IQCs from the solution
+            %
             
-            %TODO: fill this in
-
             iqc_rec = cell(size(obj.iqc_op));
             for i = 1:length(obj.iqc_op)
                 if isnumeric(obj.iqc_op{i})

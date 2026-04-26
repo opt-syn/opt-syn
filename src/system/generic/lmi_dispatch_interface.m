@@ -119,12 +119,12 @@ classdef lmi_dispatch_interface
 
     methods (Abstract)
         create_vars(obj, vars, cons, alg, specs)
-        
+        create_vars_storage(obj, cons, alg_psi, name)
         
         %supported performance measures
         stability(obj, vars, cons, diss)  
-        e2e(obj, vars, cons, diss)  
-        e2e_target(obj, vars, cons, diss)  
+        % e2e(obj, vars, cons, diss)  
+        % e2e_target(obj, vars, cons, diss)  
 
         %should allow for:
             %quad

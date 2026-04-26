@@ -181,6 +181,9 @@ classdef  opt_system_interface
         nxn(obj)    %number of network states
         nxi(obj)    %number of controller states
 
+
+        build_plant()
+    
         %regulator equations
         form_internal_model(obj)
         check_regulator(obj)
