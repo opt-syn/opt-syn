@@ -212,8 +212,9 @@ classdef genplant
 
 
         function b_out = lft(obj, b2)
-            %LFT feedback interconnection of obj and plant bt
+            %LFT feedback interconnection of obj and plant b2
             %along common channels (u, y)
+            %obj star b2
 
             b_out = obj;
             if isa(b2, 'genplant')
@@ -237,6 +238,41 @@ classdef genplant
             end
 
             
+        end
+
+        function b_out = lft_lower(obj, b2)
+            %LFT_LOWER
+            b_out = obj.lft(obj, b2);
+        end
+
+        function b_out = lft_upper(obj, b2, nz2, nw2)
+            %LFT_UPPER linear fractional transformation
+            % LFT feedback interconnection of obj and plant b
+            %along common channels (u, y)
+            %b2 star obj
+
+            b_out = obj;
+            if isa(b2, 'genplant')
+
+
+                b_out.nw = b2.nw;
+                b_out.nwp = obj.nwp + b2.nwp;
+                b_out.nz = b2.nz;
+                b_out.nzp = obj.nzp + b2.nzp;
+                b_out.nu = obj.nu;
+                b_out.ny = obj.ny;
+                b_out.s = obj.s + b2.s;
+
+
+                b_out.P = lft(b2.P, obj.P, obj.nu, obj.ny);
+            else
+                [nz2_orig, nw2_orig] = size(b2.D);
+                b_out.P = lft(b2, obj.P, nz2, nw2);
+                b_out.nz = nz2_orig- nz2;
+                b_out.nw = nw2_orig - nw2;
+            end
+
+
         end
 
         function obj = lift(obj, d)
