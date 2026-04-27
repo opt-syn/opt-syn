@@ -12,9 +12,13 @@ classdef  opt_system_periodic < opt_system_switch
                 bind = 1:s;            
             end
 
+            if nargin >= 5
+                 tracking = [];
+            end
+
             Nss = max(P.Nss);
             adj = circshift(eye(Nss), -1);
-            obj@opt_system_switch(op, P, K, adj, bind)
+            obj@opt_system_switch(op, P, K, adj, bind, tracking)
             obj.type = 'periodic';
         end        
 

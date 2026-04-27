@@ -44,7 +44,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
                 name = [];
             end
 
-            G = obj.define_storage_G(cons, alg_psi, name);
+            [G, cons] = obj.define_storage_G(cons, alg_psi, name);
             vars_diss= struct('G', G);
 
         end
