@@ -148,21 +148,14 @@ classdef (Abstract) opt_manager_interface
         end
 
 
-        function [sol] = solve_single(obj, order, specs)
+        function [sol] = solve_single(obj, arg, specs)
             %SOLVE_SINGLE Solve the program once
 
             %ADD_SPECIFICATIONS
-            if ~iscell(order)
-                order0 =order;
-                nop = length(obj.sys.op);
-                order = cell(nop, 1);
-                for i = 1:nop
-                    order{i}  = order0;
-                end
-            end
+
 
             % warning('all', 'off')
-            obj = obj.oracle_order(order);
+            obj = obj.process_argument(arg);            
             obj = obj.add_specifications(specs);
 
             [vars, cons, objective] = obj.build_program(); 
@@ -190,13 +183,16 @@ classdef (Abstract) opt_manager_interface
         end
 
         %% Bisection routines
-        function [sol_best, vr] = bisect(obj, order, specs, b_opts)
+        function [sol_best, vr] = bisect(obj, arg, specs, b_opts)
             %BISECT: perform bisection on a parameter. Minimization target
             %
             %sweep in options structure? 
             %
             %Input
             %
+            % arg:      arguments for the routine (order for analysis, iqcs
+            %           for synthesis)
+            % specs:    performance specifications
             % (b_opts): bisection options (bisect_opts)
             %   param_range:    upper and lower bound for the parameter
             %   sweep_rho:      True:  sweep rho for the specification
@@ -216,21 +212,15 @@ classdef (Abstract) opt_manager_interface
             vr = [];
             %base relations
             
-            nop = length(obj.sys.op);
-            if ~iscell(order)
-                order0 =order;
-                order = cell(nop, 1);
-                for i = 1:nop
-                    order{i}  = order0;
-                end
-            end
-            
-            obj = obj.oracle_order(order);
+
+            %process the inputs and specifications
+            obj = obj.process_argument(arg);
             obj = obj.add_specifications(specs);
             cons = obj.cons;
             specs = obj.specs;
-
             vars = obj.vars;
+
+            %form the plant
             [iqc_data] = obj.iqc_op_all();
             [alg_psi, iqc_op, alg_loop]  = obj.sys.build_plant(iqc_data);
             [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);            
@@ -286,17 +276,19 @@ classdef (Abstract) opt_manager_interface
                 end
             end
 
-            if sol.status == 0
+
+
+            if sol_best.status == 0
                 if obj.LMILAB
                     [vrec] = rec_vars(vars, sol.lmi_out);
                 else
                     [vrec] = rec_vars(vars);
                 end
 
-                sol.vars = vrec;
+                sol_best.vars = vrec;
 
-                sol = obj.process_recovery(sol, sol.lmi_out);
-                sol.objective = double(double(sol.objective, sol.lmi_out));
+                sol_best = obj.process_recovery(sol_best, sol_best.lmi_out);
+                sol_best.objective = double(double(sol_best.objective, sol_best.lmi_out));
             end
 
                         
@@ -517,9 +509,9 @@ classdef (Abstract) opt_manager_interface
         
     end
 
-    methods (Abstract)        
-        oracle_order(obj)                        
-        process_recovery(obj, sol);
+    methods (Abstract)   
+        process_argument(obj, arg); %inputs to run the routine
+        process_recovery(obj, sol); %get the solution
     end
 end
 

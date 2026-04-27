@@ -20,6 +20,21 @@ classdef opt_analysis < opt_manager_interface
         end
         
         %% define IQCs for the operators
+        function obj = process_argument(obj, order)
+            %PROCESS_ARGUMENT assign orders to the operators/IQCs
+
+            if ~iscell(order)
+                order0 =order;
+                nop = length(obj.sys.op);
+                order = cell(nop, 1);
+                for i = 1:nop
+                    order{i}  = order0;
+                end
+            end
+            obj = obj.oracle_order(order);
+        end
+
+
         function [obj, vars, cons] = oracle_order(obj,order, ind)
             %ORACLE_ORDER: set the orders of the IQCs
             %Example: order 3 for monotone operators (op_gen) or for SmL
