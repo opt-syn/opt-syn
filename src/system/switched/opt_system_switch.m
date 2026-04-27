@@ -109,6 +109,7 @@ classdef  opt_system_switch < opt_system_interface
 
 
             alg_psi = cell(obj.Nss, 1);
+            alg_loop = cell(obj.Nss, 1);
            
             %get the plant and the IQCs.
             %for each subsystem
@@ -119,7 +120,7 @@ classdef  opt_system_switch < opt_system_interface
             for i = 1:obj.Nss
                 param = struct('mode', i);
                 alg = obj.get_alg(param); 
-                [alg_psi{i}, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data);
+                [alg_psi{i}, iqc_op, alg_loop{i}] = build_plant_single(obj, alg, iqc_data);
             end
             %repeat this call multiple times for switched systems. This
             %function will be overloaded, whereas build_plant_single will

@@ -207,9 +207,7 @@ classdef (Abstract) opt_manager_interface
             %   sol_best: the best solution
             %   vr:       the range of the value at the optimal bisection
 
-            if ~iscell(order)
-                order = {order};               
-            end
+
             if nargin < 4
                 b_opts = bisect_opts;
             end
@@ -217,6 +215,15 @@ classdef (Abstract) opt_manager_interface
             sol_best = [];
             vr = [];
             %base relations
+            
+            nop = length(obj.sys.op);
+            if ~iscell(order)
+                order0 =order;
+                order = cell(nop, 1);
+                for i = 1:nop
+                    order{i}  = order0;
+                end
+            end
             
             obj = obj.oracle_order(order);
             obj = obj.add_specifications(specs);
@@ -382,7 +389,7 @@ classdef (Abstract) opt_manager_interface
             %                                       formulation)
             %               false: hard constraint
             
-            %TODO: figure out synthesis here
+            %TODO: maybe this should go inside the (system), not (manager)?
             
             if nargin < 4
                 specs = obj.specs;
@@ -427,18 +434,33 @@ classdef (Abstract) opt_manager_interface
                 % nwr = length(sp_ind_r);
 
                 %TODO: allow for synthesis here
-                [nwr, nww] = ssize(alg_psi.D);
+
+                
+
+                if iscell(alg_psi)
+                    [nwr, nww] = ssize(alg_psi{1}.D);
+                else
+                    [nwr, nww] = ssize(alg_psi.D);
+                end
                 %enforce squareness in the performance specs?
                 E_w = full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww));
                 E_r = full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr));
 
 
-                %nonminimal representation
-                alg_screen = E_r * alg_psi * E_w;
+                %nonminimal representation of the multiplier-extended plant
+                if iscell(alg_psi)
+                    alg_screen = cell(size(alg_psi));
+                    for j = 1:length(alg_screen)
+                        alg_screen{j} = E_r * alg_psi{j} * E_w;
+                    end
+                else
+                    alg_screen = E_r * alg_psi * E_w;
+                end
 
 
-                diss{i} = struct('plant', alg_screen, 'iqc_rob', iqc_op, ...
+                diss{i} = struct('iqc_rob', iqc_op, ...
                     'spec', sp);
+                diss{i}.plant = alg_screen;
                 % %need to permute the entries of Mdiag for the partition
 
 

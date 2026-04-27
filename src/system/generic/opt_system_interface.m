@@ -37,6 +37,80 @@ classdef  opt_system_interface
             
         end    
 
+        %% formation of the plant
+        function [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data)
+            
+
+            %sort oracles based on the bind (exposure of repeated
+            %nonlinearities)
+            nop = length(obj.bind);
+            [~, perm] = sort(obj.bind);
+
+            %TODO: different number of channels per oracle
+            c = obj.op{1}.c;
+            P = eye(nop);
+            P(:, perm) = P;
+            P = kron(P, eye(c));
+
+            Pwp = blkdiag(P', eye(obj.P.nwp));
+            Pzp = blkdiag(P, eye(obj.P.nzp));
+
+            alg_perm = Pzp * alg * Pwp;
+
+            %identify and get rid of the same (m=L) oracles   
+            %use an explicit substitution
+
+
+            ind_same = iqc_data.ind_same;
+            
+            ind_diff = setdiff(1:obj.P.nw, ind_same);
+            Pd = eye(nop*c);
+            Pd(:, [ind_same, ind_diff]) = Pd;
+            n_same = length(ind_same);
+
+            Pwp2 = blkdiag(Pd', eye(obj.P.nwp));
+            Pzp2 = blkdiag(Pd, eye(obj.P.nzp));
+            alg_perm_same = Pzp2 * alg_perm * Pwp2;
+
+            alg_perm_m = lft(iqc_data.m_same, alg_perm_same, n_same, n_same);
+
+            
+            %get the iqcs for the operators
+            %no loop transformations in performance
+            iqc_op = iqc_data.iqc;
+
+            loop = iqc_op.loop;
+            nloop = length(loop)/2;
+            alg_loop = lft(loop, alg_perm_m, nloop, nloop);
+
+
+            %form the system
+            I = ss(eye(size(alg_loop.D, 2)));
+            GI = [alg_loop; I];
+
+            obj.P.nwp;
+
+
+            %TODO: division between analysis and synthesis
+
+            if strcmp(iqc_data.task, 'analysis')
+                Psi1 = iqc_op.Psi1;
+                Psi2 = iqc_op.Psi2;
+                I_zp = eye(obj.P.nzp);
+                I_wp = eye(obj.P.nwp);
+    
+                psi = blkdiag(Psi1, I_zp, Psi2, I_wp);
+                
+    
+                alg_psi = psi * GI; 
+            else
+                %TODO: implement synthesis
+                error('Synthesis not yet implemented (future feature)')
+            end
+        end
+
+
+
         %% Dimension Counters
         function nss = Nss(obj)
             %NSS: number of subsystems

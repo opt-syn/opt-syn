@@ -71,7 +71,7 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
                 diss_curr = diss;
                 diss_curr.plant = diss.plant{i};
                 diss_curr.ind_curr = i;
-                diss_curr.ind_next = 1+mod(i+1, obj.Nss);
+                diss_curr.ind_next = 1+mod(i, obj.Nss);
                 
 
                 [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
@@ -185,7 +185,7 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
             end
         end
 
-        function [vars_diss, cons]= create_vars_storage(obj, alg_psi, cons, name)
+        function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
             %create_vars_storage create variables for the dissipation
             %constraints. One for each subsystem
             %
@@ -212,11 +212,14 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
                 %define a storage function for each subsystem
 
                 for i = 1:obj.Nss
-                    G_curr = obj.define_storage_G(num2str(i));
+                    G_curr = obj.define_storage_G(cons, alg_psi{i}, num2str(i));
                     G_cell{i} = G_curr;
                 end
 
             end
+
+            vars_diss = struct;
+            vars_diss.G = G_cell;
 
         end
 
