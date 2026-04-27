@@ -55,7 +55,7 @@ classdef spec_interface
             nwwp = length(obj.iwp);
         end
 
-        function [vars, cons] = create_vars(obj, cons)
+        function [vars, cons] = create_vars(obj, cons, name)
             %CREATE_VARS form the variables for the problem            
             vars = [];            
         end

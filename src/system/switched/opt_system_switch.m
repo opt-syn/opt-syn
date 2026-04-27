@@ -76,7 +76,6 @@ classdef  opt_system_switch < opt_system_interface
             Kcurr = obj.K{param.mode};
         end    
         
-
         %dimensions
         function dimn = nxn(obj)
             %nxn: number of states in network
@@ -86,11 +85,52 @@ classdef  opt_system_switch < opt_system_interface
         function nss = Nss(obj)
             nss = obj.P.Nss;
         end
+
         function dimn = nxi(obj)
             %nxi: number of states in controller
             dimn = length(obj.K{1}.A);
         end
 
+
+        %% build the plant
+                function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, task)
+            %BUILD_PLANT: form the plant to be used for analysis
+            %or synthesis
+            %Input:
+            %   iqc_data: from manager.iqc_op_all, information about the
+            %             operator iqc descriptions
+            %   task: 'analysis' or 'synthesis'
+            %
+            %Output:
+            %   alg_psi:    plant with filters (psi)
+            %   alg_loop:   plant without filters, but after loop
+            %               transformation (should be stable)
+            %   iqc_op:     iqcs for the robust uncertainties
+
+
+            alg_psi = cell(obj.Nss, 1);
+           
+            %get the plant and the IQCs.
+            %for each subsystem
+            %
+            %TODO: different IQCs for each subsystem, right now they are
+            %identical.
+            %
+            for i = 1:obj.Nss
+                param = struct('mode', i);
+                alg = obj.get_alg(param); 
+                [alg_psi{i}, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data);
+            end
+            %repeat this call multiple times for switched systems. This
+            %function will be overloaded, whereas build_plant_single will
+            %stay the same.
+            
+
+                      
+
+        end 
+
+        %% regulator equation
         %TODO: implement regulator equation
 
         function regulator = form_internal_model(obj)

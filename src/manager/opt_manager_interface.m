@@ -151,8 +151,14 @@ classdef (Abstract) opt_manager_interface
         function [sol] = solve_single(obj, order, specs)
             %SOLVE_SINGLE Solve the program once
 
+            %ADD_SPECIFICATIONS
             if ~iscell(order)
-                order = {order};               
+                order0 =order;
+                nop = length(obj.sys.op);
+                order = cell(nop, 1);
+                for i = 1:nop
+                    order{i}  = order0;
+                end
             end
 
             % warning('all', 'off')

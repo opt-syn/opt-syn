@@ -11,13 +11,19 @@ classdef  opt_system_periodic < opt_system_switch
                 s = length(op);
                 bind = 1:s;            
             end
-            
-            Nss = max(length(P), length(K));
+
+            Nss = max(P.Nss);
             adj = circshift(eye(Nss), -1);
             obj@opt_system_switch(op, P, K, adj, bind)
             obj.type = 'periodic';
         end        
 
+
+        function tp = get_type(obj)
+            %get the type of the switched system
+            %is periodic!
+            tp = obj.type;
+        end
 
         function mode_next = next_mode(obj, mode)
             %next mode in the switching sequence

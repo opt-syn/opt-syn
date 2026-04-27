@@ -13,6 +13,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
     %   Implemented
     %       stability
     %       e2e
+    %       quad
     %       p2p
     %
     %   TODO:

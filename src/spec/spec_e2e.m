@@ -44,9 +44,12 @@ classdef spec_e2e < spec_interface
             
        end
 
-       function [vars, cons] = create_vars(obj, cons)
+       function [vars, cons] = create_vars(obj, cons, name)
             %CREATE_VARS form the variables for the problem                        
-            mu_l2 = lmim('mu_l2', 1, 1);            
+            if nargin < 3
+                name = [];
+            end
+            mu_l2 = lmim(['mu_l2', name], 1, 1);            
             vars = struct('mu_l2', mu_l2);
             if ~obj.target
                 cons = append_lmi(cons, obj.gain - mu_l2, obj.LMILAB);

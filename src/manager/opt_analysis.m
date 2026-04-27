@@ -26,7 +26,17 @@ classdef opt_analysis < opt_manager_interface
             %causal (op_sml_causal)
             %
             %         order [2, 1] for SmL noncausal (op_sml)
+
             nop = length(obj.sys.op);
+            if ~iscell(order)
+                order0 =order;
+                order = cell(nop, 1);
+                for i = 1:nop
+                    order{i}  = order0;
+                end
+            end
+
+            
             if nargin < 3
                 ind = 1:nop;
             end

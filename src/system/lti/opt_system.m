@@ -48,16 +48,13 @@ classdef  opt_system < opt_system_interface
         end
 
         %% build the plant
-        function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, task, param)
+        function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, task)
             %BUILD_PLANT: form the plant to be used for analysis
             %or synthesis
             %Input:
             %   iqc_data: from manager.iqc_op_all, information about the
             %             operator iqc descriptions
             %   task: 'analysis' or 'synthesis'
-            %   param: set of parameters: 
-            %       TODO: this may be unnecessary? Carried entirely by the
-            %       system description.
             %
             %Output:
             %   alg_psi:    plant with filters (psi)
@@ -73,7 +70,7 @@ classdef  opt_system < opt_system_interface
 
             %get the plant and the IQCs.
             
-            alg = obj.get_alg(param);            
+            alg = obj.get_alg([]);            
             
 
             %repeat this call multiple times for switched systems. This
