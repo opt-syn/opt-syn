@@ -9,10 +9,21 @@ if isnumeric(lmi_add)
     lmi_new = lmi_old;
 else
     if LMILAB
-        if isempty(lmi_old)
-            lmi_new = lmis(-lmi_add);
+
+        if iscell(lmi_add)
+                % lmi_neg = lmi_add;
+                
+            lmi_neg = cellfun(@(c) -c, lmi_add, 'UniformOutput', false);
         else
-            lmi_new = lmis(lmi_old, -lmi_add);
+            lmi_neg = -lmi_add;
+        end
+
+
+        if isempty(lmi_old)
+            lmi_new = lmis(lmi_neg);
+        else
+            
+            lmi_new = lmis(lmi_old, lmi_neg);
         end   
     else
         lmi_new = [lmi_old; lmi_add >= 0];

@@ -21,6 +21,8 @@ else
     [n, m] = size(M);
 end
 
+    cv = cell(n*m, 1);
+    count = 1;
     for i =1:n
         e = zeros(1, n);
         e(i) = 1;
@@ -31,10 +33,13 @@ end
             
             vc = e * M * ej;
             if ~isnumeric(vc)
-                cons = append_lmi(cons, vc + vc', 1);
+                cv{count} = vc;
             end
+            count = count + 1;
         end
     end
+
+    cons = append_lmi(cons, cv, LMILAB);
 
 end
 

@@ -95,10 +95,11 @@ classdef lmis
                     cn=c;
                 end
             else
-                if ~isa(p,'lmim')
+                if ~isa(p,'lmim') && ~iscell(p)
                     error('First argument must be a single lmim.')
                 else
-                    sn=lmim(p);
+                    % sn=lmim(p);
+                    sn = p;
                     if nargin>2;
                         error('Only two arguments allowed.')
                     end
@@ -115,6 +116,15 @@ classdef lmis
                 else
                     %cost map always replaced, no arrays allowed.
                     so.cost=sn;
+                end
+            elseif iscell(sn)
+                lsn = length(sn);
+                lf = length(so.fac);
+                valcn = lmival(cn);
+
+                for i = lsn:-1:1
+                    so.lmim(lf + i) = sn{i};
+                    so.fac(lf + i) = valcn;
                 end
             else
                 %otherwise adjoin sn to so.lmim and outer factor if
