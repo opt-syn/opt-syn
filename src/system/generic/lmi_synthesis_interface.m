@@ -144,34 +144,34 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %
 
 
-            n = ssize(alg_psi{1}.A, 1);
+            n = ssize(alg_psi.A, 1);
             ns = ssize(obj.model.S, 1);
 
 
 
+            nX = n + ns;
+
             
-            if obj.reduced_order
+            if obj.opts.reduced_order
                 %TODO: not yet implemented
-                nc = n - ns;
+                nY = n;
             else
-                nc = n;
+                nY = n + ns;
             end
 
-             GX = lmim(['GX', name], n, n, 'sym');
+             GX = lmim(['GX', name], nX, nX, 'sym');
             
           
 
-            GY = lmim(['GY', name], nc, nc, 'sym');
+            GY = lmim(['GY', name], nY, nY, 'sym');
 
             %TODO the terminal constraints with the coupling condition?
 
 
             %bound the entries of the GX and GY matrices
             if obj.tol.G_max < Inf                   
-                cons = append_lmi(cons, obj.tol.GX_max*eye(n)  - GX, obj.LMILAB);
-                cons = append_lmi(cons, obj.tol.GX_max*eye(n)  + GX, obj.LMILAB);                
-                cons = append_lmi(cons, obj.tol.GY_max*eye(nc)  - GY, obj.LMILAB);
-                cons = append_lmi(cons, obj.tol.GY_max*eye(nc)  + GY, obj.LMILAB);  
+                cons = append_lmi(cons, obj.tol.GX_max*eye(nX)  - GX, obj.LMILAB);                            
+                cons = append_lmi(cons, obj.tol.GY_max*eye(nY)  - GY, obj.LMILAB);                
             end            
         end
 
@@ -187,7 +187,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             if obj.reduced_order
                 %TODO: not yet implemented
-                T = vars.reg.Pi;
+                %some sort of indexing on Pi
+                Pi = vars.reg.Pi;
                 G = [GY, eye(nx); eye(nx), GX];
             else
                 %
@@ -219,14 +220,14 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 name = [];
             end
 
-            n = ssize(alg_psi{1}.A, 1);
+            n = ssize(alg_psi.A, 1);
             ns = ssize(obj.model.S, 1);
             
-            if obj.reduced_order
+            if obj.opts.reduced_order
                 %TODO: not yet implemented
-                nc = n - ns;
-            else
                 nc = n;
+            else
+                nc = n + ns;
             end
 
             ny = obj.sys.P.ny;
@@ -235,12 +236,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %declare the variables
             vars_K = struct;
             %easy: ABC
-            vars_K.Ak = lmim(['Ak', name], nc, nc);
-            vars_K.Bk = lmim(['Bk', name], nc, ny);
-            vars_K.Ck = lmim(['Ck', name], nu, nc);
+            vars_K.A = lmim(['Ak', name], nc, nc);
+            vars_K.B = lmim(['Bk', name], nc, ny);
+            vars_K.C = lmim(['Ck', name], ns + nu, nc);
 
 
-            vars_K.Dk = obj.form_Dk();
+            vars_K.D = obj.form_Dk(alg_psi);
             %TODO: better interface here: number of inputs
             
 
@@ -248,32 +249,43 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %no elimination just yet
 
             %bound entries of the controllers
-            kq = [vars.Ak, vars.Bk;            
-              vars.Ck,  vars.Dk];
-            cons= append_lmi(cons, vars.ga*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], LMILAB);
+            kq = [vars_K.A, vars_K.B;            
+              vars_K.C,  vars_K.D];
+            cons= append_lmi(cons, obj.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
 
         end
 
-        function [Dk] = form_Dk(obj, D_mask_0)
+        function [Dk] = form_Dk(obj, alg_psi, name)
             %FORM_Dk: lower triangular structure needed for the controller
             %need a better interface for the mask
+
+
+            %also, maybe an object structure for the internal model?
             
+            if nargin < 3
+                name = [];
+            end
+
+            
+            n = ssize(alg_psi.A, 1);
+
             s = length(obj.sys.bind);
             c = obj.sys.op{1}.c;
             nu = obj.sys.P.nu;
+            ns = size(obj.model.R, 2);
 
             %more difficult: Dk
             
             %the unconstrained term for the internal model control
-            Dk1_var = lmim(['Dk1', name], nu-s*c, s*c, 'full');
+            Dk1_var = lmim(['Dk1', name], ns + n, ns, 'full');
             Dk = Dk1_var;
 
 
 
             %the sparsity-constrained term for internal model control
-            if nargin < 2
+            % if nargin < 2
                 D_mask_0 = obj.opts.D_mask;
-            end
+            % end
            
             if isempty(D_mask_0)
                 D_mask_0 = tril(ones(length(obj.sys.bind)));
@@ -283,6 +295,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             %use the triangular structure
             
+            %TODO: graceful handling of other dynamics
             D_mask = kron(D_mask_0, eye(c));
  
             nd2= nnz(D_mask);
@@ -304,14 +317,14 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                         Din = sparse(1:ncc, eind, ones(ncc, 1), ncc, s);
                         Din_var = Dvar * Din;
 
-                        vars_K.Dk = [vars_K.Dk; Din_var];
+                        Dk = [Dk; Din_var];
     
                         
                         % Dk2_curr = sparse(, 1:nc )
                         % vars.Dk(i+(nu-s), j) = Dk2_var * eind;
                         counter = counter+nnz(D_mask(i, :));
                     else
-                        vars_K.Dk = [vars_K.Dk; zeros(1, ny)];
+                        Dk = [Dk; zeros(1, ny)];
                     end
                     % end
                     
@@ -338,6 +351,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             %TODO: check that this is the right formula, specifically when
             %X is a non-PSD terminal cost
+
+            %matrix dilation results
 
             nf = ssize(X);
             n = ssize(G, 1);

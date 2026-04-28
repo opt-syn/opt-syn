@@ -30,6 +30,7 @@ classdef  opt_system < opt_system_interface
             dimn = length(obj.P.A);
         end
 
+
         function dimn = nxi(obj)
             %nxi: number of states in controller
             dimn = length(obj.K.A);
@@ -70,7 +71,11 @@ classdef  opt_system < opt_system_interface
 
             %get the plant and the IQCs.
             
-            alg = obj.get_alg([]);            
+            if strcmp(iqc_data.task, 'analysis');
+                alg = obj.get_alg([]);            
+            else
+                alg = obj.P.P;
+            end
             
 
             %repeat this call multiple times for switched systems. This

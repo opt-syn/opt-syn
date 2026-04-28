@@ -45,8 +45,8 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                 name = [];
             end
 
-            [G, cons] = obj.define_storage_G(cons, alg_psi, name);
-            vars_diss= struct('G', G);
+            [GX, GY, cons] = obj.define_storage_G(cons, alg_psi, name);
+            vars_diss= struct('GX', GX, 'GY', GY);
 
         end
 

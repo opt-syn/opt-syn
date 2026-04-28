@@ -13,7 +13,8 @@ classdef lmi_dispatch_interface
             'X', 1e-7, ...          %tolerance for sign/terminal cost constraints 
             'G_max', 100, ...       %upper bound on norm of storage matrix (analysis)
             'GX_max', 100, ...      %upper bound on norm of primal storage matrix (synthesis)
-            'GY_max', 100)          %upper bound on norm of dual storage matrix (synthesis)
+            'GY_max', 100,...       %upper bound on norm of dual storage matrix (synthesis)
+            'K_max', 100)           %upper bound on norm of controller state space matrices
     end
     
     methods

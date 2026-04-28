@@ -52,15 +52,19 @@ classdef  opt_system_interface
             P(:, perm) = P;
             P = kron(P, eye(c));
 
-            Pwp = blkdiag(P', eye(obj.P.nwp));
-            Pzp = blkdiag(P, eye(obj.P.nzp));
+            wshift = c*nop;
+
+            w_offset = ssize(alg.B, 2) - wshift;
+            z_offset = ssize(alg.C, 1) - wshift;
+
+
+            Pwp = blkdiag(P', eye(w_offset));
+            Pzp = blkdiag(P, eye(z_offset));
 
             alg_perm = Pzp * alg * Pwp;
 
             %identify and get rid of the same (m=L) oracles   
-            %use an explicit substitution
-
-
+            %use an explicit substitution w = m z rather than w \in F(z)
             ind_same = iqc_data.ind_same;
             
             ind_diff = setdiff(1:obj.P.nw, ind_same);
@@ -68,8 +72,8 @@ classdef  opt_system_interface
             Pd(:, [ind_same, ind_diff]) = Pd;
             n_same = length(ind_same);
 
-            Pwp2 = blkdiag(Pd', eye(obj.P.nwp));
-            Pzp2 = blkdiag(Pd, eye(obj.P.nzp));
+            Pwp2 = blkdiag(Pd', eye(w_offset));
+            Pzp2 = blkdiag(Pd, eye(z_offset));
             alg_perm_same = Pzp2 * alg_perm * Pwp2;
 
             alg_perm_m = lft(iqc_data.m_same, alg_perm_same, n_same, n_same);
@@ -84,16 +88,16 @@ classdef  opt_system_interface
             alg_loop = lft(loop, alg_perm_m, nloop, nloop);
 
 
-            %form the system
-            I = ss(eye(size(alg_loop.D, 2)));
-            GI = [alg_loop; I];
-
-            obj.P.nwp;
 
 
             %TODO: division between analysis and synthesis
 
             if strcmp(iqc_data.task, 'analysis')
+                %form the system
+                I = ss(eye(size(alg_loop.D, 2)));
+                GI = [alg_loop; I];
+
+
                 Psi1 = iqc_op.Psi1;
                 Psi2 = iqc_op.Psi2;
                 I_zp = eye(obj.P.nzp);
@@ -104,9 +108,13 @@ classdef  opt_system_interface
     
                 alg_psi = psi * GI; 
             else
-                %TODO: implement synthesis
-                error('Synthesis not yet implemented (future feature)')
-            end
+                %TODO: implement synthesis                
+
+                n = obj.P.dump_dim;
+                n.nw = n.nw - length(ind_same);
+                n.nz = n.nz - length(ind_same);
+                alg_psi = iqc_op.wrap_synth(alg_loop, n);
+            end            
         end
 
 
@@ -115,6 +123,16 @@ classdef  opt_system_interface
         function nss = Nss(obj)
             %NSS: number of subsystems
             nss = 1;
+        end
+
+        function dimn = nu(obj)
+            %nu: number of states in network
+            dimn = obj.P.nu;
+        end
+
+        function dimn = ny(obj)
+            %nu: number of states in network
+            dimn = obj.P.ny;
         end
 
 

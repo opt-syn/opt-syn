@@ -5,9 +5,7 @@ classdef opt_analysis < opt_manager_interface
     % the fixed-point equation 
     %               0 \in sum_i F_i(\beta).
     %
-    properties
-        task = 'analysis';
-    end
+
        
     methods
         function obj = opt_analysis(sys)
@@ -15,8 +13,12 @@ classdef opt_analysis < opt_manager_interface
            
             obj@opt_manager_interface(sys);
 
+            obj.task = 'analysis';
             obj.lmi = obj.select_lmi(sys);
 
+       
+
+    
         end
         
         %% define IQCs for the operators

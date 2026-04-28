@@ -167,6 +167,8 @@ classdef iqc_loop_split
             %
             %
             
+            Psi1 = ss(obj.Psi1.A, obj.Psi1.B, obj.Psi1.C, obj.Psi1.D, 1);
+            Psi2 = ss(obj.Psi2.A, obj.Psi2.B, obj.Psi2.C, obj.Psi2.D, 1);
 
             %Do we need to factor at all?
             need_to_factor = true;
@@ -176,26 +178,40 @@ classdef iqc_loop_split
             if dim_check
                 %both filters should be stable, and Psi2 should have a
                 %stable inverse
-                e1 = eig(obj.Psi1);
-                e2 = eig(obj.Psi2);
-                P2inv = inv(obj.Psi2);
-                e2inv = eig(P2inv);
+                if ssize(Psi1.A, 1) == 0
+                    e1 = [];
+                else
+                    e1 = eig(obj.Psi1);
+                end
+                if ssize(Psi2.A, 1) == 0
+                    e2 = [];
+                    e2inv = [];
+
+                    invscal = (min(svd(Psi2.D)) < 1e-8);
+                else
+                    e2 = eig(Psi2);
+                    P2inv = inv(Psi2);
+                    e2inv = eig(P2inv);
+
+                    invscal = false;
+                end
 
                 eall = [e1; e2; e2inv];
                 %TODO: check the comparator: >= or >?
-                stab_check = any(abs(eall) > 1);
+                stab_check = any(abs(eall) > 1) || invscal;
 
                 need_to_factor = stab_check;
             end
 
             if need_to_factor
                 %TODO: implement the spectral factorization
+                error('TODO: spectral factorization not yet implemented')
                 iqc_factored = [];
             else
                 %the filter is already factored. fill in the information.
                 C3 = zeros(obj.nf, obj.nz);
                 D3 = zeros(obj.nw, obj.nz);
-                iqc_factored = iqc_loop_factored(obj.Psi1, obj.Psi2,...
+                iqc_factored = iqc_loop_factored(Psi1, Psi2,...
                     C3, D3, obj.M, obj.X, obj.loop);
             end
         end

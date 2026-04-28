@@ -35,9 +35,45 @@ classdef iqc_loop_factored
             end
         end
         
+
+                function nw_out = nw(obj)
+            %number of inputs (channel two)
+            if isnumeric(obj.Psi2.D)                
+                nw_out = size(obj.Psi2.D, 2);
+            else
+                nw_out = dim(obj.Psi2.D, 2);
+            end        
+        end
+
+        function nz_out = nz(obj)
+            %number of inputs (channel one)
+            if isnumeric(obj.Psi1.D)                
+                nz_out = size(obj.Psi1.D, 2);
+            else
+                nz_out = dim(obj.Psi1.D, 2);
+            end
+        end
+
+        function np_out = np(obj)
+            %number of outputs (channel one)
+            if isnumeric(obj.Psi1.D)                
+                np_out = size(obj.Psi1.D, 1);
+            else
+                np_out = dim(obj.Psi1.D, 1);
+            end
+        end
+
+        function nq_out = nq(obj)
+            %number of outputs (channel two)
+            if isnumeric(obj.Psi2.D)
+                nq_out = size(obj.Psi2.D, 1);
+            else                
+                nq_out = dim(obj.Psi2.D, 1);
+            end
+        end
+
         function hf = nf(obj)
-            %NF number of states in the filter
-            
+            %NF number of states in the filter            
             hf = length(obj.Psi1.A)+ length(obj.Psi2.A);
         end
 
@@ -107,6 +143,74 @@ classdef iqc_loop_factored
             X_lift = kron_eye(obj.X, c);
             
             iqc_lift = iqc_loop_split(Psi1_lift, M_lift, C3_lift, D3_lift, Psi2_lift, X_lift, loop_lift);
+        end
+
+        function G_wrap = wrap_synth(obj, G, n)
+            %wrap a genearlized plant for controller synthesis
+
+            %
+            % [z] = G [w]
+            % [y]     [u]
+            %to [Psi1, Psi3 Psi2^-1]  [G Psi2^-1]
+            %   [0,               I]  [I]
+            %   [
+            %with G cl
+
+
+
+            %routine copied and modified from 
+            % https://github.com/Schwenkel/mpc-iqc/blob/main/multi-objective-iqc-synthesis/syn_step.m
+            %by Lukas Schwenkel
+
+            %dimension counts
+
+            n1 = length(obj.Psi1.A);
+            n2 = length(obj.Psi2.A);
+            nx = length(G.A);    
+            
+            
+            nw = n.nw;            
+            nz = n.nz;
+            
+            nwp = n.nwp;
+            nzp = n.nzp;
+            
+            nu = n.nu;            
+            ny = n.ny;
+
+            %index groups (unfortunately, the nature of the genplant is
+            %lost. fix with overrides?)
+            p = 1:nw;
+            q = 1:nz;
+
+            w = nw + (1:nwp);
+            z = nz + (1:nzp);
+
+            u = nw + nwp + (1:nu);
+            y = nz + nzp + (1:ny);
+
+            C2i = -obj.Psi2.D\obj.Psi2.C;
+            A2i = obj.Psi2.A+obj.Psi2.B*C2i;
+            B2i = obj.Psi2.B/obj.Psi2.D;
+            
+            
+            %TODO: check the number of outputs here.
+            A = [ obj.Psi1.A        obj.Psi1.B*G.D(q,p)*C2i   obj.Psi1.B*G.C(q,:)
+                  zeros(n2,n1)   A2i                    zeros(n2,nx)
+                  zeros(nx,n1)   G.B(:,p)*C2i           G.A          ];
+            B = [ obj.Psi1.B*(G.D(q,p)/obj.Psi2.D)  obj.Psi1.B*G.D(q,w)  obj.Psi1.B*G.D(q,u)
+                  B2i                         zeros(n2,nwp)      zeros(n2,nu)
+                  G.B(:,p)/obj.Psi2.D            G.B(:,w)          G.B(:,u)   ];
+            Dsp = (obj.Psi2.D*G.D(q,p)+obj.D3);
+            C = [ obj.Psi2.C       obj.C3+Dsp*C2i  obj.Psi2.D*G.C(q,:)
+                  zeros(nzp,n1)  G.D(z,p)*C2i     G.C(z,:)
+                  zeros(ny,n1)  G.D(y,p)*C2i     G.C(y,:) ];
+            D = [ Dsp/obj.Psi2.D       obj.Psi2.D*G.D(q,w)  obj.Psi2.D*G.D(q,u)
+                  G.D(z,p)/obj.Psi2.D  G.D(z,w)          G.D(z,u)  
+                  G.D(y,p)/obj.Psi2.D  G.D(y,w)          G.D(y,u) ];
+
+            G_wrap = ss(A, B, C, D, 1);
+
         end
     end
 end

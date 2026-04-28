@@ -24,6 +24,7 @@ classdef (Abstract) opt_manager_interface
         lmi = [];
         %other options
         opts = struct('impose_X', true)
+        task = 'generic';
     end
     
     methods
@@ -33,7 +34,8 @@ classdef (Abstract) opt_manager_interface
             nop = length(obj.sys.op);
             obj.iqc_op = cell(nop, 1);
             obj.vars = struct('op', []);
-            obj.vars.op =cell(nop, 1);            
+            obj.vars.op =cell(nop, 1);     
+            
 
         end
 
@@ -391,6 +393,7 @@ classdef (Abstract) opt_manager_interface
                 target_ind = 0;
             end
 
+
             diss = cell(length(specs), 1);
             %determine the indices for each performance specification
             for i = 1:length(specs)
@@ -434,10 +437,21 @@ classdef (Abstract) opt_manager_interface
                 else
                     [nwr, nww] = ssize(alg_psi.D);
                 end
-                %enforce squareness in the performance specs?
-                E_w = full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww));
-                E_r = full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr));
 
+                if strcmp(obj.task, 'synthesis')
+                    nu = obj.sys.nu;
+                    ny = obj.sys.ny;
+                else
+                    nu = 0;
+                    ny = 0;
+                end
+
+
+                %enforce squareness in the performance specs?
+                E_w = blkdiag(full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww)), eye(nu));
+                E_r = blkdiag(full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr)), eye(ny));
+
+                
 
                 %nonminimal representation of the multiplier-extended plant
                 if iscell(alg_psi)

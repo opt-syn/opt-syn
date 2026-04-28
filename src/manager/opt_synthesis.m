@@ -7,17 +7,24 @@ classdef opt_synthesis < opt_manager_interface
     %
     % in which the oracles F_i are interfaced over a dynamical network
     properties
-        opts = struct('reduced_order',  false);   
-        iqc_rob = {};
+        % opts = 
+        % iqc_op = {};
     end
     
     methods
-        function obj = opt_synthesis(sys)
+        function obj = opt_synthesis(sys, iqc_op)
             %OPT_SYNTHESIS Construct an instance of this class
             %   Detailed explanation goes here
 
             obj@opt_manager_interface(sys);
-            
+                        
+            if nargin == 2
+                obj.iqc_op = iqc_op;
+            end
+
+            obj.task = 'synthesis';            
+            obj.lmi = obj.select_lmi(sys);
+
         end
         
         function obj = process_argument(obj,iqc_rob)
