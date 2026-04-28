@@ -11,7 +11,9 @@ classdef lmi_dispatch_interface
         impose_X = false;           %impose the sign constraint on the terminal cost
         tol = struct('M', 1e-7, ... %tolerance for dissipation constraints
             'X', 1e-7, ...          %tolerance for sign/terminal cost constraints 
-            'G_max', 100)           %upper bound on norm of storage matrix
+            'G_max', 100, ...       %upper bound on norm of storage matrix (analysis)
+            'GX_max', 100, ...      %upper bound on norm of primal storage matrix (synthesis)
+            'GY_max', 100)          %upper bound on norm of dual storage matrix (synthesis)
     end
     
     methods
@@ -111,6 +113,77 @@ classdef lmi_dispatch_interface
             [M] = outer_blkdiag(iqc_rob.M, supp, n1, m1, n2, m2);
             % Mdiag = blkdiag(iqc_op.M, sp.supply);
         end
+
+        function sb = sys_block(obj, plant, Pnew, Pold, rho)
+            % SYS_BLOCK system block used in analysis programs
+            %
+            %sb =  [0, I]^T [Pold*rho^2, 0] [0, I]
+            %      [A, B]   [0,      -Pnew] [A, B]
+
+            
+            A = plant.A;
+            B = plant.B;
+            
+            [n, m] = size(B);  
+
+            Ablock = [eye(n), zeros(n, m);
+                A, B];
+
+            Pblock = blkdiag(Pold*(rho^2), -Pnew);
+
+            sb = Ablock' * Pblock * Ablock;            
+
+        end
+
+        function sb = supply_block(obj, plant, M)
+            % SUPPLY_BLOCK supply block used in analysis programs
+            %
+            %sb =  [C, D]^T [-M] [C D]
+            %               
+
+
+            Cblock = [plant.C, plant.D];   
+            
+            sb = Cblock' * (-M) * Cblock;
+
+        end
+
+
+        function [plant_no_p, CDp] = separate_performance_output(obj, diss)
+
+            %SEPARATE_PERFORMANCE_OUTPUT
+            %extract the performance output from the plant
+            %
+            %plant_no_p:    the plant with the performance output removed
+            %CDp:           the entries of [Cp, Dp] matrix for the
+            %               performance output
+            %
+            %
+            %This routine is used in the computation of l2 norms via Schur
+            %complements            
+            
+            %separate the performance outputs   
+            nzp = length(diss.spec.izp);
+            ind_sep = (diss.iqc_rob.np) + (1:nzp);
+            nz = ssize(diss.plant.D, 1);
+
+            ind_diff_sep = setdiff(1:nz, ind_sep);
+            Iz = eye(nz);
+            Izp = Iz(ind_diff_sep, :);
+
+            %the plant without the schur-complemented-out performance input
+            plant_no_p = Izp*diss.plant;
+
+
+            Ezp = sparse(1:length(ind_sep), ind_sep, ones(length(ind_sep)), ...
+                length(ind_sep), ssize(diss.plant.C, 1));
+
+
+            CDp = Ezp * [diss.plant.C, diss.plant.D];
+
+        end
+
+
         
     end
 

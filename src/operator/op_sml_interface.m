@@ -56,6 +56,44 @@ classdef op_sml_interface < operator_interface
 
             loop = kron(loop_base, eye(reps));
         end
+
+
+        function [iqc] = create_iqc_identity(obj, reps)
+            %CREATE_VARS form the IQC for the general operator
+            %identity IQC in psi
+
+            %Input:             
+            %   rep:    number of repetitions of the operator (non-frugal)
+            %
+            %Output:
+            %   vars:   variables of the problem
+            %   cons:   constraints in the problem (in terms of the
+            %           variables directly)
+
+            if nargin < 2
+                reps = 1;
+            end
+            
+            if obj.same
+                iqc = obj.get_same(reps);
+            else
+                vars = [];
+                %form the IQC            
+                % M = build_M(obj, vars, 0, reps);
+                M = kron([0, 1; 1, 0], eye(reps));
+                X = [];
+    
+                loop = obj.build_loop(reps);            
+    
+                % [psi1, psi2] = obj.build_psi(vars, order, reps);
+                psi1 = ss(eye(reps));
+                psi2 = ss(eye(reps));
+    
+                iqc_orig = iqc_loop_split(psi1, M, loop, psi2, X);
+    
+                iqc = iqc_orig.lift(obj.c);                
+            end
+        end
         
     end
 end

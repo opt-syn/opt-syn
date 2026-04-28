@@ -194,9 +194,10 @@ classdef  opt_system < opt_system_interface
                 Phi0 = D21 * [zeros(sN, nr), N] + D22*Gam0 + C2*Pi0;
 
                 if nnull
-                    Pi_basis = null_basis(1:n, :);
-                    Gam_basis = null_basis(n+1:end, :);
-                    Phi_basis = D22*Gam_basis + C2*Pi_basis;
+                    %TODO: verify this 
+                    Pi_basis = null_basis(1:n*ns, :);
+                    Gam_basis = null_basis(ns*n+1:end, :);
+                    Phi_basis = kron(D22, eye(nc))*Gam_basis + kron(C2, eye(nc))*Pi_basis;
     
 
                 else

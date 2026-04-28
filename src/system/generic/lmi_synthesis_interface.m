@@ -1,0 +1,393 @@
+classdef lmi_synthesis_interface < lmi_dispatch_interface
+    %LMI_ANALYSIS_INTERFACE 
+    %Linear Matrix Inequality constraints for analysis of algorithmic
+    %interconnections.
+    %
+    %
+    %this is overridden by specialized analysis routines for system types:
+    %   lti
+    %   periodic
+    %   switched robust
+    %   switched jump
+    
+    properties
+        model; %internal model of the controller
+        
+        %TODO: reduced order control (better interface later)        
+        opts = struct('reduced_order', 0, 'D_mask', []);
+    end
+
+    
+    methods
+        function obj = lmi_synthesis_interface(sys, opts)
+            %LMI_SYNTHESIS_INTERFACE Construct an instance of this class
+            %   Detailed explanation goes here
+            obj@lmi_dispatch_interface(sys);
+
+
+            obj.model = sys.form_internal_model();
+
+            %TODO: better options handling down below
+            if nargin > 1
+                fn = fieldnames(opts);
+                for i = 1:length(fn)
+                    gc = getfield(opts,fn);
+                    obj.opts = setfield(obj.opts, fn, gc);
+                end
+            end
+        end
+
+
+        %% variable creation
+
+        function [vars, cons] = create_vars(obj, vars, cons, alg_psi, specs)
+            %CREATE_VARS create the variables for the problem
+
+            [vars.diss, cons] = obj.create_vars_storage(cons, alg_psi);
+            [vars.spec, cons] = obj.create_vars_spec(cons, specs);
+            [vars.reg]  = obj.create_vars_regulator();
+            [vars.K, cons]    = obj.create_vars_controller(cons, alg_psi);
+        end
+
+        function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
+            %create_vars_storage create variables for the dissipation
+            %constraints
+            %
+            %Input:
+            %   cons:       accumulated constraints
+            %   alg_psi:    the filtered algorithmic interconnection
+            %   name:       a name for the variable
+
+            if nargin < 4
+                name = [];
+            end
+
+            [GX, GY, cons] = obj.define_storage_G(cons, alg_psi, name);
+            vars_diss= struct('GX', GX, 'GY', GY);
+
+        end
+
+        function [vars_reg] = create_vars_regulator(obj)
+            %CREATE_VARS_REGULATOR
+            %parameterize the solutions to the regulator equations
+            %use this as a variable in reduced-order control
+            %
+            %systems with more outputs than oracles can have freedom in the            
+            %regulator equations (such as optimization problems with known 
+            % Laplacian matrices)
+
+            
+
+            %nominal solution of the regulator equation
+            vars_reg.Pi = obj.model.Pi;
+            vars_reg.Gam = obj.model.Gam;
+            vars_reg.Phi = obj.model.Phi;
+
+            
+
+            nbasis = size(obj.model.Gam_basis, 2);
+            if nbasis> 0 && (obj.opts.reduced_order)
+
+
+                %search over solutions
+                eta = lmim('reg_param', nbasis, 1, 'full');
+
+                %TODO: parameterization of regulator equation solutions
+                %needs to be debugged (e.g. Laplacian example)
+                Pi_free_vec = obj.model.Pi_basis*eta;
+                Gam_free_vec = obj.model.Pi_basis*eta;
+                Phi_free_vec = obj.model.Pi_basis*eta;
+
+                Pi_free = [];
+                Gam_free = [];
+                Phi_free = [];
+
+                d = size(vars_reg.Pi, 2);
+                n = size(vars_reg.Pi, 1);
+                nu = size(vars_reg.Gam, 1);
+                ny = size(vars_reg.Phi, 1);
+
+                %parameterization of the nullspace
+                for i = 1:d
+                    Pi_curr = lmim_index(Pi_free_vec, (i-1)*n + (1:n), 1);
+                    Gam_curr = lmim_index(Gam_free_vec, (i-1)*nu + (1:nu), 1);
+                    Phi_curr = lmim_index(Phi_free_vec, (i-1)*ny + (1:ny), 1);
+
+                    Pi_free = [Pi_free, Pi_curr];
+                    Gam_free = [Gam_free, Gam_curr];
+                    Phi_free = [Phi_free, Phi_curr];
+                end
+
+                %add the free nullspace part to the system
+
+                vars_reg.Pi = vars_reg.Pi + Pi_free;
+                vars_reg.Gam = vars_reg.Gam + Gam_free;
+                vars_reg.Phi = vars_reg.Phi + Phi_free;
+                vars_reg.reg_param = eta;
+            else
+                vars_reg.reg_param= [];
+            end
+
+            
+
+        end
+
+
+
+        function [GX, GY, cons] = define_storage_G(obj, cons, alg_psi,  name)
+            %DEFINE_STORAGE_G storage function for a specific subsystem
+
+            %without terminal cost:
+            %
+            %[GX, I;
+            %[I, GY] is PD
+            %
+
+
+            n = ssize(alg_psi{1}.A, 1);
+            ns = ssize(obj.model.S, 1);
+
+
+
+            
+            if obj.reduced_order
+                %TODO: not yet implemented
+                nc = n - ns;
+            else
+                nc = n;
+            end
+
+             GX = lmim(['GX', name], n, n, 'sym');
+            
+          
+
+            GY = lmim(['GY', name], nc, nc, 'sym');
+
+            %TODO the terminal constraints with the coupling condition?
+
+
+            %bound the entries of the GX and GY matrices
+            if obj.tol.G_max < Inf                   
+                cons = append_lmi(cons, obj.tol.GX_max*eye(n)  - GX, obj.LMILAB);
+                cons = append_lmi(cons, obj.tol.GX_max*eye(n)  + GX, obj.LMILAB);                
+                cons = append_lmi(cons, obj.tol.GY_max*eye(nc)  - GY, obj.LMILAB);
+                cons = append_lmi(cons, obj.tol.GY_max*eye(nc)  + GY, obj.LMILAB);  
+            end            
+        end
+
+        function G = get_storage(obj, vars)
+            %GET_STORAGE get the storage function matrix G
+
+            GX = vars.diss.GX;
+            GY = vars.diss.GY;
+            
+            nx = ssize(GX, 1);
+            % ns = ssize(obj.model.S, 1);
+
+
+            if obj.reduced_order
+                %TODO: not yet implemented
+                T = vars.reg.Pi;
+                G = [GY, eye(nx); eye(nx), GX];
+            else
+                %
+                G = [GY, eye(nx); eye(nx), GX];                
+            end
+        end
+
+        function [vars_spec, cons] = create_vars_spec(obj, cons, specs)
+            %CREATE_VARS_SPEC declare variables for the specifications
+
+            %maybe put this somewhere else?
+            %
+            %right now the variables are in the (spec) object.
+            nspec = length(specs);
+            vars_spec = cell(nspec, 1);
+            for i = 1:nspec
+                [vars_spec{i}, cons] = specs{i}.create_vars(cons);
+            end           
+        end
+        
+        function [vars_K, cons] = create_vars_controller(obj, cons, alg_psi, name)
+            %CREATE_VARS_CONTROLLER create the nonlinearly-transformed
+            %controller matrices
+
+            %get the dimensions
+
+
+            if nargin < 4
+                name = [];
+            end
+
+            n = ssize(alg_psi{1}.A, 1);
+            ns = ssize(obj.model.S, 1);
+            
+            if obj.reduced_order
+                %TODO: not yet implemented
+                nc = n - ns;
+            else
+                nc = n;
+            end
+
+            ny = obj.sys.P.ny;
+            nu = obj.sys.P.nu;
+
+            %declare the variables
+            vars_K = struct;
+            %easy: ABC
+            vars_K.Ak = lmim(['Ak', name], nc, nc);
+            vars_K.Bk = lmim(['Bk', name], nc, ny);
+            vars_K.Ck = lmim(['Ck', name], nu, nc);
+
+
+            vars_K.Dk = obj.form_Dk();
+            %TODO: better interface here: number of inputs
+            
+
+
+            %no elimination just yet
+
+            %bound entries of the controllers
+            kq = [vars.Ak, vars.Bk;            
+              vars.Ck,  vars.Dk];
+            cons= append_lmi(cons, vars.ga*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], LMILAB);
+
+        end
+
+        function [Dk] = form_Dk(obj, D_mask_0)
+            %FORM_Dk: lower triangular structure needed for the controller
+            %need a better interface for the mask
+            
+            s = length(obj.sys.bind);
+            c = obj.sys.op{1}.c;
+            nu = obj.sys.P.nu;
+
+            %more difficult: Dk
+            
+            %the unconstrained term for the internal model control
+            Dk1_var = lmim(['Dk1', name], nu-s*c, s*c, 'full');
+            Dk = Dk1_var;
+
+
+
+            %the sparsity-constrained term for internal model control
+            if nargin < 2
+                D_mask_0 = obj.opts.D_mask;
+            end
+           
+            if isempty(D_mask_0)
+                D_mask_0 = tril(ones(length(obj.sys.bind)));
+            end
+
+            
+
+            %use the triangular structure
+            
+            D_mask = kron(D_mask_0, eye(c));
+ 
+            nd2= nnz(D_mask);
+            if nnz(D_mask) > 0
+                Dk2_var = lmim(['Dk2', name], 1, nd2, 'full');
+    
+                %make sure that the Dc2 term of the subcontroller is
+                %lower-triangular
+                
+                counter = 1;
+                for i = 1:s*c
+                     if any(D_mask(i, :))
+                        eind = find(D_mask(i, :));
+                        ncc = length(eind);
+                        Dvar_mat = sparse(counter + (1:ncc)-1, 1:ncc, ones(ncc, 1), nd2, ncc);
+
+                        Dvar = Dk2_var * Dvar_mat;
+                        
+                        Din = sparse(1:ncc, eind, ones(ncc, 1), ncc, s);
+                        Din_var = Dvar * Din;
+
+                        vars_K.Dk = [vars_K.Dk; Din_var];
+    
+                        
+                        % Dk2_curr = sparse(, 1:nc )
+                        % vars.Dk(i+(nu-s), j) = Dk2_var * eind;
+                        counter = counter+nnz(D_mask(i, :));
+                    else
+                        vars_K.Dk = [vars_K.Dk; zeros(1, ny)];
+                    end
+                    % end
+                    
+                % end
+                end
+            else
+                Dk = [Dk; zeros(s*c, s*c)];
+            end
+
+        end
+
+        %% terminal constraints        
+        function [cons, con_X] = con_terminal(obj, vars, cons,  alg_psi, iqc_op)
+            %CON_TERMINAL
+            %terminal cost constraint (nonnegativity for the storage function G)
+            %coupled positivity if the IQC has a terminal cost
+
+            %too many arguments taken here
+            X = iqc_op.X;
+
+            %TODO: allow for reduced-order control           
+
+            G = obj.get_storage(vars);
+
+            %TODO: check that this is the right formula, specifically when
+            %X is a non-PSD terminal cost
+
+            nf = ssize(X);
+            n = ssize(G, 1);
+
+            Ef = [eye(nf); zeros(n-nf, nf)];
+
+
+            X_f = Ef * X * Ef';
+            con_X = G + X_f;
+
+            sx = ssize(con_X, 1);
+            cons = append_lmi(cons, con_X - eye(sx)*obj.tol.X, obj.LMILAB);
+
+        end
+
+        %% helper functions to construct LMIs
+
+        %% common specification calls
+
+        
+        %function [cons, objective, con_M] = quad(obj, vars, cons, diss)
+        %Quadratic performance (defined on a per-system basis)
+
+        function [cons, objective, con_M] = stability(obj, vars, cons, diss)
+            %STABILITY certification of exponential stability
+            %
+            %the supply function in the specification is empty,
+            %so just call quadratic performance.
+
+
+            [cons, objective, con_M] = obj.quad(vars, cons, diss);
+
+        end
+
+        function [cons, objective, con_M] = e2e(obj, vars, cons, diss)
+            %E2E: energy to energy gain
+
+            if diss.spec.target
+                [cons, objective, con_M] = obj.e2e_target(vars, cons, diss);
+            else
+                %is a special case of quadratic performance
+                [cons, objective, con_M] = obj.quad(vars, cons, diss);
+            end           
+        end
+
+    end
+
+    methods (Abstract)
+        %variable creation routines        
+        quad(obj, vars, cons, diss)               
+    end
+end
+
