@@ -11,7 +11,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
     %
     % performance specification: wp -> zp from (spec)
     %
-    %   Implemented
+    %   Implemented:
     %
     %   TODO:
     %       stability
@@ -25,13 +25,13 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
     
     methods
         function obj = lmi_synthesis_lti(sys)
-            %LMI_DISPATCH_LTI Construct an instance of this class
+            %LMI_SYNTHESIS_LTI Construct an instance of this class
             %   Detailed explanation goes here
             obj@lmi_synthesis_interface(sys);
         end       
         
         
-        %% definition of variables
+        %% definition of variables and helpers
         function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
             %create_vars_storage create variables for the dissipation
             %constraints
@@ -50,36 +50,155 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
         end
 
+        function sys_cl = system_closed_loop(obj, vars_diss, vars_reg, vars_K, diss);
+            %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
+            %transformation
+
+            GX = vars_diss.GX;
+            GY = vars_diss.GY;
+
+            %should be a genplant type
+            % P_net = diss.plant;
+
+            %IMPORTANT!
+            %hook up the internal model
+            %(maybe it should happen at a higher level?)
+            P = obj.reg.connect_model(diss.plant);
+
+            [A, B, C, D] = ssdata(P);
+            iu = P.index_u;
+            iw = [P.index_w, P.index_wp];
+
+            iy = P.index_y;
+            iz = [P.index_z, P.index_zp];
+
+            % calligraphic matrices
+            % from  convexification
+            % [Y' Acl Y,  Y'Bcl ]
+            % [Ccl Y,      Dcl  ]
+
+
+            Ak = vars_K.A;
+            Bk = vars_K.B;
+            Ck = vars_K.C;
+            Dk = vars_K.D;
+            %
+            Acal = [A*GX + B(:, iu)*Ck,  A + B(:, iu)*Dk*C(iy, :);
+                    Ak, GY*A + Bk*C(iy, :)];
+            Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
+                GY*B(:, iw) + Bk*D(iy, iw)];
+            Ccal = [C(iz, :)*GX + D(iz, iu)*Ck, C(iz, :) + D(iz, iu)*Dk*C(iy, :)];
+            Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);
+    
+
+            sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
+        end
+        
+
+
 
         %% Quadratic performance (infinite horizon)
+
+
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
             %QUAD: certificate of infinite-horizon quadratic performance
 
+            
 
-            G = vars.diss.G;
+            %get the variables of the problem
+            G = obj.get_storage(vars.diss, vars.reg);
+            sys_cl = obj.system_closed_loop(vars.diss, vars.reg, vars.K, diss);
 
-
-            %system block with {A, B, G}
-            sysb = obj.sys_block(diss.plant, G, G, diss.spec.rho);
-
-
-            %supply block with {C, D, M}
+            
+            %index the quadratic specification
             vars_spec = vars.spec{diss.spec.id};
             M_quad = obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
-            suppb = obj.supply_block(diss.plant, M_quad);
 
+            if isempty(diss.spec.izp)
+                ind_p = 1:(diss.iqc_rob.nz);
+                ind_q = diss.iqc_rob.nz + (1:(diss.iqc_rob.nw));
+            else
+                ind_p = 1:(diss.iqc_rob.nz + diss.spec.izp);
+                ind_q = (diss.iqc_rob.nz + diss.spec.izp) + (1:(diss.iqc_rob.nw + diss.spec.iwp));
+            end
+            %use eigenvalue arguments here
+
+            Qq = M_quad(ind_p, ind_p);
+            Sq = M_quad(ind_p, ind_q);
+            Rq = M_quad(ind_q, ind_q);
+
+
+            [RqV, RqD] = eig(Rq);
+            eRq = diag(RqD);
+            ind_pos = find(abs(eRq) > 1e-12);
+
+            Tq = RqV(:, ind_pos);
+            Uq = diag(1./eRq(ind_pos));
+            
+            %formulation from ParDynSyn notes (parametric dynamic
+            %synthesis)
+
+            %acquire the dimensions
+            n = ssize(sys_cl.A, 1);
+            nw = ssize(sys_cl.B, 2);
+            nz = ssize(sys_cl.C, 1);
+            nt = length(ind_pos);
+
+            %[nx, nz, nx, nt]
+
+            %TODO: audit this, break up into other routines
+            outer_Q = [zeros(n, nz); eye(nz); zeros(n, nz); zeros(nt, nz)];
+           
+            supp_b = 0;
+            supp_b = -outer_Q * Qq * outer_Q';
+
+            outer_U = [zeros(n, nt); zeros(nz, nt); zeros(n, nt); eye(nt, nt)];
+
+            if nt
+                supp_b = supp_b + outer_U * Uq * outer_U';
+            end
+            
+            %supply block building
+            outer_curr = [diss.spec.rho*eye(n, n); zeros(nz, n); zeros(n, n); eye(nt, n)];
+
+            outer_next = [zeros(n, n); zeros(nz, n); eye(n); eye(nt, n)];
+
+            G_curr = G;
+            G_next = G;
+            sys_b_G = outer_curr * G_curr * outer_curr'; 
+            sys_b_G = sys_b_G + outer_next* G_next * outer_next'; 
+
+
+            %now for the controller parameters
+            %TODO: verify dimensions here
+            outer_cl_left = [zeros(n), zeros(n, nw);
+                zeros(nw, n), Sq;
+                eye(n), zeros(n, nw);
+                zeros(nt, n), Tq];
+
+            outer_cl_right= [[eye(n), zeros(n, nz);
+                zeros(nz, n), eye(nz)], zeros(n+nz, n+nt)];
+                
+
+            center_cl = [sys_cl.A, sys_cl.B;
+                sys_cl.C, sys_cl.D];
+
+            dyn_b = outer_cl_left * center_cl * outer_cl_right; 
+            dyn_b_he = dyn_b + dyn_b';
+            % sys_b = sys_b - dyn_b_he;
 
             %wrap it all together
             objective = 0;
 
-            con_M = sysb + suppb;
+            con_M = sys_b_G + supp_b + dyn_b_he;
 
 
             sM = ssize(con_M,1);
             cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB); 
 
             %impose sign constraint
-            cons = obj.con_terminal(G, cons, diss.iqc_rob);
+            %change this up
+            cons = obj.con_terminal(G, cons, [], diss.iqc_rob);
         end        
 
 

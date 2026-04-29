@@ -11,7 +11,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
     %   switched jump
     
     properties
-        model; %internal model of the controller
+        reg; %internal model of the controller
         
         %TODO: reduced order control (better interface later)        
         opts = struct('reduced_order', 0, 'D_mask', []);
@@ -25,7 +25,11 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             obj@lmi_dispatch_interface(sys);
 
 
-            obj.model = sys.form_internal_model();
+            %form the internal model
+            reg_name = ['regulator_', sys.get_type()];
+
+            reg_handle = str2func(reg_name);
+            obj.reg = reg_handle(sys);
 
             %TODO: better options handling down below
             if nargin > 1
@@ -37,6 +41,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             end
         end
 
+        
 
         %% variable creation
 
@@ -78,56 +83,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             
 
-            %nominal solution of the regulator equation
-            vars_reg.Pi = obj.model.Pi;
-            vars_reg.Gam = obj.model.Gam;
-            vars_reg.Phi = obj.model.Phi;
-
             
-
-            nbasis = size(obj.model.Gam_basis, 2);
-            if nbasis> 0 && (obj.opts.reduced_order)
-
-
-                %search over solutions
-                eta = lmim('reg_param', nbasis, 1, 'full');
-
-                %TODO: parameterization of regulator equation solutions
-                %needs to be debugged (e.g. Laplacian example)
-                Pi_free_vec = obj.model.Pi_basis*eta;
-                Gam_free_vec = obj.model.Pi_basis*eta;
-                Phi_free_vec = obj.model.Pi_basis*eta;
-
-                Pi_free = [];
-                Gam_free = [];
-                Phi_free = [];
-
-                d = size(vars_reg.Pi, 2);
-                n = size(vars_reg.Pi, 1);
-                nu = size(vars_reg.Gam, 1);
-                ny = size(vars_reg.Phi, 1);
-
-                %parameterization of the nullspace
-                for i = 1:d
-                    Pi_curr = lmim_index(Pi_free_vec, (i-1)*n + (1:n), 1);
-                    Gam_curr = lmim_index(Gam_free_vec, (i-1)*nu + (1:nu), 1);
-                    Phi_curr = lmim_index(Phi_free_vec, (i-1)*ny + (1:ny), 1);
-
-                    Pi_free = [Pi_free, Pi_curr];
-                    Gam_free = [Gam_free, Gam_curr];
-                    Phi_free = [Phi_free, Phi_curr];
-                end
-
-                %add the free nullspace part to the system
-
-                vars_reg.Pi = vars_reg.Pi + Pi_free;
-                vars_reg.Gam = vars_reg.Gam + Gam_free;
-                vars_reg.Phi = vars_reg.Phi + Phi_free;
-                vars_reg.reg_param = eta;
-            else
-                vars_reg.reg_param= [];
-            end
-
+            
+            
+            vars_reg = obj.reg.create_vars();
             
 
         end
@@ -145,7 +104,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
             n = ssize(alg_psi.A, 1);
-            ns = ssize(obj.model.S, 1);
+            ns = ssize(obj.reg.S, 1);
 
 
 
@@ -175,17 +134,19 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             end            
         end
 
-        function G = get_storage(obj, vars)
+        function G = get_storage(obj, vars_diss, vars_reg)
             %GET_STORAGE get the storage function matrix G
 
-            GX = vars.diss.GX;
-            GY = vars.diss.GY;
+            % 
+            %
+            GX = vars_diss.GX;
+            GY = vars_diss.GY;
             
             nx = ssize(GX, 1);
-            % ns = ssize(obj.model.S, 1);
+            % ns = ssize(obj.reg.S, 1);
 
 
-            if obj.reduced_order
+            if obj.opts.reduced_order
                 %TODO: not yet implemented
                 %some sort of indexing on Pi
                 Pi = vars.reg.Pi;
@@ -221,7 +182,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             end
 
             n = ssize(alg_psi.A, 1);
-            ns = ssize(obj.model.S, 1);
+            ns = ssize(obj.reg.S, 1);
             
             if obj.opts.reduced_order
                 %TODO: not yet implemented
@@ -272,7 +233,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             s = length(obj.sys.bind);
             c = obj.sys.op{1}.c;
             nu = obj.sys.P.nu;
-            ns = size(obj.model.R, 2);
+            ns = size(obj.reg.R, 2);
 
             %more difficult: Dk
             
@@ -337,7 +298,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
         %% terminal constraints        
-        function [cons, con_X] = con_terminal(obj, vars, cons,  alg_psi, iqc_op)
+        function [cons, con_X] = con_terminal(obj, G, cons,  alg_psi, iqc_op)
             %CON_TERMINAL
             %terminal cost constraint (nonnegativity for the storage function G)
             %coupled positivity if the IQC has a terminal cost
@@ -346,8 +307,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             X = iqc_op.X;
 
             %TODO: allow for reduced-order control           
-
-            G = obj.get_storage(vars);
 
             %TODO: check that this is the right formula, specifically when
             %X is a non-PSD terminal cost

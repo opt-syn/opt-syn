@@ -276,9 +276,6 @@ classdef  opt_system_interface
 
         build_plant()
     
-        %regulator equations
-        form_internal_model(obj)
-        check_regulator(obj)
     end
 end
 

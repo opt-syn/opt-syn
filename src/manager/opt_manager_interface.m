@@ -370,118 +370,7 @@ classdef (Abstract) opt_manager_interface
 
         end
 
-        function [diss] = index_specs(obj, alg_psi, iqc_op, specs)
-
-            %INDEX_SPECS:  index into the performance specifications
-            %
-            %
-            %   diss:   structure describing the problem
-            %       plant:  system to control
-            %       spec:   performance specification           
-            %       target: whether the performance measure should be optimized
-            %               true:  soft constraint (e.g. Schur complement
-            %                                       formulation)
-            %               false: hard constraint
-            
-            %TODO: maybe this should go inside the (system), not (manager)?
-            
-            if nargin < 4
-                specs = obj.specs;
-            end
-
-            if nargin < 5
-                target_ind = 0;
-            end
-
-
-            diss = cell(length(specs), 1);
-            %determine the indices for each performance specification
-            for i = 1:length(specs)
-                
-                      
-                sp = specs{i};
-                iwp_iqc = (1:(iqc_op.nw))';
-                ir_iqc_first = (1:(iqc_op.np))';
-
-
-                count_iqc_in = (iqc_op.nw);
-                count_iqc_out = (iqc_op.np);
-
-                if isempty(sp.izp) || isempty(sp.iwp)
-                    ir_iqc_first_r =[];
-                    iw_iqc_first_r = [];
-                else
-                    iw_iqc_first_r = count_iqc_in + (1:sp.iwp);
-                    count_iqc_in = count_iqc_in + sp.iwp;
-
-                    ir_iqc_first_r = count_iqc_out  + (1:sp.izp);
-                    count_iqc_out = count_iqc_out + sp.izp;
-                end
-
-                iwp_iqc = [iwp_iqc; iw_iqc_first_r];
-
-                ir_iqc = [ir_iqc_first; ir_iqc_first_r];
-                ir_iqc = [ir_iqc; ir_iqc + (iqc_op.np + obj.sys.P.nwp )];
-
-                sp_ind_w = iwp_iqc;
-                sp_ind_r = ir_iqc;
-                % nww = length(sp_ind_w);
-                % nwr = length(sp_ind_r);
-
-                %TODO: allow for synthesis here
-
-                
-
-                if iscell(alg_psi)
-                    [nwr, nww] = ssize(alg_psi{1}.D);
-                else
-                    [nwr, nww] = ssize(alg_psi.D);
-                end
-
-                if strcmp(obj.task, 'synthesis')
-                    nu = obj.sys.nu;
-                    ny = obj.sys.ny;
-                else
-                    nu = 0;
-                    ny = 0;
-                end
-
-
-                %enforce squareness in the performance specs?
-                E_w = blkdiag(full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww)), eye(nu));
-                E_r = blkdiag(full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr)), eye(ny));
-
-                
-
-                %nonminimal representation of the multiplier-extended plant
-                if iscell(alg_psi)
-                    alg_screen = cell(size(alg_psi));
-                    for j = 1:length(alg_screen)
-                        alg_screen{j} = E_r * alg_psi{j} * E_w;
-                    end
-                else
-                    alg_screen = E_r * alg_psi * E_w;
-                end
-
-
-                diss{i} = struct('iqc_rob', iqc_op, ...
-                    'spec', sp);
-                diss{i}.plant = alg_screen;
-                % %need to permute the entries of Mdiag for the partition
-
-
-
-
-
-                %TODO: this may run into trouble if one entry has an X.
-                %performance with dynamic multipliers?
-            
-                % diss{i} = struct('plant', alg_screen, 'M', M, 'X', iqc_op.X, ...
-                    % 'spec', sp);
-            end
-
-        end
-
+        
 
         function [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_op, specs)
             %CONS_DYNAMIC: form the dynamical dissipation relations for the
@@ -526,6 +415,7 @@ classdef (Abstract) opt_manager_interface
     methods (Abstract)   
         process_argument(obj, arg); %inputs to run the routine
         process_recovery(obj, sol); %get the solution
+        index_specs(obj, alg_psi, iqc_op, specs); %index the performance specifications
     end
 end
 

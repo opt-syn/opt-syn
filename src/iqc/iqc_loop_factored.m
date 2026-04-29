@@ -203,13 +203,17 @@ classdef iqc_loop_factored
                   G.B(:,p)/obj.Psi2.D            G.B(:,w)          G.B(:,u)   ];
             Dsp = (obj.Psi2.D*G.D(q,p)+obj.D3);
             C = [ obj.Psi2.C       obj.C3+Dsp*C2i  obj.Psi2.D*G.C(q,:)
-                  zeros(nzp,n1)  G.D(z,p)*C2i     G.C(z,:)
+                  zeros(nzp,n1)  G.D(z,p)*C2i     G.C(z,:);
                   zeros(ny,n1)  G.D(y,p)*C2i     G.C(y,:) ];
             D = [ Dsp/obj.Psi2.D       obj.Psi2.D*G.D(q,w)  obj.Psi2.D*G.D(q,u)
                   G.D(z,p)/obj.Psi2.D  G.D(z,w)          G.D(z,u)  
                   G.D(y,p)/obj.Psi2.D  G.D(y,w)          G.D(y,u) ];
 
-            G_wrap = ss(A, B, C, D, 1);
+            P = ss(A, B, C, D, 1);
+
+
+            %dimensions don't change: square multiplier
+            G_wrap = genplant(P, n);
 
         end
     end

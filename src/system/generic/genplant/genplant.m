@@ -28,8 +28,12 @@ classdef genplant
             if isnumeric(P) && ~isempty(P)
                 %static system
                 [obj.ny, obj.nu] = size(P);
-            else                     
-                obj.s = n.s;
+            else              
+                if ~isfield(n, 's')
+                    obj.s = 0;
+                else
+                    obj.s = n.s;
+                end
                 obj.nz = n.nz;
                 obj.nw = n.nw;
                 obj.ny = n.ny;
@@ -178,6 +182,10 @@ classdef genplant
 
             D0 = obj.P.D;
             D = D0(izp, iw);
+        end
+
+        function [A, B, C, D] = ssdata(obj)
+            [A, B, C, D]  = ssdata(obj.P);
         end
 
         function Ao = A(obj)
