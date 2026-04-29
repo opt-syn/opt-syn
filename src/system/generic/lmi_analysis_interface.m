@@ -35,7 +35,12 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
 
         function [G, cons] = define_storage_G(obj, cons, alg_psi,  name)
             %DEFINE_STORAGE_G storage function for a specific subsystem
-            n = ssize(alg_psi{1}.A, 1);
+            
+            if iscell(alg_psi)
+                n = ssize(alg_psi{1}.A, 1); 
+            else
+                n = ssize(alg_psi.A, 1); 
+            end
             G = lmim(['G', name], n, n, 'sym');
 
             

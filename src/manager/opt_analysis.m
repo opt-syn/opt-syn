@@ -152,15 +152,15 @@ classdef opt_analysis < opt_manager_interface
 
 
 
-                E_r = full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr));
-                E_w = full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww));
-
 
                 if iscell(alg_psi)
                     [nwr, nww] = ssize(alg_psi{1}.D);                    
                 else
                     [nwr, nww] = ssize(alg_psi.D);
                 end
+
+                E_r = full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr));
+                E_w = full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww));
 
 
                 %enforce squareness in the performance specs?
