@@ -79,6 +79,11 @@ classdef genplant
             wr_ind = 1:(obj.nw + obj.nwp);
         end
 
+        function T = Ts(obj)
+            %Ts sample time
+            Ts = obj.P.Ts;
+        end
+
         %% extract matrices       
         function B = Bw(obj)
             B0 = obj.B;

@@ -56,7 +56,7 @@ classdef (Abstract) opt_manager_interface
 
 
 
-        function [vars, cons, objective] = build_program(obj, specs)
+        function [vars, cons, objective, alg_psi] = build_program(obj, specs)
             %BUILD_PROGRAM set up the algorithm analysis problem
 
             if nargin < 2
@@ -160,7 +160,7 @@ classdef (Abstract) opt_manager_interface
             obj = obj.process_argument(arg);            
             obj = obj.add_specifications(specs);
 
-            [vars, cons, objective] = obj.build_program(); 
+            [vars, cons, objective, alg_psi] = obj.build_program(); 
 
             % objective = obj.get_objective(vars);
             
@@ -178,7 +178,7 @@ classdef (Abstract) opt_manager_interface
 
                 sol.vars = vrec;
 
-                sol = obj.process_recovery(sol, sol.lmi_out);
+                sol = obj.process_recovery(sol, sol.lmi_out, alg_psi);
                 sol.objective = double(double(objective, sol.lmi_out));
             end
 

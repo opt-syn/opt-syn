@@ -183,10 +183,10 @@ classdef opt_synthesis < opt_manager_interface
         end
 
         %% extract the solution                   
-        function  sol = process_recovery(obj, sol, lmi_out);
+        function  sol = process_recovery(obj, sol, lmi_out, alg_psi)
             %PROCESS_RECOVERY recover the controller from the solution
             
-            warning('TODO: Controller Recovery to be implemented')
+            sol = obj.lmi.process_recovery(sol, lmi_out, alg_psi);
             
             % iqc_rec = cell(size(obj.iqc_op));
             % for i = 1:length(obj.iqc_op)

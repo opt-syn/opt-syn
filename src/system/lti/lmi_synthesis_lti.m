@@ -298,9 +298,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                 gam = vars_spec.gam_p2p;
                 M_u = -eye(diss.spec.nwp) * rrecip * (gam - mu);                
 
-                
-
-                
+                               
                 M_p2p = blkdiag(diss.iqc_rob.M, M_u);
                 suppb_2 = obj.supply_block(plant_no_p, M_p2p);
 
@@ -339,6 +337,146 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             cons = append_lmi(cons, con_M_2 - obj.tol.M*eye(sM2), obj.LMILAB);                         
 
             con_M = {con_M_1, con_M_2};
+        end
+
+
+        function sol = process_recovery(obj, sol, lmi_out, alg_psi)
+            %recover the controller
+
+            %this code is with a full-order controller: duplication of the
+            %number of internal model states
+            %TODO: reduced order controller synthesis and recovery
+
+            %get the system with the internal model
+            P_trans =  obj.reg.connect_model(alg_psi);
+
+            %evaluate the variables
+
+            [A, B, C, D] = ssdata(P_trans);
+
+            iz = [P_trans.index_z(); P_trans.index_zp()];
+            iw = [P_trans.index_w(); P_trans.index_wp()];
+            iu = P_trans.index_u();
+            iy = P_trans.index_y();
+            
+
+
+
+            nz = length(iz);
+            nw = length(iw);
+            nu = length(iu);
+            ny = length(iy);
+
+            Ak = sol.vars.K.A;
+            Bk = sol.vars.K.B;
+            Ck = sol.vars.K.C;
+            Dk = sol.vars.K.D;
+            K_warp = [Ak, Bk; Ck, Dk];
+
+            [n] = size(Ak,1);
+            % m = size(Bk);
+
+
+            % S = (sol.vars.S);
+            S = eye(n);
+
+            Y = sol.vars.diss.GY;
+            X = sol.vars.diss.GX;
+
+            J = S - X * Y;
+            [Up, Sig, Vp] = svd(J);
+
+            % U = Up*Sig;
+            ssig = sqrt(Sig);
+            srsig = diag(1./(diag(ssig)));
+
+
+            V = Vp*ssig;
+            U = Up*ssig;
+
+            Uinv = srsig*Up';
+            Vinv = srsig*Vp';
+
+            Lblock = [Uinv, -Uinv*X*B(:, iu);
+                zeros(nu, size(V, 2)), eye(nu)];
+
+            LblockI = [U, X*B(:, iu); 
+                zeros(nu, size(V, 2)), eye(nu)];
+
+            Cblock = [Ak - X*A*Y, Bk;
+                Ck, Dk];
+
+            RblockI = [V' , zeros(size(V, 2), ny);
+                C(iy, :)*Y, eye(ny)];
+
+            Rblock = [Vinv', zeros(size(V, 2), ny);
+                -C(iy, :)*Y*Vinv', eye(ny)];
+
+
+            % Kblock0 = inv(LblockI)* (Cblock) * inv(RblockI);
+            % Kblock1 = LblockI) \ Cblock) * inv(RblockI);
+            % Kblockinv = RblockI') \ LblockI) \ Cblock)')';
+
+            Kblock = Lblock * Cblock * Rblock;
+
+            Ac = Kblock(1:n, 1:n);
+            Bc = Kblock(1:n, n+1:end);
+            Cc = Kblock(n+1:end, 1:n);
+            Dc = Kblock(n+1:end, n+1:end);
+
+            K_sub_full = ss(Ac, Bc, Cc, Dc, 1);
+            K_sub=minreal(K_sub_full,1e-5);
+
+            
+
+
+            %add the proper term by LFT
+            %this part may be incorrect
+
+
+            D22 = D(iy, iu);
+            Dfeed = zeros(nz+ny, nw+nu);            
+            Dfeed(nz+1:end, nw+1:end) = D22;
+
+            
+
+            P_trans_nofeed = P_trans.ss;
+            P_trans_nofeed.D = P_trans_nofeed.D - Dfeed;
+
+            T_feed = [zeros(nu, ny), eye(nu); eye(ny), -D22];
+
+            K_feed = lft(T_feed, K_sub, nu, ny);
+            K_feed_full = lft(T_feed, K_sub_full, nu, ny);
+
+            %connect the internal model: form the controller
+
+            model = obj.reg.get_model(sol.vars.reg);
+
+            K = lft(model, K_feed);
+            K_full = lft(model, K_feed_full);
+
+            
+            %form the algorithm
+            alg = lft(obj.sys.P, K);
+            alg_full = lft(obj.sys.P, K_full);
+
+
+            sol.alg = alg_full;
+            sol.K = K_full;
+            sol.model = model;
+            sol.K_sub = K_sub;
+
+            sol.alg_trans = lft(P_trans, K_feed);  
+
+
+            %verify performance of the algorithm
+            %TODO: a postprocessing LMI (?) to check that the recovered 
+            %algorithm satisfies the performance specifications 
+
+            
+
+
+
         end
 
     end
