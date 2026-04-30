@@ -371,7 +371,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             Bk = sol.vars.K.B;
             Ck = sol.vars.K.C;
             Dk = sol.vars.K.D;
-            K_warp = [Ak, Bk; Ck, Dk];
+            K_warp = full([Ak, Bk; Ck, Dk]);
 
             [n] = size(Ak,1);
             % m = size(Bk);
@@ -382,6 +382,8 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
             Y = sol.vars.diss.GY;
             X = sol.vars.diss.GX;
+
+            G = obj.get_storage(sol.vars.diss, sol.vars.reg);
 
             J = S - X * Y;
             [Up, Sig, Vp] = svd(J);
@@ -396,6 +398,28 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
             Uinv = srsig*Up';
             Vinv = srsig*Vp';
+
+
+            %similarity transformation
+
+
+            %get right-side entries
+            I = eye(n);
+            Z1 = (Vinv*(I - X * Y')')';
+            Z2 = (Vinv* (-U * Y')')';
+            
+            Z34 = [X, Z1; U, Z2] \ [zeros(n); eye(n)];
+            
+            Z3 = Z34(1:n, :);
+            Z4 = Z34((n+1):end, :);
+            
+            T = [eye(n), Y'; zeros(n), V'];
+            Ti = [eye(n), -Y' * Vinv'; zeros(n), Vinv'];
+            
+            SimG = [X, Z1; U, Z2];
+            SimGi = [Y', Z3; V', Z4];
+
+            %controller recovery
 
             Lblock = [Uinv, -Uinv*X*B(:, iu);
                 zeros(nu, size(V, 2)), eye(nu)];

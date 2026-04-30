@@ -35,7 +35,7 @@ classdef opt_synthesis < opt_manager_interface
         function iqc_op = make_blank_iqc(obj)
             %if no IQCs are provided, make identity IQCs
                 nop = length(obj.sys.op);
-                iqc_op = cell(nop);
+                iqc_op = cell(nop, 1);
                 bind =obj.sys.bind;
                 for i = 1:nop
                     nrep = sum(i==bind);

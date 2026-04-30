@@ -77,6 +77,62 @@ classdef iqc_loop_factored
             hf = length(obj.Psi1.A)+ length(obj.Psi2.A);
         end
 
+        function iqc = blkdiag(obj, b)
+            %BLKDIAG: block diagonal of the multipliers
+
+            % if length(varargin) == 1
+                % b = varargin{1};
+                if isempty(b)
+                    iqc = obj;
+                else                   
+                    Psi1 = blkdiag(obj.Psi1, b.Psi1);
+                    Psi2 = blkdiag(obj.Psi2, b.Psi2);
+                    X = blkdiag(obj.X, b.X);
+        
+        
+                    n1 = obj.nw;
+                    m1 = obj.nz;
+        
+                    n2 = b.nw;
+                    m2 = b.nz;   
+                    
+    
+                    [loop] = outer_blkdiag(obj.loop, b.loop, n1, m1, n2, m2);
+    
+                    % loop = E1*obj.loop*E1' + E2*b.loop*E2';
+        
+                    n1 = obj.np;
+                    m1 = obj.nq;
+                    n2 = b.np;
+                    m2 = b.nq;
+    
+                    [M] = outer_blkdiag(obj.M, b.M, n1, m1, n2, m2);
+        
+                    %care must be taken with empties
+                    if isempty(b.C3)
+                        if isempty(obj.C3)
+                            C3 = zeros(n1+n2, 0);
+                        else
+                            C3 = [obj.C3, zeros(n2, size(obj.C3, 1))];
+                        end
+                    else
+                        if isempty(obj.C3)
+                            C3 = [zeros(n1, size(b.C3, 1)); b.C3, ];
+                        else
+                            C3 =  blkdiag(obj.C3, b.C3);
+                        end
+                    end          
+
+
+
+                    D3 = blkdiag(obj.D3, b.D3);
+    
+                    iqc = iqc_loop_factored(Psi1, Psi2, C3, D3, M, X, loop);
+
+                end
+        end
+
+
         function  psi_out = get_psi(obj)
             %GET_PSI form the triangular multiplier
 
