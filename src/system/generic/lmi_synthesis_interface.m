@@ -12,9 +12,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
     
     properties
         reg; %internal model of the controller
-        
-        %TODO: reduced order control (better interface later)        
-        config;
+                
     end
 
     
@@ -22,7 +20,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         function obj = lmi_synthesis_interface(sys, config)
             %LMI_SYNTHESIS_INTERFACE Construct an instance of this class
             %   Detailed explanation goes here
-            obj@lmi_dispatch_interface(sys);
+            obj@lmi_dispatch_interface(sys, config);
 
 
             %form the internal model
@@ -105,7 +103,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             nX = n + ns;
 
             
-            if obj.opts.reduced_order
+            if obj.config.syn.reduced_order
                 %TODO: not yet implemented
                 nY = n;
             else
@@ -122,7 +120,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
             %bound the entries of the GX and GY matrices
-            if obj.tol.G_max < Inf                   
+            if obj.config.tol.G_max < Inf                   
                 cons = append_lmi(cons, obj.config.tol.GX_max*eye(nX)  - GX, obj.config.LMILAB);                            
                 cons = append_lmi(cons, obj.config.tol.GY_max*eye(nY)  - GY, obj.config.LMILAB);                
             end            
@@ -140,7 +138,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             % ns = ssize(obj.reg.S, 1);
 
 
-            if obj.opts.reduced_order
+            if obj.config.syn.reduced_order
                 %TODO: not yet implemented
                 %some sort of indexing on Pi
                 Pi = vars.reg.Pi;
@@ -178,7 +176,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             n = ssize(alg_psi.A, 1);
             ns = ssize(obj.reg.S, 1);
             
-            if obj.opts.reduced_order
+            if obj.config.syn.reduced_order
                 %TODO: not yet implemented
                 nc = n;
             else
@@ -206,7 +204,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %bound entries of the controllers
             kq = [vars_K.A, vars_K.B;            
               vars_K.C,  vars_K.D];
-            cons= append_lmi(cons, obj.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
+            cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
 
         end
 
@@ -239,7 +237,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             %the sparsity-constrained term for internal model control
             % if nargin < 2
-                D_mask_0 = obj.config.D_mask;
+                D_mask_0 = obj.config.syn.D_mask;
             % end
            
             if isempty(D_mask_0)

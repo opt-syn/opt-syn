@@ -30,7 +30,7 @@ classdef opt_synthesis < opt_manager_interface
             end
 
             obj.task = 'synthesis';            
-            obj.lmi = obj.select_lmi(sys, config);
+            obj.lmi = obj.select_lmi(sys);
 
         end
 

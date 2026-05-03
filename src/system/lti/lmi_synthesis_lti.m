@@ -194,7 +194,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
 
             sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB); 
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
 
             %impose sign constraint
             %change this up
@@ -233,7 +233,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
 
             sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB);   
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB);   
             
             
             %impose sign constraint
@@ -333,8 +333,8 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
             sM1 = ssize(con_M_1,1);  sM2 = ssize(con_M_2,1);
 
-            cons = append_lmi(cons, con_M_1 - obj.tol.M*eye(sM1), obj.LMILAB);   
-            cons = append_lmi(cons, con_M_2 - obj.tol.M*eye(sM2), obj.LMILAB);                         
+            cons = append_lmi(cons, con_M_1 - obj.config.tol.M*eye(sM1), obj.LMILAB);   
+            cons = append_lmi(cons, con_M_2 - obj.config.tol.M*eye(sM2), obj.LMILAB);                         
 
             con_M = {con_M_1, con_M_2};
         end
