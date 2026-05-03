@@ -8,10 +8,14 @@ classdef opt_analysis < opt_manager_interface
 
        
     methods
-        function obj = opt_analysis(sys)
+        function obj = opt_analysis(sys, config)
             %OPT_ANALYSIS Construct an instance of this class            
-           
-            obj@opt_manager_interface(sys);
+                     
+            if nargin < 2
+                config = opt_config;
+            end
+
+            obj@opt_manager_interface(sys, config);
 
             obj.task = 'analysis';
             obj.lmi = obj.select_lmi(sys);
@@ -87,8 +91,13 @@ classdef opt_analysis < opt_manager_interface
                 cs = cs + cs_curr;
             end
 
-            cons = append_lmi(cons, cs - nop*0.9, obj.LMILAB);
-            cons = append_lmi(cons, -cs + nop*1.1, obj.LMILAB);
+
+            %LMILAB doesn't like equality constraints on coefficients
+            %so add a margin
+            marg = obj.config.ana.normalize_margin;
+
+            cons = append_lmi(cons, cs - nop*(1-marg), obj.config.LMILAB);
+            cons = append_lmi(cons, -cs + nop*(1+marg), obj.config.LMILAB);
         end
 
         function [diss] = index_specs(obj, alg_psi, iqc_op, specs)
@@ -202,7 +211,7 @@ classdef opt_analysis < opt_manager_interface
         
 
         %% extract the solution                   
-        function  sol = process_recovery(obj, sol, lmi_out);
+        function  sol = process_recovery(obj, sol, lmi_out, alg_psi);
             %PROCESS_RECOVERY recover the IQCs from the solution
             %
             

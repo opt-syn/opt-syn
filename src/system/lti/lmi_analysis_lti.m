@@ -23,10 +23,10 @@ classdef lmi_analysis_lti < lmi_analysis_interface
     %
     
     methods
-        function obj = lmi_analysis_lti(sys)
+        function obj = lmi_analysis_lti(sys, config)
             %LMI_DISPATCH_LTI Construct an instance of this class
             %   Detailed explanation goes here
-            obj@lmi_analysis_interface(sys);
+            obj@lmi_analysis_interface(sys, config);
         end       
         
         
@@ -75,7 +75,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
 
             sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB); 
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB); 
 
             %impose sign constraint
             cons = obj.con_terminal(G, cons, diss.iqc_rob);
@@ -215,8 +215,8 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
             sM1 = ssize(con_M_1,1);  sM2 = ssize(con_M_2,1);
 
-            cons = append_lmi(cons, con_M_1 - obj.tol.M*eye(sM1), obj.LMILAB);   
-            cons = append_lmi(cons, con_M_2 - obj.tol.M*eye(sM2), obj.LMILAB);                         
+            cons = append_lmi(cons, con_M_1 - obj.config.tol.M*eye(sM1), obj.LMILAB);   
+            cons = append_lmi(cons, con_M_2 - obj.config.tol.M*eye(sM2), obj.LMILAB);                         
 
             con_M = {con_M_1, con_M_2};
         end

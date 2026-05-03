@@ -12,22 +12,25 @@ classdef opt_synthesis < opt_manager_interface
     end
     
     methods
-        function obj = opt_synthesis(sys, iqc_op)
+        function obj = opt_synthesis(sys, iqc_op, config)
             %OPT_SYNTHESIS Construct an instance of this class
             %   Detailed explanation goes here
 
-            obj@opt_manager_interface(sys);
+            if nargin < 3
+                config = opt_config;
+            end
+
+            obj@opt_manager_interface(sys, config);
                         
             if nargin == 1 || isempty(iqc_op)                
                 %create identity filters, but keep the loop transformations
                 obj.iqc_op = obj.make_blank_iqc;
             else
-                obj.iqc_op = iqc_op;
-            
+                obj.iqc_op = iqc_op;            
             end
 
             obj.task = 'synthesis';            
-            obj.lmi = obj.select_lmi(sys);
+            obj.lmi = obj.select_lmi(sys, config);
 
         end
 

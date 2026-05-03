@@ -14,12 +14,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         reg; %internal model of the controller
         
         %TODO: reduced order control (better interface later)        
-        opts = struct('reduced_order', 0, 'D_mask', []);
+        config;
     end
 
     
     methods
-        function obj = lmi_synthesis_interface(sys, opts)
+        function obj = lmi_synthesis_interface(sys, config)
             %LMI_SYNTHESIS_INTERFACE Construct an instance of this class
             %   Detailed explanation goes here
             obj@lmi_dispatch_interface(sys);
@@ -32,13 +32,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             obj.reg = reg_handle(sys);
 
             %TODO: better options handling down below
-            if nargin > 1
-                fn = fieldnames(opts);
-                for i = 1:length(fn)
-                    gc = getfield(opts,fn);
-                    obj.opts = setfield(obj.opts, fn, gc);
-                end
-            end
+            obj.config = config;
         end
 
         
@@ -129,8 +123,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             %bound the entries of the GX and GY matrices
             if obj.tol.G_max < Inf                   
-                cons = append_lmi(cons, obj.tol.GX_max*eye(nX)  - GX, obj.LMILAB);                            
-                cons = append_lmi(cons, obj.tol.GY_max*eye(nY)  - GY, obj.LMILAB);                
+                cons = append_lmi(cons, obj.config.tol.GX_max*eye(nX)  - GX, obj.config.LMILAB);                            
+                cons = append_lmi(cons, obj.config.tol.GY_max*eye(nY)  - GY, obj.config.LMILAB);                
             end            
         end
 
@@ -245,7 +239,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             %the sparsity-constrained term for internal model control
             % if nargin < 2
-                D_mask_0 = obj.opts.D_mask;
+                D_mask_0 = obj.config.D_mask;
             % end
            
             if isempty(D_mask_0)
@@ -323,7 +317,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             con_X = G + X_f;
 
             sx = ssize(con_X, 1);
-            cons = append_lmi(cons, con_X - eye(sx)*obj.tol.X, obj.LMILAB);
+            cons = append_lmi(cons, con_X - eye(sx)*obj.config.tol.X, obj.LMILAB);
 
         end
 

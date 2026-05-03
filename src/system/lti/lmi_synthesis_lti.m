@@ -24,10 +24,10 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
     %
     
     methods
-        function obj = lmi_synthesis_lti(sys)
+        function obj = lmi_synthesis_lti(sys, config)
             %LMI_SYNTHESIS_LTI Construct an instance of this class
             %   Detailed explanation goes here
-            obj@lmi_synthesis_interface(sys);
+            obj@lmi_synthesis_interface(sys, config);
         end       
         
         

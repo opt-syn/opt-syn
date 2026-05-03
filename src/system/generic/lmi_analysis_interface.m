@@ -16,10 +16,10 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
     % end
     
     methods
-        function obj = lmi_analysis_interface(sys)
+        function obj = lmi_analysis_interface(sys, config)
             %LMI_ANALYSIS_INTERFACE Construct an instance of this class
             %   Detailed explanation goes here
-            obj@lmi_dispatch_interface(sys);
+            obj@lmi_dispatch_interface(sys, config);
         end
 
 
@@ -45,10 +45,10 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
 
             
 
-            if obj.tol.G_max < Inf    
+            if obj.config.tol.G_max < Inf    
                 %issue in the bounding?
-                cons = append_lmi(cons, obj.tol.G_max*eye(n)  - G, obj.LMILAB);
-                cons = append_lmi(cons, obj.tol.G_max*eye(n)  + G, obj.LMILAB);                
+                cons = append_lmi(cons, obj.config.tol.G_max*eye(n)  - G, obj.config.LMILAB);
+                cons = append_lmi(cons, obj.config.tol.G_max*eye(n)  + G, obj.config.LMILAB);                
             end            
         end
 
@@ -61,7 +61,7 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
             nspec = length(specs);
             vars_spec = cell(nspec, 1);
             for i = 1:nspec
-                [vars_spec{i}, cons] = specs{i}.create_vars(cons);
+                [vars_spec{i}, cons] = specs{i}.create_vars(cons, [], obj.config);
             end
         end
 
@@ -84,7 +84,7 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
             con_X = G + X_f;
 
             sx = ssize(con_X, 1);
-            cons = append_lmi(cons, con_X - eye(sx)*obj.tol.X, obj.LMILAB);
+            cons = append_lmi(cons, con_X - eye(sx)*obj.config.tol.X, obj.config.LMILAB);
 
         end
         

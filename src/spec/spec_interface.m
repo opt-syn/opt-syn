@@ -15,8 +15,7 @@ classdef spec_interface
         rho=1; %exponential discounting
         iwp = [];    %indices for performance input
         izp = [];    %indices for performance output        
-        vars;                
-        LMILAB = 1;            
+        vars;                        
         id = 0;
         target = false; %should this be the target of optimization (within 
                         %bisection iterations)?
@@ -55,7 +54,7 @@ classdef spec_interface
             nwwp = length(obj.iwp);
         end
 
-        function [vars, cons] = create_vars(obj, cons, name)
+        function [vars, cons] = create_vars(obj, cons, name, config)
             %CREATE_VARS form the variables for the problem            
             vars = [];            
         end

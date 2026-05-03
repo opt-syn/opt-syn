@@ -17,24 +17,28 @@ classdef (Abstract) opt_manager_interface
         %task: 'analysis' or 'synthesis': determined by subclass
         
         
-        %numerics
-        LMILAB = true;
-        tol = struct('dia', 1e-11);          %tolerance for acceptable solution 
+        config = [];
 
         lmi = [];
         %other options
-        opts = struct('impose_X', true)
         task = 'generic';
     end
     
     methods
-        function obj = opt_manager_interface(sys)
+        function obj = opt_manager_interface(sys, config)
             %OPT_MANAGER_INTERFACE
+
+            if nargin < 2
+                config = opt_config();
+            end
+
             obj.sys = sys;
             nop = length(obj.sys.op);
             obj.iqc_op = cell(nop, 1);
             obj.vars = struct('op', []);
-            obj.vars.op =cell(nop, 1);     
+            obj.vars.op =cell(nop, 1);   
+
+            obj.config = config;
             
 
         end
@@ -50,7 +54,7 @@ classdef (Abstract) opt_manager_interface
             clname = ['lmi_', obj.task, '_', tp];
             lmi_hand = str2func(clname);
 
-            lmi_handler = lmi_hand(sys);
+            lmi_handler = lmi_hand(sys, obj.config);
 
         end
 
@@ -80,6 +84,11 @@ classdef (Abstract) opt_manager_interface
 
         end
 
+        function verdict = LMILAB(obj)
+            %is LMILAB used?
+            verdict = obj.config.LMILAB();
+        end
+
         %% acquire solutions
         function [sol] = run(obj,  vars, cons, objective)
             %RUN: run the program
@@ -95,7 +104,7 @@ classdef (Abstract) opt_manager_interface
                 
                 
                 sol.dia = lmi_out.dia;
-                STATUS = (lmi_out.status || (sol.dia > obj.tol.dia));
+                STATUS = (lmi_out.status || (sol.dia > obj.config.tol.dia));
                 sol.info = info_out;
 
 
@@ -112,7 +121,7 @@ classdef (Abstract) opt_manager_interface
                 % end
                 
             else %YALMIP
-                opt = sdpsettings('verbose', p.opts.verbose, 'solver', p.opts.solver);
+                opt = sdpsettings('verbose', obj.gen.config.verbose, 'solver', obj.config.gen.solver);
             
                 t = optimize(lmi, objective, opt);
                 
@@ -185,7 +194,7 @@ classdef (Abstract) opt_manager_interface
         end
 
         %% Bisection routines
-        function [sol_best, vr] = bisect(obj, arg, specs, b_opts)
+        function [sol_best, vr] = bisect(obj, arg, specs)
             %BISECT: perform bisection on a parameter. Minimization target
             %
             %sweep in options structure? 
@@ -206,13 +215,11 @@ classdef (Abstract) opt_manager_interface
             %   vr:       the range of the value at the optimal bisection
 
 
-            if nargin < 4
-                b_opts = bisect_opts;
-            end
-
             sol_best = [];
             vr = [];
             %base relations
+
+            b_opts = obj.bisect;
             
 
             %process the inputs and specifications
@@ -322,6 +329,8 @@ classdef (Abstract) opt_manager_interface
             %BISECT_INNER: inner loop for bisection
             %run the program and process the solution
             
+            % TODO: will need to redo constraint invocation due to the
+            % exponential convergence implementation
 
             spec_curr = obj.modify_spec(pcurr, spec, b_opts);
 

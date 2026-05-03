@@ -33,10 +33,10 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
     end
 
     methods
-        function obj = lmi_analysis_periodic(sys)
+        function obj = lmi_analysis_periodic(sys, config)
             %LMI_DISPATCH_LTI Construct an instance of this class
             %   Detailed explanation goes here
-            obj@lmi_analysis_interface(sys);
+            obj@lmi_analysis_interface(sys, config);
         end
 
 
@@ -122,7 +122,7 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
 
 
             sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB); 
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB); 
 
             %impose sign constraint
             cons = obj.con_terminal(Gcurr, cons, diss.iqc_rob);
@@ -161,7 +161,7 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
 
 
             sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB);   
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB);   
             
             
             %impose sign constraint
@@ -237,7 +237,7 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
                 % for j = 1:obj.Nss
                     % name = ['_', num2str(j)];
                     name = [];
-                    [vars_spec{i}, cons] = specs{i}.create_vars(cons, name);
+                    [vars_spec{i}, cons] = specs{i}.create_vars(cons, name, obj.config);
                 % end
             end
         end

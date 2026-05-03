@@ -39,10 +39,10 @@ classdef lmi_analysis_periodic_orbit < lmi_analysis_periodic
     end
 
     methods
-        function obj = lmi_analysis_periodic_orbit(sys)
+        function obj = lmi_analysis_periodic_orbit(sys, config)
             %LMI_DISPATCH_LTI Construct an instance of this class
             %   Detailed explanation goes here
-            obj@lmi_analysis_periodic(sys);
+            obj@lmi_analysis_periodic(sys, config);
             obj.R = sys.R;
         end
 
@@ -109,7 +109,7 @@ classdef lmi_analysis_periodic_orbit < lmi_analysis_periodic
 
 
             sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB); 
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB); 
 
             %impose sign constraint
             cons = obj.con_terminal(G, cons, diss.iqc_rob);
@@ -150,7 +150,7 @@ classdef lmi_analysis_periodic_orbit < lmi_analysis_periodic
 
 
             sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB);   
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB);   
             
             
             %impose sign constraint

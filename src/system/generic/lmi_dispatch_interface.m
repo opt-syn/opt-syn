@@ -7,21 +7,15 @@ classdef lmi_dispatch_interface
     %  
     properties
         sys;
-        LMILAB = 1;
-        impose_X = false;           %impose the sign constraint on the terminal cost
-        tol = struct('M', 1e-7, ... %tolerance for dissipation constraints
-            'X', 1e-7, ...          %tolerance for sign/terminal cost constraints 
-            'G_max', 100, ...       %upper bound on norm of storage matrix (analysis)
-            'GX_max', 100, ...      %upper bound on norm of primal storage matrix (synthesis)
-            'GY_max', 100,...       %upper bound on norm of dual storage matrix (synthesis)
-            'K_max', 100)           %upper bound on norm of controller state space matrices
+        config;
     end
     
     methods
-        function obj = lmi_dispatch_interface(sys)
+        function obj = lmi_dispatch_interface(sys, config)
             %LMI_DISPATCH_INTERFACE Construct an instance of this class
             %   Detailed explanation goes here
             obj.sys = sys;
+            obj.config = config;
         end
         
 
@@ -147,6 +141,11 @@ classdef lmi_dispatch_interface
             
             sb = Cblock' * (-M) * Cblock;
 
+        end
+
+        function verdict = LMILAB(obj)
+            %is LMILAB used?
+            verdict = obj.config.LMILAB();
         end
 
 
