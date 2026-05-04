@@ -50,7 +50,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
         end
 
-        function sys_cl = system_closed_loop(obj, vars_diss, vars_reg, vars_K, diss);
+        function sys_cl = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
             %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
             %transformation
 
@@ -59,11 +59,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
             %should be a genplant type
             % P_net = diss.plant;
-
-            %IMPORTANT!
-            %hook up the internal model
-            %(maybe it should happen at a higher level?)
-            P = obj.reg.connect_model(diss.plant);
+            
 
             [A, B, C, D] = ssdata(P);
             iu = P.index_u;
@@ -83,26 +79,75 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             Ck = vars_K.C;
             Dk = vars_K.D;
             %
-            Acal = [A*GX + B(:, iu)*Ck,  A + B(:, iu)*Dk*C(iy, :);
-                    Ak, GY*A + Bk*C(iy, :)];
+            Acal = [A*GY + B(:, iu)*Ck,  A + B(:, iu)*Dk*C(iy, :);
+                    Ak, GX*A + Bk*C(iy, :)];
             Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
-                GY*B(:, iw) + Bk*D(iy, iw)];
-            Ccal = [C(iz, :)*GX + D(iz, iu)*Ck, C(iz, :) + D(iz, iu)*Dk*C(iy, :)];
+                GX*B(:, iw) + Bk*D(iy, iw)];
+            Ccal = [C(iz, :)*GY+ D(iz, iu)*Ck, C(iz, :) + D(iz, iu)*Dk*C(iy, :)];
             Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);
     
 
             sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
         end
-        
+
+        %% stability (for testing)
+        % function [cons, objective, con_M] = stability_passive(obj, vars, cons, diss)
+        function [cons, objective, con_M] = stability(obj, vars, cons, diss)
+            %certification of exponential stability
+            
+            G = obj.get_storage(vars.diss, vars.reg);
+
+            %IMPORTANT!
+            %hook up the internal model
+            %(maybe it should happen at a higher level?)
+            P = obj.reg.connect_model(diss.plant, diss.rho);
+
+            sys_cl = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
+
+            %only do this if the system is passive
+
+            n = ssize(sys_cl.A, 1);
+            nw = ssize(sys_cl.B, 2);
+            nz = ssize(sys_cl.C, 1);
+            
+            % nt = length(ind_pos);
+
+            dyn_block =  [G,  sys_cl.A, sys_cl.B;
+            sys_cl.A', G, zeros(n, nz);
+            sys_cl.B', zeros(nz, n), zeros(nz)];
+
+            %supply block
+            %       sp = [zeros(n), zeros(n), zeros(n, nz);
+            % zeros(n), zeros(n), zeros(n, nz); %vars.ga * eye(n)
+            % zeros(nz, n), Ccl, Dcl + eye(nz)*p.opts.pass_tol] * (-0.5);
+
+            dissI = eye(nz)*obj.config.tol.input_diss;
+            % dissI = zeros(nz);
+              sp = [zeros(n), zeros(n), zeros(n, nz);
+            zeros(n), zeros(n), zeros(n, nz); %vars.ga * eye(n)
+            zeros(nz, n), sys_cl.C, sys_cl.D + dissI] * (-0.5);
+            
+            cost_block = sp + sp';
+    
+            con_M = dyn_block + cost_block;
+    
+            objective = 0;            
 
 
+            sM = ssize(con_M,1);
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
 
-        %% Quadratic performance (infinite horizon)
+            %impose sign constraint
+            %change this up
+            % cons = obj.con_terminal(G, cons, [], diss.iqc_rob);
+        end
 
 
+        %% Quadratic performance (infinite horizon)        
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
             %QUAD: certificate of infinite-horizon quadratic performance
 
+            %TODO: debug this
             
 
             %get the variables of the problem
@@ -112,7 +157,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             
             %index the quadratic specification
             vars_spec = vars.spec{diss.spec.id};
-            M_quad = obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
+            M_quad = -obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
 
             if isempty(diss.spec.izp)
                 ind_p = 1:(diss.iqc_rob.nz);
@@ -150,7 +195,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             outer_Q = [zeros(n, nz); eye(nz); zeros(n, nz); zeros(nt, nz)];
            
             supp_b = 0;
-            supp_b = -outer_Q * Qq * outer_Q';
+            supp_b = -outer_Q * (Qq - obj.config.tol.input_diss*(length(ind_p))) * outer_Q';
 
             outer_U = [zeros(n, nt); zeros(nz, nt); zeros(n, nt); eye(nt, nt)];
 
@@ -159,7 +204,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             end
             
             %supply block building
-            outer_curr = [diss.spec.rho*eye(n, n); zeros(nz, n); zeros(n, n); eye(nt, n)];
+            outer_curr = [eye(n, n); zeros(nz, n); zeros(n, n); eye(nt, n)];
 
             outer_next = [zeros(n, n); zeros(nz, n); eye(n); eye(nt, n)];
 
@@ -211,7 +256,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
             
            
-            sysb = obj.sys_block(diss.plant, G, G, diss.spec.rho);
+            sysb = obj.sys_block(diss.plant, G, G);
 
             %variable to optimize
             mu = vars.spec{diss.spec.id}.mu_l2;
@@ -249,6 +294,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
             % verification by Theorem 4 of https://www.sciencedirect.com/science/article/pii/S2405896323008194
 
+            %TODO: fix exponential rate here
             %storage matrix
             G = vars.diss.G;
                       
@@ -275,7 +321,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             nwp = length(diss.spec.iwp);
             M_base = blkdiag(diss.iqc_rob.M, -mu * eye(nwp));
             
-            sysb_1 = obj.sys_block(diss.plant, G, G, diss.spec.rho);
+            sysb_1 = obj.sys_block(diss.plant, G, G);
             suppb_1 = obj.supply_block(plant_no_p, M_base);
 
 
@@ -348,7 +394,16 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %TODO: reduced order controller synthesis and recovery
 
             %get the system with the internal model
-            P_trans =  obj.reg.connect_model(alg_psi);
+            P_trans =  obj.reg.connect_model(alg_psi, sol.rho);
+
+            sys_cl = obj.system_closed_loop(P_trans, sol.vars.diss, sol.vars.reg, sol.vars.K);
+            [Acl, Bcl, Ccl, Dcl] = ssdata(sys_cl);
+
+            %for debugging
+            G = obj.get_storage(sol.vars.diss, sol.vars.reg);
+
+            sys_cal = ss(G \ Acl, G \ Bcl, Ccl, Dcl, 1);
+
 
             %evaluate the variables
 
@@ -357,10 +412,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             iz = [P_trans.index_z(); P_trans.index_zp()];
             iw = [P_trans.index_w(); P_trans.index_wp()];
             iu = P_trans.index_u();
-            iy = P_trans.index_y();
-            
-
-
+            iy = P_trans.index_y();           
 
             nz = length(iz);
             nw = length(iw);
@@ -371,6 +423,8 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             Bk = sol.vars.K.B;
             Ck = sol.vars.K.C;
             Dk = sol.vars.K.D;
+
+            % sys_cal = ss(Ak, Bk, Ck, Dk, 1);
             K_warp = full([Ak, Bk; Ck, Dk]);
 
             [n] = size(Ak,1);
@@ -383,7 +437,6 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             Y = sol.vars.diss.GY;
             X = sol.vars.diss.GX;
 
-            G = obj.get_storage(sol.vars.diss, sol.vars.reg);
 
             J = S - X * Y;
             [Up, Sig, Vp] = svd(J);
@@ -449,16 +502,13 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             Cc = Kblock(n+1:end, 1:n);
             Dc = Kblock(n+1:end, n+1:end);
 
-            K_sub_full = ss(Ac, Bc, Cc, Dc, 1);
-            K_sub=minreal(K_sub_full,1e-5);
+            K_nofeed_full = ss(Ac, Bc, Cc, Dc, 1);
+            K_nofeed =minreal(K_nofeed_full,1e-5);
 
             
 
 
             %add the proper term by LFT
-            %this part may be incorrect
-
-
             D22 = D(iy, iu);
             Dfeed = zeros(nz+ny, nw+nu);            
             Dfeed(nz+1:end, nw+1:end) = D22;
@@ -470,11 +520,14 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
             T_feed = [zeros(nu, ny), eye(nu); eye(ny), -D22];
 
-            K_feed = lft(T_feed, K_sub, nu, ny);
-            K_feed_full = lft(T_feed, K_sub_full, nu, ny);
+            K_feed = lft(T_feed, K_nofeed, nu, ny);
+            K_feed_full = lft(T_feed, K_nofeed_full, nu, ny);
+
+            alg_trans = lft(P_trans, K_feed);
+            alg_trans_nofeed = lft(P_trans_nofeed, K_nofeed);
 
             K_sub= rhotrafo(K_feed, 1/sol.rho);
-            K_sub_full = rhotrafo(K_feed, 1/sol.rho);
+            K_sub_full = rhotrafo(K_feed_full, 1/sol.rho);
             %connect the internal model: form the controller
 
             model = obj.reg.get_model(sol.vars.reg);
@@ -493,7 +546,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             sol.model = model;
             sol.K_sub = K_sub;
 
-            sol.alg_trans = lft(P_trans, K_feed);  
+            sol.alg_trans = alg_trans;  
 
 
             %verify performance of the algorithm

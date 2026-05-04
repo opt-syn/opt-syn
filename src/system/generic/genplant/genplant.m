@@ -235,6 +235,12 @@ classdef genplant
             P_out= ss2tf(obj.ss());
         end
 
+        function obj = rhotrafo(obj, rho)
+            %rho transformation (exponential discount)
+            obj.P.A = obj.P.A * (rho^(-1));
+            obj.P.B = obj.P.B * (rho^(-1));
+        end
+
         %% overloads
 
         function b_out = blkdiag(obj, b2)

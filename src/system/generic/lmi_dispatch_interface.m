@@ -82,6 +82,9 @@ classdef lmi_dispatch_interface < handle
                     ' is not supported for ', spt, 'systems.'];
                 error('msg', 'OPT:spec_unsupported');
             end
+
+
+            
     
         end
 

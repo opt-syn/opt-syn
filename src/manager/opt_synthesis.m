@@ -83,13 +83,14 @@ classdef opt_synthesis < opt_manager_interface
                 target_ind = 0;
             end
 
+            [rho, sperf] = obj.perf_specs(specs);
 
-            diss = cell(length(specs), 1);
+            diss = cell(length(sperf), 1);
             %determine the indices for each performance specification
-            for i = 1:length(specs)
+            for i = 1:length(sperf)
                 
                       
-                sp = specs{i};
+                sp = sperf{i};
                 iwp_iqc = (1:(iqc_op.nw))';
                 ir_iqc_first = (1:(iqc_op.np))';
 
@@ -168,7 +169,7 @@ classdef opt_synthesis < opt_manager_interface
 
 
                 diss{i} = struct('iqc_rob', iqc_op, ...
-                    'spec', sp);
+                    'spec', sp, 'rho', rho);
                 diss{i}.plant = alg_screen;
                 % %need to permute the entries of Mdiag for the partition
 

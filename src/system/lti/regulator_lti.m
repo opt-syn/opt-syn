@@ -191,11 +191,16 @@ classdef regulator_lti < regulator_interface
 
         end
 
-        function plant_model = connect_model(obj, plant)
+        function plant_model = connect_model(obj, plant, rho)
             %connect the model (nominal regulator equation)
 
+            if nargin < 3
+                rho = 1;
+            end
+
             model = obj.get_model();
-            plant_model = lft(plant, model);
+            model_rho = rhotrafo(model, rho);
+            plant_model = lft(plant, model_rho);
         end
 
 

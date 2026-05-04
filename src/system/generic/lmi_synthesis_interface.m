@@ -34,6 +34,36 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
         
+        function [cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
+            %CONS form the dissipation and sign constraints
+            %
+            %Input:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss:   structure describing the problem
+            %       plant:  system to control
+            %       spec:   performance specification           
+            %       target: whether the performance measure should be optimized
+            %               true:  soft constraint (e.g. Schur complement
+            %                                       formulation)
+            %               false: hard constraint            
+            %
+            %Output:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            
+            
+            %need to look up the right constraint            
+
+            %Upper-levels: iterate over the systems
+            [cons, objective, con_M] = cons_dynamic@lmi_dispatch_interface(obj, vars, cons, diss);
+
+            
+
+            
+                      
+        end
+
 
         %% variable creation
 
@@ -123,6 +153,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             if obj.config.tol.G_max < Inf                   
                 cons = append_lmi(cons, obj.config.tol.GX_max*eye(nX)  - GX, obj.config.LMILAB);                            
                 cons = append_lmi(cons, obj.config.tol.GY_max*eye(nY)  - GY, obj.config.LMILAB);                
+                cons = append_lmi(cons, -obj.config.tol.G_min*eye(nX)  + GX, obj.config.LMILAB);                            
+                cons = append_lmi(cons, -obj.config.tol.G_min*eye(nY)  + GY, obj.config.LMILAB);                
             end            
         end
 
@@ -160,6 +192,28 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             for i = 1:nspec
                 [vars_spec{i}, cons] = specs{i}.create_vars(cons);
             end           
+        end
+
+
+
+        function cons = con_spread_single(obj, cons, GX, GY)
+            %CON_SPREAD_SINGLE increase numerical conditioning by separating the 
+            %primal and dual blocks
+            np = ssize(GX, 1);
+            spr = obj.config.tol.spread+1;
+            cons_PH = [GX, (spr)*eye(np); (spr)*eye(np), GY];
+            cons = append_lmi(cons, cons_PH, obj.LMILAB);
+
+        end
+
+
+        function cons = con_spread(obj, cons, vars)
+            %CON_SPREAD increase numerical conditioning by separating the 
+            %primal and dual blocks
+            %invoke this over multiple subsystems
+            if ~obj.config.syn.reduced_order
+                cons = obj.con_spread_single(obj, cons, vars.diss.GX, vars.diss.GY);
+            end
         end
         
         function [vars_K, cons] = create_vars_controller(obj, cons, alg_psi, name)
@@ -304,6 +358,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %X is a non-PSD terminal cost
 
             %matrix dilation results
+
+            
 
             nf = ssize(X);
             n = ssize(G, 1);

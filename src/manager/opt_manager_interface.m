@@ -81,7 +81,7 @@ classdef (Abstract) opt_manager_interface < handle
 
 
 
-            [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);
+            [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, sperf);
 
             %the dissipation can change
             [vars, cons, objective] = obj.cons_dynamic(vars, cons, alg_psi, iqc_op, specs);
@@ -218,8 +218,16 @@ classdef (Abstract) opt_manager_interface < handle
 
                 sol.rho = rho;
                 sol.objective = double(double(objective, sol.lmi_out));
+
+                ncons = length(cons.lmim);
+                sol.blocks = cell(ncons, 1);
+                for i = 1:ncons
+                    sol.blocks{i} = double(double(cons.lmim(i), sol.lmi_out));
+                end
+
                 sol = obj.process_recovery(sol, sol.lmi_out, alg_psi);
                 
+
                 
             end
 

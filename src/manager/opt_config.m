@@ -24,6 +24,7 @@ classdef opt_config
             'G_max', 100, ...           %upper bound on norm of storage matrix (analysis)
             'GX_max', 100, ...          %upper bound on norm of primal storage matrix (synthesis)
             'GY_max', 100,...           %upper bound on norm of dual storage matrix (synthesis)
+            'G_min', 1e-4, ...
             'spread', 0.01, ...         %tolerance in the matrix dilation constraint
             'input_diss', 1e-4,...           %tolerance for strict input dissipation
             'K_max', 100);              %upper bound on norm of controller state space matrices
