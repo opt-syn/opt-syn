@@ -10,7 +10,11 @@ classdef  opt_system_interface
         tracking; %tracking of optimal solution (struct (S, R) by default)
                   %tracking of varying gradients requires LPV/periodic/switched
                   % methods, is a TODO
-        type=[];   %type of system: (e.g. lti, periodic, switched, mjls, lpv)
+        type=[];   %type of system: (e.g. lti, periodic, switched, mjls, lpv)    
+        
+        
+        discount = true; %is the subsystem exponentially discounted?
+        %for a 3-mode system: could be [true, false, false]
     end
     
     methods
@@ -38,8 +42,21 @@ classdef  opt_system_interface
         end    
 
         %% formation of the plant
-        function [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data)
-            
+        function [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data, rho)
+            %BUILD_PLANT_SINGLE build a single plant (in a switched
+            %system) based on filtering the exponentially-discounted plant 
+            %by an IQC
+            %
+            %Input:
+            %   alg:        original algorithm or network
+            %   iqc_data:   IQCs for the oracle uncertainties
+            %   rho:        exponential discount factor
+            %
+            %Output:
+            %   alg_psi:    filtered algorithm 
+            %   iqc_op:     IQCS for the oracle uncertainties (altogether)
+            %   alg_loop:   the discounted algorithm before applying the 
+            %               dynamical filter (for debugging)
 
             %sort oracles based on the bind (exposure of repeated
             %nonlinearities)
@@ -56,6 +73,7 @@ classdef  opt_system_interface
 
             w_offset = ssize(alg.B, 2) - wshift;
             z_offset = ssize(alg.C, 1) - wshift;
+            
 
 
             Pwp = blkdiag(P', eye(w_offset));
@@ -78,14 +96,20 @@ classdef  opt_system_interface
 
             alg_perm_m = lft(iqc_data.m_same, alg_perm_same, n_same, n_same);
 
+            %exponentially weight the algorithm by the rate rho
+            alg_rho = alg_perm_m;            
+            alg_rho.A = (rho^(-1)) * alg_perm_m.A;
+            alg_rho.B = (rho^(-1)) * alg_perm_m.B;
             
+            %now apply the IQC to the exponentially-weighted system
+
             %get the iqcs for the operators
             %no loop transformations in performance
             iqc_op = iqc_data.iqc;
 
             loop = iqc_op.loop;
             nloop = length(loop)/2;
-            alg_loop = lft(loop, alg_perm_m, nloop, nloop);
+            alg_loop = lft(loop, alg_rho, nloop, nloop);
 
 
 
@@ -116,8 +140,6 @@ classdef  opt_system_interface
                 alg_psi = iqc_op.wrap_synth(alg_loop, n);
             end            
         end
-
-
 
         %% Dimension Counters
         function nss = Nss(obj)
@@ -165,6 +187,26 @@ classdef  opt_system_interface
             op_out = obj.op{obj.bind(i)};
         end
         
+        function pow = discount_schedule(ordermax)
+            %DISCOUNT_SCHEDULE exponential weights encountered when
+            %applying the FIR filters
+            %
+            %[0; 1 ; 2] -> rho.^[0; 1; 2] for uniform exponential stability
+
+            %This becomes relevant when performing shuffled systems
+            %(override on switched systems) 
+            %
+            %TODO: switched systems
+            
+
+            if obj.discount
+                pow = -(0:ordermax);
+            end
+
+
+        end
+
+
         %% for simulation
 
         function [y, u] = get_internal_signals(obj, param, x_all, w_all)

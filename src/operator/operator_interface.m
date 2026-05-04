@@ -56,7 +56,7 @@ classdef (Abstract) operator_interface
                 iqc_orig = iqc_loop_split(psi1, M, loop, psi2, X);
     
                 iqc = iqc_orig.lift(obj.c);
-                cons = obj.filter_constraints(cons, order, vars, iqc);
+                % cons = obj.filter_constraints(cons, order, vars, iqc);
             end
         end
 
@@ -82,7 +82,7 @@ classdef (Abstract) operator_interface
         build_X(obj, vars, order, reps);
         build_loop(obj, reps);
 
-        filter_constraints(obj, cons, order, vars, iqc)
+        filter_constraints(obj, cons, order, vars, rho_sched, iqc)
         %recovery
 %         factor_iqc(obj)        
     end

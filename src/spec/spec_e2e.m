@@ -14,13 +14,13 @@ classdef spec_e2e < spec_interface
     end
     
     methods
-        function obj = spec_e2e(GAIN, iwp, izp, rho)
+        function obj = spec_e2e(GAIN, iwp, izp)
             %SPEC_E2E Construct an instance of this class
             %   Detailed explanation goes here
-            if nargin < 4
-                rho = 1;
-            end            
-            obj@spec_interface(iwp, izp, rho);
+            % if nargin < 4
+            %     rho = 1;
+            % end            
+            obj@spec_interface(iwp, izp);
             obj.gain = GAIN;
         end
         

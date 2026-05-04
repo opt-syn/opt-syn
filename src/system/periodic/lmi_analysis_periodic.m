@@ -103,10 +103,10 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
             
             %allow for differing one-step exponential growths along arcs
             %graph Lyapunov function format
-            rho = obj.get_rho(diss.spec.rho, diss.ind_curr);
+            
             
             %system block with {A, B, G}
-            sysb = obj.sys_block(diss.plant, Gnext, Gcurr, rho);
+            sysb = obj.sys_block(diss.plant, Gnext, Gcurr);
 
 
             %supply block with {C, D, M}
@@ -137,9 +137,9 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
 
 
 
-            rho = obj.get_rho(diss.spec.rho, diss.ind_curr); 
+            
            
-            sysb = obj.sys_block(diss.plant, Gnext, Gcurr, rho);
+            sysb = obj.sys_block(diss.plant, Gnext, Gcurr);
 
             %variable to optimize
             mu = vars.spec{diss.spec.id}.mu_l2;
@@ -176,14 +176,14 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
             ns = obj.sys.Nss;
         end
 
-        function rho = get_rho(obj, rho_list, ind_arc)
-            %GET_RHO: get the exponential growth parameter
-            if length(rho_list) > 1
-                rho = rho_list(ind_arc);
-            else
-                rho = rho_list;
-            end
-        end
+        % function rho = get_rho(obj, rho_list, ind_arc)
+        %     %GET_RHO: get the exponential growth parameter
+        %     if length(rho_list) > 1
+        %         rho = rho_list(ind_arc);
+        %     else
+        %         rho = rho_list;
+        %     end
+        % end
 
         function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
             %create_vars_storage create variables for the dissipation

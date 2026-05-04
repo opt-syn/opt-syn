@@ -14,13 +14,13 @@ classdef spec_p2p < spec_interface
     end
 
     methods
-        function obj = spec_p2p(GAIN, iwp, izp, rho)
+        function obj = spec_p2p(GAIN, iwp, izp)
             %SPEC_P2P Construct an instance of this class
             %   Detailed explanation goes here
-            if nargin < 4
-                rho = 1;
-            end            
-            obj@spec_interface(iwp, izp, rho);
+            % if nargin < 4
+            %     rho = 1;
+            % end            
+            obj@spec_interface(iwp, izp);
             obj.gain = GAIN;
         end
 

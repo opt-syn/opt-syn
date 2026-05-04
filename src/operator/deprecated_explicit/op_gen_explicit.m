@@ -13,6 +13,9 @@ classdef op_gen  < operator_interface
         function obj = op_gen(prop, c)
             %OP_GEN Construct a general operator (possibly a set-valued
             %map that does not have a potential function)            
+            
+        
+            
             if nargin < 2
                 c = 1;
             end
@@ -48,15 +51,12 @@ classdef op_gen  < operator_interface
             %A proxy to normalize the multipliers
             % cs = 1;
 
-            % [n, m] = dim(vars.cM);
-            % cs = ones(1, n) * vars.cM * ones(m, 1);
-
-            cs = 0;
-            for i = 1:obj.prop_count
-                cs = cs + trace(vars.cM{i}) + trace(vars.cX{i});
-            end
+            [n, m] = dim(vars.cM);
+            cs = ones(1, n) * vars.cM * ones(m, 1);
 
         end
+
+
 
         function psi = build_psi_fir(obj, order, reps)
             %BUILD_PSI_FIR form the fir filter [1; z^-1; z^-2; z^-3..] 
@@ -84,14 +84,13 @@ classdef op_gen  < operator_interface
 
         function M_out = build_M(obj, vars, order, reps)
             %BUILD_M create the running cost M
-            M_out = obj.build_cost(vars.cM);
+            M_out = obj.build_cost((order+1)* reps, vars.cM);
         end
 
         function X_out = build_X(obj, vars, order, reps)
             %BUILD_X create the terminal cost X
             if order > 0
-                % X_out = obj.build_cost(order*reps, vars.cX);
-                X_out = obj.build_cost(vars.cX);
+                X_out = obj.build_cost(order*reps, vars.cX);
             else
                 X_out = [];
             end
@@ -101,94 +100,79 @@ classdef op_gen  < operator_interface
             %build the DHD basis
 
 
-
-            sz = ssize(var_curr{1}, 1);            
-                        
+            [nM, pc] = dim(var_curr);            
+            
+            % DBM = dhd_basis_0(sz);
             M11 = zeros(sz);
             M12 = zeros(sz);
             M22 = zeros(sz);
 
             count = 1;
             for p = 1:pc
-                cDBM = var_curr{p};
-                    switch obj.prop{p, 1}
-                    case 'monotone'
-                        mu = obj.prop{p, 2};
-                        M12 = M12 + cDBM;
-                        M22 = M22 - (cDBM + cDBM') * mu/2; 
-                
-                    case 'cocoercive'
-                        beta = obj.prop{p, 2};
-                        M12 = M12 + cDBM;
-                        M11 = M11 - (cDBM + cDBM') * beta/2; 
+                for i = 1:sz
+                    for j = 1:i
+                    % DBM_curr = DBM(:, :, i);
 
-                    case 'lipschitz'
-                        L2 = obj.prop{p, 2}^2;
-                        M11 = M11 - (cDBM + cDBM')/2; 
-                        M22 = M22 + cDBM * L2; 
+                    %manually generate the DHD matrices
+                    cMind = lmim_index(var_curr, i, p);
+                    if j == i
+                        E = zeros(sz, 1);
+                        E(j)=1;
+                        cbl = cMind;
+                    else
+                        E = zeros(sz, 2);
+                        E(i, 1) = 1;
+                        E(j, 2) = 1;
+                        cbl = [1; -1]*cMind * [1, -1];
+                        % cbl = [cMind, -cMind; -cMind, cMind];
+                    end
 
-                    case 'inv_lipschitz'
-                        L2 = obj.prop{p, 2}^2;
-                        M22 = M22 - (cDBM + cDBM')/2; 
-                        M11 = M11 + cDBM * L2;                            
+                        % cMcurr = drep(cMind, sz);
+                        % cMcurr = drep_scalar(cMind, sz);
+                        % cDBM = smul(DBM_curr, );
+                        % cDBM = cMind * DBM_curr;
+    
+                        cDBM = E * cbl * E';
+                        switch obj.prop{p, 1}
+                            case 'monotone'
+                                mu = obj.prop{p, 2};
+                                M12 = M12 + cDBM;
+                                M22 = M22 - cDBM * mu; 
+                        
+                            case 'cocoercive'
+                                beta = obj.prop{p, 2};
+                                M12 = M12 + cDBM;
+                                M11 = M11 - cDBM * beta; 
+    
+                            case 'lipschitz'
+                                L2 = obj.prop{p, 2}^2;
+                                M11 = M11 - cDBM; 
+                                M22 = M22 + cDBM * L2; 
+    
+                            case 'inv_lipschitz'
+                                L2 = obj.prop{p, 2}^2;
+                                M22 = M22 - cDBM; 
+                                M11 = M11 + cDBM * L2; 
+    
+                        end
+                    end
                 end
-                
             end
 
             cost = [M11, M12; M12', M22];
         end
 
 
-        function cons = filter_constraints(obj, cons, order, vars, rho_sched, iqc_out)
+        function cons = filter_constraints(obj, cons, order, vars, iqc_out)
             %constraints on the filter coefficients
 
+            cons = elem_nonneg(vars.cM, cons);
+            cons = elem_nonneg(vars.cX, cons); 
 
-            %TODO: with rho schedule
-
-            % cons = elem_nonneg(vars.cM, cons);
-            % cons = elem_nonneg(vars.cX, cons); 
-
-            %discounting with M
-            reps = ssize(vars.cM{1}, 1)/(order+1);           
-            nsched = size(rho_sched, 2);
-
-            %discounting with X
-            rho_sched_drop = rho_sched(1:end-1, :);
-            rho_sched_drop = unique(rho_sched_drop', 'rows')'; 
-            nschedX = size(rho_sched_drop, 2);
-
-            for i = 1:obj.prop_count
-                %exponential discounting of M
-                for j =1:nsched
-                    rho_1 = kron(diag(rho_sched(1:(order+1), j)), eye(reps));
-                    rho_2 = rho_1;
-    
-                    M_rho = rho_1 * vars.cM{i} * rho_2;
-                    [cons] = dhd_impose(M_rho, cons, obj.LMILAB);
-                end
-
-                %DHD imposition of X
-                %exponential discounting 
-                if order > 0                    
-                    for j =1:nschedX
-                        rho_1 = kron(diag(rho_sched_drop(1:(order), j)), eye(reps));
-                        rho_2 = rho_1;
-    
-                        X_rho = rho_1 * vars.cX{i} * rho_2;
-                        [cons] = dhd_impose(X_rho, cons, obj.LMILAB);
-                    end
-                end
-            end
-
+            [dx1, dx2] = dim(vars.cX);
+            cXtop = ones(1, dx1)*vars.cX*ones(dx2, 1);
+            cons = elem_nonneg(obj.tol_cX - cXtop, cons); 
         end
-
-
-            
-
-            % [dx1, dx2] = dim(vars.cX);
-            % cXtop = ones(1, dx1)*vars.cX*ones(dx2, 1);
-            % cons = elem_nonneg(obj.tol_cX - cXtop, cons); 
-        
 
 
         function [vars] = create_vars(obj, order, reps)
@@ -219,28 +203,29 @@ classdef op_gen  < operator_interface
      
             %declare the variables
             nM = (order+1) * reps;
-            nX = order * reps;
-            % NM = nM + nM*(nM-1)/2;
+            NM = nM + nM*(nM-1)/2;
 
 
          
             pc = obj.prop_count;
 
-            cM = cell(pc, 1);
-            for i = 1:pc
-                cM_curr = lmim(['cM_', obj.sid, '_', num2str(i)], nM, nM, 'full');
-                cM{i} = cM_curr;
-            end
 
-            % cM = lmim(['cM_', obj.sid], NM, pc, 'full');
+            cM = lmim(['cM_', obj.sid], NM, pc, 'full');
                
-            cX = cell(pc, 1);
-            if order > 0
-              cX_curr = lmim(['cX_', obj.sid, '_', num2str(i)], nX, nX, 'full');
-              cX{i} = cM_curr;
+          if order > 0
+                nX = order * reps;
+                NX = nX + nX*(nX-1)/2;
+
+                cX= lmim(['cX_', obj.sid], NX, pc, 'full');
+            else
+                cX = [];
             end
             
             vars = struct('cM', cM, 'cX', cX);
+
+            %declare the constraints            
+         
+
         end
     end
 end

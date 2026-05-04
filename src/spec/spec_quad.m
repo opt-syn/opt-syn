@@ -13,13 +13,13 @@ classdef spec_quad < spec_interface
     end
     
     methods
-        function obj = spec_quad(M, iwp, izp, rho)
+        function obj = spec_quad(M, iwp, izp)
             %SPEC_QUAD Construct an instance of this class
             %   Detailed explanation goes here
-            if nargin > 3
-                rho = 1;
-            end            
-            obj@spec_interface(iwp, izp, rho);
+            % if nargin > 3
+            %     rho = 1;
+            % end            
+            obj@spec_interface(iwp, izp);
             obj.M = M;
         end
         

@@ -1,4 +1,4 @@
-classdef (Abstract) opt_manager_interface
+classdef (Abstract) opt_manager_interface < handle
     %OPT_MANAGER_INTERFACE interface for the analysis and synthesis of
     %optimization/fixed point algorithms
 
@@ -60,8 +60,8 @@ classdef (Abstract) opt_manager_interface
 
 
 
-        function [vars, cons, objective, alg_psi] = build_program(obj, specs)
-            %BUILD_PROGRAM set up the algorithm analysis problem
+        function [vars, cons, objective, alg_psi, rho] = build_program(obj, specs)
+            %BUILD_PROGRAM set up the algorithm analysis or synthesis problem
 
             if nargin < 2
                 specs = obj.specs;
@@ -74,8 +74,12 @@ classdef (Abstract) opt_manager_interface
             %alg_loop: used for debugging. The algorithm after signal 
             % transformationsbefore, but before cascade by the filters    
 
+            [rho, sperf] = obj.perf_specs(specs);
+
             [iqc_data] = obj.iqc_op_all();
-            [alg_psi, iqc_op, alg_loop] = obj.sys.build_plant(iqc_data);
+            [alg_psi, iqc_op, alg_loop] = obj.sys.build_plant(iqc_data, rho);
+
+
 
             [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);
 
@@ -158,17 +162,40 @@ classdef (Abstract) opt_manager_interface
             end
         end
 
+        function [rho, sperf] = perf_specs(obj, specs)
+            %PERF_SPECS get the performance specifications and extract the
+            %rho convergence rate 
+            %
+            % TODO: improve this part.
+            %
+
+            rho = 1;
+            if nargin < 2
+                sperf = obj.specs;
+            else
+                sperf = specs;
+            end
+            %extract the convergence rate
+            %keep the stability spec if there is more than one
+            %specification
+            for i = 1:length(specs)
+                if isa(specs{i}, 'spec_stability') && length(specs) > 1
+                    sperf{i} = [];
+                    rho = specs{i}.rho;
+                end
+            end
+
+        end
 
         function [sol] = solve_single(obj, arg, specs)
             %SOLVE_SINGLE Solve the program once
-
             %ADD_SPECIFICATIONS
 
 
             % warning('all', 'off')
             obj = obj.process_argument(arg);            
             obj = obj.add_specifications(specs);
-
+            
             [vars, cons, objective, alg_psi] = obj.build_program(); 
 
             % objective = obj.get_objective(vars);
@@ -231,7 +258,9 @@ classdef (Abstract) opt_manager_interface
 
             %form the plant
             [iqc_data] = obj.iqc_op_all();
+            %TODO: modify this for different exponential weighting
             [alg_psi, iqc_op, alg_loop]  = obj.sys.build_plant(iqc_data);
+            
             [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);            
             
             

@@ -172,15 +172,28 @@ classdef op_sml < op_sml_interface
 
         end
 
-        function cons = filter_constraints(obj, cons, order, vars, iqc)
+        function cons = filter_constraints(obj, cons, order, vars, rho_sched, iqc)
             %FILTER_CONSTRAINTS constraints on the filter coefficients            
 
             %Zames-Falb DHD constraints with terminal cost
 
+            if length(order) == 1
+                order = [order, 0];
+            end
+
+            reps = iqc.nu/order(1);
             
                 
             P = obj.dhd_lift(order, vars, iqc);
-            [cons] = dhd_impose(P, cons, obj.LMILAB);
+
+            %impose the exponential discounting
+            nsched = size(rho_sched, 2);
+            for i = 1:nsched
+                rho_1 = kron(diag(rho_sched(1:(order(1)+1), i)), eye(reps));
+                rho_2 = kron(diag(rho_sched(1:(order(2)+1), i)), eye(reps));
+                P_rho = rho_1 * P * rho_2;
+                [cons] = dhd_impose(P_rho, cons, obj.LMILAB);
+            end
             
             nu = dim(vars.Df1, 1);
             % for i = 1:nu

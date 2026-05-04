@@ -59,7 +59,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
 
             %system block with {A, B, G}
-            sysb = obj.sys_block(diss.plant, G, G, diss.spec.rho);
+            sysb = obj.sys_block(diss.plant, G, G);
 
 
             %supply block with {C, D, M}
@@ -91,7 +91,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
             
            
-            sysb = obj.sys_block(diss.plant, G, G, diss.spec.rho);
+            sysb = obj.sys_block(diss.plant, G, G);
 
             %variable to optimize
             mu = vars.spec{diss.spec.id}.mu_l2;
@@ -155,7 +155,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             nwp = length(diss.spec.iwp);
             M_base = blkdiag(diss.iqc_rob.M, -mu * eye(nwp));
             
-            sysb_1 = obj.sys_block(diss.plant, G, G, diss.spec.rho);
+            sysb_1 = obj.sys_block(diss.plant, G, G);
             suppb_1 = obj.supply_block(plant_no_p, M_base);
 
 
@@ -163,11 +163,12 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
             %Block 2: with performance (and terminal constraint)
 
-            sysb_2 = obj.sys_block(diss.plant, X_f, G, diss.spec.rho);
+            sysb_2 = obj.sys_block(diss.plant, X_f, G);
 
 
             if diss.spec.target
-                
+                %TODO: fix this
+                error('Spec P2P with exponential discounting needs some work.')
 
                 %optimize over the gain
 

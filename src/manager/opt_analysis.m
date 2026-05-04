@@ -6,7 +6,11 @@ classdef opt_analysis < opt_manager_interface
     %               0 \in sum_i F_i(\beta).
     %
 
-       
+    properties
+        order = [];
+        schedule = [];
+    end
+
     methods
         function obj = opt_analysis(sys, config)
             %OPT_ANALYSIS Construct an instance of this class            
@@ -75,9 +79,16 @@ classdef opt_analysis < opt_manager_interface
             %normalize the coefficients for the filters
             cons = obj.coeff_normalize(vars, cons);
 
+            %get the discounting schedule (exponents of rho)
+            omax = cellfun(@(c) maximum(c, 'all'), obj.order);
+
+            obj.schedule = obj.sys.discount_schedule(omax);
+
             %TODO: semi-global interface? not very nice.
             obj.cons = cons;
-            obj.vars = vars;
+            obj.vars = vars;            
+            obj.order = order;
+            
         end
 
 
@@ -100,6 +111,24 @@ classdef opt_analysis < opt_manager_interface
             cons = append_lmi(cons, -cs + nop*(1+marg), obj.config.LMILAB);
         end
 
+        function [vars, cons, objective, alg_psi, rho] = build_program(obj)
+
+            %BUILD_PROGRAM set up the algorithm analysis problem
+            [vars, cons, objective, alg_psi, rho] = build_program@opt_manager_interface(obj); 
+
+
+            %load in the filter constraints      
+
+            %this requires a weighting by the exponential discounts            
+            rho_pow = rho.^(obj.schedule);
+
+            %see if this can be parameterized later
+            for i = 1:length(obj.sys.op)
+                cons = obj.sys.op{i}.filter_constraints(cons, obj.order{i}, vars, rho_pow, obj.iqc_op{i});
+            end
+
+        end
+           
         function [diss] = index_specs(obj, alg_psi, iqc_op, specs)
 
             %INDEX_SPECS:  index into the performance specifications

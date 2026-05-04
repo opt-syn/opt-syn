@@ -1,4 +1,4 @@
-classdef lmi_dispatch_interface
+classdef lmi_dispatch_interface < handle
     %LMI_DISPATCH_INTERFACE analysis and synthesis LMIs for the
     %algorithmic interconnections
     %
@@ -109,10 +109,10 @@ classdef lmi_dispatch_interface
             % Mdiag = blkdiag(iqc_op.M, sp.supply);
         end
 
-        function sb = sys_block(obj, plant, Pnew, Pold, rho)
+        function sb = sys_block(obj, plant, Pnew, Pold)
             % SYS_BLOCK system block used in analysis programs
             %
-            %sb =  [0, I]^T [Pold*rho^2, 0] [0, I]
+            %sb =  [0, I]^T [Pold, 0] [0, I]
             %      [A, B]   [0,      -Pnew] [A, B]
 
             
@@ -124,7 +124,7 @@ classdef lmi_dispatch_interface
             Ablock = [eye(n), zeros(n, m);
                 A, B];
 
-            Pblock = blkdiag(Pold*(rho^2), -Pnew);
+            Pblock = blkdiag(Pold, -Pnew);
 
             sb = Ablock' * Pblock * Ablock;            
 

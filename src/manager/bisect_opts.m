@@ -1,4 +1,4 @@
-classdef bisect_opts
+classdef bisect_opts < handle
     %SWEEP_OPTS Summary of this class goes here
     %   Detailed explanation goes here
     

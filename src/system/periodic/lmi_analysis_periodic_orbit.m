@@ -93,7 +93,7 @@ classdef lmi_analysis_periodic_orbit < lmi_analysis_periodic
             Gnew = Rkron'*G*Rkron;
 
             %system block with {A, B, G}
-            sysb = obj.sys_block(diss.plant, Gnew, G, diss.spec.rho);
+            sysb = obj.sys_block(diss.plant, Gnew, G);
 
 
             %supply block with {C, D, M}
@@ -128,7 +128,7 @@ classdef lmi_analysis_periodic_orbit < lmi_analysis_periodic
 
             Gnew = Rkron'*G*Rkron;
            
-            sysb = obj.sys_block(diss.plant, G, G, diss.spec.rho);
+            sysb = obj.sys_block(diss.plant, G, G);
 
             %variable to optimize
             mu = vars.spec{diss.spec.id}.mu_l2;

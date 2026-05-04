@@ -12,7 +12,6 @@ classdef spec_interface
     %   (simplification of the routines)
     
     properties
-        rho=1; %exponential discounting
         iwp = [];    %indices for performance input
         izp = [];    %indices for performance output        
         vars;                        
@@ -22,7 +21,7 @@ classdef spec_interface
     end
     
     methods
-        function obj = spec_interface(iwp, izp, rho)
+        function obj = spec_interface(iwp, izp)
             %OPT_PERFORMANCE a performance specification for the IQC
             %analysis.
             %
@@ -36,9 +35,9 @@ classdef spec_interface
                 obj.iwp = iwp;
                 obj.izp = izp;
             end
-            if nargin > 2
-                obj.rho = rho;
-            end
+            % if nargin > 2
+            %     obj.rho = rho;
+            % end
             
             
         end
