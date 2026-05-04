@@ -4,6 +4,7 @@ classdef spec_stability < spec_interface
     
     properties
         type = 'stability';
+        rho = 1;
     end
     
     methods
@@ -11,11 +12,12 @@ classdef spec_stability < spec_interface
             %SPEC_STABLE Construct an instance of this class
             %   Detailed explanation goes here
 
-            if nargin > 2
+            if nargin == 0
                 rho = 1;
             end
+            obj@spec_interface([], []);
 
-            obj@spec_interface([], [], rho);
+            obj.rho = rho;
         end       
 
     end

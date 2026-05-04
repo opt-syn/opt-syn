@@ -80,7 +80,7 @@ classdef opt_analysis < opt_manager_interface
             cons = obj.coeff_normalize(vars, cons);
 
             %get the discounting schedule (exponents of rho)
-            omax = cellfun(@(c) maximum(c, 'all'), obj.order);
+            omax = max(cellfun(@(c) sum(c)+1, order));
 
             obj.schedule = obj.sys.discount_schedule(omax);
 
@@ -124,7 +124,7 @@ classdef opt_analysis < opt_manager_interface
 
             %see if this can be parameterized later
             for i = 1:length(obj.sys.op)
-                cons = obj.sys.op{i}.filter_constraints(cons, obj.order{i}, vars, rho_pow, obj.iqc_op{i});
+                cons = obj.sys.op{i}.filter_constraints(cons, obj.order{i}, vars.op{i}, rho_pow, obj.iqc_op{i});
             end
 
         end

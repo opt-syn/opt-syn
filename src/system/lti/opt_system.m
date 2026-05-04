@@ -49,13 +49,13 @@ classdef  opt_system < opt_system_interface
         end
 
         %% build the plant
-        function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, task)
+        function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, rho)
             %BUILD_PLANT: form the plant to be used for analysis
             %or synthesis
             %Input:
             %   iqc_data: from manager.iqc_op_all, information about the
             %             operator iqc descriptions
-            %   task: 'analysis' or 'synthesis'
+            %   rho: exponential convergence rate (default 1)
             %
             %Output:
             %   alg_psi:    plant with filters (psi)
@@ -64,7 +64,7 @@ classdef  opt_system < opt_system_interface
             %   iqc_op:     iqcs for the robust uncertainties
 
             if nargin < 3
-                param = [];
+                rho = 1;
             end
 
             
@@ -81,7 +81,7 @@ classdef  opt_system < opt_system_interface
             %repeat this call multiple times for switched systems. This
             %function will be overloaded, whereas build_plant_single will
             %stay the same.
-            [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data);
+            [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data, rho);
 
                       
 

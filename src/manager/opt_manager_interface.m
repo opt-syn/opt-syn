@@ -179,8 +179,10 @@ classdef (Abstract) opt_manager_interface < handle
             %keep the stability spec if there is more than one
             %specification
             for i = 1:length(specs)
-                if isa(specs{i}, 'spec_stability') && length(specs) > 1
-                    sperf{i} = [];
+                if isa(specs{i}, 'spec_stability') 
+                    if length(specs) > 1                        
+                        sperf{i} = [];
+                    end
                     rho = specs{i}.rho;
                 end
             end

@@ -4,6 +4,7 @@ classdef op_gen  < operator_interface
     
     
     properties
+        LINEAR = false;
         prop = {'monotone', 0};
         %other properties of an operator?
         tol_cX = 1000; %tolerance for the terminal cost
@@ -159,23 +160,30 @@ classdef op_gen  < operator_interface
 
             for i = 1:obj.prop_count
                 %exponential discounting of M
-                for j =1:nsched
-                    rho_1 = kron(diag(rho_sched(1:(order+1), j)), eye(reps));
-                    rho_2 = rho_1;
-    
-                    M_rho = rho_1 * vars.cM{i} * rho_2;
-                    [cons] = dhd_impose(M_rho, cons, obj.LMILAB);
-                end
-
-                %DHD imposition of X
-                %exponential discounting 
-                if order > 0                    
-                    for j =1:nschedX
-                        rho_1 = kron(diag(rho_sched_drop(1:(order), j)), eye(reps));
+                if obj.LINEAR
+                    [cons] = dhd_impose(vars.cM{i}, cons, obj.LMILAB);
+                    if order > 0
+                        [cons] = dhd_impose(vars.cX{i}, cons, obj.LMILAB);
+                    end
+                else
+                    for j =1:nsched
+                        rho_1 = kron(diag(rho_sched(1:(order+1), j)), eye(reps));
                         rho_2 = rho_1;
+        
+                        M_rho = rho_1 * vars.cM{i} * rho_2;
+                        [cons] = dhd_impose(M_rho, cons, obj.LMILAB);
+                    end
     
-                        X_rho = rho_1 * vars.cX{i} * rho_2;
-                        [cons] = dhd_impose(X_rho, cons, obj.LMILAB);
+                    %DHD imposition of X
+                    %exponential discounting 
+                    if order > 0                    
+                        for j =1:nschedX
+                            rho_1 = kron(diag(rho_sched_drop(1:(order), j)), eye(reps));
+                            rho_2 = rho_1;
+        
+                            X_rho = rho_1 * vars.cX{i} * rho_2;
+                            [cons] = dhd_impose(X_rho, cons, obj.LMILAB);
+                        end
                     end
                 end
             end

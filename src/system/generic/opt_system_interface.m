@@ -187,7 +187,7 @@ classdef  opt_system_interface
             op_out = obj.op{obj.bind(i)};
         end
         
-        function pow = discount_schedule(ordermax)
+        function pow = discount_schedule(obj, ordermax)
             %DISCOUNT_SCHEDULE exponential weights encountered when
             %applying the FIR filters
             %
@@ -200,7 +200,7 @@ classdef  opt_system_interface
             
 
             if obj.discount
-                pow = -(0:ordermax);
+                pow = -(0:ordermax)';
             end
 
 
