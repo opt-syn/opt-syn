@@ -111,10 +111,15 @@ classdef opt_analysis < opt_manager_interface
             cons = append_lmi(cons, -cs + nop*(1+marg), obj.config.LMILAB);
         end
 
-        function [vars, cons, objective, alg_psi, rho] = build_program(obj)
+        function [vars, cons, objective, alg_psi, rho] = build_program(obj, specs)
+
+
+            if nargin < 2
+                specs = obj.specs;
+            end
 
             %BUILD_PROGRAM set up the algorithm analysis problem
-            [vars, cons, objective, alg_psi, rho] = build_program@opt_manager_interface(obj); 
+            [vars, cons, objective, alg_psi, rho] = build_program@opt_manager_interface(obj, specs); 
 
 
             %load in the filter constraints      

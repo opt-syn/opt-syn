@@ -223,7 +223,7 @@ classdef (Abstract) opt_manager_interface < handle
         end
 
         %% Bisection routines
-        function [sol_best, vr] = bisect(obj, arg, specs)
+        function [sol_best, vr] = bisect(obj, arg, specs, b_opts)
             %BISECT: perform bisection on a parameter. Minimization target
             %
             %sweep in options structure? 
@@ -248,7 +248,12 @@ classdef (Abstract) opt_manager_interface < handle
             vr = [];
             %base relations
 
-            b_opts = obj.bisect;
+            %bisection options are separate from configuration options
+            %should they be?
+            if nargin < 4
+                b_opts = bisect_opts;
+            end
+            
             
 
             %process the inputs and specifications
@@ -258,33 +263,29 @@ classdef (Abstract) opt_manager_interface < handle
             specs = obj.specs;
             vars = obj.vars;
 
-            %form the plant
-            [iqc_data] = obj.iqc_op_all();
-            %TODO: modify this for different exponential weighting
-            [alg_psi, iqc_op, alg_loop]  = obj.sys.build_plant(iqc_data);
-            
-            [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);            
-            
+            % %form the plant
+            % [iqc_data] = obj.iqc_op_all();
+            % %TODO: modify this for different exponential weighting
+            % [alg_psi, iqc_op, alg_loop]  = obj.sys.build_plant(iqc_data);
+            % 
+            % [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);            
+            % 
             
             
             
             %take the initial step
             
-            % if isempty(b_opts.val_init)
-                v = max(b_opts.val_range);
-                vr = b_opts.val_range;
-                WARM = false;
-            % else
-            %     v = b_opts.val_init;
-            %     vr = [1 - b_opts.warm_factor, 1 + b_opts.warm_factor] * v;
-            %     WARM = true;
-            % end
+            
+            v = max(b_opts.val_range);
+            vr = b_opts.val_range;
+            WARM = false;
 
 
             
             %modify the specification use an oracle to do this
             
-            f = @(pcurr) bisect_inner(obj, pcurr, vars, cons, alg_psi, iqc_op, specs, b_opts);
+            % f = @(pcurr) bisect_inner(obj, pcurr, vars, cons, alg_psi, iqc_op, specs, b_opts);
+            f = @(pcurr) bisect_inner(obj, pcurr, vars, cons, specs, b_opts);
 
             found_bound = [0, 0];
             sol0 = f(v);
@@ -356,7 +357,7 @@ classdef (Abstract) opt_manager_interface < handle
             obj.lmi.tol = setfield(obj.lmi.tol, key, val);
         end
 
-        function [sol] = bisect_inner(obj, pcurr, vars, cons, alg_psi, iqc_op, spec, b_opts)
+        function [sol] = bisect_inner(obj, pcurr, vars, cons, spec, b_opts)
             %BISECT_INNER: inner loop for bisection
             %run the program and process the solution
             
@@ -365,7 +366,15 @@ classdef (Abstract) opt_manager_interface < handle
 
             spec_curr = obj.modify_spec(pcurr, spec, b_opts);
 
-            [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_op, spec_curr);
+            [vars, cons, objective] = obj.build_program(spec_curr); 
+            %form the plant
+            % [iqc_data] = obj.iqc_op_all();
+            %TODO: modify this for different exponential weighting
+            % [alg_psi, iqc_op, alg_loop]  = obj.sys.build_plant(iqc_data);
+            % 
+            % [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, spec_curr);            
+            % 
+            % [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_op, spec_curr);
             [sol] = obj.run(vars, cons, objective);
             sol.objective = double(double(objective, sol.lmi_out));
             
@@ -447,6 +456,10 @@ classdef (Abstract) opt_manager_interface < handle
             % 
             % end
         end
+
+        %% getters and setters
+        % function obj = set.config(obj, )
+        % end
 
 
         
