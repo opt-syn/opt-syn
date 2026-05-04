@@ -443,6 +443,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
             Kblock = Lblock * Cblock * Rblock;
 
+            %extraction and exponential weighting
             Ac = Kblock(1:n, 1:n);
             Bc = Kblock(1:n, n+1:end);
             Cc = Kblock(n+1:end, 1:n);
@@ -472,12 +473,14 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             K_feed = lft(T_feed, K_sub, nu, ny);
             K_feed_full = lft(T_feed, K_sub_full, nu, ny);
 
+            K_sub= rhotrafo(K_feed, 1/sol.rho);
+            K_sub_full = rhotrafo(K_feed, 1/sol.rho);
             %connect the internal model: form the controller
 
             model = obj.reg.get_model(sol.vars.reg);
 
-            K = lft(model, K_feed);
-            K_full = lft(model, K_feed_full);
+            K = lft(model, K_sub);
+            K_full = lft(model, K_sub_full);
 
             
             %form the algorithm

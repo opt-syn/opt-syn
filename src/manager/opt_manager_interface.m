@@ -198,7 +198,7 @@ classdef (Abstract) opt_manager_interface < handle
             obj = obj.process_argument(arg);            
             obj = obj.add_specifications(specs);
             
-            [vars, cons, objective, alg_psi] = obj.build_program(); 
+            [vars, cons, objective, alg_psi, rho] = obj.build_program(); 
 
             % objective = obj.get_objective(vars);
             
@@ -216,8 +216,11 @@ classdef (Abstract) opt_manager_interface < handle
 
                 sol.vars = vrec;
 
-                sol = obj.process_recovery(sol, sol.lmi_out, alg_psi);
+                sol.rho = rho;
                 sol.objective = double(double(objective, sol.lmi_out));
+                sol = obj.process_recovery(sol, sol.lmi_out, alg_psi);
+                
+                
             end
 
         end
@@ -366,7 +369,7 @@ classdef (Abstract) opt_manager_interface < handle
 
             spec_curr = obj.modify_spec(pcurr, spec, b_opts);
 
-            [vars, cons, objective] = obj.build_program(spec_curr); 
+            [vars, cons, objective, alg_psi, rho] = obj.build_program(spec_curr); 
             %form the plant
             % [iqc_data] = obj.iqc_op_all();
             %TODO: modify this for different exponential weighting
@@ -375,8 +378,9 @@ classdef (Abstract) opt_manager_interface < handle
             % [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, spec_curr);            
             % 
             % [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_op, spec_curr);
-            [sol] = obj.run(vars, cons, objective);
             sol.objective = double(double(objective, sol.lmi_out));
+            sol.rho = rho;
+            [sol] = obj.run(vars, cons, objective);
             
             
         end
