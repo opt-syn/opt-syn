@@ -12,17 +12,17 @@ classdef opt_synthesis < opt_manager_interface
     end
     
     methods
-        function obj = opt_synthesis(sys, iqc_op, config)
+        function obj = opt_synthesis(sys, config, iqc_op)
             %OPT_SYNTHESIS Construct an instance of this class
             %   Detailed explanation goes here
 
-            if nargin < 3
+            if nargin < 2
                 config = opt_config;
             end
 
             obj@opt_manager_interface(sys, config);
                         
-            if nargin == 1 || isempty(iqc_op)                
+            if nargin == 2 || isempty(iqc_op)                
                 %create identity filters, but keep the loop transformations
                 obj.iqc_op = obj.make_blank_iqc;
             else
@@ -190,8 +190,10 @@ classdef opt_synthesis < opt_manager_interface
         function  sol = process_recovery(obj, sol, lmi_out, alg_psi)
             %PROCESS_RECOVERY recover the controller from the solution
             
-            sol = obj.lmi.process_recovery(sol, lmi_out, alg_psi);
-            
+            sol.iqc_op = obj.iqc_op;
+            sol.iqc_op_all = obj.iqc_op_all;
+            sol = obj.lmi.process_recovery(sol, lmi_out, alg_psi);            
+
             % iqc_rec = cell(size(obj.iqc_op));
             % for i = 1:length(obj.iqc_op)
             %     if isnumeric(obj.iqc_op{i})

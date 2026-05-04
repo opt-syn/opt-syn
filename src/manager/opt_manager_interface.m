@@ -217,6 +217,7 @@ classdef (Abstract) opt_manager_interface < handle
                 sol.vars = vrec;
 
                 sol.rho = rho;
+                sol.alg_psi = alg_psi;
                 sol.objective = double(double(objective, sol.lmi_out));
 
                 ncons = length(cons.lmim);
@@ -226,8 +227,6 @@ classdef (Abstract) opt_manager_interface < handle
                 end
 
                 sol = obj.process_recovery(sol, sol.lmi_out, alg_psi);
-                
-
                 
             end
 
@@ -331,15 +330,17 @@ classdef (Abstract) opt_manager_interface < handle
 
 
             if sol_best.status == 0
+                %ugly interface here
+                vars_im = sol_best.vars;
                 if obj.LMILAB
-                    [vrec] = rec_vars(vars, sol.lmi_out);
+                    [vrec] = rec_vars(vars_im, sol.lmi_out);
                 else
-                    [vrec] = rec_vars(vars);
+                    [vrec] = rec_vars(vars_im);
                 end
 
                 sol_best.vars = vrec;
 
-                sol_best = obj.process_recovery(sol_best, sol_best.lmi_out);
+                sol_best = obj.process_recovery(sol_best, sol_best.lmi_out, sol.alg_psi);
                 sol_best.objective = double(double(sol_best.objective, sol_best.lmi_out));
             end
 
@@ -386,11 +387,13 @@ classdef (Abstract) opt_manager_interface < handle
             % [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, spec_curr);            
             % 
             % [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_op, spec_curr);
+            
+            
+            [sol] = obj.run(vars, cons, objective);
             sol.objective = double(double(objective, sol.lmi_out));
             sol.rho = rho;
-            [sol] = obj.run(vars, cons, objective);
-            
-            
+            sol.alg_psi = alg_psi;
+            sol.vars = vars;
         end
 
         %% Constraint optimization
@@ -479,7 +482,7 @@ classdef (Abstract) opt_manager_interface < handle
 
     methods (Abstract)   
         process_argument(obj, arg); %inputs to run the routine
-        process_recovery(obj, sol); %get the solution
+        process_recovery(obj, sol, lmi_out, alg_psi); %get the solution
         index_specs(obj, alg_psi, iqc_op, specs); %index the performance specifications
     end
 end

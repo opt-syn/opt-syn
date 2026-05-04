@@ -187,7 +187,7 @@ nvar=decnbr(lmisys);
 %disp(['Number of terms: ' num2str(nterms)])
 if nvar>1000;
     warning('on')
-    warning('More that 1000 variables.')
+    warning('More than 1000 variables.')
 end
 
 if isempty(lmis.cost)

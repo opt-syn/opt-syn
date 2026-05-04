@@ -265,7 +265,7 @@ classdef opt_analysis < opt_manager_interface
 
             end
 
-            sol.iqc = iqc_rec;
+            sol.iqc_op = iqc_rec;
         end
         
 

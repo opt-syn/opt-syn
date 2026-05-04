@@ -195,7 +195,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
 
-
         function cons = con_spread_single(obj, cons, GX, GY)
             %CON_SPREAD_SINGLE increase numerical conditioning by separating the 
             %primal and dual blocks
