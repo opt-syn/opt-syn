@@ -1,5 +1,5 @@
-classdef op_sml_causal_lam < op_sml_causal
-    %OP_SML_CAUSAL_lam An operator which is the subdifferential of a function in SmL:
+classdef op_sml_causal < op_sml_interface
+    %OP_SML_CAUSAL An operator which is the subdifferential of a function in SmL:
     %
     %F = partial f, where f(x) - m norm(x, 2)^2 and L norm(x, 2)^2 - f(x)
     %are both proper, convex, and closed with -Inf < m <= L < inf
@@ -15,13 +15,13 @@ classdef op_sml_causal_lam < op_sml_causal
     %coefficients
  
     methods
-        function obj = op_sml_causal_lam(m, L, c)
+        function obj = op_sml_causal(m, L, c)
             %OP_SML Construct an instance of this class
             %   Detailed explanation goes here
             if nargin < 3
                 c = 1;
             end
-            obj@op_sml_causal(m ,L, c)            
+            obj@op_sml_interface(m ,L, c)            
         end
 
 
@@ -100,7 +100,7 @@ classdef op_sml_causal_lam < op_sml_causal
             r = ssize(vars.Df, 2);
             nsched = size(rho_sched, 2);
             for i = 1:nsched
-                curr_sched = rho_sched(:, i);
+                curr_sched = rho_sched(1:(order+1), i);
                 M1 = [vars.Cf, vars.Df]*curr_sched;
                 cons = elem_nonneg(M1, cons, obj.LMILAB);
 

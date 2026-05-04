@@ -113,7 +113,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
 
             sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.tol.M*eye(sM), obj.LMILAB);   
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB);   
             
             
             %impose sign constraint
