@@ -277,13 +277,14 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             s = length(obj.sys.bind);
             c = obj.sys.op{1}.c;
+            ny = obj.sys.P.ny;
             nu = obj.sys.P.nu;
             ns = size(obj.reg.R, 2);
 
             %more difficult: Dk
             
             %the unconstrained term for the internal model control
-            Dk1_var = lmim(['Dk1', name], ns + n, ns, 'full');
+            Dk1_var = lmim(['Dk1', name], ns, ny, 'full');
             Dk = Dk1_var;
 
 

@@ -35,8 +35,13 @@ classdef iqc_loop_factored
             end
         end
         
+        function obj = factor(obj)
+            %the IQC is already factored, do nothing
+        end
 
-                function nw_out = nw(obj)
+        %% dimension counters
+
+        function nw_out = nw(obj)
             %number of inputs (channel two)
             if isnumeric(obj.Psi2.D)                
                 nw_out = size(obj.Psi2.D, 2);
@@ -77,6 +82,7 @@ classdef iqc_loop_factored
             hf = length(obj.Psi1.A)+ length(obj.Psi2.A);
         end
 
+       
         function iqc = blkdiag(obj, b)
             %BLKDIAG: block diagonal of the multipliers
 
@@ -257,11 +263,13 @@ classdef iqc_loop_factored
             B = [ obj.Psi1.B*(G.D(q,p)/obj.Psi2.D)  obj.Psi1.B*G.D(q,w)  obj.Psi1.B*G.D(q,u)
                   B2i                         zeros(n2,nwp)      zeros(n2,nu)
                   G.B(:,p)/obj.Psi2.D            G.B(:,w)          G.B(:,u)   ];
-            Dsp = (obj.Psi2.D*G.D(q,p)+obj.D3);
-            C = [ obj.Psi2.C       obj.C3+Dsp*C2i  obj.Psi2.D*G.C(q,:)
+
+            Dsp = (obj.Psi1.D*G.D(q,p)+obj.D3);
+
+            C = [ obj.Psi1.C       obj.C3+Dsp*C2i  obj.Psi1.D*G.C(q,:)
                   zeros(nzp,n1)  G.D(z,p)*C2i     G.C(z,:);
                   zeros(ny,n1)  G.D(y,p)*C2i     G.C(y,:) ];
-            D = [ Dsp/obj.Psi2.D       obj.Psi2.D*G.D(q,w)  obj.Psi2.D*G.D(q,u)
+            D = [ Dsp/obj.Psi2.D       obj.Psi1.D*G.D(q,w)  obj.Psi1.D*G.D(q,u)
                   G.D(z,p)/obj.Psi2.D  G.D(z,w)          G.D(z,u)  
                   G.D(y,p)/obj.Psi2.D  G.D(y,w)          G.D(y,u) ];
 

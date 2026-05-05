@@ -38,10 +38,21 @@ classdef iqc_loop_split
         end
         
         function nf_out = nf(obj)
-            %number of states in the IQC filter
-            nf_out = length(obj.Psi1.A);
+            %NF number of states in the IQC filter
+            nf_out = obj.nx1 + obj.nx2;            
+        end
+
+        function nx1_out = nx1(obj)
+            %NX1 number of states in filter 1
+            nx1_out = length(obj.Psi1.A);
+        end
+
+        function nx2_out = nx2(obj)
+            %NX2 number of states in filter 2
             if ~isscalar(obj.Psi2)
-                nf_out = nf_out + length(obj.Psi2.A);
+                nx2_out = length(obj.Psi2.A);
+            else
+                nx2_out = 0;
             end
         end
 
@@ -209,7 +220,7 @@ classdef iqc_loop_split
                 iqc_factored = [];
             else
                 %the filter is already factored. fill in the information.
-                C3 = zeros(obj.nf, obj.nz);
+                C3 = zeros(obj.nx2, obj.nz);
                 D3 = zeros(obj.nw, obj.nz);
                 iqc_factored = iqc_loop_factored(Psi1, Psi2,...
                     C3, D3, obj.M, obj.X, obj.loop);

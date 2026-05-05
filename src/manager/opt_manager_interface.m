@@ -268,7 +268,10 @@ classdef (Abstract) opt_manager_interface < handle
 
             %process the inputs and specifications
             obj = obj.process_argument(arg);
+            
+            obj.specs = [];
             obj = obj.add_specifications(specs);
+
             cons = obj.cons;
             specs = obj.specs;
             vars = obj.vars;

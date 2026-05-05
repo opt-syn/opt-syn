@@ -227,6 +227,10 @@ classdef opt_synthesis < opt_manager_interface
                 specs = {specs};
             end
 
+            for j = 1:numel(iqc_curr)
+                iqc_curr{j} = iqc_curr{j}.factor();
+            end
+
             success = false;
             for i = 1:Niter
                 %start with synthesis
@@ -270,7 +274,7 @@ classdef opt_synthesis < opt_manager_interface
                 
                 for j = 1:numel(iqc_curr)
                     iqc_curr{j} = sol_ana.iqc_op{j}.factor();
-                end
+                end                
 
             end
 
