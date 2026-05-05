@@ -31,9 +31,27 @@ classdef op_gen  < operator_interface
               pc = size(obj.prop, 1);
         end
              
+        function mu = get_mu(obj)
+            %GET_MU get the (strong) monotonicity parameter
+            mu = [];
+            for i = 1:obj.prop_count
+                if strcmp(obj.prop{i, 1}, 'monotone')
+                    mu = obj.prop{i, 2};
+                end
+            end
+        end
+
         function loop_out = build_loop(obj, reps)
-            %BUILD_LOOP construct the loop transformation
-            loop_out = [zeros(reps), eye(reps); eye(reps), zeros(reps)];
+            %BUILD_LOOP construct the loop transformation  
+
+            mu = obj.get_mu();
+
+            if isempty(mu)
+                mu = 0;
+            end
+        
+            loop_out = [zeros(reps), eye(reps); eye(reps), mu*eye(reps)];
+            
         end
 
         function [psi1, psi2] = build_psi(obj, vars, order, reps)
@@ -98,45 +116,74 @@ classdef op_gen  < operator_interface
             end
         end
 
-        function cost = build_cost(obj, sz, var_curr)
-            %build the DHD basis
+        function cost = build_cost(obj, var_curr)
+            %BUILD_COST create the matrices M and X
 
 
-
+            %IQC: [x; g] with g \in F(x)
+            %
+            %
             sz = ssize(var_curr{1}, 1);            
                         
             M11 = zeros(sz);
             M12 = zeros(sz);
             M22 = zeros(sz);
 
-            count = 1;
+            zz = zeros(sz);
+            pc = obj.prop_count;
+
+            mu = obj.get_mu();
+
+            %loop transformation for the strong monotonicity (?)
+            if isempty(mu)
+                loop_mat = eye(sz*2);
+            else
+                loop_mat = [eye(sz), zz; mu*eye(sz), eye(sz)];
+            end
+
+            cost = zeros(2*sz);
+            
             for p = 1:pc
                 cDBM = var_curr{p};
+                csym = (cDBM+cDBM');
                     switch obj.prop{p, 1}
-                    case 'monotone'
-                        mu = obj.prop{p, 2};
-                        M12 = M12 + cDBM;
-                        M22 = M22 - (cDBM + cDBM') * mu/2; 
-                
-                    case 'cocoercive'
-                        beta = obj.prop{p, 2};
-                        M12 = M12 + cDBM;
-                        M11 = M11 - (cDBM + cDBM') * beta/2; 
+                        case 'monotone'
+                            % mu = obj.prop{p, 2};
+                            % M12 = M12 + cDBM;
+                            Mcurr = [zz, cDBM; cDBM', zz];
+                            Mloop = Mcurr;
+                            % M22 = M22 - (cDBM + cDBM') * (mu); 
+                            % 
+                        case 'cocoercive'
+                            beta = obj.prop{p, 2};
+                            % M12 = M12 + cDBM;
+                            % M11 = M11 - (cDBM + cDBM') * (beta); 
 
-                    case 'lipschitz'
-                        L2 = obj.prop{p, 2}^2;
-                        M11 = M11 - (cDBM + cDBM')/2; 
-                        M22 = M22 + cDBM * L2; 
+                            Mcurr = [zz, cDBM; cDBM', -csym*beta];
+                            Mloop = loop_mat'*Mcurr*loop_mat;
+    
+                        case 'lipschitz'
+                            L2 = obj.prop{p, 2}^2;
+                            % M11 = M11 - (cDBM + cDBM'); 
+                            % M22 = M22 + cDBM * L2; 
 
-                    case 'inv_lipschitz'
-                        L2 = obj.prop{p, 2}^2;
-                        M22 = M22 - (cDBM + cDBM')/2; 
-                        M11 = M11 + cDBM * L2;                            
-                end
+                            Mcurr = [L2*csym, zz; zz', -csym];
+                            Mloop = loop_mat'*Mcurr*loop_mat;
+    
+                        case 'inv_lipschitz'
+                            L2 = obj.prop{p, 2}^2;
+                            
+                            Mcurr = [-csym, zz; zz', L2*csym];                            
+                            Mloop = loop_mat'*Mcurr*loop_mat;
+                        
+                        otherwise
+                            error('op_gen: unsupported property of operator')
+                    end
+                    cost = cost + Mloop;
                 
             end
 
-            cost = [M11, M12; M12', M22];
+            % cost = [M11, M12; M12', M22];
         end
 
 
@@ -236,19 +283,23 @@ classdef op_gen  < operator_interface
 
             cM = cell(pc, 1);
             for i = 1:pc
-                cM_curr = lmim(['cM_', obj.sid, '_', num2str(i)], nM, nM, 'full');
+                cM_curr = lmim(['cM_', obj.sid, '_', num2str(i)], nM, nM, 'sym');
                 cM{i} = cM_curr;
             end
 
             % cM = lmim(['cM_', obj.sid], NM, pc, 'full');
                
             cX = cell(pc, 1);
-            if order > 0
-              cX_curr = lmim(['cX_', obj.sid, '_', num2str(i)], nX, nX, 'full');
-              cX{i} = cM_curr;
+            for i = 1:pc
+                if order > 0
+                    cX_curr = lmim(['cX_', obj.sid, '_', num2str(i)], nX, nX, 'sym');
+                    cX{i} = cX_curr;
+                end
             end
             
-            vars = struct('cM', cM, 'cX', cX);
+            vars = struct;
+            vars.cM = cM;
+            vars.cX = cX;
         end
     end
 end
