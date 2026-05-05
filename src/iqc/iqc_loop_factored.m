@@ -185,7 +185,20 @@ classdef iqc_loop_factored
 
         function psi_inv = psi2_inv(obj)
             %PSI2_INV inverse of the parameter psi2
-            psi_inv = inv(obj.Psi2);
+            % psi_inv = inv(obj.Psi2);
+
+
+            [A2, B2, C2, D2] = ssdata(obj.Psi2);
+
+
+            Ainv = A2 - B2* (D2 \ C2);
+            Binv = B2 * inv(D2);
+            Cinv = -D2 \ C2;
+            Dinv = inv(D2);
+
+            psi_inv = ss(Ainv, Binv, Cinv, Dinv, 1);
+            
+
             %TODO: figure out clever conjugation
             %
             %how this should play with the zeros

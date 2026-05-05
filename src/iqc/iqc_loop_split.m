@@ -340,7 +340,7 @@ classdef iqc_loop_split
             C1hat = Psi11Psi1.C(nq+1:end,:);
 
             %FLAG 1: the first transfer system
-            Psi1h = ss(A1hat, B1hat, C11hat, D11hat);
+            Psi1h = ss(A1hat, B1hat, C11hat, D11hat, 1);
 
 
 
@@ -374,12 +374,12 @@ classdef iqc_loop_split
             R2 = (R2+R2')/2;
 
             %stabilizing solution to riccati
-            Zs = idare(A2hat,B2hat,Q2,R2,S2);
+            [Zs, Ks, Ls] = idare(A2hat,B2hat,Q2,R2,S2);
             D22hat = chol(B2hat'*Zs*B2hat+R2);
             C22hat = D22hat'\(B2hat'*Zs*A2hat+S2');
 
             %Flag Psi2
-            Psi2h = ss(A2hat, B2hat, C22hat, D22hat);
+            Psi2h = ss(A2hat, B2hat, C22hat, D22hat, 1);
             
             % 4. package up the IQC
             Ahat = blkdiag(A1hat,A2hat);
@@ -410,14 +410,24 @@ classdef iqc_loop_split
             Psih.B = Bhat;
             Psih.Chat = [C1hat C2hat];
 
+
+    
+
             % 5. Computing Z, Xh, and Vh
+
+            %get the state transformation/compression
+            Vh = obj.compute_Vhat(Psih);
+            Xh_V = Vh'*obj.X*Vh;
+
             Mhat = blkdiag(eye(nq),-eye(np));
             Q = [Chat; C1hat C2hat]'*blkdiag(Mhat,-M)*[Chat; C1hat C2hat];
             Q = (Q+Q')/2; % ensure symmetry
             Z = dlyap(Ahat',Q);
             
-            %get the terminal cost
-            [Xhat, Vh] = obj.compute_Xhat(Psih, Z);
+
+
+            Xhat = Xh_V+Z;
+            Xhat = (Xhat+Xhat')/2;
 
 
             %package it all up
@@ -428,7 +438,7 @@ classdef iqc_loop_split
     
     
     
-        function [Xh, Vh] = compute_Xhat(obj, Psih, Z)
+        function [ Vh] = compute_Vhat(obj, Psih)
 
                 %
             % find Vhat such that Vhat*Ahat=Apsi*Vhat, Vhat*Bhat=Bpsi, and
@@ -459,9 +469,7 @@ classdef iqc_loop_split
             % T2 = obsv(Ah(nW+1:end,nW+1:end), Ch(:,nW+1:end));
             % T3 = obsv(Psi.A, Psi.C);
             % Vhat = T3\T2*T1(nW+1:end,:);
-        
-            Xh = Vh'*obj.X*Vh+Z;
-            Xh = (Xh+Xh')/2;
+
 
         end
     end
