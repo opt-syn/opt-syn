@@ -172,11 +172,15 @@ classdef iqc_loop_split
             iqc_rec.Psi2 = Psi2_rec;
         end        
 
-        %% factorization routine
-        function iqc_factored = factor(obj)
+        %% factorization routines
+        function iqc_factored = factor(obj, perturb)
             %FACTOR spectral factorization of the IQC for synthesis
             %
             %
+
+            if nargin < 2
+                perturb = 1e-4;
+            end
             
             Psi1 = ss(obj.Psi1.A, obj.Psi1.B, obj.Psi1.C, obj.Psi1.D, 1);
             Psi2 = ss(obj.Psi2.A, obj.Psi2.B, obj.Psi2.C, obj.Psi2.D, 1);
@@ -216,8 +220,9 @@ classdef iqc_loop_split
 
             if need_to_factor
                 %TODO: implement the spectral factorization
-                error('TODO: spectral factorization not yet implemented')
-                iqc_factored = [];
+
+                iqc_factored = obj.perform_factorization(perturb );
+                              
             else
                 %the filter is already factored. fill in the information.
                 C3 = zeros(obj.nx2, obj.nz);
@@ -225,6 +230,239 @@ classdef iqc_loop_split
                 iqc_factored = iqc_loop_factored(Psi1, Psi2,...
                     C3, D3, obj.M, obj.X, obj.loop);
             end
+        end
+
+        function iqc_factored = perform_factorization(obj, perturb);
+            %PERFORM_FACTORIZATION
+            %the inner parts of the spectral factorization routines
+            %
+            % All factorization routines are based on the code of 
+            % Lukas Schwenkel https://github.com/Schwenkel/mpc-iqc
+            %
+            % in the paper
+            %
+            %@article{Schwenkel2025,
+            %   title={Output-feedback model predictive control under dynamic uncertainties using integral quadratic constraints},
+            %   author={L. Schwenkel and J. K{\"o}hler and M. A. M{\"u}ller and F. Allg{\"o}wer}},
+            %   year={2025},
+            %   journal={arxiv:2504.00196},
+            %   doi = {10.48550/arXiv.2504.00196},
+            % }
+            %
+            % full credit to the authors
+
+            %first determine the type of factorization
+            
+            if nargin < 2
+                perturb = 1e-4;
+            end                                
+            np = obj.np;
+
+            %top corner: select passive factorization
+            M11 = obj.M(1:np, 1:np);
+            
+
+            if all(M11 == 0, "all")
+                %passive factorization
+                % iqc_factored = obj.passive_factorization();
+
+                iqc_factored = obj.passive_factorize();
+            else
+                %PN-factorization
+                %check the inertia
+                % eM = eig(M);
+
+                % epos= sum(eM>0);
+                % eneg = sum(eM<0);
+                % 
+                % M_perturb = M;
+                % if epos < nq
+                %     M_perturb(1:nq, 1:nq) = M_perturb(1:nq, 1:nq) + eye(nq)*perturb;
+                % end
+                % 
+                % obj.M = M_perturb 
+                iqc_factored = obj.hinf_factorize();
+            end
+
+            %now do the factorization
+
+            
+        end
+
+        function [iqc_factored, Vh, Z] = hinf_factorize(obj)
+            %COMPUTE_PSI1 construct the first term [psi1] in [psi1, psi3; 0, psi2]
+            % in the spectral factorization            
+
+            % 1. Constructing Psih_1
+            % nq = obj.nq;
+            % np = obj.np;
+
+
+
+            
+            %index into the relevant system
+            
+            Psi1 = [obj.Psi1; zeros(obj.nq, obj.nz)];
+            Psi2 = [ zeros(obj.np, obj.nw); obj.Psi2];
+
+            nq = size(Psi1.B,2);
+            np = size(Psi2.B,2);
+
+            %form an equivalent supply rate
+            M11 = obj.M(1:np, 1:np);
+
+            M =  obj.M;
+
+            Q = Psi1.C'*M*Psi1.C;
+            R = Psi1.D'*M*Psi1.D;
+            S = Psi1.C'*M*Psi1.D;
+
+            %get a certificate
+            [Zu, Ku, n0] = dare_anti(Psi1.A,Psi1.B,Q,R,S);
+
+
+            D11hatu = chol(Psi1.B'*Zu*Psi1.B+R);
+            C11hatu = D11hatu'\(Psi1.B'*Zu*Psi1.A+S');
+            
+            %add extra poles at zero to compensate for the lack of inverse
+            %in discrete time
+            Psi11u = ss(Psi1.A,Psi1.B,C11hatu,D11hatu,-1);                       
+            
+            Psi11 = tf('z')^(-n0)*Psi11u; 
+
+            %the product (Psi11' Psi1) in state space
+            Psi11Psi1 = minreal([Psi11; Psi1],[],false);
+            Psi11Psi1 = balreal(Psi11Psi1);
+
+            %matrices  for the product Psi1
+            A1hat = Psi11Psi1.A;              B1hat = Psi11Psi1.B; 
+            C11hat = Psi11Psi1.C(1:nq,:);     D11hat = Psi11Psi1.D(1:nq,:);   
+            C1hat = Psi11Psi1.C(nq+1:end,:);
+
+            %FLAG 1: the first transfer system
+            Psi1h = ss(A1hat, B1hat, C11hat, D11hat);
+
+
+
+            % 2. Constructing Psih_12
+            B1inv = B1hat/D11hat;
+            D1inv = Psi1.D/D11hat;
+
+            Psi1Psi11inv = ss(A1hat-B1inv*C11hat,B1inv,C1hat-D1inv*C11hat,D1inv,-1);
+            [~, Psi11Psi11invMPsi2] = isproper(Psi1Psi11inv'*obj.M*Psi2);
+
+            Psi12Psi2 = minreal([Psi11Psi11invMPsi2; Psi2],[],false);
+            Psi12Psi2 = balreal(Psi12Psi2);
+
+            %data associated with Psih12
+            A2hat = Psi12Psi2.A;              B2hat = Psi12Psi2.B; 
+            C12hat = Psi12Psi2.C(1:nq,:);     D12hat = Psi12Psi2.D(1:nq,:);   
+            C2hat = Psi12Psi2.C(nq+1:end,:);
+
+
+            C3 = C12hat;
+            D3 = D12hat;
+
+
+
+            % 3. Constructing Psih_22
+            %equivalent supply
+            Q2 = Psi12Psi2.C'*blkdiag(eye(nq),-obj.M)*Psi12Psi2.C;
+            R2 = Psi12Psi2.D'*blkdiag(eye(nq),-obj.M)*Psi12Psi2.D;
+            S2 = Psi12Psi2.C'*blkdiag(eye(nq),-obj.M)*Psi12Psi2.D;
+            Q2 = (Q2+Q2')/2;
+            R2 = (R2+R2')/2;
+
+            %stabilizing solution to riccati
+            Zs = idare(A2hat,B2hat,Q2,R2,S2);
+            D22hat = chol(B2hat'*Zs*B2hat+R2);
+            C22hat = D22hat'\(B2hat'*Zs*A2hat+S2');
+
+            %Flag Psi2
+            Psi2h = ss(A2hat, B2hat, C22hat, D22hat);
+            
+            % 4. package up the IQC
+            Ahat = blkdiag(A1hat,A2hat);
+            Bhat = blkdiag(B1hat,B2hat);
+            Chat = [C11hat                   C12hat;
+                    zeros(np,length(A1hat))  C22hat];
+            % Dhat = [D11hat        D12hat;
+            %         zeros(np,nq)  D22hat];
+            % Psih.A1 = A1hat;
+            % Psih.A2 = A2hat;
+            % 
+            % Psih.B1 = B1hat;
+            % Psih.B2 = B2hat;
+            % 
+            % Psih.C1 = C11hat;
+            % Psih.C2 = C22hat;
+            % Psih.C3 = C12hat;
+            % Psih.C = Chat;
+            % Psih.D1 = D11hat;
+            % Psih.D2 = D22hat;
+            % Psih.D3 = D12hat;
+            % Psih.D = Dhat;
+            % 
+            % Psih.Dhat = [Psi1.D Psi2.D];
+
+            Psih = struct;
+            Psih.A = Ahat;
+            Psih.B = Bhat;
+            Psih.Chat = [C1hat C2hat];
+
+            % 5. Computing Z, Xh, and Vh
+            Mhat = blkdiag(eye(nq),-eye(np));
+            Q = [Chat; C1hat C2hat]'*blkdiag(Mhat,-M)*[Chat; C1hat C2hat];
+            Q = (Q+Q')/2; % ensure symmetry
+            Z = dlyap(Ahat',Q);
+            
+            %get the terminal cost
+            [Xhat, Vh] = obj.compute_Xhat(Psih, Z);
+
+
+            %package it all up
+            iqc_factored = iqc_loop_factored(Psi1h, Psi2h,...
+                    C3, D3, Mhat, Xhat, obj.loop);
+        end
+        
+    
+    
+    
+        function [Xh, Vh] = compute_Xhat(obj, Psih, Z)
+
+                %
+            % find Vhat such that Vhat*Ahat=Apsi*Vhat, Vhat*Bhat=Bpsi, and
+            % Chat=Cpsi*Vhat by solving system of linear equations.
+            %
+            %Author: Lukas Schwenkel, 2025
+        
+        
+            [Apsi, Bpsi, Cpsi, Dpsi] = ssdata(obj.get_psi);
+
+            %work this through
+            npsih = length(Psih.A);
+            npsi = length(Apsi);
+
+            %state transformation matrix
+            Kvh = [ kron(eye(npsih),Apsi)-kron(Psih.A',eye(npsi));
+                     kron(eye(npsih),Cpsi);
+                     kron(Psih.B',eye(npsi))                        ];
+            
+            ansvh = [ zeros(npsi*npsih,1); Psih.Chat(:); Bpsi(:)       ];
+
+            Vh = Kvh \ ansvh; 
+                   
+            Vh = reshape(Vh,[npsi, npsih]);
+            
+            % Alternative way to compute Vhat
+            % [Ah,~,Ch,T1] = obsvf(Psih.A, Psih.B, Psih.Chat);
+            % T2 = obsv(Ah(nW+1:end,nW+1:end), Ch(:,nW+1:end));
+            % T3 = obsv(Psi.A, Psi.C);
+            % Vhat = T3\T2*T1(nW+1:end,:);
+        
+            Xh = Vh'*obj.X*Vh+Z;
+            Xh = (Xh+Xh')/2;
+
         end
     end
 end
