@@ -45,7 +45,11 @@ classdef  opt_system < opt_system_interface
         
         function Kcurr = get_K(obj, param)
             %GET_K get the controller K
-            Kcurr = obj.K;
+            if isa(obj.K, 'genplant')
+                Kcurr = obj.K.ss;
+            else
+                Kcurr = obj.K;
+            end
         end
 
         %% build the plant

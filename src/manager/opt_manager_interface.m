@@ -329,7 +329,7 @@ classdef (Abstract) opt_manager_interface < handle
 
 
 
-            if sol_best.status == 0
+            if ~isempty(sol_best) && sol_best.status == 0
                 %ugly interface here
                 vars_im = sol_best.vars;
                 if obj.LMILAB
@@ -352,7 +352,7 @@ classdef (Abstract) opt_manager_interface < handle
 
             spec_new = spec_old;
             i = b_opts.spec_ind;
-            if b_opts.bisect_rho
+            if b_opts.bisect_rho && isa(spec_old{i}, 'spec_stability')
                 spec_new{i}.rho = pcurr;
             else
                 spec_new{i} = spec_new{i}.set_p(pcurr);                

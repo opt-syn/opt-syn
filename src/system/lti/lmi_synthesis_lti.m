@@ -91,8 +91,8 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
         end
 
         %% stability (for testing)
-        % function [cons, objective, con_M] = stability_passive(obj, vars, cons, diss)
-        function [cons, objective, con_M] = stability(obj, vars, cons, diss)
+        function [cons, objective, con_M] = stability_passive(obj, vars, cons, diss)
+        % function [cons, objective, con_M] = stability(obj, vars, cons, diss)
             %certification of exponential stability
             
             G = obj.get_storage(vars.diss, vars.reg);
@@ -152,8 +152,14 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
             %get the variables of the problem
             G = obj.get_storage(vars.diss, vars.reg);
-            sys_cl = obj.system_closed_loop(vars.diss, vars.reg, vars.K, diss);
+            
 
+            %IMPORTANT!
+            %hook up the internal model
+            %(maybe it should happen at a higher level?)
+            P = obj.reg.connect_model(diss.plant, diss.rho);
+
+            sys_cl = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
             
             %index the quadratic specification
             vars_spec = vars.spec{diss.spec.id};
@@ -195,7 +201,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             outer_Q = [zeros(n, nz); eye(nz); zeros(n, nz); zeros(nt, nz)];
            
             supp_b = 0;
-            supp_b = -outer_Q * (Qq - obj.config.tol.input_diss*(length(ind_p))) * outer_Q';
+            supp_b = -outer_Q * (Qq + obj.config.tol.input_diss*eye(length(ind_p))) * outer_Q';
 
             outer_U = [zeros(n, nt); zeros(nz, nt); zeros(n, nt); eye(nt, nt)];
 

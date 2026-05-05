@@ -96,17 +96,18 @@ classdef op_sml_causal < op_sml_interface
             %constraints on the filter coefficients
 
 
-            cons = elem_nonneg(-vars.Cf, cons, obj.LMILAB);
-            r = ssize(vars.Df, 2);
+            %nonpositivity of non-main elements
+            cons = elem_nonneg(-vars.Cf, cons, obj.LMILAB);            
+            cons = elem_nonneg_offdiag(-vars.Df, cons, obj.LMILAB);            
+
+            %positivity of main elements
+            reps = ssize(vars.Df, 2);
             nsched = size(rho_sched, 2);
             for i = 1:nsched
-                curr_sched = rho_sched(1:(order+1), i);
+                curr_sched = kron(rho_sched((order+1):-1:1, i), ones(1, reps));
                 M1 = [vars.Cf, vars.Df]*curr_sched;
                 cons = elem_nonneg(M1, cons, obj.LMILAB);
-
             end
-            
-            cons = elem_nonneg_offdiag(-vars.Df, cons, obj.LMILAB);            
 
         end
 

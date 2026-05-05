@@ -10,7 +10,9 @@ classdef bisect_opts < handle
         tol = 1e-4; %tolerance for upper bound - lower bound in bisection
         warm_factor = 0.1; %if an initial guess is supplied, expand for an 
         % initial range
+        Niter = 4; %number of alternating iterations
 
+        backoff = 1e-4;
 
     end
     

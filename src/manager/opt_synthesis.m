@@ -34,7 +34,6 @@ classdef opt_synthesis < opt_manager_interface
 
         end
 
-
         function iqc_op = make_blank_iqc(obj)
             %if no IQCs are provided, make identity IQCs
                 nop = length(obj.sys.op);
@@ -206,6 +205,79 @@ classdef opt_synthesis < opt_manager_interface
             % end
             % 
             % sol.iqc = iqc_rec;
+        end
+
+        %% alternating design
+        function [sol_history, vr_history, success] = alternate(obj, iqc_init, order, specs, b_opts)
+            %ALTERNATE alternating synthesis and analysis
+            %
+            %use bisection in analysis and synthesis
+
+
+            Niter = b_opts.Niter;
+
+            sol_history = cell(2, Niter);
+            vr_history = cell(2, Niter);
+
+            iqc_curr = iqc_init;
+            
+            sys_curr = obj.sys;
+
+            if ~iscell(specs)
+                specs = {specs};
+            end
+
+            success = false;
+            for i = 1:Niter
+                %start with synthesis
+                [sol_syn, vr_syn] = obj.bisect(iqc_curr, specs, b_opts);
+
+                
+                sol_history{1, i} = sol_syn;
+                vr_history{1, i} = vr_syn;
+
+                if sol_syn.status
+                    break
+                end
+                
+                %back off a bit
+                vr_back = vr_syn(2)+ b_opts.backoff;
+
+                spec_back = obj.modify_spec(vr_back, specs, b_opts);
+
+                obj.specs= {};
+                sol_syn_back = obj.solve_single(iqc_curr, spec_back);
+                
+
+                %then do analysis
+                sys_curr.K = sol_syn_back.K;
+
+                ana = opt_analysis(sys_curr);
+                [sol_ana, vr_ana] = ana.bisect(order, specs, b_opts);
+
+                sol_history{2, i} = sol_ana;
+                vr_history{2, i} = vr_ana;
+
+                if sol_ana.status
+                    break
+                elseif i==Niter
+                    success = true;
+                end
+                
+                %prepare for next go-around
+                %factor the iqcs from analysis for use in synthesis
+                iqc_curr = cell(length(sol_ana.iqc_op), 1);
+                
+                for j = 1:numel(iqc_curr)
+                    iqc_curr{j} = sol_ana.iqc_op{j}.factor();
+                end
+
+            end
+
+            
+
+
+            
         end
     end
 end
