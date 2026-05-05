@@ -309,7 +309,7 @@ classdef iqc_loop_split
             np = size(Psi2.B,2);
 
             %form an equivalent supply rate
-            M11 = obj.M(1:np, 1:np);
+            % M11 = obj.M(1:np, 1:np);
 
             M =  obj.M;
 
