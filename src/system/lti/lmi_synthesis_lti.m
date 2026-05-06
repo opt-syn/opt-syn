@@ -408,6 +408,9 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %for debugging
             G = obj.get_storage(sol.vars.diss, sol.vars.reg);
 
+            %this is the (nonlinearly-warped) system that is certified as
+            %possessing the desired performance and robustness
+            %specifications
             sys_cal = ss(G \ Acl, G \ Bcl, Ccl, Dcl, 1);
 
 
@@ -429,8 +432,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             Bk = sol.vars.K.B;
             Ck = sol.vars.K.C;
             Dk = sol.vars.K.D;
-
-            % sys_cal = ss(Ak, Bk, Ck, Dk, 1);
+            
             K_warp = full([Ak, Bk; Ck, Dk]);
 
             [n] = size(Ak,1);
