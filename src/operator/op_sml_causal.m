@@ -104,7 +104,7 @@ classdef op_sml_causal < op_sml_interface
             reps = ssize(vars.Df, 2);
             nsched = size(rho_sched, 2);
             for i = 1:nsched
-                curr_sched = kron(rho_sched((order+1):-1:1, i), ones(1, reps));
+                curr_sched = kron(rho_sched((order+1):-1:1, i), ones(reps, 1));
                 M1 = [vars.Cf, vars.Df]*curr_sched;
                 cons = elem_nonneg(M1, cons, obj.LMILAB);
             end

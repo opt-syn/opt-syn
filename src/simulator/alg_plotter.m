@@ -42,6 +42,14 @@ classdef alg_plotter
             end
         end
 
+        function fig = plot_6f(obj, fignum)
+            if nargin < 2
+                fignum = [];
+            end
+            sigs = {'x', 'w', 'res_w', 'f', 'z', 'res_z'};
+            fig = obj.plot(sigs, fignum);
+        end
+
         function fig = plot_6(obj, fignum)
             if nargin < 2
                 fignum = [];

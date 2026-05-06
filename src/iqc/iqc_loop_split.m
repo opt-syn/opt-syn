@@ -289,19 +289,14 @@ classdef iqc_loop_split
             
         end
 
-        function [iqc_factored, Vh, Z] = hinf_factorize(obj)
-            %COMPUTE_PSI1 construct the first term [psi1] in [psi1, psi3; 0, psi2]
-            % in the spectral factorization            
+        function [iqc_factored, Vh, Z] = passive_factorize(obj)
+            %PASSIVE_FACTORIZE perform an passive-infinity type factorization
 
             % 1. Constructing Psih_1
             % nq = obj.nq;
             % np = obj.np;
 
-
-
-            
-            %index into the relevant system
-            
+            %index into the relevant system            
             Psi1 = [obj.Psi1; zeros(obj.nq, obj.nz)];
             Psi2 = [ zeros(obj.np, obj.nw); obj.Psi2];
 
@@ -311,11 +306,141 @@ classdef iqc_loop_split
             %form an equivalent supply rate
             % M11 = obj.M(1:np, 1:np);
 
+            %form a generic supply rate for the Psi1 term
             M =  obj.M;
+            MI = [eye(obj.np), zeros(obj.np, obj.nq); zeros(obj.nq, obj.np), zeros(obj.nq)];
 
-            Q = Psi1.C'*M*Psi1.C;
-            R = Psi1.D'*M*Psi1.D;
-            S = Psi1.C'*M*Psi1.D;
+            Q = Psi1.C'*MI*Psi1.C;
+            R = Psi1.D'*MI*Psi1.D;
+            S = Psi1.C'*MI*Psi1.D;
+
+            %get a certificate
+            [Zu, Ku, n0] = dare_anti(Psi1.A,Psi1.B,Q,R,S);
+
+
+            D11hatu = chol(Psi1.B'*Zu*Psi1.B+R);
+            C11hatu = D11hatu'\(Psi1.B'*Zu*Psi1.A+S');
+            
+            %add extra poles at zero to compensate for the lack of inverse
+            %in discrete time
+            Psi11u = ss(Psi1.A,Psi1.B,C11hatu,D11hatu,-1);                       
+            
+            Psi11 = tf('z')^(-n0)*Psi11u; 
+
+            %the product (Psi11' Psi1) in state space
+            Psi11Psi1 = minreal([Psi11; Psi1],[],false);
+            Psi11Psi1 = balreal(Psi11Psi1);
+
+            %matrices  for the product Psi1
+            A1hat = Psi11Psi1.A;              B1hat = Psi11Psi1.B; 
+            C11hat = Psi11Psi1.C(1:nq,:);     D11hat = Psi11Psi1.D(1:nq,:);   
+            C1hat = Psi11Psi1.C(nq+1:end,:);
+
+            %FLAG 1: the first transfer system
+            Psi1h = ss(A1hat, B1hat, C11hat, D11hat, 1);
+
+
+
+            % 2. Constructing Psih_12
+            B1inv = B1hat/D11hat;
+            D1inv = Psi1.D/D11hat;
+
+            Psi1Psi11inv = ss(A1hat-B1inv*C11hat,B1inv,C1hat-D1inv*C11hat,D1inv,-1);
+            [~, Psi11Psi11invMPsi2] = isproper(Psi1Psi11inv'*obj.M*Psi2);
+
+            Psi11Psi11invMPsi2 = dss2ss(Psi11Psi11invMPsi2);
+            
+            Psi12Psi2 = minreal([Psi11Psi11invMPsi2; Psi2],[],false);
+            Psi12Psi2 = balreal(Psi12Psi2);
+
+            %data associated with Psih12
+            A2hat = Psi12Psi2.A;              B2hat = Psi12Psi2.B; 
+            C12hat = Psi12Psi2.C(1:nq,:);     D12hat = Psi12Psi2.D(1:nq,:);   
+            C2hat = Psi12Psi2.C(nq+1:end,:);
+
+
+            C3 = C12hat;
+            D3 = D12hat;
+
+
+
+            % 3. Constructing Psih_22
+            %equivalent supply
+            Q2 = Psi12Psi2.C'*blkdiag(eye(nq),-obj.M)*Psi12Psi2.C;
+            R2 = Psi12Psi2.D'*blkdiag(eye(nq),-obj.M)*Psi12Psi2.D;
+            S2 = Psi12Psi2.C'*blkdiag(eye(nq),-obj.M)*Psi12Psi2.D;
+            Q2 = (Q2+Q2')/2;
+            R2 = (R2+R2')/2;
+
+            %stabilizing solution to riccati
+            [Zs, Ks, Ls] = idare(A2hat,B2hat,Q2,R2,S2);
+            D22hat = chol(B2hat'*Zs*B2hat+R2);
+            C22hat = D22hat'\(B2hat'*Zs*A2hat+S2');
+
+            %Flag Psi2
+            Psi2h = ss(A2hat, B2hat, C22hat, D22hat, 1);
+            
+            % 4. package up the IQC
+            Ahat = blkdiag(A1hat,A2hat);
+            Bhat = blkdiag(B1hat,B2hat);
+            Chat = [C11hat                   C12hat;
+                    zeros(np,length(A1hat))  C22hat];
+
+            Psih = struct;
+            Psih.A = Ahat;
+            Psih.B = Bhat;
+            Psih.Chat = [C1hat C2hat];
+
+
+    
+
+            % 5. Computing Z, Xh, and Vh
+
+            %get the state transformation/compression
+            Vh = obj.compute_Vhat(Psih);
+            Xh_V = Vh'*obj.X*Vh;
+
+            Mhat = blkdiag(eye(nq),-eye(np));
+            Q = [Chat; C1hat C2hat]'*blkdiag(Mhat,-M)*[Chat; C1hat C2hat];
+            Q = (Q+Q')/2; % ensure symmetry
+            Z = dlyap(Ahat',Q);
+            
+
+
+            Xhat = Xh_V+Z;
+            Xhat = (Xhat+Xhat')/2;
+
+
+            %package it all up
+            iqc_factored = iqc_loop_factored(Psi1h, Psi2h,...
+                    C3, D3, Mhat, Xhat, obj.loop);
+        end
+        
+
+        function [iqc_factored, Vh, Z] = hinf_factorize(obj)
+            %HINF_FACTORIZE perform an h-infinity type factorization
+
+            % 1. Constructing Psih_1
+            % nq = obj.nq;
+            % np = obj.np;
+
+            %index into the relevant system            
+            Psi1 = [obj.Psi1; zeros(obj.nq, obj.nz)];
+            Psi2 = [ zeros(obj.np, obj.nw); obj.Psi2];
+
+            nq = size(Psi1.B,2);
+            np = size(Psi2.B,2);
+
+            %form an equivalent supply rate
+            % M11 = obj.M(1:np, 1:np);
+
+            %form a generic supply rate for the Psi1 term
+            M =  obj.M;
+            MI = [eye(np), zeros(np, nq); zeros(nq, np), zeros(nq)];
+
+            Q = Psi1.C'*MI*Psi1.C;
+            R = Psi1.D'*MI*Psi1.D;
+            S = Psi1.C'*MI*Psi1.D;
 
             %get a certificate
             [Zu, Ku, n0] = dare_anti(Psi1.A,Psi1.B,Q,R,S);
@@ -386,24 +511,6 @@ classdef iqc_loop_split
             Bhat = blkdiag(B1hat,B2hat);
             Chat = [C11hat                   C12hat;
                     zeros(np,length(A1hat))  C22hat];
-            % Dhat = [D11hat        D12hat;
-            %         zeros(np,nq)  D22hat];
-            % Psih.A1 = A1hat;
-            % Psih.A2 = A2hat;
-            % 
-            % Psih.B1 = B1hat;
-            % Psih.B2 = B2hat;
-            % 
-            % Psih.C1 = C11hat;
-            % Psih.C2 = C22hat;
-            % Psih.C3 = C12hat;
-            % Psih.C = Chat;
-            % Psih.D1 = D11hat;
-            % Psih.D2 = D22hat;
-            % Psih.D3 = D12hat;
-            % Psih.D = Dhat;
-            % 
-            % Psih.Dhat = [Psi1.D Psi2.D];
 
             Psih = struct;
             Psih.A = Ahat;
