@@ -438,9 +438,9 @@ classdef iqc_loop_split
             M =  obj.M;
             MI = [eye(np), zeros(np, nq); zeros(nq, np), zeros(nq)];
 
-            Q = Psi1.C'*MI*Psi1.C;
-            R = Psi1.D'*MI*Psi1.D;
-            S = Psi1.C'*MI*Psi1.D;
+            Q = Psi1.C'*M*Psi1.C;
+            R = Psi1.D'*M*Psi1.D;
+            S = Psi1.C'*M*Psi1.D;
 
             %get a certificate
             [Zu, Ku, n0] = dare_anti(Psi1.A,Psi1.B,Q,R,S);
