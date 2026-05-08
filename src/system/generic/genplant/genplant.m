@@ -39,10 +39,10 @@ classdef genplant
                 obj.ny = n.ny;
                 obj.nu = n.nu;      
 
-                if isfield(n, 'zp')
+                if isfield(n, 'nzp')
                     obj.nzp = n.nzp;            
                 end
-                if isfield(n, 'zw')
+                if isfield(n, 'nwp')
                     obj.nwp = n.nwp;            
                 end
             end

@@ -181,11 +181,17 @@ classdef (Abstract) opt_manager_interface < handle
             for i = 1:length(specs)
                 if isa(specs{i}, 'spec_stability') 
                     if length(specs) > 1                        
-                        sperf{i} = [];
+                        sperf(i) = [];
                     end
                     rho = specs{i}.rho;
                 end
             end
+
+            for i =1:length(sperf)
+                sperf{i}.id = i;
+            end
+
+
 
         end
 
@@ -221,9 +227,12 @@ classdef (Abstract) opt_manager_interface < handle
                 sol.objective = double(double(objective, sol.lmi_out));
 
                 ncons = length(cons.lmim);
-                sol.blocks = cell(ncons, 1);
-                for i = 1:ncons
-                    sol.blocks{i} = double(double(cons.lmim(i), sol.lmi_out));
+
+                if obj.config.recovery.blocks
+                    sol.blocks = cell(ncons, 1);
+                    for i = 1:ncons
+                        sol.blocks{i} = double(double(cons.lmim(i), sol.lmi_out));
+                    end
                 end
 
                 sol = obj.process_recovery(sol, sol.lmi_out, alg_psi);

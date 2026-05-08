@@ -101,11 +101,11 @@ classdef opt_synthesis < opt_manager_interface
                     ir_iqc_first_r =[];
                     iw_iqc_first_r = [];
                 else
-                    iw_iqc_first_r = count_iqc_in + (1:sp.iwp);
-                    count_iqc_in = count_iqc_in + sp.iwp;
+                    iw_iqc_first_r = count_iqc_in + (sp.iwp);
+                    count_iqc_in = count_iqc_in + length(sp.iwp);
 
-                    ir_iqc_first_r = count_iqc_out  + (1:sp.izp);
-                    count_iqc_out = count_iqc_out + sp.izp;
+                    ir_iqc_first_r = count_iqc_out  + (sp.izp);
+                    count_iqc_out = count_iqc_out + length(sp.izp);
                 end
 
                 iwp_iqc = [iwp_iqc; iw_iqc_first_r];
@@ -120,6 +120,7 @@ classdef opt_synthesis < opt_manager_interface
                     
 
 
+                
                 if iscell(alg_psi)
                     %TODO: change to genplant_poly type?
                     nwr = alg_psi{1}.nz;
@@ -128,6 +129,9 @@ classdef opt_synthesis < opt_manager_interface
                     nwr = alg_psi.nz;
                     nww = alg_psi.nw;                    
                 end
+
+                nwr = nwr + length(sp.izp);
+                nww = nww + length(sp.iwp);
 
                 nu = obj.sys.nu;
                 ny = obj.sys.ny;

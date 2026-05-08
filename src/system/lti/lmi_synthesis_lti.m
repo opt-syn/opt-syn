@@ -225,7 +225,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             outer_cl_left = [zeros(n), zeros(n, nw);
                 zeros(nw, n), Sq;
                 eye(n), zeros(n, nw);
-                zeros(nt, n), Tq];
+                zeros(nt, n), Tq'];
 
             outer_cl_right= [[eye(n), zeros(n, nz);
                 zeros(nz, n), eye(nz)], zeros(n+nz, n+nt)];
@@ -258,8 +258,12 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %E2E_TARGET: use a Schur complement to minimize the energy to
             %energy gain of the transfer function
 
-            G = vars.diss.G;
+            G = obj.get_storage(vars.diss, vars.reg);
 
+            P = obj.reg.connect_model(diss.plant, diss.rho);
+
+            sys_cl = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
+            
             
            
             sysb = obj.sys_block(diss.plant, G, G);
@@ -418,8 +422,8 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
             [A, B, C, D] = ssdata(P_trans);
 
-            iz = [P_trans.index_z(); P_trans.index_zp()];
-            iw = [P_trans.index_w(); P_trans.index_wp()];
+            iz = [P_trans.index_z(), P_trans.index_zp()];
+            iw = [P_trans.index_w(), P_trans.index_wp()];
             iu = P_trans.index_u();
             iy = P_trans.index_y();           
 
@@ -570,7 +574,9 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
 
             %closed-loop and weighted system
-            P = alg_trans.P;
+            P = alg_trans.P(obj.sys.P.index_z, obj.sys.P.index_w);
+
+
             M = iqc_op_all.iqc.M;
             M = (M + M')/2;
             nw = floor(size(M, 1)/2);

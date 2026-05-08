@@ -30,6 +30,9 @@ classdef opt_config
             'K_max', 100);              %upper bound on norm of controller state space matrices
 
 
+        %recovery of the solution
+        recovery = struct('blocks', false)
+
         %bisection routines
         %bisection goes in bisect_opts
     end

@@ -190,7 +190,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             nspec = length(specs);
             vars_spec = cell(nspec, 1);
             for i = 1:nspec
-                [vars_spec{i}, cons] = specs{i}.create_vars(cons);
+                [vars_spec{i}, cons] = specs{i}.create_vars(cons, [], obj.config);
             end           
         end
 
