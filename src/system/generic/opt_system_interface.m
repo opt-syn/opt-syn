@@ -304,7 +304,32 @@ classdef  opt_system_interface
 
 
             N = Bind * N0;
-        end                
+        end    
+
+
+        function [obj, iwp, izp, supply] = add_ergodic_cert(obj, c)
+            %ADD_ERGODIC_CERT certificate of ergodic convergence (function
+            %value suboptimality). Used in conjunction with the op_sml.ERGODIC 
+            % Section 4.1.2 (eq (32)) of https://arxiv.org/pdf/2302.06713
+            
+            [u, indbind] = unique(bind);
+            nop = length(bind);
+            nopu = length(obj.op);
+
+            Nu = obj.get_consensus(obj.op, 1:nopu);
+
+            ind_w = indbind;
+            [obj.P, iwp] = obj.P.add_oracle_input(obj, indbind, []);
+
+
+            
+
+
+
+        end
+
+
+
 
     end
 

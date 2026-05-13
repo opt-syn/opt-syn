@@ -6,6 +6,13 @@ classdef op_sml < op_sml_interface
     %
     %
     % noncausal multipliers    
+
+    properties
+        ERGODIC = false; %Proof of ergodic (sublinear: 1/(T+1)) convergence 
+        % in the function value/duality gap. requires marginal feasibility,
+        % and an adjusted supply rate
+    end
+
     methods
         function obj = op_sml(m, L, c)
             %OP_SML Construct an instance of this class
@@ -74,8 +81,8 @@ classdef op_sml < op_sml_interface
         function cs = csum_psi(obj, vars)
             %a normalization term for the multipliers
             % cs = trace(vars.Df1) + trace(vars.Df2);
-            if obj.same
-                cs = 0;
+            if obj.same || obj.ERGODIC
+                cs = 1;
             else
                 cs = trace(vars.Df1);
             end
@@ -212,10 +219,26 @@ classdef op_sml < op_sml_interface
 
         function M = build_M(obj, vars, order, reps);
             %BUILD_M create the running cost M
-            M = kron([0, 0, 0, 1; ...
-                      0, 0, 1, 0; ...
-                      0, 1, 0, 0; ...
-                      1, 0, 0, 0], eye(reps));
+
+            M0 = [0, 0, 0, 1; ...
+                  0, 0, 1, 0; ...
+                  0, 1, 0, 0; ...
+                  1, 0, 0, 0];
+            if obj.SUBLINEAR && ~obj.same
+                % Msub = 0;
+
+                sig = 1/(obj.L - obj.m);
+                Msub0 = obj.m * [1, sig; sig, sig^2] + sig*[0, 0; 0, 1];
+                
+                I0rep = diag([1, zeros(reps-1, 1)]);
+                Msub = kron(Msub0, I0rep);
+
+                Msub = circshift(kron(Msub, eye(2)), reps, 2);
+            else
+                Msub = zeros(4*reps);
+            end
+
+            M = kron(M0, eye(reps)) + Msub;
         end
 
         function X_out = build_X(obj, vars, order, reps)

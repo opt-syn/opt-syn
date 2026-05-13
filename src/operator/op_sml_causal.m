@@ -28,7 +28,20 @@ classdef op_sml_causal < op_sml_interface
 
         function M = build_M(obj, vars, order, reps);
             %BUILD_M create the running cost M
-            M = kron([0, 1; 1, 0], eye(reps));
+
+            M0 = [0, 1; 1, 0];
+
+            if obj.ERGODIC && ~obj.same
+                sig = 1/(obj.L - obj.m);
+                Msub0 = obj.m * [1, sig; sig, sig^2] + sig*[0, 0; 0, 1];
+                
+                I0rep = diag([1, zeros(reps-1, 1)]);
+                Msub = kron(Msub0, I0rep);
+
+            else
+                Msub = zeros(2*reps);
+            end
+            M = kron(M0, eye(reps)) + Msub;
         end
 
         function X_out = build_X(obj, vars, order, reps)

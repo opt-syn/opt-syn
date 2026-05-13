@@ -387,8 +387,6 @@ classdef genplant
                 Ew = full(sparse(ind_w, 1:nwpnew, ones(nwpnew, 1), obj.nw, nwpnew));
                 Bwnew = B(:, obj.index_w) * Ew;
                 Dwnew = D(:, obj.index_w) * Ew;
-%                 Bwnew = 0 * [Ew; zeros(nzpnew, nwpnew)];
-%                 Dwnew = 1 * [Ew; zeros(nzpnew, nwpnew)];
             else
                 Bwnew = [];
                 Dwnew = [];
