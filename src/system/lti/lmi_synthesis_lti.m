@@ -106,14 +106,10 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
         %% Quadratic performance (infinite horizon)        
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
             %QUAD: certificate of infinite-horizon quadratic performance
-
-            %TODO: debug this
             
-
             %get the variables of the problem
             G = obj.get_storage(vars.diss, vars.reg);
             
-
             %IMPORTANT!
             %hook up the internal model
             %(maybe it should happen at a higher level?)
@@ -141,29 +137,16 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %formulation from ParDynSyn notes (parametric dynamic
             %synthesis)
 
-            %acquire the dimensions
-            
 
-            n = ssize(sys_cl.A, 1);
-            nw = ssize(sys_cl.B, 2);
-            nz = ssize(sys_cl.C, 1);
-            nt = ssize(quad.U);
-
-            %TODO: audit this, break up into other routines
-
-            
+            %the quadratic objective
             supp_b = obj.supply_block(sys_cl, quad);
 
+            %the storage
             stor_b = obj.storage_block(sys_cl, quad, G, G);
 
+            %the dynamics
             dyn_b = obj.dynamics_block(sys_cl, quad);
-
-
-            %now for the controller parameters
-            %TODO: verify dimensions here
-
-            % sys_b = sys_b - dyn_b_he;
-
+            
             %wrap it all together
             objective = 0;
 
@@ -173,8 +156,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             sM = ssize(con_M,1);
             cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
 
-            %impose sign constraint
-            %change this up
+            %impose sign constraint            
             cons = obj.con_terminal(G, cons, [], diss.iqc_rob);
         end        
 
@@ -184,11 +166,74 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %E2E_TARGET: use a Schur complement to minimize the energy to
             %energy gain of the transfer function
 
+
+            
+                       %get the variables of the problem
+            G = obj.get_storage(vars.diss, vars.reg);
+            
+            %IMPORTANT!
+            %hook up the internal model
+            %(maybe it should happen at a higher level?)
+            P = obj.reg.connect_model(diss.plant, diss.rho);
+
+            sys_cl = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
+            
+            %index the quadratic specification
+            vars_spec = vars.spec{diss.spec.id};
+            M_quad = -diss.iqc_rob.M;            
+
+
+            ind_p = 1:(diss.iqc_rob.nz);
+            ind_q = diss.iqc_rob.nz + (1:(diss.iqc_rob.nw));
+            
+            
+            mu_l2 = vars.spec{diss.spec.id}.mu_l2;
+
+            quad_rob = obj.quad_objective(M_quad, ind_p, ind_q);
+
+            %adapt the quadratic objecitive for the e2e target
+            nwp = length(diss.spec.iwp);
+            nzp = length(diss.spec.izp);
+            
+            Q_e2e = -eye(nzp) * mu_l2;
+            T_e2e = eye(nwp);
+            S_e2e = zeros(nzp, nwp);
+            U_e2e = -eye(nzp) * mu_l2;
+
+            Q_new = blkdiag(quad_rob.Q, Q_e2e);
+            T_new = blkdiag(quad_rob.T, T_e2e);
+            S_new = blkdiag(quad_rob.S, S_e2e);
+            U_new = blkdiag(quad_rob.U, U_e2e);
+
+            quad = struct('Q', Q_new, 'T', T_new, 'S', S_new, 'U', U_new);
+
+            
+            %formulation from ParDynSyn notes (parametric dynamic
+            %synthesis)
+
+
+            %the quadratic objective
+            supp_b = obj.supply_block(sys_cl, quad);
+
+            %the storage
+            stor_b = obj.storage_block(sys_cl, quad, G, G);
+
+            %the dynamics
+            dyn_b = obj.dynamics_block(sys_cl, quad);
+            
+            %wrap it all together
+            objective = mu_l2;
+            con_M = stor_b + supp_b + dyn_b;
+
+
+            sM = ssize(con_M,1);
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
+
+            %impose sign constraint            
+            cons = obj.con_terminal(G, cons, [], diss.iqc_rob);
+            
+            
            
-            error('LTI synthesis: e2e target not yet supported')
-            cons = [];
-            objective = 0;
-            con_M = 0;
         end
 
         %% Peak-to-Peak norm (at each finite horizon)
