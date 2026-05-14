@@ -302,7 +302,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %use the triangular structure
             
             %TODO: graceful handling of other dynamics
-            D_mask = kron(D_mask_0, eye(c));
+            D_mask = kron(D_mask_0, ones(c));
+            % D_mask = D_mask_0;
  
             nd2= nnz(D_mask);
             if nnz(D_mask) > 0

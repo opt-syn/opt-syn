@@ -4,7 +4,7 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
     %
     % w(k) \in F(z(k))
     %
-    % [x(k+1)] = [A(k)    B(k)     Bp(k)   ][x(k)]   state transition
+    % [x(k+1)] = [A(k)    Bw(k)     Bwp(k)  ][x(k)]   state transition
     % [z(k)  ] = [Cz(k)   Dzw(k)   Dzwp(k) ][w(k)]   output to oracle
     % [zp(k) ] = [Czp(k)  Dzpw(k)  Dzpwp(k)][wp(k)]  output to performance
     %
@@ -18,8 +18,6 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
     %   Implemented
     %       stability
     %       e2e
-    %       quad
-    %       p2p
     %
     %   TODO:
     %       h2      
@@ -97,8 +95,6 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
             
             Gcurr = vars.diss.G{diss.ind_curr};
             Gnext = vars.diss.G{diss.ind_next};
-
-
             
             
             %allow for differing one-step exponential growths along arcs
@@ -175,15 +171,6 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
             %NSS: Number of subsystems            
             ns = obj.sys.Nss;
         end
-
-        % function rho = get_rho(obj, rho_list, ind_arc)
-        %     %GET_RHO: get the exponential growth parameter
-        %     if length(rho_list) > 1
-        %         rho = rho_list(ind_arc);
-        %     else
-        %         rho = rho_list;
-        %     end
-        % end
 
         function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
             %create_vars_storage create variables for the dissipation

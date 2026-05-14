@@ -12,7 +12,7 @@ classdef  opt_system_periodic < opt_system_switch
                 bind = 1:s;            
             end
 
-            if nargin >= 5
+            if nargin < 5
                  tracking = [];
             end
 
