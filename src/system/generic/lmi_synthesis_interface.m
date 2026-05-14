@@ -537,6 +537,211 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             end           
         end
 
+        %% Controller Recovery
+        function sol = process_recovery(obj, sol, lmi_out, alg_psi)
+            %recover the controller
+            %
+            %override this with other system types
+
+            %this code is with a full-order controller: duplication of the
+            %number of internal model states
+            %TODO: reduced order controller synthesis and recovery
+
+            %get the system with the internal model
+            P_trans =  obj.reg.connect_model(alg_psi, sol.rho);
+
+            sys_cl = obj.system_closed_loop(P_trans, sol.vars.diss, sol.vars.reg, sol.vars.K);
+            
+            %evaluate the variables
+            [K_report] = obj.recover_subcontroller(P_trans, sol.vars, sol.rho);
+                      
+
+            sol.alg_trans = K_report.alg_trans;
+            sol.alg = K_report.alg;
+            sol.model = K_report.model;           
+            sol.K= K_report.K;
+            sol.K_sub = K_report.K_sub;
+
+            sol.gain = obj.validate_recovery_gain(sol.alg_trans, sol.iqc_op_all);
+
+
+            %verify performance of the algorithm
+            %TODO: a postprocessing LMI (?) to check that the recovered 
+            %algorithm satisfies the performance specifications 
+        end
+
+
+        function [K_report] = recover_subcontroller(obj, P_trans, vars_rec, rho)
+            %RECOVER_SUBCONTROLLER recover the subcontroller of the current
+            %mode/control
+            %
+            %
+            %Input:
+            %
+            %Output:
+            %   K_feed: the subcontroller with direct feedthrough, before
+            %           exponential discounting    
+            %(not yet exponentially undiscounted, this happens later)
+
+
+            %for debugging
+            % G = obj.get_storage(sol.vars.diss, sol.vars.reg);
+
+            %this is the (nonlinearly-warped) system that is certified as
+            %possessing the desired performance and robustness
+            %specifications
+            % sys_cal = ss(G \ Acl, G \ Bcl, Ccl, Dcl, 1);
+
+
+
+            % [Acl, Bcl, Ccl, Dcl] = ssdata(sys_cl);
+
+            % K_warp = full([Ak, Bk; Ck, Dk]);
+
+
+            % [n] = size(Ak,1);
+            % m = size(Bk);
+
+            %dynamics and indexers
+            [A, B, C, D] = ssdata(P_trans);
+
+            iz = [P_trans.index_z(), P_trans.index_zp()];
+            iw = [P_trans.index_w(), P_trans.index_wp()];
+            iu = P_trans.index_u();
+            iy = P_trans.index_y();           
+
+            nz = length(iz);
+            nw = length(iw);
+            nu = length(iu);
+            ny = length(iy);
+
+            Ak = vars_rec.K.A;
+            Bk = vars_rec.K.B;
+            Ck = vars_rec.K.C;
+            Dk = vars_rec.K.D;
+
+            S = (vars_rec.diss.S);
+            n = ssize(Ak, 1);
+            
+            Y = vars_rec.diss.GY;
+            X = vars_rec.diss.GX;
+
+
+            J = S - X * Y;
+            [Up, Sig, Vp] = svd(J);
+
+            % U = Up*Sig;
+            ssig = sqrt(Sig);
+            srsig = diag(1./(diag(ssig)));
+
+
+            V = Vp*ssig;
+            U = Up*ssig;
+
+            Uinv = srsig*Up';
+            Vinv = srsig*Vp';
+
+
+            %similarity transformation
+
+
+            %get right-side entries
+            I = eye(n);
+            Z1 = (Vinv*(I - X * Y')')';
+            Z2 = (Vinv* (-U * Y')')';
+
+            Z34 = [X, Z1; U, Z2] \ [zeros(n); eye(n)];
+
+            Z3 = Z34(1:n, :);
+            Z4 = Z34((n+1):end, :);
+
+            T = [eye(n), Y'; zeros(n), V'];
+            Ti = [eye(n), -Y' * Vinv'; zeros(n), Vinv'];
+
+            SimG = [X, Z1; U, Z2];
+            SimGi = [Y', Z3; V', Z4];
+
+            %controller recovery
+
+            Lblock = [Uinv, -Uinv*X*B(:, iu);
+                zeros(nu, size(V, 2)), eye(nu)];
+
+            LblockI = [U, X*B(:, iu); 
+                zeros(nu, size(V, 2)), eye(nu)];
+
+            Cblock = [Ak - X*A*Y, Bk;
+                Ck, Dk];
+
+            RblockI = [V' , zeros(size(V, 2), ny);
+                C(iy, :)*Y, eye(ny)];
+
+            Rblock = [Vinv', zeros(size(V, 2), ny);
+                -C(iy, :)*Y*Vinv', eye(ny)];
+
+
+            % Kblock0 = inv(LblockI)* (Cblock) * inv(RblockI);
+            % Kblock1 = LblockI) \ Cblock) * inv(RblockI);
+            % Kblockinv = RblockI') \ LblockI) \ Cblock)')';
+
+            Kblock = Lblock * Cblock * Rblock;
+
+            %extraction and exponential weighting
+            Ac = Kblock(1:n, 1:n);
+            Bc = Kblock(1:n, n+1:end);
+            Cc = Kblock(n+1:end, 1:n);
+            Dc = Kblock(n+1:end, n+1:end);
+
+            K_nofeed_full = ss(Ac, Bc, Cc, Dc, 1);
+            K_nofeed =minreal(K_nofeed_full,1e-5);
+
+
+
+
+            %add the proper term by LFT
+            D22 = D(iy, iu);
+            Dfeed = zeros(nz+ny, nw+nu);            
+            Dfeed(nz+1:end, nw+1:end) = D22;
+
+
+
+            P_trans_nofeed = P_trans.ss;
+            P_trans_nofeed.D = P_trans_nofeed.D - Dfeed;
+
+            T_feed = [zeros(nu, ny), eye(nu); eye(ny), -D22];
+
+            K_feed = lft(T_feed, K_nofeed, nu, ny);
+            K_feed_full = lft(T_feed, K_nofeed_full, nu, ny);
+
+
+            alg_trans = lft(P_trans, K_feed);
+            alg_trans_nofeed = lft(P_trans_nofeed, K_nofeed);
+
+
+            K_sub= rhotrafo(K_feed, 1/rho);
+            K_sub_full = rhotrafo(K_feed_full, 1/rho);
+            %connect the internal model: form the controller
+
+            model = obj.reg.get_model(vars_rec.reg);
+
+            K = lft(model, K_sub);
+            K_full = lft(model, K_sub_full);
+
+
+            %form the algorithm
+            alg = lft(obj.sys.P, K);
+            alg_full = lft(obj.sys.P, K_full);
+
+
+            K_report = struct;
+
+            K_report.alg = alg_full;
+            K_report.K = K_full;
+            K_report.model = model;
+            K_report.K_sub = K_sub;
+
+            K_report.alg_trans = alg_trans;  
+
+        end
     end
 
     methods (Abstract)
