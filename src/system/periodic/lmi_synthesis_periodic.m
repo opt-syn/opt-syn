@@ -143,36 +143,66 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
 
             %get the variables of the problem
             vcurr = obj.get_vars_diss(vars, diss.ind_curr);
-            vnext = obj.get_vars_diss(vars, diss.ind_curr);
+            vnext = obj.get_vars_diss(vars, diss.ind_next);
             
             Gcurr = obj.get_storage(vcurr.diss, vcurr.reg);
             Gnext = obj.get_storage(vnext.diss, vnext.reg);
 
 
 
+            %IMPORTANT!
+            %hook up the internal model
+            %(maybe it should happen at a higher level?)
+            P = obj.reg.connect_model(diss.plant, diss.ind_curr, diss.rho);
 
-            %system block with {A, B, G}
-            sysb = obj.sys_block(diss.plant, Gnext, Gcurr);
 
 
-            %supply block with {C, D, M}
+            vars_diss = vcurr.diss;
+            vars_diss.GY = vnext.diss.GY;
+
+            sys_cl = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K);
+            
+            %index the quadratic specification
             vars_spec = vars.spec{diss.spec.id};
-            M_quad = obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
-            suppb = obj.supply_block(diss.plant, M_quad);
+            M_quad = -obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
 
 
+            if isempty(diss.spec.izp)
+                ind_p = 1:(diss.iqc_rob.nz);
+                ind_q = diss.iqc_rob.nz + (1:(diss.iqc_rob.nw));
+            else
+                ind_p = 1:(diss.iqc_rob.nz + diss.spec.izp);
+                ind_q = (diss.iqc_rob.nz + diss.spec.izp) + (1:(diss.iqc_rob.nw + diss.spec.iwp));
+            end
+            
+            quad = obj.quad_objective(M_quad, ind_p, ind_q);
+                       
+            %formulation from ParDynSyn notes (parametric dynamic
+            %synthesis)
+
+
+            %the quadratic objective
+            supp_b = obj.supply_block(sys_cl, quad);
+
+            %the storage
+            stor_b = obj.storage_block(sys_cl, quad, Gcurr, Gnext);
+
+            %the dynamics
+            dyn_b = obj.dynamics_block(sys_cl, quad);
+            
             %wrap it all together
             objective = 0;
 
-            con_M = sysb + suppb;
+            con_M = stor_b + supp_b + dyn_b;
 
 
             sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB); 
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
 
-            %impose sign constraint
-            cons = obj.con_terminal(Gcurr, cons, diss.iqc_rob);
+            %impose sign constraint            
+            cons = obj.con_terminal(G, cons, [], diss.iqc_rob);
         end
+
 
     end
 end
