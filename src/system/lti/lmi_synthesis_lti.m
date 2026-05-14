@@ -50,46 +50,6 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
         end
 
-        function sys_cl = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
-            %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
-            %transformation
-
-            GX = vars_diss.GX;
-            GY = vars_diss.GY;
-
-            %should be a genplant type
-            % P_net = diss.plant;
-            
-
-            [A, B, C, D] = ssdata(P);
-            iu = P.index_u;
-            iw = [P.index_w, P.index_wp];
-
-            iy = P.index_y;
-            iz = [P.index_z, P.index_zp];
-
-            % calligraphic matrices
-            % from  convexification
-            % [Y' Acl Y,  Y'Bcl ]
-            % [Ccl Y,      Dcl  ]
-
-
-            Ak = vars_K.A;
-            Bk = vars_K.B;
-            Ck = vars_K.C;
-            Dk = vars_K.D;
-            %
-            Acal = [A*GY + B(:, iu)*Ck,  A + B(:, iu)*Dk*C(iy, :);
-                    Ak, GX*A + Bk*C(iy, :)];
-            Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
-                GX*B(:, iw) + Bk*D(iy, iw)];
-            Ccal = [C(iz, :)*GY+ D(iz, iu)*Ck, C(iz, :) + D(iz, iu)*Dk*C(iy, :)];
-            Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);
-    
-
-            sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
-        end
-
         %% stability (for testing)
         function [cons, objective, con_M] = stability_passive(obj, vars, cons, diss)
         % function [cons, objective, con_M] = stability(obj, vars, cons, diss)
@@ -165,6 +125,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             vars_spec = vars.spec{diss.spec.id};
             M_quad = -obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
 
+
             if isempty(diss.spec.izp)
                 ind_p = 1:(diss.iqc_rob.nz);
                 ind_q = diss.iqc_rob.nz + (1:(diss.iqc_rob.nw));
@@ -172,76 +133,41 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                 ind_p = 1:(diss.iqc_rob.nz + diss.spec.izp);
                 ind_q = (diss.iqc_rob.nz + diss.spec.izp) + (1:(diss.iqc_rob.nw + diss.spec.iwp));
             end
-            %use eigenvalue arguments here
+            
 
-            Qq = M_quad(ind_p, ind_p);
-            Sq = M_quad(ind_p, ind_q);
-            Rq = M_quad(ind_q, ind_q);
-
-
-            [RqV, RqD] = eig(Rq);
-            eRq = diag(RqD);
-            ind_pos = find(abs(eRq) > 1e-12);
-
-            Tq = RqV(:, ind_pos);
-            Uq = diag(1./eRq(ind_pos));
+            quad = obj.quad_objective(M_quad, ind_p, ind_q);
+            
             
             %formulation from ParDynSyn notes (parametric dynamic
             %synthesis)
 
             %acquire the dimensions
+            
+
             n = ssize(sys_cl.A, 1);
             nw = ssize(sys_cl.B, 2);
             nz = ssize(sys_cl.C, 1);
-            nt = length(ind_pos);
-
-            %[nx, nz, nx, nt]
+            nt = ssize(quad.U);
 
             %TODO: audit this, break up into other routines
-            outer_Q = [zeros(n, nz); eye(nz); zeros(n, nz); zeros(nt, nz)];
-           
-            supp_b = 0;
-            supp_b = -outer_Q * (Qq + obj.config.tol.input_diss*eye(length(ind_p))) * outer_Q';
 
-            outer_U = [zeros(n, nt); zeros(nz, nt); zeros(n, nt); eye(nt, nt)];
-
-            if nt
-                supp_b = supp_b + outer_U * Uq * outer_U';
-            end
             
-            %supply block building
-            outer_curr = [eye(n, n); zeros(nz, n); zeros(n, n); eye(nt, n)];
+            supp_b = obj.supply_block(sys_cl, quad);
 
-            outer_next = [zeros(n, n); zeros(nz, n); eye(n); eye(nt, n)];
+            stor_b = obj.storage_block(sys_cl, quad, G, G);
 
-            G_curr = G;
-            G_next = G;
-            sys_b_G = outer_curr * G_curr * outer_curr'; 
-            sys_b_G = sys_b_G + outer_next* G_next * outer_next'; 
+            dyn_b = obj.dynamics_block(sys_cl, quad);
 
 
             %now for the controller parameters
             %TODO: verify dimensions here
-            outer_cl_left = [zeros(n), zeros(n, nw);
-                zeros(nw, n), Sq;
-                eye(n), zeros(n, nw);
-                zeros(nt, n), Tq'];
 
-            outer_cl_right= [[eye(n), zeros(n, nz);
-                zeros(nz, n), eye(nz)], zeros(n+nz, n+nt)];
-                
-
-            center_cl = [sys_cl.A, sys_cl.B;
-                sys_cl.C, sys_cl.D];
-
-            dyn_b = outer_cl_left * center_cl * outer_cl_right; 
-            dyn_b_he = dyn_b + dyn_b';
             % sys_b = sys_b - dyn_b_he;
 
             %wrap it all together
             objective = 0;
 
-            con_M = sys_b_G + supp_b + dyn_b_he;
+            con_M = stor_b + supp_b + dyn_b;
 
 
             sM = ssize(con_M,1);
@@ -258,41 +184,11 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %E2E_TARGET: use a Schur complement to minimize the energy to
             %energy gain of the transfer function
 
-            G = obj.get_storage(vars.diss, vars.reg);
-
-            P = obj.reg.connect_model(diss.plant, diss.rho);
-
-            sys_cl = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
-            
-            
            
-            sysb = obj.sys_block(diss.plant, G, G);
-
-            %variable to optimize
-            mu = vars.spec{diss.spec.id}.mu_l2;
-
-            [plant_no_p, CDp] = obj.separate_performance_output(diss);
-
-            %form the supply
-            nwp = length(diss.spec.iwp);
-            M_base = blkdiag(diss.iqc_rob.M, -mu * eye(nwp));
-            
-            objective = mu;            
-            suppb = obj.supply_block(plant_no_p, M_base);
-
-
-            %wrap it all together           
-            con_M_corner = sysb + suppb;
-            nzp = ssize(CDp, 1);
-            con_M = [con_M_corner, CDp'; CDp, mu*eye(nzp)];
-
-
-            sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB);   
-            
-            
-            %impose sign constraint
-            cons = obj.con_terminal(G, cons, diss.iqc_rob);
+            error('LTI synthesis: e2e target not yet supported')
+            cons = [];
+            objective = 0;
+            con_M = 0;
         end
 
         %% Peak-to-Peak norm (at each finite horizon)
@@ -306,6 +202,8 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
             %TODO: fix exponential rate here
             %storage matrix
+
+            error('LTI synthesis: p2p target not yet supported')
             G = vars.diss.G;
                       
             %terminal constraint

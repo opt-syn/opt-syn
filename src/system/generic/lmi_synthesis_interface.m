@@ -114,7 +114,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
 
-
         function [GX, GY, cons] = define_storage_G(obj, cons, alg_psi,  name)
             %DEFINE_STORAGE_G storage function for a specific subsystem
 
@@ -377,6 +376,139 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         %% helper functions to construct LMIs
 
+        function stor_b = storage_block(obj, sys_cl, quad, G_curr, G_next)
+            %STORAGE_BLOCK form the storage block in a synthesis problem
+            if nargin < 5
+                G_next = G_curr;
+            end
+               
+            n = ssize(sys_cl.A, 1);
+            nw = ssize(sys_cl.B, 2);
+            nz = ssize(sys_cl.C, 1);
+            nt = ssize(quad.U, 1);
+
+            outer_curr = [eye(n, n); zeros(nz, n); zeros(n, n); eye(nt, n)];
+
+            outer_next = [zeros(n, n); zeros(nz, n); eye(n); eye(nt, n)];
+            
+            stor_b = outer_curr * G_curr * outer_curr'; 
+            stor_b = stor_b + outer_next* G_next * outer_next'; 
+        end
+
+
+        function dyn_b_he = dynamics_block(obj, sys_cl, quad)
+            %DYNAMICS_BLOCK form the supply block in a quadratic objective
+            % problem
+
+
+            n = ssize(sys_cl.A, 1);
+            nw = ssize(sys_cl.B, 2);
+            nz = ssize(sys_cl.C, 1);
+            nt = ssize(quad.U, 1);
+
+            outer_cl_left = [zeros(n), zeros(n, nw);
+                zeros(nw, n), quad.S;
+                eye(n), zeros(n, nw);
+                zeros(nt, n), quad.T'];
+
+            outer_cl_right= [[eye(n), zeros(n, nz);
+                zeros(nz, n), eye(nz)], zeros(n+nz, n+nt)];
+
+
+            center_cl = [sys_cl.A, sys_cl.B;
+                sys_cl.C, sys_cl.D];
+
+            dyn_b = outer_cl_left * center_cl * outer_cl_right; 
+            dyn_b_he = dyn_b + dyn_b';
+
+        end
+
+        function supp_b = supply_block(obj, sys_cl, quad)
+            % SUPPLY_BLOCK form the supply block in a quadratic objective
+            % problem
+
+            n = ssize(sys_cl.A, 1);
+            nw = ssize(sys_cl.B, 2);
+            nz = ssize(sys_cl.C, 1);
+            nt = ssize(quad.U, 1);
+            
+            outer_Q = [zeros(n, nz); eye(nz); zeros(n, nz); zeros(nt, nz)];
+
+            
+            supp_b = -outer_Q * (quad.Q + obj.config.tol.input_diss*eye(ssize(quad.Q, 1))) * outer_Q';
+
+            outer_U = [zeros(n, nt); zeros(nz, nt); zeros(n, nt); eye(nt, nt)];
+
+            if nt
+                supp_b = supp_b + outer_U * quad.U * outer_U';
+            end
+
+        end
+
+        function [quad] = quad_objective(obj, M_quad, ind_p, ind_q)
+            %QUAD_OBJECTIVE untangle the quadratic objective into a
+            %linearizable formulation
+
+            %R = T' U^-1 T, R >0
+
+
+            
+            %use eigenvalue arguments here
+
+            Qq = M_quad(ind_p, ind_p);
+            Sq = M_quad(ind_p, ind_q);
+            Rq = M_quad(ind_q, ind_q);
+
+
+            [RqV, RqD] = eig(Rq);
+            eRq = diag(RqD);
+            ind_pos = find(abs(eRq) > 1e-12);
+
+            Tq = RqV(:, ind_pos);
+            Uq = diag(1./eRq(ind_pos));
+
+            quad = struct('Q', Qq, 'S', Sq, 'U', Uq, 'T', Tq);
+        end
+
+        function sys_cl = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
+            %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
+            %transformation
+
+            GX = vars_diss.GX;
+            GY = vars_diss.GY;
+
+            %should be a genplant type
+            % P_net = diss.plant;
+
+
+            [A, B, C, D] = ssdata(P);
+            iu = P.index_u;
+            iw = [P.index_w, P.index_wp];
+
+            iy = P.index_y;
+            iz = [P.index_z, P.index_zp];
+
+            % calligraphic matrices
+            % from  convexification
+            % [Y' Acl Y,  Y'Bcl ]
+            % [Ccl Y,      Dcl  ]
+
+
+            Ak = vars_K.A;
+            Bk = vars_K.B;
+            Ck = vars_K.C;
+            Dk = vars_K.D;
+            %
+            Acal = [A*GY + B(:, iu)*Ck,  A + B(:, iu)*Dk*C(iy, :);
+                Ak, GX*A + Bk*C(iy, :)];
+            Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
+                GX*B(:, iw) + Bk*D(iy, iw)];
+            Ccal = [C(iz, :)*GY+ D(iz, iu)*Ck, C(iz, :) + D(iz, iu)*Dk*C(iy, :)];
+            Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);
+
+
+            sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
+        end
         %% common specification calls
 
         

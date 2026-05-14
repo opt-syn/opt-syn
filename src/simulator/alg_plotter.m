@@ -21,8 +21,8 @@ classdef alg_plotter
             %PLOT: multi-pane display 
             %Input:
             %   traces: signals to plot (e.g. {'x', 'w', 'f'})
-            
-            if (nargin == 3) && isnumeric(fignum)
+                        
+            if (nargin == 3) && isnumeric(fignum) && ~isempty(fignum)
                 fig = figure(fignum);
             else
                 fig = figure;
