@@ -321,7 +321,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
                         Dvar = Dk2_var * Dvar_mat;
                         
-                        Din = sparse(1:ncc, eind, ones(ncc, 1), ncc, s);
+                        Din = sparse(1:ncc, eind, ones(ncc, 1), ncc, s*c);
                         Din_var = Dvar * Din;
 
                         Dk = [Dk; Din_var];
@@ -550,20 +550,11 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             %get the system with the internal model
             P_trans =  obj.reg.connect_model(alg_psi, sol.rho);
-
-            sys_cl = obj.system_closed_loop(P_trans, sol.vars.diss, sol.vars.reg, sol.vars.K);
             
             %evaluate the variables
-            [K_report] = obj.recover_subcontroller(P_trans, sol.vars, sol.rho);
+            [sol] = obj.recover_subcontroller(P_trans, sol);
                       
 
-            sol.alg_trans = K_report.alg_trans;
-            sol.alg = K_report.alg;
-            sol.model = K_report.model;           
-            sol.K= K_report.K;
-            sol.K_sub = K_report.K_sub;
-
-            sol.gain = obj.validate_recovery_gain(sol.alg_trans, sol.iqc_op_all);
 
 
             %verify performance of the algorithm
@@ -572,7 +563,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
 
-        function [K_report] = recover_subcontroller(obj, P_trans, vars_rec, rho)
+        function [K_report] = recover_subcontroller(obj, P_trans, sol)
             %RECOVER_SUBCONTROLLER recover the subcontroller of the current
             %mode/control
             %
@@ -584,6 +575,32 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %           exponential discounting    
             %(not yet exponentially undiscounted, this happens later)
 
+            vars_rec = sol.vars;
+            rho = sol.rho;
+
+            [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec);
+
+            model = obj.reg.get_model(vars_rec.reg);
+
+            K_report = obj.K_alg_report(P_trans, K_nofeed, model, rho);
+            
+            sol.alg_trans = K_report.alg_trans;
+            sol.alg = lft(obj.sys.P, K_report.K);
+            sol.model = K_report.model;           
+            sol.K= K_report.K;
+            sol.K_sub = K_report.K_sub;
+
+            sol.gain = obj.validate_recovery_gain(sol.alg_trans, sol.iqc_op_all);
+
+            
+        end
+
+        function [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec)
+
+            %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
+            %controller 
+            %dynamics and indexers
+
 
             %for debugging
             % G = obj.get_storage(sol.vars.diss, sol.vars.reg);
@@ -591,19 +608,11 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %this is the (nonlinearly-warped) system that is certified as
             %possessing the desired performance and robustness
             %specifications
+            % sys_cl = obj.system_closed_loop(P_trans, sol.vars.diss, sol.vars.reg, sol.vars.K);
+
             % sys_cal = ss(G \ Acl, G \ Bcl, Ccl, Dcl, 1);
 
 
-
-            % [Acl, Bcl, Ccl, Dcl] = ssdata(sys_cl);
-
-            % K_warp = full([Ak, Bk; Ck, Dk]);
-
-
-            % [n] = size(Ak,1);
-            % m = size(Bk);
-
-            %dynamics and indexers
             [A, B, C, D] = ssdata(P_trans);
 
             iz = [P_trans.index_z(), P_trans.index_zp()];
@@ -623,7 +632,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             S = (vars_rec.diss.S);
             n = ssize(Ak, 1);
-            
+
             Y = vars_rec.diss.GY;
             X = vars_rec.diss.GX;
 
@@ -694,9 +703,24 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             K_nofeed_full = ss(Ac, Bc, Cc, Dc, 1);
             K_nofeed =minreal(K_nofeed_full,1e-5);
+        end
 
 
+        function K_report = K_alg_report(obj, P_trans, K_nofeed, model, rho)
+            %K_ALG_REPORT recover the algorithmic interconnection and the
+            %controller
+            
+            D = P_trans.D;
 
+            iz = [P_trans.index_z(), P_trans.index_zp()];
+            iw = [P_trans.index_w(), P_trans.index_wp()];
+            iu = P_trans.index_u();
+            iy = P_trans.index_y();           
+
+            nz = length(iz);
+            nw = length(iw);
+            nu = length(iu);
+            ny = length(iy);
 
             %add the proper term by LFT
             D22 = D(iy, iu);
@@ -711,7 +735,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             T_feed = [zeros(nu, ny), eye(nu); eye(ny), -D22];
 
             K_feed = lft(T_feed, K_nofeed, nu, ny);
-            K_feed_full = lft(T_feed, K_nofeed_full, nu, ny);
+            % K_feed_full = lft(T_feed, K_nofeed_full, nu, ny);
 
 
             alg_trans = lft(P_trans, K_feed);
@@ -719,30 +743,77 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
             K_sub= rhotrafo(K_feed, 1/rho);
-            K_sub_full = rhotrafo(K_feed_full, 1/rho);
+            % K_sub_full = rhotrafo(K_feed_full, 1/rho);
             %connect the internal model: form the controller
 
-            model = obj.reg.get_model(vars_rec.reg);
+            
 
             K = lft(model, K_sub);
-            K_full = lft(model, K_sub_full);
+            % K_full = lft(model, K_sub_full);
 
 
-            %form the algorithm
-            alg = lft(obj.sys.P, K);
-            alg_full = lft(obj.sys.P, K_full);
+            % alg_full = lft(obj.sys.P, K_full);
 
 
             K_report = struct;
-
-            K_report.alg = alg_full;
-            K_report.K = K_full;
+            
+            K_report.K = K;
             K_report.model = model;
             K_report.K_sub = K_sub;
 
             K_report.alg_trans = alg_trans;  
 
         end
+
+        function gain = validate_recovery_gain(obj, alg_trans, iqc_op_all)
+            %VALIDATE_RECOVERY validate that the system obeys the stability
+            %constraint (TODO: performance specs)
+
+
+            %closed-loop and weighted system
+            P = alg_trans.P(obj.sys.P.index_z, obj.sys.P.index_w);
+
+
+            M = iqc_op_all.iqc.M;
+            M = (M + M')/2;
+            nw = floor(size(M, 1)/2);
+
+            M11 = M(1:nw, 1:nw);
+            M12 = M(nw + (1:nw), 1:nw);
+            M22 = M(nw + (1:nw), nw + (1:nw));
+            %is the constraint passive?
+            is_passive = (norm(M11) + norm(M22) + norm(M12 - eye(nw)))==0;
+            is_hinf = (norm(M11-eye(nw)) + norm(M22+eye(nw)) + norm(M12))==0;
+
+
+            if is_passive
+                gain_passive = -getPassiveIndex(-P, 'input');
+
+                E=eye(nw);
+                Tinf=[E sqrt(2)*E;sqrt(2)*E E];
+                P_inf = lft(Tinf,P,nw,nw);
+
+                gain_inf = norm(P_inf, 'inf');
+            elseif is_hinf
+                gain_inf = norm(P, 'inf');
+
+                E=eye(nw);
+                Tpass = [-E sqrt(2)*E;sqrt(2)*E -E];
+                Ppass = lft(Tpass,P,nw,nw);
+
+                gain_passive = -getPassiveIndex(-Ppass, 'input');
+            else
+                %TODO: advanced validation
+                error('Customized validation is not yet implemented')
+                gain_inf = 0;
+                gain_passive = 0;
+            end
+
+            gain = [gain_passive, gain_inf];            
+
+        end
+
+
     end
 
     methods (Abstract)

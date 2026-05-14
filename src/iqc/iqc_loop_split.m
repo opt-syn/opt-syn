@@ -225,7 +225,7 @@ classdef iqc_loop_split
                               
             else
                 %the filter is already factored. fill in the information.
-                C3 = zeros(obj.nx2, obj.nz);
+                C3 = zeros(obj.nw, obj.nx2);
                 D3 = zeros(obj.nw, obj.nz);
                 iqc_factored = iqc_loop_factored(Psi1, Psi2,...
                     C3, D3, obj.M, obj.X, obj.loop);

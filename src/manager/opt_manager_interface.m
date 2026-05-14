@@ -201,6 +201,7 @@ classdef (Abstract) opt_manager_interface < handle
 
 
             % warning('all', 'off')
+            obj.specs = {};
             obj = obj.process_argument(arg);            
             obj = obj.add_specifications(specs);
             

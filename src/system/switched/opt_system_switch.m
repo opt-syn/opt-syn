@@ -73,7 +73,11 @@ classdef  opt_system_switch < opt_system_interface
 
         function Kcurr = get_K(obj, param)
             %TODO: override this with parameters
-            Kcurr = obj.K{param.mode};
+            if isa(obj.K{param.mode}, 'genplant')
+                Kcurr = obj.K{param.mode}.ss;
+            else
+                Kcurr = obj.K{param.mode};
+            end
         end    
         
         %dimensions

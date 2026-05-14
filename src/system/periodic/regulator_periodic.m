@@ -68,8 +68,9 @@ classdef regulator_periodic < regulator_interface
                 % try                    
                     sol0 = lsqminnorm(reg_mat, reg_ans);
                 % catch
-                if norm(sol0) > 1e-12
-                    warning('Regulator equation cannot be solved')
+                sol_err = reg_mat * sol0 - reg_ans;
+                if norm(sol_err) > 1e-12
+                    error('Regulator equation cannot be solved')
                 end
 
                 nnull = size(null_basis, 2);
@@ -221,11 +222,11 @@ classdef regulator_periodic < regulator_interface
 
             
             if nargin < 3
-                Phi = obj.Phi;
-                Gam = obj.Gam;
+                Phi = obj.Phi{ind};
+                Gam = obj.Gam{ind};
             else
-                Phi = vars_reg{ind}.Phi;
-                Gam = vars_reg{ind}.Gam;
+                Phi = vars_reg.Phi{ind};
+                Gam = vars_reg.Gam{ind};
             end
 
             [nu, ns] = ssize(Gam);
@@ -258,9 +259,20 @@ classdef regulator_periodic < regulator_interface
                 rho = 1;
             end
 
-            model = obj.get_model(ind);
-            model_rho = rhotrafo(model, rho);
-            plant_model = lft(plant, model_rho);
+            if iscell(plant)
+                plant_model = cell(obj.Nss, 1);
+                for i = 1:obj.Nss
+                    model = obj.get_model(i);
+                    model_rho = rhotrafo(model, rho);
+                    plant_model{i} = lft(plant{i}, model_rho);
+                end
+            else
+                model = obj.get_model(ind);
+                model_rho = rhotrafo(model, rho);
+                plant_model = lft(plant, model_rho);
+            end
+
+            
         end
 
 

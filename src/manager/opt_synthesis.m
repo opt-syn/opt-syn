@@ -149,19 +149,24 @@ classdef opt_synthesis < opt_manager_interface
                 %TODO: write fancier index code?
                 
 
-                n2 = alg_psi.dump_dim();
-                n2.nwp = length(sp.iwp);
-                n2.nzp = length(sp.izp);
+                
 
                 if iscell(alg_psi)
 
+                    n2 = alg_psi{1}.dump_dim();
+                    n2.nwp = length(sp.iwp);
+                    n2.nzp = length(sp.izp);
+
                     alg_screen = cell(size(alg_psi));
                     for j = 1:length(alg_screen)
-                        alg_screen{j} = E_r * alg_psi{j} * E_w;
-                    end
-
+                        alg_screen{j} = genplant(E_r * alg_psi{j}.ss * E_w, n2);
+                    end                    
                     %TODO: write this part: cells/genplant poly
                 else
+
+                    n2 = alg_psi.dump_dim();
+                    n2.nwp = length(sp.iwp);
+                    n2.nzp = length(sp.izp);
 
                     alg_screen_P = E_r * alg_psi.ss * E_w;
                     alg_screen = genplant(alg_screen_P, n2);
@@ -197,18 +202,7 @@ classdef opt_synthesis < opt_manager_interface
             sol.iqc_op_all = obj.iqc_op_all;
             sol = obj.lmi.process_recovery(sol, lmi_out, alg_psi);            
 
-            % iqc_rec = cell(size(obj.iqc_op));
-            % for i = 1:length(obj.iqc_op)
-            %     if isnumeric(obj.iqc_op{i})
-            %         %the Same oracle (m=L, known linear transformation)
-            %         iqc_rec{i} = obj.iqc_op{i};
-            %     else
-            %         iqc_rec{i} = obj.iqc_op{i}.recover(lmi_out);
-            %     end
-            % 
-            % end
-            % 
-            % sol.iqc = iqc_rec;
+
         end
 
         %% alternating design

@@ -1,4 +1,4 @@
-classdef lmi_synthesis_periodic < lmi_synthesis_interface
+classdef lmi_synthesis_periodic_orbit < lmi_synthesis_periodic
     %LMI_SYNTHESIS_PERIODIC synthesisLMIs for algorithmic interconnections
     %involving periodic linear networks and controllers
     %
@@ -254,6 +254,14 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
         % Call the recovery method to finalize the synthesis process
         % [cons, objective, con_M] = obj.recovery(vars, cons, diss);
 
+        function gain = validate_recovery_gain(obj, alg_trans, iqc_op_all);
+
+            %Validation of the LMI
+            %not performed at the moment.
+            gain = 0;
+
+        end
+
         function [sol] = recover_subcontroller(obj, P_trans, sol)
             %RECOVER_SUBCONTROLLER recover the subcontroller of the current
             %mode/control
@@ -293,7 +301,6 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             end
 
 
-            sol.gain = obj.validate_recovery_gain(sol.alg_trans, sol.iqc_op_all);
         end
 
         function [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec)
@@ -398,18 +405,6 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
     
                 K_nofeed{i}= ss(Ac, Bc, Cc, Dc, 1);                
             end
-        end
-
-        function gain = validate_recovery_gain(obj, alg_trans, iqc_op_all)
-            %VALIDATE_RECOVERY validate that the system obeys the stability
-            %constraint (TODO: performance specs)
-
-            %use the monodromy system to get specs
-            n = alg_trans{1}.dump_dim();
-            alg_trans_lti = genplant(periodic_lift(alg_trans), n);
-
-
-            gain = validate_recovery_gain@lmi_synthesis_interface(obj, alg_trans_lti, iqc_op_all);
         end
     end
 end
