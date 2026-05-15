@@ -53,7 +53,8 @@ classdef regulator_interface
             
 
             nbasis = size(obj.Gam_basis, 2);
-            if nbasis> 0 && (obj.opts.reduced_order)
+            % if nbasis> 0 
+            if false
 
 
                 %search over solutions
@@ -62,8 +63,8 @@ classdef regulator_interface
                 %TODO: parameterization of regulator equation solutions
                 %needs to be debugged (e.g. Laplacian example)
                 Pi_free_vec = obj.Pi_basis*eta;
-                Gam_free_vec = obj.Pi_basis*eta;
-                Phi_free_vec = obj.Pi_basis*eta;
+                Gam_free_vec = obj.Gam_basis*eta;
+                Phi_free_vec = obj.Phi_basis*eta;
 
                 Pi_free = [];
                 Gam_free = [];

@@ -54,15 +54,23 @@ classdef lmis
             p.lmim=s;
             h=p.lmim;
             h(end+1)=p.cost;
+
+            var_old = p.var;
+            bl_old = p.bl;
+
             %adjust varlist
-            [p.var,p.bl]=vars(h);            
+            [p.var,p.bl]=vars_append(s, var_old, bl_old);            
         end
         function p = set.cost (p, s)
             p.cost = s;
             h=p.lmim;
             h(end+1)=p.cost;
+            var_old = p.var;
+            bl_old = p.bl;
+
             %adjust varlist
-            [p.var,p.bl]=vars(h);
+            [p.var,p.bl]=vars_append(s, var_old, bl_old);            
+
         end
         function p = set.fac (p, s)
             p.fac = s;            

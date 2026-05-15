@@ -268,9 +268,23 @@ classdef opt_analysis < opt_manager_interface
             sol.iqc_op = iqc_rec;
 
             alg_psi_rec = alg_psi;
-            alg_psi_rec.C = double(double(alg_psi.C, lmi_out));
-            alg_psi_rec.D = double(double(alg_psi.D, lmi_out));
-            sol.alg_psi = ss(alg_psi_rec.A, alg_psi_rec.B, alg_psi_rec.C, alg_psi_rec.D, 1);
+
+            if ~iscell(alg_psi)
+                alg_psi_rec = {alg_psi_rec};
+            end
+            
+            
+            for i = 1:length(alg_psi_rec)
+                alg_psi_rec{i}.C = double(double(alg_psi_rec{i}.C, lmi_out));
+                alg_psi_rec{i}.D = double(double(alg_psi_rec{i}.D, lmi_out));
+                alg_psi_rec{i} = ss(alg_psi_rec{i}.A, alg_psi_rec{i}.B, alg_psi_rec{i}.C, alg_psi_rec{i}.D, 1);
+            end
+
+            if ~iscell(alg_psi)
+                sol.alg_psi = alg_psi_rec{1};
+            else
+                sol.alg_psi = alg_psi_rec;
+            end
         end
         
 

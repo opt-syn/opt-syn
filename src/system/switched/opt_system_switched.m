@@ -1,5 +1,5 @@
-classdef  opt_system_switch < opt_system_interface
-    %OPT_SYSTEM_SWITCH interconnection of network and operators
+classdef  opt_system_switched < opt_system_interface
+    %OPT_SYSTEM_SWITCHED interconnection of network and operators
     %polytopic setting: a cell A = sum theta_i A_i for parameters theta_i
     %
     %useful for switched systems, periodic systems, and LPV systems
@@ -10,11 +10,15 @@ classdef  opt_system_switch < opt_system_interface
     end
     
     methods
-        function obj = opt_system_switch(op, P, K, adj, bind, tracking)
+        function obj = opt_system_switched(op, P, K, adj, bind, tracking)
             %OPT_SYSTEM constructor            
             if nargin < 5
                 s = length(op);
                 bind = 1:s;            
+            end
+
+            if nargin < 6
+                tracking = [];
             end
 
             if ~iscell(K)
@@ -35,6 +39,11 @@ classdef  opt_system_switch < opt_system_interface
         end        
 
         %TODO: allow for parameterized systems
+
+        function [src, dst] = get_arcs(obj)
+            %GET_ARCS get transitions in the adjacency matrix
+            [src, dst] = find(obj.adj);
+        end
 
         function tp = get_type(obj)
             %get the type of the switched system
@@ -73,7 +82,11 @@ classdef  opt_system_switch < opt_system_interface
 
         function Kcurr = get_K(obj, param)
             %TODO: override this with parameters
-            Kcurr = obj.K{param.mode};
+            if isa(obj.K{param.mode}, 'genplant')
+                Kcurr = obj.K{param.mode}.ss;
+            else
+                Kcurr = obj.K{param.mode};
+            end
         end    
         
         %dimensions
@@ -93,7 +106,7 @@ classdef  opt_system_switch < opt_system_interface
 
 
         %% build the plant
-                function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, task)
+        function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, rho)
             %BUILD_PLANT: form the plant to be used for analysis
             %or synthesis
             %Input:
@@ -120,7 +133,7 @@ classdef  opt_system_switch < opt_system_interface
             for i = 1:obj.Nss
                 param = struct('mode', i);
                 alg = obj.get_alg(param); 
-                [alg_psi{i}, iqc_op, alg_loop{i}] = build_plant_single(obj, alg, iqc_data);
+                [alg_psi{i}, iqc_op, alg_loop{i}] = build_plant_single(obj, alg, iqc_data, rho);
             end
             %repeat this call multiple times for switched systems. This
             %function will be overloaded, whereas build_plant_single will

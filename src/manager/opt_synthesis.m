@@ -43,7 +43,11 @@ classdef opt_synthesis < opt_manager_interface
                     nrep = sum(i==bind);
                     op_blank = obj.sys.op{i}.create_iqc_identity(nrep);
                     
-                    iqc_op{i} = op_blank.factor();
+                    if ~isnumeric(op_blank)
+                        iqc_op{i} = op_blank.factor();
+                    else
+                        iqc_op{i} = op_blank;
+                    end
                 end
         end
         
@@ -125,16 +129,19 @@ classdef opt_synthesis < opt_manager_interface
                     %TODO: change to genplant_poly type?
                     nwr = alg_psi{1}.nz;
                     nww = alg_psi{1}.nw;                    
+                    nu = alg_psi{1}.nu;
+                    ny = alg_psi{1}.ny;
                 else
                     nwr = alg_psi.nz;
-                    nww = alg_psi.nw;                    
+                    nww = alg_psi.nw;
+                    nu = alg_psi.nu;
+                    ny = alg_psi.ny;
                 end
 
                 nwr = nwr + length(sp.izp);
                 nww = nww + length(sp.iwp);
 
-                nu = obj.sys.nu;
-                ny = obj.sys.ny;
+                
                 E_r = blkdiag(full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr)), eye(ny));
                 E_w = blkdiag(full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww)), eye(nu));
 
@@ -149,19 +156,24 @@ classdef opt_synthesis < opt_manager_interface
                 %TODO: write fancier index code?
                 
 
-                n2 = alg_psi.dump_dim();
-                n2.nwp = length(sp.iwp);
-                n2.nzp = length(sp.izp);
+                
 
                 if iscell(alg_psi)
 
+                    n2 = alg_psi{1}.dump_dim();
+                    n2.nwp = length(sp.iwp);
+                    n2.nzp = length(sp.izp);
+
                     alg_screen = cell(size(alg_psi));
                     for j = 1:length(alg_screen)
-                        alg_screen{j} = E_r * alg_psi{j} * E_w;
-                    end
-
+                        alg_screen{j} = genplant(E_r * alg_psi{j}.ss * E_w, n2);
+                    end                    
                     %TODO: write this part: cells/genplant poly
                 else
+
+                    n2 = alg_psi.dump_dim();
+                    n2.nwp = length(sp.iwp);
+                    n2.nzp = length(sp.izp);
 
                     alg_screen_P = E_r * alg_psi.ss * E_w;
                     alg_screen = genplant(alg_screen_P, n2);
@@ -196,19 +208,6 @@ classdef opt_synthesis < opt_manager_interface
             sol.iqc_op = obj.iqc_op;
             sol.iqc_op_all = obj.iqc_op_all;
             sol = obj.lmi.process_recovery(sol, lmi_out, alg_psi);            
-
-            % iqc_rec = cell(size(obj.iqc_op));
-            % for i = 1:length(obj.iqc_op)
-            %     if isnumeric(obj.iqc_op{i})
-            %         %the Same oracle (m=L, known linear transformation)
-            %         iqc_rec{i} = obj.iqc_op{i};
-            %     else
-            %         iqc_rec{i} = obj.iqc_op{i}.recover(lmi_out);
-            %     end
-            % 
-            % end
-            % 
-            % sol.iqc = iqc_rec;
         end
 
         %% alternating design

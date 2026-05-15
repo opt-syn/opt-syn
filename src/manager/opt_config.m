@@ -33,6 +33,9 @@ classdef opt_config
         %recovery of the solution
         recovery = struct('blocks', false)
 
+        %system-type specific options
+        switched = struct('common', false)
+
         %bisection routines
         %bisection goes in bisect_opts
     end

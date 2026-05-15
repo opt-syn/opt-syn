@@ -1,37 +1,32 @@
-classdef lmi_analysis_periodic < lmi_analysis_interface
-    %LMI_ANALYSIS_PERIODIC analysis LMIs for algorithmic interconnections
-    %involving periodic linear networks and controllers
+classdef lmi_analysis_switched < lmi_analysis_interface
+    %LMI_ANALYSIS_SWITCHED analysis LMIs for algorithmic interconnections
+    %involving switched linear networks and controllers
     %
-    % w(k) \in F(z(k))
+    % w(mode(k)) \in F(z(mode(k)))
     %
-    % [x(k+1)] = [A(k)    Bw(k)     Bwp(k)  ][x(k)]   state transition
-    % [z(k)  ] = [Cz(k)   Dzw(k)   Dzwp(k) ][w(k)]   output to oracle
-    % [zp(k) ] = [Czp(k)  Dzpw(k)  Dzpwp(k)][wp(k)]  output to performance
+    % [x(k+1)] = [A(mode(k))    Bw(mode(k))     Bwp(mode(k)) ][x(k)]   state transition
+    % [z(k)  ] = [Cz(mode(k))   Dzw(mode(k))   Dzwp(mode(k)) ][w(k)]   output to oracle
+    % [zp(k) ] = [Czp(mode(k))  Dzpw(mode(k))  Dzpwp(mode(k))][wp(k)]  output to performance
     %
-    %A(k) = A(k+T) for some known time T
+    %The switching signal mode(k) evolves exogenously.
     %
-    %instances of these algorithms include cyclic coordinate descent
-    %methods. Periodic systems can also be unrolled into an LTI system
-    %(monodromy methods): a single large LMI system rather than multiple 
-    % coupled smaller LMI systems
+    %instances of these algorithms include algorithms with time-varying
+    %delay (a-priori unknown, but measured online).
     %
-    %   Implemented
+    %   Implemented:
+    %
+    %       quad
+    %
+    %   TODO:    
     %       stability
     %       e2e
-    %
-    %   TODO:
     %       h2      
     %       e2p
     %       
     %
 
-
-    properties
-        opts = struct("COMMON", false);
-    end
-
     methods
-        function obj = lmi_analysis_periodic(sys, config)
+        function obj = lmi_analysis_switched(sys, config)
             %LMI_DISPATCH_LTI Construct an instance of this class
             %   Detailed explanation goes here
             obj@lmi_analysis_interface(sys, config);
@@ -64,24 +59,59 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
 
             %Upper-levels: iterate over the systems
             objective = 0;
-            for i = 1:obj.Nss
-                %extract the information of subsystem i
-                diss_curr = diss;
-                diss_curr.plant = diss.plant{i};
-                diss_curr.ind_curr = i;
-                diss_curr.ind_next = 1+mod(i, obj.Nss);
-                
+            [src, dst] = obj.sys.get_arcs();
+            Narcs = length(src);
 
-                [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
-                
-                
-                %TODO: take the max over the different subsystems
-                %but the same objective is sent to each subsystem, so it's
-                %all the same? Check this
-                if i==1
-                    objective = objective + objective_curr;
+
+            if obj.config.switched.common
+
+                for i = 1:obj.Nss
+                    
+                    %extract the information of subsystem i
+                    diss_curr = diss;
+                    diss_curr.plant = diss.plant{i};
+                    diss_curr.ind_curr = i;
+                    diss_curr.ind_next = i;
+
+
+                    [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
+                    
+                    %impose the positivity constraints
+                    Gcurr = vars.diss.G{i};
+                    cons = obj.con_terminal(Gcurr, cons, diss.iqc_rob);
+                    
                 end
-            end         
+                num_terminal = 1;
+            else
+    
+                for i = 1:Narcs
+                    %extract the information of the arc
+                    diss_curr = diss;
+                    diss_curr.plant = diss.plant{src(i)};
+                    diss_curr.ind_curr = src(i);
+                    diss_curr.ind_next = dst(i);
+                    
+    
+                    [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
+                                       
+                    %TODO: take the max over the different subsystems
+                    %but the same objective is sent to each subsystem, so it's
+                    %all the same? Check this
+                    if i==1
+                        objective = objective + objective_curr;
+                    end
+                end
+
+                for j = 1:obj.Nss
+                    Gcurr = vars.diss.G{j};
+                    %impose sign constraint
+                    cons = obj.con_terminal(Gcurr, cons, diss.iqc_rob);
+                end
+
+            
+
+            end
+            
                       
         end
 
@@ -118,10 +148,7 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
 
 
             sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB); 
-
-            %impose sign constraint
-            cons = obj.con_terminal(Gcurr, cons, diss.iqc_rob);
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB);             
         end        
 
         function [cons, objective, con_M] = e2e_target(obj, vars, cons, diss)
@@ -159,9 +186,7 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
             sM = ssize(con_M,1);
             cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB);   
             
-            
-            %impose sign constraint
-            cons = obj.con_terminal(Gcurr, cons, diss.iqc_rob);
+                      
         end
 
 
@@ -197,7 +222,6 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
                 
             else
                 %define a storage function for each subsystem
-
                 for i = 1:obj.Nss
                     [G_curr, cons] = obj.define_storage_G(cons, alg_psi{i}, num2str(i));
                     G_cell{i} = G_curr;

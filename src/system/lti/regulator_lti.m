@@ -31,10 +31,7 @@ classdef regulator_lti < regulator_interface
             %TODO: break this up into common routines
 
 
-            %% break down the plant structure
-
-            
-            
+            %% break down the plant structure                      
             [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.P.ss_zy_wu();
 
             
@@ -49,7 +46,7 @@ classdef regulator_lti < regulator_interface
 
             if isempty(obj.sys.tracking)
                 %constant tracking
-                S = eye(size(N, 2)+1);
+                S = eye(size(N, 2)+c);
                 R = S;
 
 
@@ -263,26 +260,11 @@ classdef regulator_lti < regulator_interface
                 reg_ans = [zeros(n, 1), -B*N;  -ones(sN, 1), -D*N];
                 reg_mat = [A - eye(n); C];
 
-
-                null_basis = null(reg_mat, 'rational');
-                
                 sol0 = reg_mat \ reg_ans;
-                nnull = size(null_basis, 2);
 
                 nx = obj.sys.P.nx;
                 Pi0 = sol0(1:nx, :);
                 Th0 = sol0(nx+1:end, :);        
-
-                if nnull
-                    Pi_basis_pre = null_basis(1:nx, :);
-                    Th_basis_pre = null_basis(nx+1:end, :);
-    
-                    Pi_basis = kron(Pi_basis_pre, eye(nnull));
-                    Th_basis = kron(Th_basis_pre, eye(nnull));
-                else
-                    Pi_basis = [];
-                    Th_basis = [];
-                end
 
                
 
@@ -325,24 +307,13 @@ classdef regulator_lti < regulator_interface
                 Pi0 = reg_sol(1:nx, :);
                 Th0 = reg_sol(nx+1:end, :);        
 
-                if nnull
-                    Pi_basis_pre = null_basis(1:nx, :);
-                    Th_basis_pre = null_basis(nx+1:end, :);
-    
-                    Pi_basis = kron(Pi_basis_pre, eye(nnull));
-                    Th_basis = kron(Th_basis_pre, eye(nnull));
-                else
-                    Pi_basis = [];
-                    Th_basis = [];
-                end
             end
 
 
             
             % regulator_closed = regulator;
           regulator_closed = struct('S', S, 'R', R, 'Pi', Pi0, ...
-              'Pi_basis', Pi_basis,...
-              'Th', Th0,  'Th_basis', Th_basis);
+              'Th', Th0 );
 
             
 

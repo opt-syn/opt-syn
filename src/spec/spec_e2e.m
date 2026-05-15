@@ -28,6 +28,7 @@ classdef spec_e2e < spec_interface
             %SUPPLY quadratic performance specification
             gamma = obj.gain;
             Mu = -eye(obj.nwp)*gamma;
+            
             My = eye(obj.nzp)/(gamma);
 
             M = blkdiag(My, Mu);
