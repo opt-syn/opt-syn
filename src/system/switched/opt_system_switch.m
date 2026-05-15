@@ -17,6 +17,10 @@ classdef  opt_system_switch < opt_system_interface
                 bind = 1:s;            
             end
 
+            if nargin < 6
+                tracking = [];
+            end
+
             if ~iscell(K)
                 K0 = K;
                 K = cell(P.Nss, 1);
