@@ -1,13 +1,13 @@
-classdef lmi_synthesis_periodic < lmi_synthesis_interface
-    %LMI_SYNTHESIS_PERIODIC synthesis LMIs for algorithmic interconnections
+classdef lmi_synthesis_switched < lmi_synthesis_interface
+    %LMI_SYNTHESIS_SWITCHED synthesis LMIs for algorithmic interconnections
     %involving periodic linear networks and controllers
     %
     % w(k) \in F(z(k))
     %
-    % [x(k+1)] = [A(k)    Bw(k)    Bwp(k)   Bu(k)  ][x(k)]   state transition
-    % [z(k)  ] = [Cz(k)   Dzw(k)   Dzwp(k)  Dzu(k) ][w(k)]   output to oracle
-    % [zp(k) ] = [Czp(k)  Dzpw(k)  Dzpwp(k) Dzpu(k)][wp(k)]  output to performance
-    % [y(k)  ] = [Cy(k)   Dyw(k)   Dywp(k)  Dyu(k) ][u(k)]   output to controller
+    % [x(k+1)] = [A(mode(k))    Bw(mode(k))    Bwp(mode(k))   Bu(mode(k))  ][x(k)]   state transition
+    % [z(k)  ] = [Cz(mode(k))   Dzw(mode(k))   Dzwp(mode(k))  Dzu(mode(k)) ][w(k)]   output to oracle
+    % [zp(k) ] = [Czp(mode(k))  Dzpw(mode(k))  Dzpwp(mode(k)) Dzpu(mode(k))][wp(k)]  output to performance
+    % [y(k) ]  = [Cy(mode(k))   Dyw(mode(k))   Dywp(mode(k))  Dyu(mode(k)) ][u(k)]   output to controller
     %
     %A(k) = A(k+T) for some known time T
     %
@@ -26,11 +26,11 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
     %       h2      
     %       e2p
     %       
-    %
+    %    
 
     methods
-        function obj = lmi_synthesis_periodic(sys,config)
-            %LMI_SYNTHESIS_PERIODIC undefined
+        function obj = lmi_synthesis_switched(sys,config)
+            %LMI_SYNTHESIS_SWITCHED undefined
             %   undefined
             obj@lmi_synthesis_interface(sys, config);
         end

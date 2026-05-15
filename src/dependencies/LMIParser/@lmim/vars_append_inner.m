@@ -1,38 +1,35 @@
-function [var_string,bl_lmibl]=vars(p_lmim)
-% function [var_string,bl_lmibl]=vars(p_lmim)
-%
-% Extract unique variables from p.
-%
-% Generates names var and variable definitions bl of all 
-% variables involved in p.
-
-p=p_lmim;
-var=string([]);
-bl=lmibl([]);
-for i=1:numel(p)
-    %pick i-th lmim object in array
-    s=p(i);
+function [var, bl] = vars_append_inner(s, var, bl)
+%VARS_APPEND_INNER undefined
+%   undefined
     for j=1:numel(s.bl)
-        va=s.bl(j);
+        na=s.bl(j).na;
         %test whether variable va in var
         %if yes then iv is index of current variable in var
         if isempty(var)
             ind = 0;
-            iv = 0;
+            % iv = 0;
         else
-            [ind,iv]=ismember(va.na,var);
+            ind = any(strcmp(na,var));
+            % [ind,iv]=ismember(va.na,var);
         end
-
+    
         %only add variables which are NOT transposed
         %if variable is transposed, select non-transposed version
-
+    
         %if va.na not in list var
         if ind==0
             %add na to list var
-            var=[var string(va.na)];
+            var=[var string(na)];
             %new length of list
             le=length(var);
+
+            
             %add original (not transposed) variable to so.varbl
+
+            if isnumeric(bl) && isempty(bl)
+                bl=lmibl([]);
+            end
+            va = s.bl(j);
             if va.tr
                 bl(le)=va';
             else
@@ -40,7 +37,4 @@ for i=1:numel(p)
             end
         end
     end
-end
-var_string=var;
-bl_lmibl=bl;
 end

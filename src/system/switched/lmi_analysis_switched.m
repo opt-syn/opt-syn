@@ -8,15 +8,16 @@ classdef lmi_analysis_switched < lmi_analysis_interface
     % [z(k)  ] = [Cz(mode(k))   Dzw(mode(k))   Dzwp(mode(k)) ][w(k)]   output to oracle
     % [zp(k) ] = [Czp(mode(k))  Dzpw(mode(k))  Dzpwp(mode(k))][wp(k)]  output to performance
     %
-    %A(mode(k)) = A(k+T) for some known time T
+    %The switching signal mode(k) evolves exogenously.
     %
     %instances of these algorithms include algorithms with time-varying
     %delay (a-priori unknown, but measured online).
     %
     %   Implemented:
     %
-    %   TODO:
     %       quad
+    %
+    %   TODO:    
     %       stability
     %       e2e
     %       h2      
