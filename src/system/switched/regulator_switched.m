@@ -250,8 +250,11 @@ classdef regulator_switched < regulator_interface
                 end                                    
             end
 
-            regulator_closed = struct('S', S, 'R', R, 'Pi', Pi0, ...
-                'Th', Th0 );
+            regulator_closed = struct('S', S, 'R', R);
+            
+            regulator_closed.Pi = Pi0;
+            regulator_closed.Th = Th0;
+                
         
 
         end
