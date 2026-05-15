@@ -200,11 +200,11 @@ classdef regulator_periodic < regulator_interface
                 for i = 1:obj.Nss
                     %get the regulator equation solution                    
                     ind_pi = count + (1:nxn);
-                    ind_th = count + n+ (1:nxi);
+                    ind_th = count + nxn + (1:nxi);
                     Pi0{i} = sol0(ind_pi, :);
                     Th0{i} = sol0(ind_th, :);                    
 
-                    count = count + n + nu;
+                    count = count + nxn + nxi;
 
                 end                                    
             end

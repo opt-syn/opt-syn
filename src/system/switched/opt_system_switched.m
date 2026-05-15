@@ -1,5 +1,5 @@
-classdef  opt_system_switch < opt_system_interface
-    %OPT_SYSTEM_SWITCH interconnection of network and operators
+classdef  opt_system_switched < opt_system_interface
+    %OPT_SYSTEM_SWITCHED interconnection of network and operators
     %polytopic setting: a cell A = sum theta_i A_i for parameters theta_i
     %
     %useful for switched systems, periodic systems, and LPV systems
@@ -10,7 +10,7 @@ classdef  opt_system_switch < opt_system_interface
     end
     
     methods
-        function obj = opt_system_switch(op, P, K, adj, bind, tracking)
+        function obj = opt_system_switched(op, P, K, adj, bind, tracking)
             %OPT_SYSTEM constructor            
             if nargin < 5
                 s = length(op);
@@ -39,6 +39,11 @@ classdef  opt_system_switch < opt_system_interface
         end        
 
         %TODO: allow for parameterized systems
+
+        function [src, dst] = get_arcs(obj)
+            %GET_ARCS get transitions in the adjacency matrix
+            [src, dst] = find(obj.adj);
+        end
 
         function tp = get_type(obj)
             %get the type of the switched system

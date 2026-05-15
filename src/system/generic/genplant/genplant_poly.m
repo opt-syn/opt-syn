@@ -21,6 +21,33 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
             end
             
         end
+
+        
+        function b_out = lft(obj, b2)
+
+            % Initialize the output for the linear fractional transformation
+            b_out = obj; 
+            for i = 1:obj.Nss
+
+                if iscell(b2)
+                    b_out.P{i} = lft(obj.P{i}, b2{i});
+                elseif isa(b2, 'genplant_poly')
+                    b_out.P{i} = lft(obj.P{i}, b2.P{i});
+                else
+                    b_out.P{i} = lft(obj.P{i}, b2);
+                end                
+            end
+
+            b_out.nw = b_out.P{1}.nw;
+            b_out.nwp = b_out.P{1}.nwp;
+            b_out.nz = b_out.P{1}.nz;
+            b_out.nzp = b_out.P{1}.nzp;
+            b_out.nu = b_out.P{1}.nu;
+            b_out.ny = b_out.P{1}.ny;
+            b_out.s = b_out.P{1}.s;
+
+        end
+
         function D = Dyu(obj)
             %get the direct feedthrough matrix
             D = cellfun(@Dyu, obj.P);            
