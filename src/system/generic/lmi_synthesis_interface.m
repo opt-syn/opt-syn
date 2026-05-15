@@ -215,7 +215,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             end
         end
         
-        function [vars_K, cons] = create_vars_controller(obj, cons, alg_psi, name)
+        function [vars_K, cons] = create_vars_controller(obj, cons, alg_psi, name, D_mask)
             %CREATE_VARS_CONTROLLER create the nonlinearly-transformed
             %controller matrices
 
@@ -224,6 +224,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             if nargin < 4
                 name = [];
+            end
+
+            if nargin < 5
+                D_mask = obj.get_D_mask;
             end
 
             n = ssize(alg_psi.A, 1);
@@ -238,8 +242,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             % ny = obj.sys.P.ny;
             % nu = obj.sys.P.nu;
-
-            D_mask = obj.get_D_mask();
 
             [ny, nu] = size(D_mask);
 
@@ -276,32 +278,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             if isempty(D_mask_0)
                 D_mask_0 = tril(ones(length(obj.sys.bind)));
             end
-
-
-
-            %use the triangular structure
-
-            %TODO: graceful handling of other dynamics
-
-            %DON'T knock out D entries with m = L from the mask
-
-
-            % ind_diff_1 = cellfun(@(s) ~s.same, obj.sys.op);
-            % 
-            % [nD, mD] = size(D_mask_0);
-            % ind_diff_w = 1:mD;
-            % ind_diff_z = 1:nD;
-            % for i = length(obj.sys.bind):-1:1
-            %     if obj.sys.op{i}.same
-            %         ind_diff_w(i) = [];
-            %         ind_diff_z(i) = [];
-            %     end
-            % end
-
-
-
-            % D_mask_0 = D_mask_0(ind_diff_z, ind_diff_w);
-
 
             %WARNING: do a better conversion on the coordinate lifts
             c = obj.sys.op{1}.c;

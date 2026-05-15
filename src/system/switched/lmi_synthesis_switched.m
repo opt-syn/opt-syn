@@ -135,12 +135,48 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
                 name = [];
             end
 
+            D_mask = obj.get_D_mask();            
             for i = 1:obj.Nss
                 name_curr = [name, '_', num2str(i)];
                 alg_curr = alg_psi{i};
-                [vars_K{i}, cons] = create_vars_controller@lmi_synthesis_interface(obj, cons, alg_curr, name_curr);
+                D_mask_curr = D_mask{i};
+                [vars_K{i}, cons] = create_vars_controller@lmi_synthesis_interface(obj, cons, alg_curr, name_curr, D_mask_curr);
             end
             
+        end
+
+        function D_mask = get_D_mask(obj)
+            %GET_D_MASK get the direct feedthrough terms
+
+            %the sparsity-constrained term for internal model control            
+            D_mask_0 = obj.config.syn.D_mask;
+
+            
+
+            D_mask_default  = tril(ones(length(obj.sys.bind)));
+            % Handle the case when D_mask_0 is empty
+
+
+            if ~iscell(D_mask_0)
+                D_mask_0_orig = D_mask_0;
+                D_mask_0 = cell(obj.Nss, 1);
+                for i = 1:obj.Nss
+                    if isempty(D_mask_0_orig)
+                        D_mask_0{i} = D_mask_default;
+                    else
+                        D_mask_0{i} = D_mask_0_orig;
+                    end
+                end
+            end
+            
+
+            %WARNING: do a better conversion on the coordinate lifts
+            c = obj.sys.op{1}.c;
+            D_mask = cell(obj.Nss, 1);
+            for i = 1:obj.Nss
+                D_mask{i} = kron(D_mask_0{i}, ones(c));
+            end
+
         end
 
         function vars_inv= get_vars_involved(obj, vars, ind)
