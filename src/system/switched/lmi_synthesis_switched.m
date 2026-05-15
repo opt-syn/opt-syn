@@ -426,8 +426,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
                 Dk = vars_rec.K{i}.D;
     
                 
-                n = ssize(Ak, 1);
-                inext = mod(i, obj.Nss) + 1;
+                n = ssize(Ak, 1);                
     
     
                 %controller recovery
@@ -441,7 +440,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
   
     
                 Rblock = [Vinv', zeros(size(V, 2), ny);
-                    -C(iy, :)*Y*Vinv', eye(ny)];
+                    -C(iy, :)*JY*Vinv', eye(ny)];
     
     
                 % Kblock0 = inv(LblockI)* (Cblock) * inv(RblockI);
