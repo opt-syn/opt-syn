@@ -43,7 +43,11 @@ classdef opt_synthesis < opt_manager_interface
                     nrep = sum(i==bind);
                     op_blank = obj.sys.op{i}.create_iqc_identity(nrep);
                     
-                    iqc_op{i} = op_blank.factor();
+                    if ~isnumeric(op_blank)
+                        iqc_op{i} = op_blank.factor();
+                    else
+                        iqc_op{i} = op_blank;
+                    end
                 end
         end
         
@@ -133,8 +137,8 @@ classdef opt_synthesis < opt_manager_interface
                 nwr = nwr + length(sp.izp);
                 nww = nww + length(sp.iwp);
 
-                nu = obj.sys.nu;
-                ny = obj.sys.ny;
+                nu = alg_psi.nu;
+                ny = alg_psi.ny;
                 E_r = blkdiag(full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr)), eye(ny));
                 E_w = blkdiag(full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww)), eye(nu));
 

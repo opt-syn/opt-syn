@@ -422,9 +422,10 @@ classdef (Abstract) opt_manager_interface < handle
             iqc = {};
             m_same = [];
             ind_same = [];
-            same_count = 0;
+            same_count = 0;            
 
             for i = 1:length(obj.iqc_op)
+                c = obj.sys.op{i}.c;
                 if ~obj.sys.op{i}.same
                     %block diagonal of the iqc
                     if isempty(iqc)
@@ -432,13 +433,13 @@ classdef (Abstract) opt_manager_interface < handle
                     else
                         iqc = blkdiag(iqc, obj.iqc_op{i});
                     end
-                    same_count = same_count + obj.iqc_op{i}.nw;
+                    same_count = same_count + (c);
 
                 else
                     %treat the m=L case separately
-                    m_same = blkdiag(m_same, obj.iqc_op{i});
+                    m_same = blkdiag(m_same, kron(obj.iqc_op{i}, eye(c)));
 
-                    ind_same = [ind_same, same_count + (1:length(m_same))];
+                    ind_same = [ind_same, same_count + (1:(c))];
                     same_count = same_count + length(m_same);
                 end            
             end

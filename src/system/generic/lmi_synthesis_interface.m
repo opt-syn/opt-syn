@@ -235,18 +235,23 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 nc = n + ns;
             end
 
-            ny = obj.sys.P.ny;
-            nu = obj.sys.P.nu;
+            % ny = obj.sys.P.ny;
+            % nu = obj.sys.P.nu;
 
+            D_mask = obj.get_D_mask();
+
+            [ny, nu] = size(D_mask);
+
+            
             %declare the variables
             vars_K = struct;
             %easy: ABC
             vars_K.A = lmim(['Ak', name], nc, nc);
             vars_K.B = lmim(['Bk', name], nc, ny);
-            vars_K.C = lmim(['Ck', name], ns + nu, nc);
+            vars_K.C = lmim(['Ck', name], ns + ny, nc);
 
 
-            vars_K.D = obj.form_Dk(alg_psi);
+            vars_K.D = obj.form_Dk(alg_psi, D_mask);
             %TODO: better interface here: number of inputs
             
 
@@ -260,14 +265,57 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         end
 
-        function [Dk] = form_Dk(obj, alg_psi, name)
+        function D_mask = get_D_mask(obj)
+            %GET_D_MASK get the direct feedthrough terms
+
+            %the sparsity-constrained term for internal model control            
+            D_mask_0 = obj.config.syn.D_mask;
+
+
+            if isempty(D_mask_0)
+                D_mask_0 = tril(ones(length(obj.sys.bind)));
+            end
+
+
+
+            %use the triangular structure
+
+            %TODO: graceful handling of other dynamics
+
+            %DON'T knock out D entries with m = L from the mask
+
+
+            % ind_diff_1 = cellfun(@(s) ~s.same, obj.sys.op);
+            % 
+            % [nD, mD] = size(D_mask_0);
+            % ind_diff_w = 1:mD;
+            % ind_diff_z = 1:nD;
+            % for i = length(obj.sys.bind):-1:1
+            %     if obj.sys.op{i}.same
+            %         ind_diff_w(i) = [];
+            %         ind_diff_z(i) = [];
+            %     end
+            % end
+
+
+
+            % D_mask_0 = D_mask_0(ind_diff_z, ind_diff_w);
+
+
+            %WARNING: do a better conversion on the coordinate lifts
+            c = obj.sys.op{1}.c;
+            D_mask = kron(D_mask_0, ones(c));
+
+        end
+
+        function [Dk] = form_Dk(obj, alg_psi, D_mask, name)
             %FORM_Dk: lower triangular structure needed for the controller
             %need a better interface for the mask
 
 
             %also, maybe an object structure for the internal model?
             
-            if nargin < 3
+            if nargin < 4
                 name = [];
             end
 
@@ -275,34 +323,20 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             n = ssize(alg_psi.A, 1);
 
             s = length(obj.sys.bind);
-            c = obj.sys.op{1}.c;
-            ny = obj.sys.P.ny;
-            nu = obj.sys.P.nu;
+            
+            ny = obj.sys.P.ny;            
             ns = size(obj.reg.R, 2);
 
-            %more difficult: Dk
-            
+
+            c = obj.sys.op{1}.c;
+
+
+           
             %the unconstrained term for the internal model control
-            Dk1_var = lmim(['Dk1', name], ns, ny, 'full');
+            Dk1_var = lmim(['Dk1', name], ns, size(D_mask, 2), 'full');
             Dk = Dk1_var;
 
 
-
-            %the sparsity-constrained term for internal model control
-            % if nargin < 2
-                D_mask_0 = obj.config.syn.D_mask;
-            % end
-           
-            if isempty(D_mask_0)
-                D_mask_0 = tril(ones(length(obj.sys.bind)));
-            end
-
-            
-
-            %use the triangular structure
-            
-            %TODO: graceful handling of other dynamics
-            D_mask = kron(D_mask_0, ones(c));
             % D_mask = D_mask_0;
  
             nd2= nnz(D_mask);
@@ -313,7 +347,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 %lower-triangular
                 
                 counter = 1;
-                for i = 1:s*c
+                for i = 1:size(D_mask, 1)
                      if any(D_mask(i, :))
                         eind = find(D_mask(i, :));
                         ncc = length(eind);
@@ -321,7 +355,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
                         Dvar = Dk2_var * Dvar_mat;
                         
-                        Din = sparse(1:ncc, eind, ones(ncc, 1), ncc, s*c);
+                        Din = sparse(1:ncc, eind, ones(ncc, 1), ncc, size(D_mask, 1));
                         Din_var = Dvar * Din;
 
                         Dk = [Dk; Din_var];
@@ -331,14 +365,14 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                         % vars.Dk(i+(nu-s), j) = Dk2_var * eind;
                         counter = counter+nnz(D_mask(i, :));
                     else
-                        Dk = [Dk; zeros(1, ny)];
+                        Dk = [Dk; zeros(1, size(D_mask, 2))];
                     end
                     % end
                     
                 % end
                 end
             else
-                Dk = [Dk; zeros(s*c, s*c)];
+                Dk = [Dk; zeros(size(D_mask))];
             end
 
         end
@@ -563,7 +597,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
 
-        function [K_report] = recover_subcontroller(obj, P_trans, sol)
+        function [sol] = recover_subcontroller(obj, P_trans, sol)
             %RECOVER_SUBCONTROLLER recover the subcontroller of the current
             %mode/control
             %
@@ -771,7 +805,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
             %closed-loop and weighted system
-            P = alg_trans.P(obj.sys.P.index_z, obj.sys.P.index_w);
+            P = alg_trans.P(alg_trans.index_z, alg_trans.index_w);
 
 
             M = iqc_op_all.iqc.M;
