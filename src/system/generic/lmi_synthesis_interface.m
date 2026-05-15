@@ -164,6 +164,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %
             GX = vars_diss.GX;
             GY = vars_diss.GY;
+            GS = vars_diss.GS;
             
             nx = ssize(GX, 1);
             % ns = ssize(obj.reg.S, 1);
@@ -173,10 +174,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 %TODO: not yet implemented
                 %some sort of indexing on Pi
                 Pi = vars.reg.Pi;
-                G = [GY, eye(nx); eye(nx), GX];
+                G = [GY, GS; GS', GX];
             else
                 %
-                G = [GY, eye(nx); eye(nx), GX];                
+                G = [GY, GS; GS', GX];                
             end
         end
 

@@ -42,6 +42,11 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             ns = obj.sys.Nss;
         end
 
+        function cm = common(obj)
+            cm = obj.config.switched.common;
+        end
+
+
         function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
             %create_vars_storage create variables for the dissipation
             %constraints. One for each subsystem
@@ -60,21 +65,21 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
 
             GX_cell = cell(obj.Nss, 1);
             GY_cell = cell(obj.Nss, 1);
-            S_cell = cell(obj.Nss, 1);
+            GS_cell = cell(obj.Nss, 1);
 
-            if obj.opts.COMMON
+            if obj.common
                 %common storage function among all subsystems
                 
                 [GX, GY, cons] = obj.define_storage_G(cons, alg_psi{1}, '');
                 n = ssize(GX, 1);
-                % vars_diss= struct('GX', GX, 'GY', GY, 'S', eye(n));
+                
 
                 G = vars_diss.G;
                 GX_cell = cell(obj.Nss, 1);
                 for i = 1:obj.Nss
                     GX_cell{i} = GX;
                     GY_cell{i} = GY;
-                    S_cell{i} = eye(n);
+                    GS_cell{i} = eye(n);
                 end
 
             else
@@ -85,7 +90,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
                     n = ssize(GX, 1);
                     GX_cell{i} = GX;
                     GY_cell{i} = GY;
-                    S_cell{i} = eye(n);
+                    GS_cell{i} = eye(n);
                 end
 
             end
@@ -93,7 +98,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             vars_diss = struct;
             vars_diss.GX = GX_cell;
             vars_diss.GY = GY_cell;
-            vars_diss.S  = S_cell;
+            vars_diss.GS  = S_cell;
 
         end
 
@@ -124,7 +129,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             vars_inv= struct;
             vars_inv.diss.GX = vars.diss.GX{ind};
             vars_inv.diss.GY = vars.diss.GY{ind};
-            vars_inv.diss.S  = vars.diss.S{ind};
+            vars_inv.diss.GS  = vars.diss.GS{ind};
 
             vars_inv.reg.Pi = vars.reg.Pi{ind};
             vars_inv.reg.Gam = vars.reg.Gam{ind};
@@ -324,7 +329,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
                 Y{i} = vars_rec.diss.GY{i};
                 X{i} = vars_rec.diss.GX{i};
 
-                S = vars_rec.diss.S{i};
+                S = vars_rec.diss.GS{i};
 
                 J = S - X{i} * Y{i};
                 [Up, Sig, Vp] = svd(J);

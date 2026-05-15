@@ -42,14 +42,16 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             ns = obj.sys.Nss;
         end
 
+        function cm = common(obj)
+            cm = obj.config.switched.common;
+        end
+
         function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
             %create_vars_storage create variables for the dissipation
             %constraints. One for each subsystem
             %
             %
             %a cell of G(s) functions
-
-
             if nargin < 4
                 name = [];
             end
@@ -57,20 +59,28 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
             
 
+            vars_diss = struct;
 
-            GX_cell = cell(obj.Nss, 1);
-            GY_cell = cell(obj.Nss, 1);
-            S_cell = cell(obj.Nss, 1);
 
-            if obj.opts.COMMON
+            
+            % GX_cell = cell(obj.Nss, 1);
+            % GY_cell = cell(obj.Nss, 1);
+            % S_cell = cell(obj.Nss, 1);
+
+            
+
+            if obj.common
                 %common storage function among all subsystems
-                
                 [GX, GY, cons] = obj.define_storage_G(cons, alg_psi{1}, '');
+                vars_diss.JX = GX;
+                vars_diss.JY = GY;
+                
                 n = ssize(GX, 1);
-                % vars_diss= struct('GX', GX, 'GY', GY, 'S', eye(n));
 
-                G = vars_diss.G;
-                GX_cell = cell(obj.Nss, 1);
+                JS = eye(n);
+    
+                vars_diss.JS = JS;
+
                 for i = 1:obj.Nss
                     GX_cell{i} = GX;
                     GY_cell{i} = GY;
@@ -78,22 +88,37 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
                 end
 
             else
-                %define a storage function for each subsystem
+
+                %common (slack) function
+                [JX, JY, cons] = obj.define_storage_G(cons, alg_psi{1}, '_slack');
+                vars_diss.JX = JX;
+                vars_diss.JY = JY;
+
+                n = ssize(JX, 1);
+                vars_diss.JS = lmim(['JS_slack', name], n, n, 'full');                
+
+                
+                %per-mode storage functions, coupled by the mode-independent slack
+                GX_cell = cell(obj.Nss, 1);
+                GY_cell = cell(obj.Nss, 1);
+                GS_cell = cell(obj.Nss, 1);
+                              
+
 
                 for i = 1:obj.Nss
                     [GX, GY, cons] = obj.define_storage_G(cons, alg_psi{i}, num2str(i));
                     n = ssize(GX, 1);
                     GX_cell{i} = GX;
                     GY_cell{i} = GY;
-                    S_cell{i} = eye(n);
+                    GS_cell{i} = lmim(['GS_slack', name], n, n, 'full');
                 end
 
             end
 
-            vars_diss = struct;
+            
             vars_diss.GX = GX_cell;
             vars_diss.GY = GY_cell;
-            vars_diss.S  = S_cell;
+            vars_diss.GS  = GS_cell;
 
         end
 
@@ -122,13 +147,25 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             %GET_VARS_INVOLVED get variables involved in the current mode
 
             vars_inv= struct;
-            vars_inv.diss.GX = vars.diss.GX{ind};
-            vars_inv.diss.GY = vars.diss.GY{ind};
-            vars_inv.diss.S  = vars.diss.S{ind};
+            if ind==0
+                vars_inv.diss.GX = vars.diss.JX;
+                vars_inv.diss.GY = vars.diss.JY;
+                vars_inv.diss.GS  = vars.diss.JS;
+            else
+                vars_inv.diss.GX = vars.diss.GX{ind};
+                vars_inv.diss.GY = vars.diss.GY{ind};
+                vars_inv.diss.GS  = vars.diss.GS{ind};
+            end
 
-            vars_inv.reg.Pi = vars.reg.Pi{ind};
-            vars_inv.reg.Gam = vars.reg.Gam{ind};
-            vars_inv.reg.Phi = vars.reg.Phi{ind};
+
+
+            if ind 
+                vars_inv.reg.Pi = vars.reg.Pi{ind};
+                vars_inv.reg.Gam = vars.reg.Gam{ind};
+                vars_inv.reg.Phi = vars.reg.Phi{ind};
+            else
+                vars_inv.reg =[];
+            end
 
         end
 
@@ -158,24 +195,59 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
             %Upper-levels: iterate over the systems
             objective = 0;
-            for i = 1:obj.Nss
-                %extract the information of subsystem i
-                diss_curr = diss;
-                diss_curr.plant = diss.plant{i};
-                diss_curr.ind_curr = i;
-                diss_curr.ind_next = 1+mod(i, obj.Nss);
+            if obj.common
+
+                for i = 1:obj.Nss
+                    %extract the information of subsystem i
+                    diss_curr = diss;
+                    diss_curr.plant = diss.plant{i};
+                    diss_curr.ind_curr = (i);
+                    diss_curr.ind_next = (i);
 
 
-                [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
+                    [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
 
 
-                %TODO: take the max over the different subsystems
-                %but the same objective is sent to each subsystem, so it's
-                %all the same? Check this
-                if i==1
-                    objective = objective + objective_curr;
+                    %TODO: take the max over the different subsystems
+                    %but the same objective is sent to each subsystem, so it's
+                    %all the same? Check this
+                    if i==1
+                        objective = objective + objective_curr;
+                    end
+
+                end 
+
+            else
+                [src, dst] = obj.sys.get_arcs();
+                Narcs = length(src);
+
+                for i = 1:Narcs
+                    %extract the information of subsystem i
+                    diss_curr = diss;
+                    diss_curr.plant = diss.plant{src(i)};
+                    diss_curr.ind_curr = src(i);
+                    diss_curr.ind_next = dst(i);
+    
+    
+                    [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
+    
+    
+                    %TODO: take the max over the different subsystems
+                    %but the same objective is sent to each subsystem, so it's
+                    %all the same? Check this
+                    if i==1
+                        objective = objective + objective_curr;
+                    end
+    
+                end 
+
+                %impose sign constraint    
+                for i = 1:obj.Nss
+                    vcurr = obj.get_vars_involved(vars, i);
+                    Gcurr = obj.get_storage(vcurr.diss, vcurr.reg);
+                    cons = obj.con_terminal(Gcurr, cons, [], diss.iqc_rob);
                 end
-            end         
+            end
 
         end
 
@@ -185,9 +257,12 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
 
             %get the variables of the problem
+            vslack = obj.get_vars_involved(vars, 0);            
             vcurr = obj.get_vars_involved(vars, diss.ind_curr);
             vnext = obj.get_vars_involved(vars, diss.ind_next);
             
+
+            Gslack = obj.get_storage(vslack.diss, vslack.reg);
             Gcurr = obj.get_storage(vcurr.diss, vcurr.reg);
             Gnext = obj.get_storage(vnext.diss, vnext.reg);
 
@@ -196,12 +271,9 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             %IMPORTANT!
             %hook up the internal model
             %(maybe it should happen at a higher level?)
-            P = obj.reg.connect_model(diss.plant, diss.ind_curr, diss.rho);
+            P = obj.reg.connect_model(diss.plant, diss.ind_curr, diss.rho);            
 
-            vars_diss = vcurr.diss;
-            vars_diss.GX = vnext.diss.GX;
-
-            sys_cl = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K{diss.ind_curr});
+            sys_cl = obj.system_closed_loop(P, vslack.diss, vslack.reg, vars.K{diss.ind_curr});
             
             %index the quadratic specification
             vars_spec = vars.spec{diss.spec.id};
@@ -226,7 +298,8 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             supp_b = obj.supply_block(sys_cl, quad);
 
             %the storage
-            stor_b = obj.storage_block(sys_cl, quad, Gcurr, Gnext);
+            Gcurr_slack = Gslack + Gslack' - Gcurr;
+            stor_b = obj.storage_block(sys_cl, quad, Gcurr_slack, Gnext);
 
             %the dynamics
             dyn_b = obj.dynamics_block(sys_cl, quad);
@@ -239,9 +312,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
             sM = ssize(con_M,1);
             cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
-
-            %impose sign constraint            
-            cons = obj.con_terminal(Gcurr, cons, [], diss.iqc_rob);
+            
         end
 
         %TODO: e2e_target
@@ -265,14 +336,13 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
             vars_rec = sol.vars;
             rho = sol.rho;
-            
-        
+                    
             %recover the controller
             [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec);
 
-
             %package it up
             K_report = cell(obj.Nss, 1);
+
             for i = 1:obj.Nss
 
                 model = obj.reg.get_model(i, vars_rec.reg);
@@ -310,36 +380,30 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             % sys_cal = ss(G \ Acl, G \ Bcl, Ccl, Dcl, 1);
 
 
-            %extract the storage variables and the factorizations
-            Y = cell(obj.Nss, 1);
-            X = cell(obj.Nss, 1);
-            U = cell(obj.Nss, 1);
-            V = cell(obj.Nss, 1);
-            Uinv = cell(obj.Nss, 1);
-            Vinv = cell(obj.Nss, 1);            
+            %extract the storage variables and the factorizations       
 
             K_nofeed = cell(obj.Nss, 1);        
 
-            for i = 1:obj.Nss
-                Y{i} = vars_rec.diss.GY{i};
-                X{i} = vars_rec.diss.GX{i};
-
-                S = vars_rec.diss.S{i};
-
-                J = S - X{i} * Y{i};
-                [Up, Sig, Vp] = svd(J);
-
-                % U = Up*Sig;
-                ssig = sqrt(Sig);
-                srsig = diag(1./(diag(ssig)));
 
 
-                V{i} = Vp*ssig;
-                U{i} = Up*ssig;
+            JS = vars_rec.diss.JS;
+            JX = vars_rec.diss.JX;
+            JY = vars_rec.diss.JY;
 
-                Uinv{i} = srsig*Up';
-                Vinv{i} = srsig*Vp';
-            end
+            J = JS - JX * JY;
+            [Up, Sig, Vp] = svd(J);
+
+            % U = Up*Sig;
+            ssig = sqrt(Sig);
+            srsig = diag(1./(diag(ssig)));
+
+
+            V = Vp*ssig;
+            U = Up*ssig;
+
+            Uinv = srsig*Up';
+            Vinv = srsig*Vp';
+            
             
             %get the indexers
             Pt = P_trans{1};            
@@ -368,16 +432,16 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
     
                 %controller recovery
     
-                Lblock = [Uinv{inext}, -Uinv{inext}*X{inext}*B(:, iu);
-                    zeros(nu, size(V{inext}, 2)), eye(nu)];
+                Lblock = [Uinv, -Uinv*JX*B(:, iu);
+                    zeros(nu, size(V, 2)), eye(nu)];
     
                 
-                Cblock = [Ak - X{inext}*A*Y{i}, Bk;
+                Cblock = [Ak - JX*A*JY, Bk;
                     Ck, Dk];
   
     
-                Rblock = [Vinv{i}', zeros(size(V{i}, 2), ny);
-                    -C(iy, :)*Y{i}*Vinv{i}', eye(ny)];
+                Rblock = [Vinv', zeros(size(V, 2), ny);
+                    -C(iy, :)*Y*Vinv', eye(ny)];
     
     
                 % Kblock0 = inv(LblockI)* (Cblock) * inv(RblockI);
@@ -400,12 +464,8 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             %VALIDATE_RECOVERY validate that the system obeys the stability
             %constraint (TODO: performance specs)
 
-            %use the monodromy system to get specs
-            n = alg_trans{1}.dump_dim();
-            alg_trans_lti = genplant(periodic_lift(alg_trans), n);
-
-
-            gain = validate_recovery_gain@lmi_synthesis_interface(obj, alg_trans_lti, iqc_op_all);
+            %not yet supported
+            gain = 0;
         end
     end
 end

@@ -129,16 +129,19 @@ classdef opt_synthesis < opt_manager_interface
                     %TODO: change to genplant_poly type?
                     nwr = alg_psi{1}.nz;
                     nww = alg_psi{1}.nw;                    
+                    nu = alg_psi{1}.nu;
+                    ny = alg_psi{1}.ny;
                 else
                     nwr = alg_psi.nz;
-                    nww = alg_psi.nw;                    
+                    nww = alg_psi.nw;
+                    nu = alg_psi.nu;
+                    ny = alg_psi.ny;
                 end
 
                 nwr = nwr + length(sp.izp);
                 nww = nww + length(sp.iwp);
 
-                nu = alg_psi.nu;
-                ny = alg_psi.ny;
+                
                 E_r = blkdiag(full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr)), eye(ny));
                 E_w = blkdiag(full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww)), eye(nu));
 
