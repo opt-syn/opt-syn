@@ -1,5 +1,5 @@
 classdef lmi_synthesis_periodic < lmi_synthesis_interface
-    %LMI_SYNTHESIS_PERIODIC synthesisLMIs for algorithmic interconnections
+    %LMI_SYNTHESIS_PERIODIC synthesis LMIs for algorithmic interconnections
     %involving periodic linear networks and controllers
     %
     % w(k) \in F(z(k))

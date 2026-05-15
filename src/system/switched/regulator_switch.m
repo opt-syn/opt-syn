@@ -1,19 +1,20 @@
-classdef regulator_periodic < regulator_interface
-    %REGULATOR_PERIODIC Regulator for periodic systems    
+classdef regulator_switch < regulator_interface
+    %REGULATOR_SWITCH Regulator for switched systems 
     %
-    % [x(k+1)] = [A(k)    Bd(k)    Bu(k)  ][x(k)]   state transition
-    % [e(k)  ] = [Ce(k)   Ded(k)   Deu(k) ][d(k)]   output to  regulated error    
-    % [zp(k) ] = [Cy(k)   Dyd(k)   Dyu(k) ][u(k)]   output to controller    
+    % [x(k+1)] = [A(mode(k))    Bd(mode(k))    Bu(mode(k))  ][x(k)]   state transition
+    % [e(k)  ] = [Ce(mode(k))   Ded(mode(k))   Deu(mode(k)) ][d(k)]   output to  regulated error    
+    % [u(k) ] =  [Cy(mode(k))   Dyd(mode(k))   Dyu(mode(k)) ][u(k)]   output to controller    
 
-    %A(k) = A(k+T) for some known time T
+
+    %The system obeys a switching logic: restricted mode transitions 
+    %from mode(k) to mode(k+1) based on a switching graph (adjacency matrix
+    % sys.adj)
     %
-    %instances of these algorithms include cyclic coordinate descent
-    %methods. Periodic systems can also be unrolled into an LTI system
-    %(monodromy methods): a single large LMI system rather than multiple 
-    % coupled smaller LMI systems
+    %instances of these algorithms include optimization algorithms under
+    %a-priori-unknown time-varying delays
 
     methods
-        function obj = regulator_periodic(sys)
+        function obj = regulator_switch(sys)
             %REGULATOR_PERIODIC undefined
             %   undefined
             obj@regulator_interface(sys)
@@ -125,7 +126,7 @@ classdef regulator_periodic < regulator_interface
                 
 
             else
-                error('Periodic regulation: tracking not yet supported')
+                error('Switched regulation: tracking not yet supported')
             end
 
 
@@ -143,6 +144,7 @@ classdef regulator_periodic < regulator_interface
             %CHECK_REGULATOR is the regulator equation satisfied?
             sys_cl = lft(obj.sys.P, obj.sys.K);
 
+            error('Switched regulator: regulator check not yet done')
             Npre = obj.sys.get_consensus(obj.sys.op, obj.sys.bind);
             c = size(sys_cl{1}.D, 1)/length(obj.sys.bind); %coordinate lifts: change this later?
             N = kron(Npre, eye(c));

@@ -205,8 +205,6 @@ classdef opt_synthesis < opt_manager_interface
             sol.iqc_op = obj.iqc_op;
             sol.iqc_op_all = obj.iqc_op_all;
             sol = obj.lmi.process_recovery(sol, lmi_out, alg_psi);            
-
-
         end
 
         %% alternating design
