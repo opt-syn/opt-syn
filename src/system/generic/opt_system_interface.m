@@ -166,6 +166,10 @@ classdef  opt_system_interface
         function tp = get_type(obj)
             tp = obj.type;
         end
+
+        function ds = get_discount(obj)
+            ds = obj.discount;
+        end
         
 
         %% getters

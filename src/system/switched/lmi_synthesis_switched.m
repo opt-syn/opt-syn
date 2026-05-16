@@ -231,6 +231,8 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
             %Upper-levels: iterate over the systems
             objective = 0;
+
+            ds = obj.sys.get_discount();
             if obj.common
 
                 for i = 1:obj.Nss
@@ -239,6 +241,12 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
                     diss_curr.plant = diss.plant{i};
                     diss_curr.ind_curr = (i);
                     diss_curr.ind_next = (i);
+
+                    if ds(i)
+                        diss_curr.rho = diss.rho;
+                    else
+                        diss_curr.rho = 1;
+                    end
 
 
                     [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
@@ -263,7 +271,14 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
                     diss_curr.plant = diss.plant{src(i)};
                     diss_curr.ind_curr = src(i);
                     diss_curr.ind_next = dst(i);
+
+                    
     
+                    if ds(src(i))
+                        diss_curr.rho = diss.rho;
+                    else
+                        diss_curr.rho = 1;
+                    end
     
                     [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
     
@@ -379,11 +394,19 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             %package it up
             K_report = cell(obj.Nss, 1);
 
+            ds = obj.sys.get_discount;
+
             for i = 1:obj.Nss
 
+                if ds(i)
+                    curr_rho = rho;
+                else
+                    curr_rho = 1;
+                end
+                
                 model = obj.reg.get_model(i, vars_rec.reg);
     
-                K_report = obj.K_alg_report(P_trans{i}, K_nofeed{i}, model, rho);
+                K_report = obj.K_alg_report(P_trans{i}, K_nofeed{i}, model, curr_rho);
 
                 %form the algorithm
                 sol.alg_trans{i} = K_report.alg_trans;

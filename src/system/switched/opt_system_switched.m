@@ -95,6 +95,14 @@ classdef  opt_system_switched < opt_system_interface
             dimn = obj.P.nx;
         end
 
+        function ds = get_discount(obj)
+            %which subsystems are exponentially discounted?
+            ds = obj.discount;
+            if length(ds)==1                
+                ds = ones(1, obj.Nss)*ds;
+            end
+        end
+
         function nss = Nss(obj)
             nss = obj.P.Nss;
         end
@@ -130,10 +138,19 @@ classdef  opt_system_switched < opt_system_interface
             %TODO: different IQCs for each subsystem, right now they are
             %identical.
             %
+
+            ds = obj.get_discount();
             for i = 1:obj.Nss
+
+                if ds(i)
+                    rho_curr = rho;
+                else
+                    rho_curr = 1;
+                end
+
                 param = struct('mode', i);
                 alg = obj.get_alg(param); 
-                [alg_psi{i}, iqc_op, alg_loop{i}] = build_plant_single(obj, alg, iqc_data, rho);
+                [alg_psi{i}, iqc_op, alg_loop{i}] = build_plant_single(obj, alg, iqc_data, rho_curr);
             end
             %repeat this call multiple times for switched systems. This
             %function will be overloaded, whereas build_plant_single will
