@@ -112,6 +112,44 @@ classdef  opt_system_switched < opt_system_interface
             dimn = length(obj.K{1}.A);
         end
 
+        function pow = discount_schedule(obj, ordermax)
+            %DISCOUNT_SCHEDULE exponential weights encountered when
+            %applying the FIR filters
+            %
+            %[0; 1 ; 2] -> rho.^[0; 1; 2] for uniform exponential stability
+
+            %[0; 0; 1] -> rho.^[0; 0; 1] for shuffled switched stability
+            %This becomes relevant when performing shuffled systems
+            %(override on switched systems) 
+            
+
+
+            if isscalar(obj.discount)
+                pow = -(0:ordermax)';
+            else
+
+
+                Gcon = obj.adj;
+                u_discount = [];
+                for i = 1:obj.Nss
+
+                    all_walks_curr= all_walks(Gcon, ordermax, i, []);
+
+
+                    discount_curr = obj.discount(all_walks_curr);
+                    u_curr = unique(discount_curr, "rows");
+
+                    u_discount = unique([u_discount; u_curr], "rows");
+
+                    % all_walks = [all_walks, all_walks_curr]
+                end
+
+                pow = -cumsum(u_discount, 2)';
+            end
+
+
+        end
+
 
         %% build the plant
         function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, rho)
