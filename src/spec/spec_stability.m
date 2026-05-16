@@ -1,6 +1,6 @@
 classdef spec_stability < spec_interface
     %SPEC_STABLE enforce exponential stability of the algorithmic
-    %interconnection
+    %interconnection (linear convergence)
     
     properties
         type = 'stability';

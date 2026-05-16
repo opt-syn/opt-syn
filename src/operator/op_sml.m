@@ -7,11 +7,7 @@ classdef op_sml < op_sml_interface
     %
     % noncausal multipliers    
 
-    properties
-        ERGODIC = false; %Proof of ergodic (sublinear: 1/(T+1)) convergence 
-        % in the function value/duality gap. requires marginal feasibility,
-        % and an adjusted supply rate
-    end
+
 
     methods
         function obj = op_sml(m, L, c)
@@ -86,6 +82,20 @@ classdef op_sml < op_sml_interface
             else
                 cs = trace(vars.Df1);
             end
+        end
+
+
+        function M_erg = ergodic_supply(obj, reps)
+            %ERGODIC_SUPPLY supply rate for function value decrease
+            %ergodic convergence
+
+            if nargin < 2
+                reps = 1;
+            end
+
+            M_erg = ergodic_supply@op_sml_interface(reps);
+
+            %TODO: finish and verify this?
         end
 
         function [Psi1, Psi2] = build_psi(obj, vars, order, reps)

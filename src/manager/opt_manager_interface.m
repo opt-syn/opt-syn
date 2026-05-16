@@ -74,9 +74,11 @@ classdef (Abstract) opt_manager_interface < handle
             %alg_loop: used for debugging. The algorithm after signal 
             % transformationsbefore, but before cascade by the filters    
 
-            [rho, sperf] = obj.perf_specs(specs);
+            [rho, sperf, ERGODIC] = obj.perf_specs(specs);
 
             [iqc_data] = obj.iqc_op_all();
+            iqc_data.ERGODIC = ERGODIC;
+            
             [alg_psi, iqc_op, alg_loop] = obj.sys.build_plant(iqc_data, rho);
 
 
@@ -162,7 +164,7 @@ classdef (Abstract) opt_manager_interface < handle
             end
         end
 
-        function [rho, sperf] = perf_specs(obj, specs)
+        function [rho, sperf, ERGODIC] = perf_specs(obj, specs)
             %PERF_SPECS get the performance specifications and extract the
             %rho convergence rate 
             %
@@ -178,12 +180,16 @@ classdef (Abstract) opt_manager_interface < handle
             %extract the convergence rate
             %keep the stability spec if there is more than one
             %specification
+            ERGODIC = false;
             for i = 1:length(specs)
-                if isa(specs{i}, 'spec_stability') 
+                if isa(specs{i}, 'spec_stability')
                     if length(specs) > 1                        
                         sperf(i) = [];
                     end
                     rho = specs{i}.rho;
+                end
+                if isa(specs{i}, 'spec_ergodic')
+                    ERGODIC = true;
                 end
             end
 
@@ -448,7 +454,7 @@ classdef (Abstract) opt_manager_interface < handle
             iqc_data.iqc = iqc;
             iqc_data.m_same = m_same;
             iqc_data.ind_same = ind_same;
-            iqc_data.task =  obj.task;
+            iqc_data.task =  obj.task;            
 
         end
 

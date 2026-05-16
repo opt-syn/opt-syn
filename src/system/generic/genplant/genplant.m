@@ -398,11 +398,7 @@ classdef genplant
             else
                 Bznew = [];
                 Dznew = [];
-            end
-
-            
-            
-
+            end                     
            
             B_left = B(:, [obj.index_w, obj.index_wp]);
             B_right = B(:, [obj.index_u]);
@@ -506,6 +502,60 @@ classdef genplant
 
         end
 
+        function [obj, iwp, izp] = perf_ergodic(obj, Nw)
+
+            %PERF_ERGODIC inputs and outputs for ergodic convergence
+            %Nw: given consensus matrix
+            % if nargin < 2
+            %     c = 1;
+            % end
+
+
+            if ~isempty(Nw)
+                %get the input and output indices
+                % Nw0 = obj.get_consensus_weighted();
+                % Nw = kron(Nw0, eye(c));
+    
+                [nzp_erg, nwp_erg] = size(Nw);
+    
+                iwp = obj.nw + obj.nwp + (1:nwp_erg);
+                izp = obj.nz + obj.nzp + (1:nzp_erg);
+
+
+                %insert new inputs
+                B = obj.B;
+                C = obj.C;
+                D = obj.D;
+
+
+                C_new = C(obj.index_z, :);
+                B_new_left = B(:, [obj.index_w, obj.index_wp]);
+                B_new_right= B(:, [obj.index_u]);
+                D_new_left = D(obj.index_z, [obj.index_w, obj.index_wp]);
+                D_new_right= D(obj.index_z, [obj.index_u]);
+
+                B_new_center = zeros(length(obj.A), nwp_erg);
+                D_new_center = D(obj.index_z, obj.index_u) * (-Nw);
+
+
+                B_new = [B_new_left, B_new_center, B_new_right];
+                D_new = [D_new_left, D_new_center, D_new_right];
+
+
+
+                obj.P = ss(obj.A, B_new, C_new, D_new, 1);
+
+                %read new outputs
+
+
+            else
+                % Nw = [];
+                iwp = [];
+                izp = [];
+            end
+
+            
+        end
        
 
         function [obj, izp] = perf_output_opt(obj, c, bind)

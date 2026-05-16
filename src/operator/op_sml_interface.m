@@ -58,6 +58,26 @@ classdef op_sml_interface < operator_interface
         end
 
 
+        function M_erg = ergodic_supply(obj, reps)
+            %ERGODIC_SUPPLY supply rate for function value decrease
+            %ergodic convergence
+            
+            if nargin < 2
+                reps = 1;
+            end
+            if obj.same
+                M_erg = [];
+            else
+                sig = 1/(obj.L - obj.m);
+
+                mx = [obj.m, 0; 0, 0];
+                mg = sig * [obj.m^2, -obj.m; -obj.m, 1];
+
+                M_erg = kron(mx + mg, eye(reps));
+            end
+        end
+
+
         function [iqc] = create_iqc_identity(obj, reps)
             %CREATE_VARS form the IQC for the general operator
             %identity IQC in psi

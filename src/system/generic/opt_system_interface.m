@@ -280,13 +280,38 @@ classdef  opt_system_interface
 
             %TODO: is this actually used?
             mode_next = 1;
+
+
         end
 
+        function N = get_consensus_weighted(obj, op, bind)
+            %GET_CONSENSUS_WEIGHTED create the consensus matrix
+            %weight by the number of times the operator appears in bind
  
+            if nargin < 2
+                op = obj.op;
+                bind = obj.bind;
+            end
+
+            N = get_consensus(obj, op, bind);
+
+            [gc, gt] = groupcounts(reshape(bind, [], 1));
+
+            weights = 1./(gc(bind));
+
+            Nw = diag(weights) * N;
+
+
+        end
 
         function N = get_consensus(obj, op, bind)
             %GET_CONSENSUS create the consensus matrix
             %for the regulation condition
+
+            if nargin < 2
+                op = obj.op;
+                bind = obj.bind;
+            end
 
             %which operators are equality constraints
             % EQ = cellfun(@(e) e.EQUALITY, op);
