@@ -95,6 +95,14 @@ classdef  opt_system_switched < opt_system_interface
             dimn = obj.P.nx;
         end
 
+        function ds = get_discount(obj)
+            %which subsystems are exponentially discounted?
+            ds = obj.discount;
+            if length(ds)==1                
+                ds = ones(1, obj.Nss)*ds;
+            end
+        end
+
         function nss = Nss(obj)
             nss = obj.P.Nss;
         end
@@ -102,6 +110,44 @@ classdef  opt_system_switched < opt_system_interface
         function dimn = nxi(obj)
             %nxi: number of states in controller
             dimn = length(obj.K{1}.A);
+        end
+
+        function pow = discount_schedule(obj, ordermax)
+            %DISCOUNT_SCHEDULE exponential weights encountered when
+            %applying the FIR filters
+            %
+            %[0; 1 ; 2] -> rho.^[0; 1; 2] for uniform exponential stability
+
+            %[0; 0; 1] -> rho.^[0; 0; 1] for shuffled switched stability
+            %This becomes relevant when performing shuffled systems
+            %(override on switched systems) 
+            
+
+
+            if isscalar(obj.discount)
+                pow = -(0:ordermax)';
+            else
+
+
+                Gcon = obj.adj;
+                u_discount = [];
+                for i = 1:obj.Nss
+
+                    all_walks_curr= all_walks(Gcon, ordermax, i, []);
+
+
+                    discount_curr = obj.discount(all_walks_curr);
+                    u_curr = unique(discount_curr, "rows");
+
+                    u_discount = unique([u_discount; u_curr], "rows");
+
+                    % all_walks = [all_walks, all_walks_curr]
+                end
+
+                pow = -cumsum(u_discount, 2)';
+            end
+
+
         end
 
 
@@ -130,10 +176,19 @@ classdef  opt_system_switched < opt_system_interface
             %TODO: different IQCs for each subsystem, right now they are
             %identical.
             %
+
+            ds = obj.get_discount();
             for i = 1:obj.Nss
+
+                if ds(i)
+                    rho_curr = rho;
+                else
+                    rho_curr = 1;
+                end
+
                 param = struct('mode', i);
                 alg = obj.get_alg(param); 
-                [alg_psi{i}, iqc_op, alg_loop{i}] = build_plant_single(obj, alg, iqc_data, rho);
+                [alg_psi{i}, iqc_op, alg_loop{i}] = build_plant_single(obj, alg, iqc_data, rho_curr);
             end
             %repeat this call multiple times for switched systems. This
             %function will be overloaded, whereas build_plant_single will

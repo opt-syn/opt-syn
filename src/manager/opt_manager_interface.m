@@ -444,7 +444,11 @@ classdef (Abstract) opt_manager_interface < handle
                 end            
             end
 
-            iqc_data =struct('iqc', iqc, 'm_same', m_same, 'ind_same', ind_same, 'task', obj.task);
+            iqc_data =struct;
+            iqc_data.iqc = iqc;
+            iqc_data.m_same = m_same;
+            iqc_data.ind_same = ind_same;
+            iqc_data.task =  obj.task;
 
         end
 

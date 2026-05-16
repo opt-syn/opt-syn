@@ -63,6 +63,7 @@ classdef lmi_analysis_switched < lmi_analysis_interface
             Narcs = length(src);
 
 
+            
             if obj.config.switched.common
 
                 for i = 1:obj.Nss
@@ -72,7 +73,6 @@ classdef lmi_analysis_switched < lmi_analysis_interface
                     diss_curr.plant = diss.plant{i};
                     diss_curr.ind_curr = i;
                     diss_curr.ind_next = i;
-
 
                     [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
                     
@@ -92,6 +92,7 @@ classdef lmi_analysis_switched < lmi_analysis_interface
                     diss_curr.ind_next = dst(i);
                     
     
+
                     [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
                                        
                     %TODO: take the max over the different subsystems

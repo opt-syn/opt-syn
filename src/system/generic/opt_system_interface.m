@@ -107,38 +107,43 @@ classdef  opt_system_interface
             %no loop transformations in performance
             iqc_op = iqc_data.iqc;
 
-            loop = iqc_op.loop;
-            nloop = length(loop)/2;
-            alg_loop = lft(loop, alg_rho, nloop, nloop);
-
-
-
-
-            %TODO: division between analysis and synthesis
-
-            if strcmp(iqc_data.task, 'analysis')
-                %form the system
-                I = ss(eye(size(alg_loop.D, 2)));
-                GI = [alg_loop; I];
-
-
-                Psi1 = iqc_op.Psi1;
-                Psi2 = iqc_op.Psi2;
-                I_zp = eye(obj.P.nzp);
-                I_wp = eye(obj.P.nwp);
-    
-                psi = blkdiag(Psi1, I_zp, Psi2, I_wp);
+            if isempty(iqc_op)
+                alg_loop = alg_rho;
+                alg_psi = alg_rho;
+            else
+                loop = iqc_op.loop;
+                nloop = length(loop)/2;
+                alg_loop = lft(loop, alg_rho, nloop, nloop);
                 
     
-                alg_psi = psi * GI; 
-            else
-                %TODO: implement synthesis                
-
-                n = obj.P.dump_dim;
-                n.nw = n.nw - length(ind_same);
-                n.nz = n.nz - length(ind_same);
-                alg_psi = iqc_op.wrap_synth(alg_loop, n);
-            end            
+    
+    
+                %TODO: division between analysis and synthesis
+    
+                if strcmp(iqc_data.task, 'analysis')
+                    %form the system
+                    I = ss(eye(size(alg_loop.D, 2)));
+                    GI = [alg_loop; I];
+    
+    
+                    Psi1 = iqc_op.Psi1;
+                    Psi2 = iqc_op.Psi2;
+                    I_zp = eye(obj.P.nzp);
+                    I_wp = eye(obj.P.nwp);
+        
+                    psi = blkdiag(Psi1, I_zp, Psi2, I_wp);
+                    
+        
+                    alg_psi = psi * GI; 
+                else
+                    %TODO: implement synthesis                
+    
+                    n = obj.P.dump_dim;
+                    n.nw = n.nw - length(ind_same);
+                    n.nz = n.nz - length(ind_same);
+                    alg_psi = iqc_op.wrap_synth(alg_loop, n);
+                end    
+            end
         end
 
         %% Dimension Counters
@@ -165,6 +170,10 @@ classdef  opt_system_interface
 
         function tp = get_type(obj)
             tp = obj.type;
+        end
+
+        function ds = get_discount(obj)
+            ds = obj.discount;
         end
         
 
