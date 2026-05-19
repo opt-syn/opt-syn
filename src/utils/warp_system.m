@@ -22,7 +22,8 @@ ABM = [A1, B1; eye(n1), zeros(n1, m1)];
 
 ABM_warp = M * ABM * inv(T);
 
-CDM = [C1, D1] * inv(T);
+CDM = [C1, D1;
+    zeros(p1, n1), eye(p1)] * inv(T);
 
 
 
