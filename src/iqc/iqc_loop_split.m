@@ -441,8 +441,11 @@ classdef iqc_loop_split
             Z = 2 * [zeros(n2), W_stab; W_stab', zeros(n1)];
             Xhat = Xhat + Z;
             
+            C3 = zeros(p1, n2);
+            D3 =  zeros(p1, p1);            
             
-            iqc_factored = iqc_loop_factored(Psi1hat, Psi2hat, zeros(n2, p1), zeros(p1, p1), Mhat, Xhat, obj.loop);
+            iqc_factored = iqc_loop_factored(Psi1hat, Psi2hat, C3, D3, ...
+                 Mhat, Xhat, obj.loop);
 
 
         end

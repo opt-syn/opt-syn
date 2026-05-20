@@ -22,7 +22,7 @@ classdef lmi_dispatch_interface < handle
         
         %KYP lemma terms, commonly found matrices
         
-        function [cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
+        function [cons, objective, vars, con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
             %Input:
@@ -183,6 +183,15 @@ classdef lmi_dispatch_interface < handle
 
 
             CDp = Ezp * [diss.plant.C, diss.plant.D];
+
+        end
+
+        function cons = con_spread(obj, cons, vars)
+            %CON_SPREAD increase numerical conditioning by separating the 
+            %primal and dual blocks
+            % in synthesis only
+
+            %do nothing in analysis           
 
         end
 

@@ -86,6 +86,9 @@ classdef (Abstract) opt_manager_interface < handle
             %the dissipation can change
             [vars, cons, objective] = obj.cons_dynamic(vars, cons, alg_psi, iqc_op, sperf);
 
+            %add spreading constraint
+            cons = obj.lmi.con_spread(cons, vars);
+
         end
 
         function verdict = LMILAB(obj)
@@ -110,6 +113,7 @@ classdef (Abstract) opt_manager_interface < handle
                 sol.dia = lmi_out.dia;
                 STATUS = (lmi_out.status || (sol.dia > obj.config.tol.dia));
                 sol.info = info_out;
+                sol.cons = cons;
 
 
                 %explicitly forming the blocks in recovery takes a long
@@ -346,7 +350,7 @@ classdef (Abstract) opt_manager_interface < handle
                 %ugly interface here
                 vars_im = sol_best.vars;
                 if obj.LMILAB
-                    [vrec] = rec_vars(vars_im, sol.lmi_out);
+                    [vrec] = rec_vars(vars_im, sol_best.lmi_out);
                 else
                     [vrec] = rec_vars(vars_im);
                 end
@@ -470,7 +474,7 @@ classdef (Abstract) opt_manager_interface < handle
             %dissipation relations
             objective = 0;
             for i = 1:ndiss
-                [cons, objective_curr, vars] = obj.lmi.cons_dynamic(vars, cons, diss{i});                                 
+                [cons, objective_curr, vars, con_M] = obj.lmi.cons_dynamic(vars, cons, diss{i});                                 
 
                 objective = objective + objective_curr;
 

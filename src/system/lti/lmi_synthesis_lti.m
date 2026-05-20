@@ -105,11 +105,12 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             if obj.elimination
                 %knock them out
 
-                U_elim = U_cl * U_outer;
                 V_elim = V_cl * V_outer;
+                U_elim = U_cl * U_outer;
+                
 
-                U_null = nullspace(U_elim, 'rational');
-                V_null = nullspace(V_elim, 'rational');
+                U_null = null(U_elim, 'rational');
+                V_null = null(V_elim, 'rational');
 
                 con_M_U = U_null' * con_M * U_null;
                 con_M_V = V_null' * con_M * V_null;
@@ -124,7 +125,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                 con_M_0 = con_M;
 
                 con_M = struct;
-                con_M.M0 = con_M;
+                con_M.M0 = con_M_0;
                 con_M.U = U_elim;
                 con_M.V = V_elim;
 
@@ -151,13 +152,20 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %recover the Ak and Ck matrices
             %overridden by matrix elimination
             if obj.elimination
-                nxi = size(vars_rec.K.B);
+                nxi = size(vars_rec.K.B, 1);
 
                 M0 = vars_rec.elim.M0;
                 U = vars_rec.elim.U;
                 V = vars_rec.elim.V;
 
+                Un = null(U, 'rational');
+                Vn = null(V, 'rational');
+
+
+                con_U = Un' * M0 * Un;
+                con_V = Vn' * M0 * Vn;
                 AC_block = basiclmi(-M0, -U, V, 'Xmin');
+                % AC_block = basiclmi(-M0, -U, V);
 
                 Ak = AC_block(1:nxi, :);
                 Ck = AC_block((nxi + 1):end, :);
@@ -257,8 +265,14 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             if obj.elimination
                 %knock out the terms
 
+                %get the variables
                 GX = vars_diss.GX;
                 GY = vars_diss.GY;
+
+                
+                Bk = vars_K.B;                
+                Dk = vars_K.D;
+                nk = ssize(Bk, 1);
 
                 %should be a genplant type
                 % P_net = diss.plant;
@@ -281,9 +295,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                 nw = length(iw);
 
 
-                %get the variables
-                Bk = vars_K.B;                
-                Dk = vars_K.D;
+                
 
 
                 %closed loop without [Ak; Ck]
@@ -300,7 +312,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                 %outer factors
                 U_cl = [zeros(nxn, nxi), B(:, iu);
                     eye(nxi), zeros(nxi, nu);
-                    zeros(nz, nxi), D(iz, iu)];
+                    zeros(nz, nxi), D(iz, iu)]';
 
                 V_cl = [eye(nxi), zeros(nxi, nxn+nw)];
 
