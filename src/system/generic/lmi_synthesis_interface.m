@@ -641,7 +641,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             Ck = vars_rec.K.C;
             Dk = vars_rec.K.D;
 
-            S = (vars_rec.diss.S);
+            S = (vars_rec.diss.GS);
             n = ssize(Ak, 1);
 
             Y = vars_rec.diss.GY;
