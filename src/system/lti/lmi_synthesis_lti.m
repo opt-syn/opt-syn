@@ -52,58 +52,6 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
         end
 
-        %% stability (for testing)
-        function [cons, objective, con_M] = stability_passive(obj, vars, cons, diss)
-        % function [cons, objective, con_M] = stability(obj, vars, cons, diss)
-            %certification of exponential stability
-            
-            G = obj.get_storage(vars.diss, vars.reg);
-
-            %IMPORTANT!
-            %hook up the internal model
-            %(maybe it should happen at a higher level?)
-            P = obj.reg.connect_model(diss.plant, diss.rho);
-
-            sys_cl = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
-
-            %only do this if the system is passive
-
-            n = ssize(sys_cl.A, 1);
-            nw = ssize(sys_cl.B, 2);
-            nz = ssize(sys_cl.C, 1);
-            
-            % nt = length(ind_pos);
-
-            dyn_block =  [G,  sys_cl.A, sys_cl.B;
-            sys_cl.A', G, zeros(n, nz);
-            sys_cl.B', zeros(nz, n), zeros(nz)];
-
-            %supply block
-            %       sp = [zeros(n), zeros(n), zeros(n, nz);
-            % zeros(n), zeros(n), zeros(n, nz); %vars.ga * eye(n)
-            % zeros(nz, n), Ccl, Dcl + eye(nz)*p.opts.pass_tol] * (-0.5);
-
-            dissI = eye(nz)*obj.config.tol.input_diss;
-            % dissI = zeros(nz);
-              sp = [zeros(n), zeros(n), zeros(n, nz);
-            zeros(n), zeros(n), zeros(n, nz); %vars.ga * eye(n)
-            zeros(nz, n), sys_cl.C, sys_cl.D + dissI] * (-0.5);
-            
-            cost_block = sp + sp';
-    
-            con_M = dyn_block + cost_block;
-    
-            objective = 0;            
-
-
-            sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
-
-            %impose sign constraint
-            %change this up
-            % cons = obj.con_terminal(G, cons, [], diss.iqc_rob);
-        end
-
 
         %% Quadratic performance (infinite horizon)        
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
@@ -117,7 +65,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %(maybe it should happen at a higher level?)
             P = obj.reg.connect_model(diss.plant, diss.rho);
 
-            sys_cl = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
+            [sys_cl, U_cl, V_cl] = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
             
             %index the quadratic specification
             vars_spec = vars.spec{diss.spec.id};
@@ -134,8 +82,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             
 
             quad = obj.quad_objective(M_quad, ind_p, ind_q);
-            
-            
+                        
             %formulation from ParDynSyn notes (parametric dynamic
             %synthesis)
 
@@ -147,7 +94,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             stor_b = obj.storage_block(sys_cl, quad, G, G);
 
             %the dynamics
-            dyn_b = obj.dynamics_block(sys_cl, quad);
+            [dyn_b, U_outer, V_outer] = obj.dynamics_block(sys_cl, quad);
             
             %wrap it all together
             objective = 0;
@@ -155,22 +102,82 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             con_M = stor_b + supp_b + dyn_b;
 
 
-            sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
+            if obj.elimination
+                %knock them out
 
+                U_elim = U_cl * U_outer;
+                V_elim = V_cl * V_outer;
+
+                U_null = nullspace(U_elim, 'rational');
+                V_null = nullspace(V_elim, 'rational');
+
+                con_M_U = U_null' * con_M * U_null;
+                con_M_V = V_null' * con_M * V_null;
+
+                sMU = ssize(con_M_U,1);
+                sMV = ssize(con_M_V,1);
+
+                cons = append_lmi(cons, con_M_U - obj.config.tol.M*eye(sMU), obj.LMILAB); 
+                cons = append_lmi(cons, con_M_V - obj.config.tol.M*eye(sMV), obj.LMILAB); 
+
+                %store the data
+                con_M_0 = con_M;
+
+                con_M = struct;
+                con_M.M0 = con_M;
+                con_M.U = U_elim;
+                con_M.V = V_elim;
+
+            else
+                sM = ssize(con_M,1);
+                cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
+            end
             %impose sign constraint            
             cons = obj.con_terminal(G, cons, [], diss.iqc_rob);
         end        
 
 
+        function vars_new = augment_vars(obj, vars, diss, con_M)
+            %AUGMENT_VARS add new variables/terms for recovery (useful for 
+            %matrix elimination)                      
+            vars_new = vars;            
+            if obj.elimination
+                vars_new.elim = con_M;            
+            end
+
+        end
+
+        function [Ak, Ck] = recover_Ak_Ck(obj, vars_rec)
+            %recover the Ak and Ck matrices
+            %overridden by matrix elimination
+            if obj.elimination
+                nxi = size(vars_rec.K.B);
+
+                M0 = vars_rec.elim.M0;
+                U = vars_rec.elim.U;
+                V = vars_rec.elim.V;
+
+                AC_block = basiclmi(-M0, -U, V, 'Xmin');
+
+                Ak = AC_block(1:nxi, :);
+                Ck = AC_block((nxi + 1):end, :);
+            else
+                Ak = vars_rec.K.A;
+                Ck = vars_rec.K.C;
+            end
+        end
+
+        function el = elimination(obj)
+            %ELIMINATION is the matrix elimination lemma used?
+            el = obj.config.syn.elimination;               
+        end
 
         function [cons, objective, con_M] = e2e_target(obj, vars, cons, diss)
             %E2E_TARGET: use a Schur complement to minimize the energy to
             %energy gain of the transfer function
-
-
             
-                       %get the variables of the problem
+
+            %get the variables of the problem
             G = obj.get_storage(vars.diss, vars.reg);
             
             %IMPORTANT!
@@ -237,6 +244,76 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             
            
         end
+
+
+        function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
+            %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
+            %transformation
+
+            %allow for matrix elimination
+            %elimination: get rid of the [Ak; Ck] variables. 
+            %solve only over [Bk; Dk].
+
+            if obj.elimination
+                %knock out the terms
+
+                GX = vars_diss.GX;
+                GY = vars_diss.GY;
+
+                %should be a genplant type
+                % P_net = diss.plant;
+
+
+                [A, B, C, D] = ssdata(P);
+
+                
+                iu = P.index_u;
+                iw = [P.index_w, P.index_wp];
+               
+                iy = P.index_y;
+                iz = [P.index_z, P.index_zp];
+
+                nxn = size(A, 1);
+                nxi = ssize(Bk, 1);
+                nu = length(iu);
+                ny = length(iy);
+                nz = length(iz);
+                nw = length(iw);
+
+
+                %get the variables
+                Bk = vars_K.B;                
+                Dk = vars_K.D;
+
+
+                %closed loop without [Ak; Ck]
+                Acal = [A*GY,  A + B(:, iu)*Dk*C(iy, :);
+                    zeros(nk), GX*A + Bk*C(iy, :)];
+                Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
+                    GX*B(:, iw) + Bk*D(iy, iw)];
+                Ccal = [C(iz, :)*GY, C(iz, :) + D(iz, iu)*Dk*C(iy, :)];
+                Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);                
+
+                sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
+
+                
+                %outer factors
+                U_cl = [zeros(nxn, nxi), B(:, iu);
+                    eye(nxi), zeros(nxi, nu);
+                    zeros(nz, nxi), D(iz, iu)];
+
+                V_cl = [eye(nxi), zeros(nxi, nxn+nw)];
+
+
+                %sys_cl(A; C) = sys_cl + U_cl [Ak; Ck] V_cl';
+            else
+                U_cl = [];
+                V_cl = [];
+                sys_cl = system_closed_loop@lmi_synthesis_interface(obj, P,  vars_diss, vars_reg, vars_K);
+            end
+
+        end
+
 
         %% Peak-to-Peak norm (at each finite horizon)
 

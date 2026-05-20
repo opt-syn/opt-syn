@@ -15,8 +15,12 @@ classdef opt_config
         ana = struct('normalize_margin', 0.05);
 
         %synthesis only options
-        syn = struct('reduced_order', false, ...
-            'D_mask', []);
+        syn = struct('reduced_order', false, ... %use internal model structure
+            ...                         %to synthesize reduced-order controllers                
+            'D_mask', [], ...           %which elements of D can be nonzero?
+            'elimination', false);       %if there is only one specification 
+                                        % (and the system is LTI), use the 
+                                        % matrix elimination lemma    
 
         %numerical tolerances for solving LMIs
         tol = struct('dia', 1e-11,  ... %tolerance for acceptable solution 

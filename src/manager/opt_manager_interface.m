@@ -84,7 +84,7 @@ classdef (Abstract) opt_manager_interface < handle
             [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, sperf);
 
             %the dissipation can change
-            [vars, cons, objective] = obj.cons_dynamic(vars, cons, alg_psi, iqc_op, specs);
+            [vars, cons, objective] = obj.cons_dynamic(vars, cons, alg_psi, iqc_op, sperf);
 
         end
 
@@ -470,7 +470,7 @@ classdef (Abstract) opt_manager_interface < handle
             %dissipation relations
             objective = 0;
             for i = 1:ndiss
-                [cons, objective_curr] = obj.lmi.cons_dynamic(vars, cons, diss{i});                                 
+                [cons, objective_curr, vars] = obj.lmi.cons_dynamic(vars, cons, diss{i});                                 
 
                 objective = objective + objective_curr;
 

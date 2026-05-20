@@ -186,6 +186,7 @@ classdef opt_synthesis < opt_manager_interface
                 diss{i} = struct('iqc_rob', iqc_op, ...
                     'spec', sp, 'rho', rho);
                 diss{i}.plant = alg_screen;
+                diss{i}.ndiss = length(specs);
                 % %need to permute the entries of Mdiag for the partition
 
 
@@ -276,7 +277,11 @@ classdef opt_synthesis < opt_manager_interface
                 iqc_curr = cell(length(sol_ana.iqc_op), 1);
                 
                 for j = 1:numel(iqc_curr)
-                    iqc_curr{j} = sol_ana.iqc_op{j}.factor();
+                    if isnumeric(sol_ana.iqc_op{j})
+                        iqc_curr{j} = sol_ana.iqc_op{j};
+                    else
+                        iqc_curr{j} = sol_ana.iqc_op{j}.factor();
+                    end
                 end                
 
             end

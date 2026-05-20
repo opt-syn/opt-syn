@@ -13,6 +13,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
     properties
         reg; %internal model of the controller
                 
+        
     end
 
     
@@ -34,7 +35,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
         
-        function [cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
+        function [cons, objective, vars] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
             %Input:
@@ -56,10 +57,18 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %need to look up the right constraint            
 
             %Upper-levels: iterate over the systems
+
+            if obj.elimination && (length(diss) > 1)
+                error('Matrix Elimination (opt_config.syn.elimination=true) cannot be used if there is more than performance specification');
+            end
+
             [cons, objective, con_M] = cons_dynamic@lmi_dispatch_interface(obj, vars, cons, diss);
 
             
 
+            %add new variables/terms for recovery (useful for matrix
+            %elimination)
+            vars = obj.augment_vars(vars, diss, con_M);
             
                       
         end
@@ -74,6 +83,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             [vars.spec, cons] = obj.create_vars_spec(cons, specs);
             [vars.reg]  = obj.create_vars_regulator();
             [vars.K, cons]    = obj.create_vars_controller(cons, alg_psi);
+        end
+
+        function vars_new = augment_vars(obj, vars, diss, con_M)
+            %AUGMENT_VARS add new variables/terms for recovery (useful for 
+            %matrix elimination)
+            vars_new = vars;            
         end
 
         function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
@@ -214,6 +229,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 cons = obj.con_spread_single(obj, cons, vars.diss.GX, vars.diss.GY);
             end
         end
+
+        function el = elimination(obj)
+            el = false;
+        end
         
         function [vars_K, cons] = create_vars_controller(obj, cons, alg_psi, name, D_mask)
             %CREATE_VARS_CONTROLLER create the nonlinearly-transformed
@@ -249,21 +268,27 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %declare the variables
             vars_K = struct;
             %easy: ABC
-            vars_K.A = lmim(['Ak', name], nc, nc);
             vars_K.B = lmim(['Bk', name], nc, ny);
-            vars_K.C = lmim(['Ck', name], ns + ny, nc);
-
-
             vars_K.D = obj.form_Dk(alg_psi, D_mask);
+
+            if obj.elimination
+                vars_K.A = [];
+                vars_K.C = [];
+                kq = [vars_K.B;            
+                    vars_K.D];
+            else
+                vars_K.A = lmim(['Ak', name], nc, nc);            
+                vars_K.C = lmim(['Ck', name], ns + ny, nc);
+                kq = [vars_K.A, vars_K.B;            
+                    vars_K.C,  vars_K.D];
+            end
+
+            
+            
             %TODO: better interface here: number of inputs
             
-
-
-            %no elimination just yet
-
             %bound entries of the controllers
-            kq = [vars_K.A, vars_K.B;            
-              vars_K.C,  vars_K.D];
+            
             cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
 
         end
@@ -394,9 +419,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 G_next = G_curr;
             end
                
-            n = ssize(sys_cl.A, 1);
-            nw = ssize(sys_cl.B, 2);
-            nz = ssize(sys_cl.C, 1);
+            
+            [n, nw] = ssize(sys_cl.B);
+            nz = ssize(sys_cl.D, 1);
             nt = ssize(quad.U, 1);
 
             outer_curr = [eye(n, n); zeros(nz, n); zeros(n, n); eye(nt, n)];
@@ -408,14 +433,13 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
 
-        function dyn_b_he = dynamics_block(obj, sys_cl, quad)
+        function [dyn_b_he, U_outer, V_outer] = dynamics_block(obj, sys_cl, quad)
             %DYNAMICS_BLOCK form the supply block in a quadratic objective
             % problem
 
 
-            n = ssize(sys_cl.A, 1);
-            nw = ssize(sys_cl.B, 2);
-            nz = ssize(sys_cl.C, 1);
+            [n, nw] = ssize(sys_cl.B);
+            nz = ssize(sys_cl.D, 1);
             nt = ssize(quad.U, 1);
 
             outer_cl_left = [zeros(n), zeros(n, nw);
@@ -433,15 +457,18 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             dyn_b = outer_cl_left * center_cl * outer_cl_right; 
             dyn_b_he = dyn_b + dyn_b';
 
+            U_outer = outer_cl_left';
+            V_outer = outer_cl_right;
+
         end
 
         function supp_b = supply_block(obj, sys_cl, quad)
             % SUPPLY_BLOCK form the supply block in a quadratic objective
             % problem
 
-            n = ssize(sys_cl.A, 1);
-            nw = ssize(sys_cl.B, 2);
-            nz = ssize(sys_cl.C, 1);
+            
+            [n, nw] = ssize(sys_cl.B);
+            nz = ssize(sys_cl.D, 1);
             nt = ssize(quad.U, 1);
             
             outer_Q = [zeros(n, nz); eye(nz); zeros(n, nz); zeros(nt, nz)];
@@ -565,9 +592,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %evaluate the variables
             [sol] = obj.recover_subcontroller(P_trans, sol);
                       
-
-
-
             %verify performance of the algorithm
             %TODO: a postprocessing LMI (?) to check that the recovered 
             %algorithm satisfies the performance specifications 
@@ -606,6 +630,13 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
         end
 
+        function [Ak, Ck] = recover_Ak_Ck(obj, vars_rec)
+            %recover the Ak and Ck matrices
+            %overridden by matrix elimination
+            Ak = vars_rec.K.A;
+            Ck = vars_rec.K.C;
+        end
+
         function [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec)
 
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
@@ -636,10 +667,14 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             nu = length(iu);
             ny = length(iy);
 
-            Ak = vars_rec.K.A;
+            
+            
             Bk = vars_rec.K.B;
-            Ck = vars_rec.K.C;
             Dk = vars_rec.K.D;
+
+            [Ak, Ck] = obj.recover_Ak_Ck(vars_rec);
+            
+            
 
             S = (vars_rec.diss.GS);
             n = ssize(Ak, 1);
