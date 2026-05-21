@@ -21,10 +21,10 @@ classdef opt_config
             'elimination', false,...);  %if there is only one specification 
             ...                         % (and the system is LTI), use the 
             ...                         % matrix elimination lemma    
-            'eliminate_B', true);       %the elimination type
-                                        %eliminate_B: 
-                                        % true: remove [Ak, Bk; Ck1, Dk1]
-                                        % false: remove [Ak; Ck]
+            'elimination_type', 2);     %the elimination type                                        
+                                        % 2: remove [Ak, Bk; Ck, Dk]
+                                        % 1: remove [Ak, Bk; Ck1, Dk1]
+                                        % 0: remove [Ak; Ck]
                                         %
                                         % true: smaller size variables
                                         % false: more interpretable

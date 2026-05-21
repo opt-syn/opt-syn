@@ -105,22 +105,76 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             if obj.elimination
                 %knock them out
 
-                V_elim = V_cl * V_outer;
-                U_elim = U_cl * U_outer;
-                
+                if ~iscell(U_cl)
+                    U_cl0 = U_cl;
+                    V_cl0 = V_cl;
+                    U_cl = {U_cl0, []};
+                    V_cl = {[], V_cl0};
+                end
 
-                U_null = null(U_elim, 'rational');
-                V_null = null(V_elim, 'rational');
+                % if true
+                    %triangular elimination
 
-                con_M_U = U_null' * con_M * U_null;
-                con_M_V = V_null' * con_M * V_null;
+                    %from Lemma 4 of https://arxiv.org/pdf/1305.1746
 
-                sMU = ssize(con_M_U,1);
-                sMV = ssize(con_M_V,1);
+                    ntri = length(U_cl);                    
 
-                cons = append_lmi(cons, con_M_U - obj.config.tol.M*eye(sMU), obj.LMILAB); 
-                cons = append_lmi(cons, con_M_V - obj.config.tol.M*eye(sMV), obj.LMILAB); 
+                    U_elim = cell(ntri, 1);
+                    V_elim = cell(ntri, 1);
+                    con_M_null = cell(ntri, 1);
+                    V_accum = [];
+                    null_accum = cell(ntri, 1);
+                    for i = 1:ntri
 
+                        if ~isempty(U_cl{i})
+                            U_elim{i} = U_cl{i} * U_outer;
+                        end
+                        if ~isempty(V_cl{i})
+                            V_elim{i} = V_cl{i} * V_outer;
+                        end
+                        V_accum = [V_accum; V_cl{i}];
+                        
+                        %get the nullspace
+                        if isempty(V_accum)
+                            elim_curr = U_elim{i}; %used in elimination
+                            null_store = eye(ssize(con_M, 1));       %stored for recovery
+                        else
+                            elim_curr = [V_accum * V_outer; U_elim{i}];
+                            null_store = null(V_accum * V_outer, 'rational');
+                        end
+                        null_accum{i} = null_store;
+
+                        null_curr = null(elim_curr, 'rational');
+
+
+                        %form and enforce the constraint
+                        con_M_curr = null_curr'* con_M * null_curr;
+
+                        sU = ssize(con_M_curr, 1);
+                        con_M_null{i} = con_M_curr;
+                        
+                        cons = append_lmi(cons, con_M_curr - obj.config.tol.M*eye(sU), obj.LMILAB); 
+
+                    end
+                % else
+                %     %standard elimination
+                %     V_elim = V_cl * V_outer;
+                %     U_elim = U_cl * U_outer;
+                % 
+                % 
+                %     U_null = null(U_elim, 'rational');
+                %     V_null = null(V_elim, 'rational');
+                % 
+                %     con_M_U = U_null' * con_M * U_null;
+                %     con_M_V = V_null' * con_M * V_null;
+                % 
+                %     sMU = ssize(con_M_U,1);
+                %     sMV = ssize(con_M_V,1);
+                % 
+                %     cons = append_lmi(cons, con_M_U - obj.config.tol.M*eye(sMU), obj.LMILAB); 
+                %     cons = append_lmi(cons, con_M_V - obj.config.tol.M*eye(sMV), obj.LMILAB); 
+
+                % end
                 %store the data
                 con_M_0 = con_M;
 
@@ -129,13 +183,16 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                 con_M.M0 = con_M_0;
                 con_M.U = U_elim;
                 con_M.V = V_elim;
+                con_M.null = null_accum;
+                con_M.Mnull = con_M_null;
+                % con_M.U = U_elim;
+                % con_M.V = V_elim;
 
                 %subsidiaries for error checking
-                con_M.U_null = U_null;
-                con_M.V_null = U_null;
-                con_M.M_U = con_M_U;
-                con_M.M_V = con_M_V;
-
+                % con_M.U_null = U_null;
+                % con_M.V_null = U_null;
+                % con_M.M_U = con_M_U;
+                % con_M.M_V = con_M_V;
             else
                 sM = ssize(con_M,1);
                 cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
@@ -159,45 +216,93 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %recover the eliminated matrices in the controller            
             if obj.elimination
                 
+                % https://www.sciencedirect.com/science/article/pii/0167691194000919
                 %reconstruct the eliminated controller block
                 M0 = vars_rec.elim.M0;
                 U = vars_rec.elim.U;
-                V = vars_rec.elim.V;
+                V = vars_rec.elim.V;                                
 
-                Un = null(U, 'rational');
-                Vn = null(V, 'rational');
+                if obj.config.syn.elimination_type == 2
+                    Knull = vars_rec.elim.null;
 
+                    
 
-                con_U = Un' * M0 * Un;
-                con_V = Vn' * M0 * Vn;
-                K_rem_block = basiclmi(-M0, -U, V, 'Xmin');
-                
+                    M_accum = M0;
 
+                    ns = size(obj.reg.R, 2);
+                    nu = obj.sys.nu;
+                    ny = obj.sys.ny;
 
-                if obj.config.syn.eliminate_B
-                    %get the prior entries
-                    Ck2 = vars_rec.K.C;
-                    Dk2 = vars_rec.K.D;
+                    nxi = size(vars_rec.diss.GY, 1);
 
-                    nxi = size(Ck2, 2);
+                    K_block = zeros(ns + nxi + nu, nxi + ny);
 
-                    %index the block
-                    Ak = K_rem_block(1:nxi, 1:nxi);
-                    Bk = K_rem_block(1:nxi, (nxi+1):end);
-                    Ck1 = K_rem_block((nxi+1):end, 1:nxi);
-                    Dk1 = K_rem_block((nxi+1):end, (nxi+1):end);
+                    [U_coord, V_coord] = obj.get_K_tri_basis(nxi);
+
+                    for i = (length(U)-1):-1:1
+                        
+                        %recover the current portion of the triangular
+                        %controller
+                        null_curr = Knull{i};
+                        M_curr = null_curr' * M_accum * null_curr;
+                        K_frag_curr = basiclmi(-M_curr, -U{i} * null_curr, V{i+1} * null_curr, 'Xmin');
+
+                        K_embed_curr = U_coord{i}' * K_frag_curr * V_coord{i};
+                        K_outer_curr = U{i}' * K_frag_curr * V{i+1};
+                        K_block = K_block + K_embed_curr;
+
+                        %prep for the next recovery step
+                        M_accum = M_accum + K_outer_curr + K_outer_curr'; 
+                    end
+
+                    %now index the block
+
+                    
+                    
+                    
+                    Ak = K_block(nu + (1:nxi), 1:nxi);
+                    Bk = K_block(nu + (1:nxi), (nxi+1):end);
+
+                    Ck1 = K_block(nu + nxi + (1:ns), 1:nxi);
+                    Dk1 = K_block(nu + nxi + (1:ns), (nxi+1):end);
+
+                    Ck2 = K_block(1:nu, 1:nxi);
+                    Dk2 = K_block(1:nu, (nxi+1):end);
 
                     Ck = [Ck1; Ck2];
                     Dk = [Dk1; Dk2];
-                else
-                    %get the prior entries
-                    Bk = vars_rec.K.B;
-                    Dk = vars_rec.K.D;
 
-                    %index the block
-                    nxi = size(Bk, 1);
-                    Ak = K_rem_block(1:nxi, :);
-                    Ck = K_rem_block((nxi + 1):end, :);
+                else
+                    U = U{1};
+                    V = V{2};
+
+                    K_rem_block = basiclmi(-M0, -U, V, 'Xmin');
+                
+                    if obj.config.syn.elimination_type == 1
+                    %get the prior entries
+                        Ck2 = vars_rec.K.C;
+                        Dk2 = vars_rec.K.D;
+    
+                        nxi = size(Ck2, 2);
+    
+                        %index the block
+                        Ak = K_rem_block(1:nxi, 1:nxi);
+                        Bk = K_rem_block(1:nxi, (nxi+1):end);
+                        Ck1 = K_rem_block((nxi+1):end, 1:nxi);
+                        Dk1 = K_rem_block((nxi+1):end, (nxi+1):end);
+    
+                        Ck = [Ck1; Ck2];
+                        Dk = [Dk1; Dk2];
+                    else
+                        %get the prior entries
+                        Bk = vars_rec.K.B;
+                        Dk = vars_rec.K.D;
+    
+                        %index the block
+                        nxi = size(Bk, 1);
+                        Ak = K_rem_block(1:nxi, :);
+                        Ck = K_rem_block((nxi + 1):end, :);
+                    end
                 end
             else
                 [Ak, Bk, Ck, Dk] = recover_K_from_elim@lmi_synthesis_interface(obj, vars_rec);
@@ -314,8 +419,54 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                 nw = length(iw);
 
                 
-                if obj.config.syn.eliminate_B
-                    
+                if obj.config.syn.elimination_type == 2
+                    %remove [Ak, Bk; Ck, Dk]
+                    %in progress
+
+                    ns = size(obj.reg.R, 2);
+                    iu1 = iu(1:ns);         %inputs to the internal model
+                    iu2 = iu((ns+1):end);   %inputs to the plant
+
+                    nu2 = length(iu2);
+                    nxi = ssize(GY, 1);
+
+                    %closed loop without [Ak, Bk; Ck1, Dk1]
+
+
+                    Acal = [A*GY ,  A ;
+                        zeros(nxi), GX*A];
+                    Bcal = [B(:, iw);
+                        GX*B(:, iw)];
+                    Ccal = [C(iz, :)*GY, C(iz, :) ];
+                    Dcal = D(iz, iw);
+
+
+                    %base outer factors
+                    U_cl_base = [B(:, iu2), zeros(nxn, nxi), B(:, iu1);
+                        zeros(nxi, nu2), eye(nxi), zeros(nxi, ns);
+                        D(iz, iu2), zeros(nz, nxi), D(iz, iu1)]';
+    
+                    V_cl_base = [eye(nxi), zeros(nxi, nxn), zeros(nxi, nw);
+                        zeros(ny, nxi), C(iy, :), D(iy, iw)];
+
+
+
+                    %triangular decomposition
+                    [U_coord, V_coord] = obj.get_K_tri_basis(nxi);
+
+                    ntri= length(V_coord);
+                    U_cl = cell(ntri+1, 1);
+                    V_cl = cell(ntri+1, 1);
+
+                    for i = 1:ntri
+                        U_cl{i} = U_coord{i} * U_cl_base;
+                        V_cl{i+1} = V_coord{i} * V_cl_base;
+                    end
+
+
+
+                elseif obj.config.syn.elimination_type == 1 
+                    %remove [Ak, Bk; Ck1, Dk1]
 
                     Ck2 = vars_K.C;
                     Dk2 = vars_K.D;
@@ -346,6 +497,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
 
                 else
+                    %remove [Ak; Ck]
                     Bk = vars_K.B;                
                     Dk = vars_K.D;
                     nxi = ssize(Bk, 1);                

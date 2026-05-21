@@ -275,7 +275,14 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             if obj.elimination
                 vars_K.A = [];                
 
-                if obj.config.syn.eliminate_B                    
+                if obj.config.syn.elimination_type == 2    
+                    %remove all terms [Ak, Bk; Ck, Dk]
+                    %using triangular elimination (in development)
+                    %lemma 4 of https://arxiv.org/pdf/1305.1746
+                    vars_K.B = [];  
+                    vars_K.C = [];  
+                    vars_K.D = [];  
+                elseif obj.config.syn.elimination_type == 1                                    
                     %remove [Ak, Bk; Ck1, Dk1]    
                     vars_K.B = [];  
                     vars_K.C = lmim(['Ck', name], ny, nc);
@@ -288,6 +295,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                     vars_K.D = obj.form_Dk(alg_psi, D_mask);
                     kq = [vars_K.B;            
                     vars_K.D];
+                    cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
+
             
                 end
             else
@@ -299,6 +308,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
                 kq = [vars_K.A, vars_K.B;            
                     vars_K.C,  vars_K.D];
+                cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
+
             end
 
             
@@ -307,10 +318,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
             %bound entries of the controllers
             
-            cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
 
         end
 
+        %% formation of the Dk matrix in controller synthesis
         function D_mask = get_D_mask(obj)
             %GET_D_MASK get the direct feedthrough terms
 
@@ -327,6 +338,76 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             D_mask = kron(D_mask_0, ones(c));
 
         end
+
+        function K_mask = get_K_mask(obj, nxi)
+            %K_mask: controller sparsity pattern
+            %
+            %[Ck2, Dk2
+            % Ak,  Bk
+            % Ck1, Dk1]
+            %
+            %Input: 
+            %   nxi: number of controller states
+            %Output:
+            %   pattern K_mask
+
+            %used for matrix elimination lemma for LTI systems
+
+            D_mask = obj.get_D_mask();
+
+            ns = size(obj.reg.R, 2);
+            nu = obj.sys.nu;
+            ny = obj.sys.ny;
+            
+            K_mask = logical([ones(nu + nxi + ns, nxi), [D_mask; ones(nxi+ns, ny)]]);
+
+        end
+
+        function [U, V] = get_K_tri_basis(obj, nxi)
+            %GET_K_TRI_BASIS get a basis for the Dk
+            %elimination method. Break up the lower-triangular Dk factor
+            %to apply Lemma 4 of https://arxiv.org/pdf/1305.1746
+
+            
+            %get the mask for the permuted controller matrix
+            K_mask = obj.get_K_mask(nxi);
+            sz = size(K_mask);
+            
+            %now break it down
+            %find the lower triangular factors
+            [sel, cs] = max( K_mask ==0, [], 2 );
+            [uf, ff] = unique(cs, 'first');
+            
+            coords= [uf, ff];
+            
+            coord_first = coords(2:end, :);
+            coord_last = coords(1, 2);
+            
+            h_first = diff([1; coord_first(:, 1)]);
+            
+            coord_shift = coords(:, 2);
+            coord_shift(1) = 0;
+            
+            
+            %store the identity indexers            
+            nc = size(coord_first, 1);
+            U = cell(nc+1, 1);
+            V = cell(nc+1, 1);            
+            for i = 1:nc  
+                % U{i} = speye(sz(1) - coord_shift(i), sz(1));
+                U{i} = [sparse(sz(1)- coord_shift(i), coord_shift(i)),  speye(sz(1) - coord_shift(i))];
+                hi = h_first(i);
+                V{i} = sparse(1:hi, sum(h_first(1:i-1)) + (1:hi), ones(hi, 1), hi, sz(2));    
+            end
+            
+            % U{nc+1} = speye(sz(1) - coord_last+1, sz(1));
+
+            U{nc+1} = [sparse(sz(1)-coord_last+1, coord_last - 1),  speye(sz(1) - coord_last+1)];
+            hi = sz(2) - sum(cellfun(@(n) size(n, 1), V(1:end-1))); %not ideal
+            V{nc+1} = sparse(1:hi, sum(h_first) + (1:hi), ones(hi, 1), hi, sz(2));
+
+        end
+
 
         function [Dk] = form_Dk(obj, alg_psi, D_mask, name, include_Dk1)
             %FORM_Dk: lower triangular structure needed for the controller
