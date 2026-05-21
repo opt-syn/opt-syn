@@ -303,7 +303,7 @@ classdef regulator_lti < regulator_interface
 
                 reg_sol = reshape(reg_sol_vec, [], ns);
 
-                nx = obj.P.nx;
+                nx = obj.sys.P.nx;
                 Pi0 = reg_sol(1:nx, :);
                 Th0 = reg_sol(nx+1:end, :);        
 

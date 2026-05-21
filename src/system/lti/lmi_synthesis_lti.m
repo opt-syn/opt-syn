@@ -125,9 +125,16 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                 con_M_0 = con_M;
 
                 con_M = struct;
+                %the main attributes for matrix elimination
                 con_M.M0 = con_M_0;
                 con_M.U = U_elim;
                 con_M.V = V_elim;
+
+                %subsidiaries for error checking
+                con_M.U_null = U_null;
+                con_M.V_null = U_null;
+                con_M.M_U = con_M_U;
+                con_M.M_V = con_M_V;
 
             else
                 sM = ssize(con_M,1);
