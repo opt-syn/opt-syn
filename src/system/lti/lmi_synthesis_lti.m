@@ -200,7 +200,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                     Ck = K_rem_block((nxi + 1):end, :);
                 end
             else
-                [Ak, Bk, Ck, Dk] = recover_K_from_elim@lmi_synthesis_interface(vars_rec);
+                [Ak, Bk, Ck, Dk] = recover_K_from_elim@lmi_synthesis_interface(obj, vars_rec);
             end
         end
 

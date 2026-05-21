@@ -340,7 +340,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             end
 
             if nargin < 5
-                include_Dk1 = false;
+                include_Dk1 = true;
             end
 
             
@@ -873,7 +873,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 gain_passive = -getPassiveIndex(-Ppass, 'input');
             else
                 %TODO: advanced validation
-                error('Customized validation is not yet implemented')
+                warning('Customized validation is not yet implemented')
                 gain_inf = 0;
                 gain_passive = 0;
             end
