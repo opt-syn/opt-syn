@@ -155,12 +155,11 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
         end
 
-        function [Ak, Ck] = recover_Ak_Ck(obj, vars_rec)
-            %recover the Ak and Ck matrices
-            %overridden by matrix elimination
+        function [Ak, Bk, Ck, Dk] = recover_K_from_elim(obj, vars_rec)
+            %recover the eliminated matrices in the controller            
             if obj.elimination
-                nxi = size(vars_rec.K.B, 1);
-
+                
+                %reconstruct the eliminated controller block
                 M0 = vars_rec.elim.M0;
                 U = vars_rec.elim.U;
                 V = vars_rec.elim.V;
@@ -171,14 +170,37 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
                 con_U = Un' * M0 * Un;
                 con_V = Vn' * M0 * Vn;
-                AC_block = basiclmi(-M0, -U, V, 'Xmin');
-                % AC_block = basiclmi(-M0, -U, V);
+                K_rem_block = basiclmi(-M0, -U, V, 'Xmin');
+                
 
-                Ak = AC_block(1:nxi, :);
-                Ck = AC_block((nxi + 1):end, :);
+
+                if obj.config.syn.eliminate_B
+                    %get the prior entries
+                    Ck2 = vars_rec.K.C;
+                    Dk2 = vars_rec.K.D;
+
+                    nxi = size(Ck2, 2);
+
+                    %index the block
+                    Ak = K_rem_block(1:nxi, 1:nxi);
+                    Bk = K_rem_block(1:nxi, (nxi+1):end);
+                    Ck1 = K_rem_block((nxi+1):end, 1:nxi);
+                    Dk1 = K_rem_block((nxi+1):end, (nxi+1):end);
+
+                    Ck = [Ck1; Ck2];
+                    Dk = [Dk1; Dk2];
+                else
+                    %get the prior entries
+                    Bk = vars_rec.K.B;
+                    Dk = vars_rec.K.D;
+
+                    %index the block
+                    nxi = size(Bk, 1);
+                    Ak = K_rem_block(1:nxi, :);
+                    Ck = K_rem_block((nxi + 1):end, :);
+                end
             else
-                Ak = vars_rec.K.A;
-                Ck = vars_rec.K.C;
+                [Ak, Bk, Ck, Dk] = recover_K_from_elim@lmi_synthesis_interface(vars_rec);
             end
         end
 
@@ -276,15 +298,6 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                 GX = vars_diss.GX;
                 GY = vars_diss.GY;
 
-                
-                Bk = vars_K.B;                
-                Dk = vars_K.D;
-                nk = ssize(Bk, 1);
-
-                %should be a genplant type
-                % P_net = diss.plant;
-
-
                 [A, B, C, D] = ssdata(P);
 
                 
@@ -294,37 +307,71 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                 iy = P.index_y;
                 iz = [P.index_z, P.index_zp];
 
-                nxn = size(A, 1);
-                nxi = ssize(Bk, 1);
-                nu = length(iu);
+                nxn = size(A, 1);                
+                nu = length(iu);                
                 ny = length(iy);
                 nz = length(iz);
                 nw = length(iw);
 
-
                 
+                if obj.config.syn.eliminate_B
+                    
+
+                    Ck2 = vars_K.C;
+                    Dk2 = vars_K.D;
+                    nxi = ssize(Ck2, 2);   
+
+                    ns = size(obj.reg.R, 2);
+                    iu1 = iu(1:ns);         %inputs to the internal model
+                    iu2 = iu((ns+1):end);   %inputs to the plant
+
+                    %closed loop without [Ak, Bk; Ck1, Dk1]
 
 
-                %closed loop without [Ak; Ck]
-                Acal = [A*GY,  A + B(:, iu)*Dk*C(iy, :);
-                    zeros(nk), GX*A + Bk*C(iy, :)];
-                Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
-                    GX*B(:, iw) + Bk*D(iy, iw)];
-                Ccal = [C(iz, :)*GY, C(iz, :) + D(iz, iu)*Dk*C(iy, :)];
-                Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);                
+                    Acal = [A*GY + B(:, iu2)*Ck2,  A + B(:, iu2)*Dk2*C(iy, :);
+                        zeros(nxi), GX*A];
+                    Bcal = [B(:, iw) + B(:, iu2)*Dk2*D(iy, iw);
+                        GX*B(:, iw)];
+                    Ccal = [C(iz, :)*GY+ D(iz, iu2)*Ck2, C(iz, :) + D(iz, iu2)*Dk2*C(iy, :)];
+                    Dcal = D(iz, iw) + D(iz, iu2)*Dk2*D(iy, iw);
+
+
+                    %outer factors
+                    U_cl = [zeros(nxn, nxi), B(:, iu1);
+                        eye(nxi), zeros(nxi, ns);
+                        zeros(nz, nxi), D(iz, iu1)]';
+    
+                    V_cl = [eye(nxi), zeros(nxi, nxn), zeros(nxi, nw);
+                        zeros(ny, nxi), C(iy, :), D(iy, iw)];
+
+
+                else
+                    Bk = vars_K.B;                
+                    Dk = vars_K.D;
+                    nxi = ssize(Bk, 1);                
+    
+                    %closed loop without [Ak; Ck]
+                    Acal = [A*GY,  A + B(:, iu)*Dk*C(iy, :);
+                        zeros(nxi), GX*A + Bk*C(iy, :)];
+                    Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
+                        GX*B(:, iw) + Bk*D(iy, iw)];
+                    Ccal = [C(iz, :)*GY, C(iz, :) + D(iz, iu)*Dk*C(iy, :)];
+                    Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);                
+    
+    
+                    
+                    %outer factors
+                    U_cl = [zeros(nxn, nxi), B(:, iu);
+                        eye(nxi), zeros(nxi, nu);
+                        zeros(nz, nxi), D(iz, iu)]';
+    
+                    V_cl = [eye(nxi), zeros(nxi, nxn+nw)];
+
+                end
 
                 sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
-
+    
                 
-                %outer factors
-                U_cl = [zeros(nxn, nxi), B(:, iu);
-                    eye(nxi), zeros(nxi, nu);
-                    zeros(nz, nxi), D(iz, iu)]';
-
-                V_cl = [eye(nxi), zeros(nxi, nxn+nw)];
-
-
-                %sys_cl(A; C) = sys_cl + U_cl [Ak; Ck] V_cl';
             else
                 U_cl = [];
                 V_cl = [];

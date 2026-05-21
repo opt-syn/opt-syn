@@ -18,9 +18,16 @@ classdef opt_config
         syn = struct('reduced_order', false, ... %use internal model structure
             ...                         %to synthesize reduced-order controllers                
             'D_mask', [], ...           %which elements of D can be nonzero?
-            'elimination', false);       %if there is only one specification 
-                                        % (and the system is LTI), use the 
-                                        % matrix elimination lemma    
+            'elimination', false,...);  %if there is only one specification 
+            ...                         % (and the system is LTI), use the 
+            ...                         % matrix elimination lemma    
+            'eliminate_B', true);       %the elimination type
+                                        %eliminate_B: 
+                                        % true: remove [Ak, Bk; Ck1, Dk1]
+                                        % false: remove [Ak; Ck]
+                                        %
+                                        % true: smaller size variables
+                                        % false: more interpretable
 
         %numerical tolerances for solving LMIs
         tol = struct('dia', 1e-11,  ... %tolerance for acceptable solution 

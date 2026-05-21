@@ -270,17 +270,33 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %declare the variables
             vars_K = struct;
             %easy: ABC
-            vars_K.B = lmim(['Bk', name], nc, ny);
-            vars_K.D = obj.form_Dk(alg_psi, D_mask);
+            
 
             if obj.elimination
-                vars_K.A = [];
-                vars_K.C = [];
-                kq = [vars_K.B;            
+                vars_K.A = [];                
+
+                if obj.config.syn.eliminate_B                    
+                    %remove [Ak, Bk; Ck1, Dk1]    
+                    vars_K.B = [];  
+                    vars_K.C = lmim(['Ck', name], ny, nc);
+                    vars_K.D = obj.form_Dk(alg_psi, D_mask, [], false);
+                    kq = [vars_K.C, vars_K.D];
+                else
+                    %remove [Ak; Ck]
+                    vars_K.C = [];
+                    vars_K.B = lmim(['Bk', name], nc, ny);
+                    vars_K.D = obj.form_Dk(alg_psi, D_mask);
+                    kq = [vars_K.B;            
                     vars_K.D];
+            
+                end
             else
-                vars_K.A = lmim(['Ak', name], nc, nc);            
+                
+                vars_K.A = lmim(['Ak', name], nc, nc);
+                vars_K.B = lmim(['Bk', name], nc, ny);    
                 vars_K.C = lmim(['Ck', name], ns + ny, nc);
+                vars_K.D = obj.form_Dk(alg_psi, D_mask);
+
                 kq = [vars_K.A, vars_K.B;            
                     vars_K.C,  vars_K.D];
             end
@@ -312,7 +328,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         end
 
-        function [Dk] = form_Dk(obj, alg_psi, D_mask, name)
+        function [Dk] = form_Dk(obj, alg_psi, D_mask, name, include_Dk1)
             %FORM_Dk: lower triangular structure needed for the controller
             %need a better interface for the mask
 
@@ -321,6 +337,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
             if nargin < 4
                 name = [];
+            end
+
+            if nargin < 5
+                include_Dk1 = false;
             end
 
             
@@ -337,8 +357,13 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
            
             %the unconstrained term for the internal model control
-            Dk1_var = lmim(['Dk1', name], ns, size(D_mask, 2), 'full');
-            Dk = Dk1_var;
+
+            if include_Dk1
+                Dk1_var = lmim(['Dk1', name], ns, size(D_mask, 2), 'full');
+                Dk = Dk1_var;
+            else
+                Dk = [];
+            end
 
 
             % D_mask = D_mask_0;
@@ -632,11 +657,13 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
         end
 
-        function [Ak, Ck] = recover_Ak_Ck(obj, vars_rec)
+        function [Ak, Bk, Ck, Dk] = recover_K_from_elim(obj, vars_rec)
             %recover the Ak and Ck matrices
             %overridden by matrix elimination
             Ak = vars_rec.K.A;
+            Bk = vars_rec.K.B;            
             Ck = vars_rec.K.C;
+            Dk = vars_rec.K.D;
         end
 
         function [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec)
@@ -668,15 +695,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             nw = length(iw);
             nu = length(iu);
             ny = length(iy);
+                        
 
-            
-            
-            Bk = vars_rec.K.B;
-            Dk = vars_rec.K.D;
-
-            [Ak, Ck] = obj.recover_Ak_Ck(vars_rec);
-            
-            
+            [Ak, Bk, Ck, Dk] = obj.recover_K_from_elim(vars_rec);                        
 
             S = (vars_rec.diss.GS);
             n = ssize(Ak, 1);
