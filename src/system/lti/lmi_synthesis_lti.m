@@ -229,7 +229,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
                     M_accum = M0;
 
-                    ns = size(obj.reg.R, 2);
+                    ns = obj.reg.ns;
                     nu = obj.sys.nu;
                     ny = obj.sys.ny;
 
@@ -423,7 +423,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                     %remove [Ak, Bk; Ck, Dk]
                     %in progress
 
-                    ns = size(obj.reg.R, 2);
+                    ns = obj.reg.ns;
                     iu1 = iu(1:ns);         %inputs to the internal model
                     iu2 = iu((ns+1):end);   %inputs to the plant
 
@@ -472,7 +472,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                     Dk2 = vars_K.D;
                     nxi = ssize(Ck2, 2);   
 
-                    ns = size(obj.reg.R, 2);
+                    ns = obj.reg.ns;
                     iu1 = iu(1:ns);         %inputs to the internal model
                     iu2 = iu((ns+1):end);   %inputs to the plant
 

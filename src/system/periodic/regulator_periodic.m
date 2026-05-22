@@ -126,6 +126,7 @@ classdef regulator_periodic < regulator_interface
 
             else
                 error('Periodic regulation: tracking not yet supported')
+                %TODO: to be implemented
             end
 
 

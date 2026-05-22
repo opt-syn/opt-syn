@@ -45,6 +45,12 @@ classdef regulator_interface
             obj = obj.form_internal_model();
         end
 
+        function NS = ns(obj)
+            %NS: number of states of exosystem
+
+            NS = length(obj.S);
+        end
+
         function vars_reg = create_vars(obj)
             vars_reg.Pi = obj.Pi;
             vars_reg.Gam = obj.Gam;
