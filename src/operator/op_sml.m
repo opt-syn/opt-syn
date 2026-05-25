@@ -84,9 +84,6 @@ classdef op_sml < op_sml_interface
             end
         end
 
-
-
-
         function [Psi1, Psi2] = build_psi(obj, vars, order, reps)
             %BUILD_PSI construct the filter for the SML function
             %
@@ -175,7 +172,6 @@ classdef op_sml < op_sml_interface
             BE = Bh2'*E*Bh1;
 
             P = Dh1 + Dh2' + BE;      
-
         end
 
         function cons = filter_constraints(obj, cons, order, vars, rho_sched, iqc)
@@ -230,10 +226,10 @@ classdef op_sml < op_sml_interface
 
                 Msub0 = obj.ergodic_supply(reps);
 
-                I0rep = diag([1, zeros(reps-1, 1)]);
+                I0rep = diag([0, 1]);
                 Msub = kron(Msub0, I0rep);
 
-                Msub = circshift(kron(Msub, eye(2)), reps, 2);
+                % Msub = kron(Msub, eye(2));
             else
                 Msub = zeros(4*reps);
             end
