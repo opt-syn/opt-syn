@@ -85,18 +85,7 @@ classdef op_sml < op_sml_interface
         end
 
 
-        function M_erg = ergodic_supply(obj, reps)
-            %ERGODIC_SUPPLY supply rate for function value decrease
-            %ergodic convergence
 
-            if nargin < 2
-                reps = 1;
-            end
-
-            M_erg = ergodic_supply@op_sml_interface(reps);
-
-            %TODO: finish and verify this?
-        end
 
         function [Psi1, Psi2] = build_psi(obj, vars, order, reps)
             %BUILD_PSI construct the filter for the SML function
@@ -236,12 +225,11 @@ classdef op_sml < op_sml_interface
                   0, 0, 1, 0; ...
                   0, 1, 0, 0; ...
                   1, 0, 0, 0];
-            if obj.SUBLINEAR && ~obj.same
+            if obj.ERGODIC && ~obj.same
                 % Msub = 0;
 
-                sig = 1/(obj.L - obj.m);
-                Msub0 = obj.m * [1, sig; sig, sig^2] + sig*[0, 0; 0, 1];
-                
+                Msub0 = obj.ergodic_supply(reps);
+
                 I0rep = diag([1, zeros(reps-1, 1)]);
                 Msub = kron(Msub0, I0rep);
 
@@ -269,6 +257,23 @@ classdef op_sml < op_sml_interface
                 zmE = zeros(mE);
                 X_out = [znE, vars.E; vars.E', zmE];
             end
+        end
+
+        function [iqc] = create_iqc_identity(obj, reps)
+            %CREATE_VARS form the IQC for the general operator
+            %identity IQC in psi
+
+            iqc = create_iqc_identity@op_sml_interface(obj, reps);
+
+            if obj.ERGODIC
+
+                Msub = obj.ergodic_supply(reps);
+
+                iqc.M = iqc.M + Msub;
+
+            end
+        
+
         end
 
         

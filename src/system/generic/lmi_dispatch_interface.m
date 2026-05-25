@@ -195,6 +195,41 @@ classdef lmi_dispatch_interface < handle
 
         end
 
+        function [cons, objective, con_M] = stability(obj, vars, cons, diss)
+            %STABILITY certification of exponential stability
+            %
+            %the supply function in the specification is empty,
+            %so just call quadratic performance.
+
+
+            [cons, objective, con_M] = obj.quad(vars, cons, diss);
+
+        end
+
+        function [cons, objective, con_M] = ergodic(obj, vars, cons, diss)
+            %ERGODIC certification of ergodic convergence
+            %            
+            %call quadratic performance.
+            %
+            %ergodic means the system should have previously been adjusted
+
+
+            [cons, objective, con_M] = obj.quad(vars, cons, diss);
+
+        end
+
+
+        function [cons, objective, con_M] = e2e(obj, vars, cons, diss)
+            %E2E: energy to energy gain
+
+            if diss.spec.target
+                [cons, objective, con_M] = obj.e2e_target(vars, cons, diss);
+            else
+                %is a special case of quadratic performance
+                [cons, objective, con_M] = obj.quad(vars, cons, diss);
+            end           
+        end
+
 
         
     end
@@ -205,15 +240,18 @@ classdef lmi_dispatch_interface < handle
     methods (Abstract)
         create_vars(obj, vars, cons, alg, specs)
         create_vars_storage(obj, cons, alg_psi, name)
-        
+        % process_recovery(obj, sol, lmi_out, alg_psi)
+
         %supported performance measures
-        stability(obj, vars, cons, diss)  
+        % quad 
+        % stability(obj, vars, cons, diss)  
         % e2e(obj, vars, cons, diss)  
         % e2e_target(obj, vars, cons, diss)  
 
         %should allow for:
             %quad
             %e2e
+            %e2p
         % stability(obj, vars, cons, diss)
         
         

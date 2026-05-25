@@ -99,33 +99,13 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
         %function [cons, objective, con_M] = quad(obj, vars, cons, diss)
         %Quadratic performance (defined on a per-system basis)
 
-        function [cons, objective, con_M] = stability(obj, vars, cons, diss)
-            %STABILITY certification of exponential stability
-            %
-            %the supply function in the specification is empty,
-            %so just call quadratic performance.
+ 
 
-
-            [cons, objective, con_M] = obj.quad(vars, cons, diss);
-
-        end
-
-        function [cons, objective, con_M] = e2e(obj, vars, cons, diss)
-            %E2E: energy to energy gain
-
-            if diss.spec.target
-                [cons, objective, con_M] = obj.e2e_target(vars, cons, diss);
-            else
-                %is a special case of quadratic performance
-                [cons, objective, con_M] = obj.quad(vars, cons, diss);
-            end           
-        end
 
     end
 
     methods (Abstract)
-        %variable creation routines        
-        quad(obj, vars, cons, diss)               
+        %variable creation routines                              
     end
 end
 

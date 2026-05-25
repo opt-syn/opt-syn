@@ -39,7 +39,7 @@ classdef spec_ergodic < spec_interface
             
         end
 
-        function M = supply(obj)
+        function M = supply(obj, vars_spec)
             %SUPPLY generate the supply rate
             %
             %duality gap 

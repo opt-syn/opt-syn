@@ -16,6 +16,7 @@ classdef op_sml_interface < operator_interface
         m; %convexity parameter
         L; %smoothness parameter
         L_top = true; %should the L term be filtered (Lz - w)?
+        ERGODIC = false;
     end
     
     methods
