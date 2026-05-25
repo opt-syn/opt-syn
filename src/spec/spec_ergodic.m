@@ -51,8 +51,9 @@ classdef spec_ergodic < spec_interface
             else
                 % [na, nb] = size(obj.Nw);
                 
-                antipass = [0, -1; -1, 0];
-                Mk = kron(antipass, eye(length(obj.izp)));
+                % M0 = [0, -1; -1, 0];
+                M0 = -[0, 1; 1, 0];
+                Mk = kron(M0, eye(length(obj.izp)));
 
                 outer = blkdiag(eye(length(obj.izp)), obj.Nw);
 

@@ -105,8 +105,8 @@ classdef lmi_dispatch_interface < handle
             end
             n1 = iqc_rob.np;
             m1 = iqc_rob.nq;
-            n2 = length(sp.iwp);
-            m2 = length(sp.izp);
+            n2 = length(sp.izp);
+            m2 = length(sp.iwp);
             
             [M] = outer_blkdiag(iqc_rob.M, supp, n1, m1, n2, m2);
             % Mdiag = blkdiag(iqc_op.M, sp.supply);
