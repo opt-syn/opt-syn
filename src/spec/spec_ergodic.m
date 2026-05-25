@@ -52,7 +52,8 @@ classdef spec_ergodic < spec_interface
                 % [na, nb] = size(obj.Nw);
                 
                 % M0 = [0, -1; -1, 0];
-                M0 = -[0, 1; 1, 0];
+                M0 = [0, 1; 1, 0];
+                % M0  = zeros(2);
                 Mk = kron(M0, eye(length(obj.izp)));
 
                 outer = blkdiag(eye(length(obj.izp)), obj.Nw);
