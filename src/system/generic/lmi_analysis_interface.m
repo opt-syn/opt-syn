@@ -84,7 +84,12 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
             con_X = G + X_f;
 
             sx = ssize(con_X, 1);
-            cons = append_lmi(cons, con_X - eye(sx)*obj.config.tol.X, obj.config.LMILAB);
+
+            if obj.config.gen.impose_X == 1
+                cons = append_lmi(cons, con_X - eye(sx)*obj.config.tol.X, obj.config.LMILAB);
+            elseif obj.config.gen.impose_X == 2
+                cons = append_lmi(cons, G - eye(sx)*obj.config.tol.X, obj.config.LMILAB);
+            end
 
         end
         

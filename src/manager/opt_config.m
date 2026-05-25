@@ -8,14 +8,26 @@ classdef opt_config
         %generic options (for both analysis and synthesis)
         
         gen = struct('solver', 'lmilab', ...
-            'verbose', 0)       
+            'verbose', 0, ...
+            'impose_X', 1)       %terminal cost sign constraint
 
         %analysis only options        
         ana = struct('normalize_margin', 0.05);
 
         %synthesis only options
-        syn = struct('reduced_order', false, ...
-            'D_mask', []);
+        syn = struct('reduced_order', false, ... %use internal model structure
+            ...                         %to synthesize reduced-order controllers                
+            'D_mask', [], ...           %which elements of D can be nonzero?
+            'elimination', false,...);  %if there is only one specification 
+            ...                         % (and the system is LTI), use the 
+            ...                         % matrix elimination lemma    
+            'elimination_type', 2);     %the elimination type                                        
+                                        % 2: remove [Ak, Bk; Ck, Dk]
+                                        % 1: remove [Ak, Bk; Ck1, Dk1]
+                                        % 0: remove [Ak; Ck]
+                                        %
+                                        % true: smaller size variables
+                                        % false: more interpretable
 
         %numerical tolerances for solving LMIs
         tol = struct('dia', 1e-11,  ... %tolerance for acceptable solution 

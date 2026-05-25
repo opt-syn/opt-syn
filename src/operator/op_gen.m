@@ -4,10 +4,12 @@ classdef op_gen  < operator_interface
     
     
     properties
-        LINEAR = false;
-        prop = {'monotone', 0};
-        %other properties of an operator?
-        tol_cX = 1000; %tolerance for the terminal cost
+        LINEAR = false;             %is the operator a linear map?
+        prop = {'monotone', 0};     %properties of the operator
+                                    %monotone
+                                    %cocoercive
+                                    %lipschitz
+                                    %inverse lipschitz              
     end
     
     methods
@@ -28,6 +30,7 @@ classdef op_gen  < operator_interface
         end
 
         function pc = prop_count(obj)
+            %PROP_COUNT: count the number of properties
               pc = size(obj.prop, 1);
         end
              
@@ -123,11 +126,7 @@ classdef op_gen  < operator_interface
             %IQC: [x; g] with g \in F(x)
             %
             %
-            sz = ssize(var_curr{1}, 1);            
-                        
-            M11 = zeros(sz);
-            M12 = zeros(sz);
-            M22 = zeros(sz);
+            sz = ssize(var_curr{1}, 1);                                 
 
             zz = zeros(sz);
             pc = obj.prop_count;
@@ -139,9 +138,11 @@ classdef op_gen  < operator_interface
                 loop_mat = eye(sz*2);
             else
                 loop_mat = [eye(sz), zz; mu*eye(sz), eye(sz)];
+                % loop_mat = inv([eye(sz), zz; -mu * eye(sz), eye(sz)]);
             end
 
             cost = zeros(2*sz);
+            
             
             for p = 1:pc
                 cDBM = var_curr{p};
@@ -156,8 +157,6 @@ classdef op_gen  < operator_interface
                             % 
                         case 'cocoercive'
                             beta = obj.prop{p, 2};
-                            % M12 = M12 + cDBM;
-                            % M11 = M11 - (cDBM + cDBM') * (beta); 
 
                             Mcurr = [zz, cDBM; cDBM', -csym*beta];
                             Mloop = loop_mat'*Mcurr*loop_mat;
@@ -172,8 +171,8 @@ classdef op_gen  < operator_interface
     
                         case 'inv_lipschitz'
                             L2 = obj.prop{p, 2}^2;
-                            
-                            Mcurr = [-csym, zz; zz', L2*csym];                            
+                            Mcurr = [-csym, zz; zz', L2*csym];
+                                                        
                             Mloop = loop_mat'*Mcurr*loop_mat;
                         
                         otherwise
@@ -237,13 +236,48 @@ classdef op_gen  < operator_interface
 
         end
 
+        function [iqc] = create_iqc_identity(obj, reps)
+            %CREATE_VARS form the IQC for the general operator
+            %identity IQC in psi
 
+            %Input:             
+            %   rep:    number of repetitions of the operator (non-frugal)
+            %
+            %Output:
+            %   vars:   variables of the problem
+            %   cons:   constraints in the problem (in terms of the
+            %           variables directly)
+
+            if nargin < 2
+                reps = 1;
+            end
+
+            vars = struct;
+            pc = obj.prop_count;
+            vars.cX = cell(pc, 1);
+            vars.cM = cell(pc, 1);
+            
+            for i = 1:pc
+                %identity matrix (w.r.t zero as the other point)
+                vars.cM{i} = eye(reps)/(reps*pc);
+                vars.cX{i} = [];
+            end
+            
             
 
-            % [dx1, dx2] = dim(vars.cX);
-            % cXtop = ones(1, dx1)*vars.cX*ones(dx2, 1);
-            % cons = elem_nonneg(obj.tol_cX - cXtop, cons); 
-        
+            M = obj.build_cost(vars.cM);
+
+            X = [];
+
+            loop = obj.build_loop(reps);            
+            
+            [psi1, psi2] = build_psi(obj, vars, 0, reps);
+
+            iqc_orig = iqc_loop_split(psi1, M, loop, psi2, X);
+
+            iqc = iqc_orig.lift(obj.c);                
+            
+        end
 
 
         function [vars] = create_vars(obj, order, reps)
@@ -275,7 +309,6 @@ classdef op_gen  < operator_interface
             %declare the variables
             nM = (order+1) * reps;
             nX = order * reps;
-            % NM = nM + nM*(nM-1)/2;
 
 
          

@@ -257,12 +257,31 @@ classdef iqc_loop_split
                 perturb = 1e-4;
             end                                
             np = obj.np;
+            nq = obj.np;
 
             %top corner: select passive factorization
             M11 = obj.M(1:np, 1:np);
+            M12 = obj.M(1:np, np + (1:nq));
+            M22 = obj.M(np + (1:nq), np + (1:nq));
             
+            %specialized factorization for zames-falb type multipliers
 
-            if all(M11 == 0, "all")
+
+            reps = nq/2;
+            Mref = kron([0, 0, 0, 1; ...
+                      0, 0, 1, 0; ...
+                      0, 1, 0, 0; ...
+                      1, 0, 0, 0], eye(reps));
+
+            %a bit hacked together logic here
+            is_passive = (np == nq) && all(size(obj.M) == size(Mref)) && all(obj.M == Mref, "all") && ...
+                all(obj.Psi1.C(np/2 + (1:nq/2), :)==0, "all") && ...
+                all(obj.Psi2.C(np/2 + (1:nq/2), :)==0, "all") && ...
+                all(obj.Psi1.D(np/2 + (1:nq/2), :)==eye(nq/2), "all") && ...
+                all(obj.Psi2.D(np/2 + (1:nq/2), :)==eye(nq/2), "all");
+
+            %passive is not yet developed
+            if is_passive
                 %passive factorization
                 % iqc_factored = obj.passive_factorization();
 
@@ -290,11 +309,160 @@ classdef iqc_loop_split
         end
 
         function [iqc_factored, Vh, Z] = passive_factorize(obj)
-            %PASSIVE_FACTORIZE perform an passive-infinity type factorization
+            %passive_FACTORIZE perform a factorization for zames-falb-obeying
+            %operators (mostly in SmL)
+
+            %extract data from the multipliers
+            p1t = size(obj.Psi1, 1)/2;
+
+            Psi1 = obj.Psi1(1:p1t, :);
+            Psi2 = obj.Psi2(1:p1t, :);
+
+            [A1, B1, C1, D1] = ssdata(Psi1);
+            [p1, n1] = size(C1);
+
+            [A2, B2, C2, D2] = ssdata(Psi2);
+            [p2, n2] = size(C2);
+
+
+            Mhat = kron([0, 1; 1, 0], eye(p1));
+
+            %step 1:
+            %apply a Mobius transformation, convert to continuous time
+            alpha = 1;
+            beta = 1;
+
+
+
+            [Psi1w] = warp_system_mat(Psi1, alpha, beta);
+            [A1w, B1w, C1w, D1w] = ssdata(Psi1w);
+
+            [Psi2w] = warp_system_mat(Psi2, alpha, beta);
+            [A2w, B2w, C2w, D2w] = ssdata(Psi2w);
+
+
+            %step 2:
+            %get the reference supply rate, match this via a nonsymmetric 
+            %continuous algebraic riccati equation            
+            CD1 = [C1w, D1w; zeros(p1, n1), eye(p1)];
+            CD2 = [C2w, D2w; zeros(p2, n2), eye(p2)];
+
+            Supp = CD2' * Mhat * CD1;
+
+            %index into the supply rate
+            Qw = Supp(1:n2, 1:n1);
+            L1w = Supp(1:n2, (n1+1):end);
+            L2w = Supp((n2+1):end, 1:n1);
+            Rw = Supp((n2+1):end, (n1+1):end);
+
+            %Rw will always be nonzero (strictness assumption in tolerance)
+            Ri = inv(Rw);
+
+            %step 3:
+            %get the hamiltonian
+            Hp = [A1w - B1w * Ri * L2w, -B1w * Ri * B2w';
+                -Qw + L1w * Ri * L2w -A2w' + L1w * Ri * B2w'];
+
+
+            %find the stabilizing solution of the riccati equation
+            [U, T] = schur(Hp, 'real');
+            [US, TS] = ordschur(U, T, 'lhp');
+            
+            
+            US_stab = US(:, 1:n1);
+            TS_stab = TS(1:n1, 1:n1);
+            
+            %invariant stable subspace
+            V_stab = US_stab * TS_stab;
+            V1 = V_stab(1:n1, :);
+            V2 = V_stab((n1+1):end, :);
+            
+            %riccati solution
+            W_stab = (V1' \ V2')';
+
+            %stabilizing riccati gain
+            F_stab = -Ri * (B2w' * W_stab + L2w);            
+            
+            %verify the solution
+            RIC_lhs = [A2w' * W_stab + W_stab*A1w + Qw, W_stab*B1w + L1w;
+                B2w' * W_stab + L2w, Rw];
+            RIC_ans = [eye(n1); F_stab];
+
+
+            %step 4:
+            %index the continuous-time factors
+            D1hatw = Rw;
+            D2hatw = eye(p2);
+            
+            C2hatw = (D1hatw \ (W_stab * B1w + L1w)');
+            C1hatw = D2hatw \ (B2w' * W_stab + L2w);
+
+
+            %step 5:
+            %transform back into discrete-time
+            T1 = [alpha*A1 + beta*eye(n1), alpha*B1;
+                zeros(p1, n1), eye(p1)];
+            
+            T2 = [beta*A2 + alpha*eye(n2), beta*B2;
+                zeros(p2, n2), eye(p2)];
+            
+            S1block = [C1hatw, D1hatw] * T1;
+            S2block = [C2hatw, D2hatw] * T2;
+            C1hat = S1block(:, 1:n1);
+            D1hat = S1block(:, (n1+1):end);
+            C2hat = S2block(:, 1:n2);
+            D2hat = S2block(:, (n2+1):end);
+            
+            Psi1hat = ss(A1, B1, C1hat, D1hat, 1);
+            Psi2hat = ss(A2, B2, C2hat, D2hat, 1);
+
+
+            
+            
+            
+            %step 6:
+            %get the state transformation matrix
+
+            Ahat = blkdiag(A1,A2);
+            Bhat = blkdiag(B1,B2);
+            Chat = blkdiag(C1hat, C2hat);
+
+            Psih = struct;
+            Psih.A = Ahat;
+            Psih.B = Bhat;
+            Psih.Chat = Chat;
+            
+            Vh = eye(n1 + n2);
+            % Vh = obj.compute_Vhat(Psih);
+            % Xh_V = Vh'*obj.X*Vh;
+            Xhat = obj.X;
+
+            %TODO: VERIFY THIS
+            Z = 2 * [zeros(n2), W_stab; W_stab', zeros(n1)];
+            Xhat = Xhat + Z;
+            
+            C3 = zeros(p1, n2);
+            D3 =  zeros(p1, p1);            
+            
+            iqc_factored = iqc_loop_factored(Psi1hat, Psi2hat, C3, D3, ...
+                 Mhat, Xhat, obj.loop);
+
+
+        end
+
+        function [iqc_factored, Vh, Z] = passive_factorize_general(obj)
+            %PASSIVE_FACTORIZE perform an passivity type factorization
+            %general 
 
             % 1. Constructing Psih_1
             % nq = obj.nq;
             % np = obj.np;
+
+            %TODO:
+
+            %WARNING: this code doesn't work, must be fixed (generic
+            %passive factorization). Use passive_factorize instead for operators
+            %in SmL.
 
             %index into the relevant system            
             Psi1 = [obj.Psi1; zeros(obj.nq, obj.nz)];

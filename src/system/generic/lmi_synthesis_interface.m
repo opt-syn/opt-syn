@@ -13,6 +13,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
     properties
         reg; %internal model of the controller
                 
+        
     end
 
     
@@ -34,7 +35,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
         
-        function [cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
+        function [cons, objective, vars, con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
             %Input:
@@ -56,10 +57,20 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %need to look up the right constraint            
 
             %Upper-levels: iterate over the systems
-            [cons, objective, con_M] = cons_dynamic@lmi_dispatch_interface(obj, vars, cons, diss);
+
+            if obj.elimination && (length(diss) > 1)
+                error('Matrix Elimination (opt_config.syn.elimination=true) cannot be used if there is more than performance specification');
+            end
+
+            [cons, objective, vars, con_M] = cons_dynamic@lmi_dispatch_interface(obj, vars, cons, diss);
 
             
 
+            %add new variables/terms for recovery (useful for matrix
+            %elimination)
+
+            
+            vars = obj.augment_vars(vars, diss, con_M);
             
                       
         end
@@ -74,6 +85,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             [vars.spec, cons] = obj.create_vars_spec(cons, specs);
             [vars.reg]  = obj.create_vars_regulator();
             [vars.K, cons]    = obj.create_vars_controller(cons, alg_psi);
+        end
+
+        function vars_new = augment_vars(obj, vars, diss, con_M)
+            %AUGMENT_VARS add new variables/terms for recovery (useful for 
+            %matrix elimination)
+            vars_new = vars;            
         end
 
         function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
@@ -211,8 +228,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %primal and dual blocks
             %invoke this over multiple subsystems
             if ~obj.config.syn.reduced_order
-                cons = obj.con_spread_single(obj, cons, vars.diss.GX, vars.diss.GY);
+                cons = obj.con_spread_single(cons, vars.diss.GX, vars.diss.GY);
             end
+        end
+
+        function el = elimination(obj)
+            el = false;
         end
         
         function [vars_K, cons] = create_vars_controller(obj, cons, alg_psi, name, D_mask)
@@ -249,25 +270,58 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %declare the variables
             vars_K = struct;
             %easy: ABC
-            vars_K.A = lmim(['Ak', name], nc, nc);
-            vars_K.B = lmim(['Bk', name], nc, ny);
-            vars_K.C = lmim(['Ck', name], ns + ny, nc);
-
-
-            vars_K.D = obj.form_Dk(alg_psi, D_mask);
-            %TODO: better interface here: number of inputs
             
 
+            if obj.elimination
+                vars_K.A = [];                
 
-            %no elimination just yet
+                if obj.config.syn.elimination_type == 2    
+                    %remove all terms [Ak, Bk; Ck, Dk]
+                    %using triangular elimination (in development)
+                    %lemma 4 of https://arxiv.org/pdf/1305.1746
+                    vars_K.B = [];  
+                    vars_K.C = [];  
+                    vars_K.D = [];  
+                elseif obj.config.syn.elimination_type == 1                                    
+                    %remove [Ak, Bk; Ck1, Dk1]    
+                    vars_K.B = [];  
+                    vars_K.C = lmim(['Ck', name], ny, nc);
+                    vars_K.D = obj.form_Dk(alg_psi, D_mask, [], false);
+                    kq = [vars_K.C, vars_K.D];
+                else
+                    %remove [Ak; Ck]
+                    vars_K.C = [];
+                    vars_K.B = lmim(['Bk', name], nc, ny);
+                    vars_K.D = obj.form_Dk(alg_psi, D_mask);
+                    kq = [vars_K.B;            
+                    vars_K.D];
+                    cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
 
+            
+                end
+            else
+                
+                vars_K.A = lmim(['Ak', name], nc, nc);
+                vars_K.B = lmim(['Bk', name], nc, ny);    
+                vars_K.C = lmim(['Ck', name], ns + ny, nc);
+                vars_K.D = obj.form_Dk(alg_psi, D_mask);
+
+                kq = [vars_K.A, vars_K.B;            
+                    vars_K.C,  vars_K.D];
+                cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
+
+            end
+
+            
+            
+            %TODO: better interface here: number of inputs
+            
             %bound entries of the controllers
-            kq = [vars_K.A, vars_K.B;            
-              vars_K.C,  vars_K.D];
-            cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
+            
 
         end
 
+        %% formation of the Dk matrix in controller synthesis
         function D_mask = get_D_mask(obj)
             %GET_D_MASK get the direct feedthrough terms
 
@@ -285,7 +339,77 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         end
 
-        function [Dk] = form_Dk(obj, alg_psi, D_mask, name)
+        function K_mask = get_K_mask(obj, nxi)
+            %K_mask: controller sparsity pattern
+            %
+            %[Ck2, Dk2
+            % Ak,  Bk
+            % Ck1, Dk1]
+            %
+            %Input: 
+            %   nxi: number of controller states
+            %Output:
+            %   pattern K_mask
+
+            %used for matrix elimination lemma for LTI systems
+
+            D_mask = obj.get_D_mask();
+
+            ns = size(obj.reg.R, 2);
+            nu = obj.sys.nu;
+            ny = obj.sys.ny;
+            
+            K_mask = logical([ones(nu + nxi + ns, nxi), [D_mask; ones(nxi+ns, ny)]]);
+
+        end
+
+        function [U, V] = get_K_tri_basis(obj, nxi)
+            %GET_K_TRI_BASIS get a basis for the Dk
+            %elimination method. Break up the lower-triangular Dk factor
+            %to apply Lemma 4 of https://arxiv.org/pdf/1305.1746
+
+            
+            %get the mask for the permuted controller matrix
+            K_mask = obj.get_K_mask(nxi);
+            sz = size(K_mask);
+            
+            %now break it down
+            %find the lower triangular factors
+            [sel, cs] = max( K_mask ==0, [], 2 );
+            [uf, ff] = unique(cs, 'first');
+            
+            coords= [uf, ff];
+            
+            coord_first = coords(2:end, :);
+            coord_last = coords(1, 2);
+            
+            h_first = diff([1; coord_first(:, 1)]);
+            
+            coord_shift = coords(:, 2);
+            coord_shift(1) = 0;
+            
+            
+            %store the identity indexers            
+            nc = size(coord_first, 1);
+            U = cell(nc+1, 1);
+            V = cell(nc+1, 1);            
+            for i = 1:nc  
+                % U{i} = speye(sz(1) - coord_shift(i), sz(1));
+                U{i} = [sparse(sz(1)- coord_shift(i), coord_shift(i)),  speye(sz(1) - coord_shift(i))];
+                hi = h_first(i);
+                V{i} = sparse(1:hi, sum(h_first(1:i-1)) + (1:hi), ones(hi, 1), hi, sz(2));    
+            end
+            
+            % U{nc+1} = speye(sz(1) - coord_last+1, sz(1));
+
+            U{nc+1} = [sparse(sz(1)-coord_last+1, coord_last - 1),  speye(sz(1) - coord_last+1)];
+            hi = sz(2) - sum(cellfun(@(n) size(n, 1), V(1:end-1))); %not ideal
+            V{nc+1} = sparse(1:hi, sum(h_first) + (1:hi), ones(hi, 1), hi, sz(2));
+
+        end
+
+
+        function [Dk] = form_Dk(obj, alg_psi, D_mask, name, include_Dk1)
             %FORM_Dk: lower triangular structure needed for the controller
             %need a better interface for the mask
 
@@ -294,6 +418,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
             if nargin < 4
                 name = [];
+            end
+
+            if nargin < 5
+                include_Dk1 = true;
             end
 
             
@@ -310,8 +438,13 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
            
             %the unconstrained term for the internal model control
-            Dk1_var = lmim(['Dk1', name], ns, size(D_mask, 2), 'full');
-            Dk = Dk1_var;
+
+            if include_Dk1
+                Dk1_var = lmim(['Dk1', name], ns, size(D_mask, 2), 'full');
+                Dk = Dk1_var;
+            else
+                Dk = [];
+            end
 
 
             % D_mask = D_mask_0;
@@ -394,9 +527,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 G_next = G_curr;
             end
                
-            n = ssize(sys_cl.A, 1);
-            nw = ssize(sys_cl.B, 2);
-            nz = ssize(sys_cl.C, 1);
+            
+            [n, nw] = ssize(sys_cl.B);
+            nz = ssize(sys_cl.D, 1);
             nt = ssize(quad.U, 1);
 
             outer_curr = [eye(n, n); zeros(nz, n); zeros(n, n); eye(nt, n)];
@@ -408,14 +541,13 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
 
-        function dyn_b_he = dynamics_block(obj, sys_cl, quad)
+        function [dyn_b_he, U_outer, V_outer] = dynamics_block(obj, sys_cl, quad)
             %DYNAMICS_BLOCK form the supply block in a quadratic objective
             % problem
 
 
-            n = ssize(sys_cl.A, 1);
-            nw = ssize(sys_cl.B, 2);
-            nz = ssize(sys_cl.C, 1);
+            [n, nw] = ssize(sys_cl.B);
+            nz = ssize(sys_cl.D, 1);
             nt = ssize(quad.U, 1);
 
             outer_cl_left = [zeros(n), zeros(n, nw);
@@ -433,15 +565,18 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             dyn_b = outer_cl_left * center_cl * outer_cl_right; 
             dyn_b_he = dyn_b + dyn_b';
 
+            U_outer = outer_cl_left';
+            V_outer = outer_cl_right;
+
         end
 
         function supp_b = supply_block(obj, sys_cl, quad)
             % SUPPLY_BLOCK form the supply block in a quadratic objective
             % problem
 
-            n = ssize(sys_cl.A, 1);
-            nw = ssize(sys_cl.B, 2);
-            nz = ssize(sys_cl.C, 1);
+            
+            [n, nw] = ssize(sys_cl.B);
+            nz = ssize(sys_cl.D, 1);
             nt = ssize(quad.U, 1);
             
             outer_Q = [zeros(n, nz); eye(nz); zeros(n, nz); zeros(nt, nz)];
@@ -565,9 +700,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %evaluate the variables
             [sol] = obj.recover_subcontroller(P_trans, sol);
                       
-
-
-
             %verify performance of the algorithm
             %TODO: a postprocessing LMI (?) to check that the recovered 
             %algorithm satisfies the performance specifications 
@@ -606,6 +738,15 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
         end
 
+        function [Ak, Bk, Ck, Dk] = recover_K_from_elim(obj, vars_rec)
+            %recover the Ak and Ck matrices
+            %overridden by matrix elimination
+            Ak = vars_rec.K.A;
+            Bk = vars_rec.K.B;            
+            Ck = vars_rec.K.C;
+            Dk = vars_rec.K.D;
+        end
+
         function [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec)
 
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
@@ -635,13 +776,11 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             nw = length(iw);
             nu = length(iu);
             ny = length(iy);
+                        
 
-            Ak = vars_rec.K.A;
-            Bk = vars_rec.K.B;
-            Ck = vars_rec.K.C;
-            Dk = vars_rec.K.D;
+            [Ak, Bk, Ck, Dk] = obj.recover_K_from_elim(vars_rec);                        
 
-            S = (vars_rec.diss.S);
+            S = (vars_rec.diss.GS);
             n = ssize(Ak, 1);
 
             Y = vars_rec.diss.GY;
@@ -815,7 +954,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 gain_passive = -getPassiveIndex(-Ppass, 'input');
             else
                 %TODO: advanced validation
-                error('Customized validation is not yet implemented')
+                warning('Customized validation is not yet implemented')
                 gain_inf = 0;
                 gain_passive = 0;
             end
