@@ -76,6 +76,8 @@ classdef alg_plotter
                 sig_curr = getfield(obj.sim, sig);
             elseif strcmp(sig, 'x')
                 sig_curr = [obj.sim.xn; obj.sim.xi];
+            elseif strcmp(sig, 'delay')
+                sig_curr = obj.sim.mode - 1;
             end
                
                 %TODO: plot the regulation signals
@@ -83,10 +85,14 @@ classdef alg_plotter
                 sz_curr = size(sig_curr);
                 sig_flat = reshape(permute(sig_curr, [length(sz_curr), 1:(length(sz_curr)-1)]), T,  []);
     
+                
                 szflat = size(sig_flat, 2);
                 hold on
                 for i =1:szflat
-                    plot(obj.sim.k, sig_flat(:, i))
+                    sig_plot = sig_flat(:, i);
+                    
+
+                    plot(obj.sim.k, sig_plot)
                 end
     
                 xlabel('$k$', 'interpreter', 'latex', 'fontsize', obj.FS)
@@ -96,6 +102,10 @@ classdef alg_plotter
                     set(ax, 'YScale', 'log');
                 end
                 xlim([k(1), k(end)])
+                
+                if strcmp(sig, 'delay')
+                    yticks(1:max(sig_plot));                    
+                end
             
         end
 
@@ -117,6 +127,8 @@ classdef alg_plotter
                 name_mid = '$|| E z - b||_2$';
             elseif strcmp(sig, 'mode')
                 name_mid = 'mode';
+            elseif strcmp(sig, 'delay')
+                name_mid = 'delay';
             elseif strcmp(sig, 'res_w')
                 if obj.EQUALITY
                     % name_mid = '$||\text{Proj}_{\text{null} \ E} (1^{\top} w)||_2$';
