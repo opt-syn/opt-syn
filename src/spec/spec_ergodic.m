@@ -52,6 +52,11 @@ classdef spec_ergodic < spec_interface
                 % [na, nb] = size(obj.Nw);
                 
                 % M0 = [0, -1; -1, 0];
+
+                %this carries the duality gap to the other side
+
+                %sum_i f(z_i) - <u*_i, y_i - y*_i> <= Supply
+
                 M0 = [0, 1; 1, 0];
                 % M0  = zeros(2);
                 Mk = kron(M0, eye(length(obj.izp)));
