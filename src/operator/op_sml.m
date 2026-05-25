@@ -265,7 +265,7 @@ classdef op_sml < op_sml_interface
 
             iqc = create_iqc_identity@op_sml_interface(obj, reps);
 
-            if obj.ERGODIC
+            if ~isnumeric(iqc) && obj.ERGODIC
 
                 Msub = obj.ergodic_supply(reps);
 

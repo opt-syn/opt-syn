@@ -506,9 +506,6 @@ classdef genplant
 
             %PERF_ERGODIC inputs and outputs for ergodic convergence
             %Nw: given consensus matrix
-            % if nargin < 2
-            %     c = 1;
-            % end
 
 
             if ~isempty(Nw)

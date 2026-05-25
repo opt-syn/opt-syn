@@ -180,6 +180,17 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
             obj.nzp = obj.nzp + nnew;            
         end
 
+        function [obj, iwp, izp] = perf_ergodic(obj, Nw)
+            %PERF_ERGODIC inputs and outputs for ergodic convergence
+            %Nw: given consensus matrix
+
+            for i = 1:obj.Nss
+                [obj.P{i}, iwp, izp] = obj.P{i}.perf_ergodic(Nw);
+            end
+            obj.nwp = obj.nwp + length(iwp);
+            obj.nzp = obj.nzp + length(izp);
+        end
+
     end
 
     methods (Access=protected)

@@ -206,7 +206,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
         end
 
         %% main call
-        function [cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
+        function [cons, objective, vars, con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
             %Input:
@@ -331,13 +331,8 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             M_quad = -obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
 
 
-            if isempty(diss.spec.izp)
-                ind_p = 1:(diss.iqc_rob.nz);
-                ind_q = diss.iqc_rob.nz + (1:(diss.iqc_rob.nw));
-            else
-                ind_p = 1:(diss.iqc_rob.nz + diss.spec.izp);
-                ind_q = (diss.iqc_rob.nz + diss.spec.izp) + (1:(diss.iqc_rob.nw + diss.spec.iwp));
-            end
+            [ind_q, ind_p] = obj.get_idx_performance(diss);
+
             
             quad = obj.quad_objective(M_quad, ind_p, ind_q);
                        
@@ -364,6 +359,17 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             sM = ssize(con_M,1);
             cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
             
+        end
+
+        function cons = con_spread(obj, cons, vars)
+            %CON_SPREAD increase numerical conditioning by separating the 
+            %primal and dual blocks
+            %invoke this over multiple subsystems
+            if ~obj.config.syn.reduced_order
+                for i = 1:obj.Nss
+                    cons = obj.con_spread_single(cons, vars.diss.GX{i}, vars.diss.GY{i});
+                end
+            end
         end
 
         %TODO: e2e_target
