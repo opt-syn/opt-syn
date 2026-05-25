@@ -71,15 +71,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             vars_spec = vars.spec{diss.spec.id};
             M_quad = -obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
 
-
-            if isempty(diss.spec.izp)
-                ind_p = 1:(diss.iqc_rob.nz);
-                ind_q = diss.iqc_rob.nz + (1:(diss.iqc_rob.nw));
-            else
-                ind_p = 1:(diss.iqc_rob.nz + diss.spec.izp);
-                ind_q = (diss.iqc_rob.nz + diss.spec.izp) + (1:(diss.iqc_rob.nw + diss.spec.iwp));
-            end
-            
+            [ind_q, ind_p] = obj.get_idx_performance(diss);
 
             quad = obj.quad_objective(M_quad, ind_p, ind_q);
                         
@@ -333,16 +325,13 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             vars_spec = vars.spec{diss.spec.id};
             M_quad = -diss.iqc_rob.M;            
 
-
-            ind_p = 1:(diss.iqc_rob.nz);
-            ind_q = diss.iqc_rob.nz + (1:(diss.iqc_rob.nw));
-            
+            [ind_q, ind_p] = get_idx_performance(obj, diss);
             
             mu_l2 = vars.spec{diss.spec.id}.mu_l2;
 
             quad_rob = obj.quad_objective(M_quad, ind_p, ind_q);
 
-            %adapt the quadratic objecitive for the e2e target
+            %adapt the quadratic objective for the e2e target
             nwp = length(diss.spec.iwp);
             nzp = length(diss.spec.izp);
             

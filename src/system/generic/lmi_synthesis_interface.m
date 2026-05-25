@@ -532,9 +532,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             nz = ssize(sys_cl.D, 1);
             nt = ssize(quad.U, 1);
 
-            outer_curr = [eye(n, n); zeros(nz, n); zeros(n, n); eye(nt, n)];
+            outer_curr = [eye(n, n); zeros(nw, n); zeros(n, n); eye(nt, n)];
 
-            outer_next = [zeros(n, n); zeros(nz, n); eye(n); eye(nt, n)];
+            outer_next = [zeros(n, n); zeros(nw, n); eye(n); eye(nt, n)];
             
             stor_b = outer_curr * G_curr * outer_curr'; 
             stor_b = stor_b + outer_next* G_next * outer_next'; 
@@ -550,17 +550,29 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             nz = ssize(sys_cl.D, 1);
             nt = ssize(quad.U, 1);
 
-            outer_cl_left = [zeros(n), zeros(n, nw);
-                zeros(nw, n), quad.S;
-                eye(n), zeros(n, nw);
-                zeros(nt, n), quad.T'];
-
-            outer_cl_right= [[eye(n), zeros(n, nz);
-                zeros(nz, n), eye(nz)], zeros(n+nz, n+nt)];
-
-
             center_cl = [sys_cl.A, sys_cl.B;
                 sys_cl.C, sys_cl.D];
+
+            outer_cl_right= [[eye(n), zeros(n, nw);
+                zeros(nw, n), eye(nw)], zeros(n+nw, n+nt)];
+
+            outer_cl_left = [zeros(n), zeros(n, nz);
+                zeros(nw, n), quad.S;
+                eye(n), zeros(n, nz);
+                zeros(nt, n), quad.T];
+
+
+
+            % outer_cl_left = [zeros(n), zeros(n, nw);
+            %     zeros(nw, n), quad.S';
+            %     eye(n), zeros(n, nw);
+            %     zeros(nt, n), quad.T'];
+            % 
+            % outer_cl_right= [[eye(n), zeros(n, nz);
+            %     zeros(nz, n), eye(nz)], zeros(n+nz, n+nt)];
+
+
+
 
             dyn_b = outer_cl_left * center_cl * outer_cl_right; 
             dyn_b_he = dyn_b + dyn_b';
@@ -579,12 +591,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             nz = ssize(sys_cl.D, 1);
             nt = ssize(quad.U, 1);
             
-            outer_Q = [zeros(n, nz); eye(nz); zeros(n, nz); zeros(nt, nz)];
+            outer_Q = [zeros(n, nw); eye(nw); zeros(n, nw); zeros(nt, nw)];
 
             
             supp_b = -outer_Q * (quad.Q + obj.config.tol.input_diss*eye(ssize(quad.Q, 1))) * outer_Q';
 
-            outer_U = [zeros(n, nt); zeros(nz, nt); zeros(n, nt); eye(nt, nt)];
+            outer_U = [zeros(n, nt); zeros(nw, nt); zeros(n, nt); eye(nt, nt)];
 
             if nt
                 supp_b = supp_b + outer_U * quad.U * outer_U';
@@ -602,16 +614,16 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
             %use eigenvalue arguments here
 
-            Qq = M_quad(ind_p, ind_p);
-            Sq = M_quad(ind_p, ind_q);
-            Rq = M_quad(ind_q, ind_q);
+            Qq = M_quad(ind_q, ind_q);
+            Sq = M_quad(ind_q, ind_p);
+            Rq = M_quad(ind_p, ind_p);
 
 
             [RqV, RqD] = eig(Rq);
             eRq = diag(RqD);
             ind_pos = find(abs(eRq) > 1e-12);
 
-            Tq = RqV(:, ind_pos);
+            Tq = RqV(:, ind_pos)';
             Uq = diag(1./eRq(ind_pos));
 
             quad = struct('Q', Qq, 'S', Sq, 'U', Uq, 'T', Tq);

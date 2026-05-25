@@ -23,14 +23,17 @@ classdef spec_ergodic < spec_interface
 
 
             sys_erg = sys;
-            iwp = [];
-            izp = [];
-            Nw = [];
+            % iwp = [];
+            % izp = [];
+            % Nw = [];
 
             %TODO: figure out the duality gap relation in context with
             %multi-oracles
-            % [sys_erg, iwp, izp] = sys.P.perf_ergodic(Nw);
+            [P_erg, iwp, izp] = sys.P.perf_ergodic(Nw);
 
+            sys_erg.P = P_erg;
+            % sys_erg.nwp = P_erg.nwp;
+            % sys_erg.nzp = P_erg.nzp;
             
 
             obj@spec_interface(iwp, izp);
@@ -49,9 +52,9 @@ classdef spec_ergodic < spec_interface
                 % [na, nb] = size(obj.Nw);
                 
                 antipass = [0, -1; -1, 0];
-                Mk = kron(antipass, eye(length(izp)));
+                Mk = kron(antipass, eye(length(obj.izp)));
 
-                outer = blkdiag(length(izp), obj.Nw);
+                outer = blkdiag(eye(length(obj.izp)), obj.Nw);
 
                 M = outer' * Mk * outer;
             end

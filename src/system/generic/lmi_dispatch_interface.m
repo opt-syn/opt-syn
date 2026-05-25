@@ -112,6 +112,9 @@ classdef lmi_dispatch_interface < handle
             % Mdiag = blkdiag(iqc_op.M, sp.supply);
         end
 
+
+
+
         function sb = sys_block(obj, plant, Pnew, Pold)
             % SYS_BLOCK system block used in analysis programs
             %
@@ -145,6 +148,18 @@ classdef lmi_dispatch_interface < handle
             sb = Cblock' * (-M) * Cblock;
 
         end
+
+        function [ind_q, ind_p] = get_idx_performance(obj, diss);
+            %GET_IDX_PERFORMANCE 
+        
+            nz = diss.iqc_rob.nz + diss.spec.nzp;
+            nw = diss.iqc_rob.nw + diss.spec.nwp;
+
+            ind_p = 1:nz;
+            ind_q = nz + (1:nw);
+
+        end
+
 
         function verdict = LMILAB(obj)
             %is LMILAB used?
@@ -257,4 +272,5 @@ classdef lmi_dispatch_interface < handle
         
     end
 end
+
 

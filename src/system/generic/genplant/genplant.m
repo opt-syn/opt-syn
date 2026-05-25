@@ -518,8 +518,8 @@ classdef genplant
     
                 [nzp_erg, nwp_erg] = size(Nw);
     
-                iwp = obj.nw + obj.nwp + (1:nwp_erg);
-                izp = obj.nz + obj.nzp + (1:nzp_erg);
+                iwp = obj.nwp + (1:nwp_erg)';
+                izp = obj.nzp + (1:nzp_erg)';
 
 
                 %insert new inputs
@@ -541,10 +541,27 @@ classdef genplant
                 B_new = [B_new_left, B_new_center, B_new_right];
                 D_new = [D_new_left, D_new_center, D_new_right];
 
+                
+                
+                D_old_topleft  = D([obj.index_z, obj.index_zp], [obj.index_w, obj.index_wp]);
+                D_old_topright = D([obj.index_z, obj.index_zp], obj.index_u);
+                D_old_botleft  = D(obj.index_y, [obj.index_w, obj.index_wp]);
+                D_old_botright = D(obj.index_y, obj.index_u);
+                
+                D_old_top = [D_old_topleft, zeros(obj.nz + obj.nzp, nwp_erg), D_old_topright];
+                D_old_bot = [D_old_botleft, zeros(obj.ny, nwp_erg), D_old_botright];
 
 
-                obj.P = ss(obj.A, B_new, C_new, D_new, 1);
+                B_merge = B_new;
+                C_merge = [C([obj.index_z, obj.index_zp], :); C_new; C(obj.index_u, :)];
+                
+                D_merge = [D_old_top; D_new; D_old_bot];
+                
+                               
+                obj.P = ss(obj.A, B_merge, C_merge, D_merge, 1);
 
+                obj.nzp = obj.nzp + nzp_erg;
+                obj.nwp = obj.nwp + nwp_erg;
                 %read new outputs
 
 

@@ -62,6 +62,7 @@ classdef spec_interface
             %SUPPLY quadratic performance specification
             M = [];
         end
+        
 
         function [obj] = set_p(obj, p)
             %SET_P set a parameter when performing bisection
