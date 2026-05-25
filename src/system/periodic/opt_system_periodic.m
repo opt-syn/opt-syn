@@ -1,4 +1,4 @@
-classdef  opt_system_periodic < opt_system_switch
+classdef  opt_system_periodic < opt_system_switched
     %OPT_SYSTEM_PERIODIC interconnection of network and operators
     %
     %a periodic system: repeated and predictable cycle evaluation   
@@ -18,7 +18,7 @@ classdef  opt_system_periodic < opt_system_switch
 
             Nss = max(P.Nss);
             adj = circshift(eye(Nss), -1);
-            obj@opt_system_switch(op, P, K, adj, bind, tracking)
+            obj@opt_system_switched(op, P, K, adj, bind, tracking)
             obj.type = 'periodic';
         end        
 
@@ -28,7 +28,7 @@ classdef  opt_system_periodic < opt_system_switch
             %solution. allow for time-varying exosystems (periodic),
             %represented by a cell
 
-            [Sbeta0, Rbeta0] = get_tracked_opt@opt_system_inteface(obj);
+            [Sbeta0, Rbeta0] = get_tracked_opt@opt_system_switched(obj);
 
             if iscell(Sbeta0)
                 Sbeta = Sbeta0;

@@ -98,7 +98,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             vars_diss = struct;
             vars_diss.GX = GX_cell;
             vars_diss.GY = GY_cell;
-            vars_diss.GS  = S_cell;
+            vars_diss.GS  = GS_cell;
 
         end
 
@@ -148,6 +148,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
                 name = [];
             end
 
+            D_mask = obj.get_D_mask();
             for i = 1:obj.Nss
                 name_curr = [name, '_', num2str(i)];
                 alg_curr = alg_psi{i};
@@ -172,7 +173,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
         end
 
         %% main call
-        function [cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
+        function [cons, objective, vars, con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
             %Input:
@@ -247,13 +248,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             M_quad = -obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
 
 
-            if isempty(diss.spec.izp)
-                ind_p = 1:(diss.iqc_rob.nz);
-                ind_q = diss.iqc_rob.nz + (1:(diss.iqc_rob.nw));
-            else
-                ind_p = 1:(diss.iqc_rob.nz + diss.spec.izp);
-                ind_q = (diss.iqc_rob.nz + diss.spec.izp) + (1:(diss.iqc_rob.nw + diss.spec.iwp));
-            end
+            [ind_p, ind_q] = obj.get_idx_performance(diss);
             
             quad = obj.quad_objective(M_quad, ind_p, ind_q);
                        
