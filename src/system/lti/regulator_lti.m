@@ -10,18 +10,6 @@ classdef regulator_lti < regulator_interface
             obj@regulator_interface(sys)
         end
         
-%% Regulation check and internal models
-
-        %solve the regulator equation for the network (Pi, Gamma, Phi)
-        %   used for verification and internal model control
-        %   find a parameterization of solutions of the regulator equation
-
-        %construct the internal model
-
-        %solve the regulator equation for the controller (Theta) given
-        %(Gamma, Phi): this is verification
-        
-
         function sys = get_model(obj, vars_reg)
             %get_model
             %fetch the internal model (nominal)

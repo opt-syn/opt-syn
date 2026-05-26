@@ -17,6 +17,8 @@ classdef regulator_interface
     %
     % 
     %
+    %Open issues:
+    % multiple solutions to the regulator equations
     
     properties
         sys;
@@ -281,8 +283,7 @@ classdef regulator_interface
 
 
         end
-        % 
-        % 
+
         % 
         function [Bd, Dyd, Dyu] = d_influence(obj, param)
            %D_INFLUENCE how does the system get affected by the
