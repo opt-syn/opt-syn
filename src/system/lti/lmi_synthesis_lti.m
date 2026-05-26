@@ -69,15 +69,14 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             
             %index the quadratic specification
             vars_spec = vars.spec{diss.spec.id};
-            M_quad = -obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
 
-            [ind_q, ind_p] = obj.get_idx_performance(diss);
+            np = diss.iqc_rob.np;
+            nq = diss.iqc_rob.nq;
 
-            quad = obj.quad_objective(M_quad, ind_p, ind_q);
-                        
-            %formulation from ParDynSyn notes (parametric dynamic
-            %synthesis)
+            M_quad_rob = quad_objective_decomp(diss.iqc_rob.M, 1:np, np + (1:nq));
+            [M_quad_spec, objective] = diss.spec.supply_quad(vars_spec);
 
+            quad = obj.merge_quad_neg(M_quad_rob, M_quad_spec);
 
             %the quadratic objective
             supp_b = obj.supply_block(sys_cl, quad);
@@ -88,9 +87,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %the dynamics
             [dyn_b, U_outer, V_outer] = obj.dynamics_block(sys_cl, quad);
             
-            %wrap it all together
-            objective = 0;
-
+            %wrap it all together           
             con_M = stor_b + supp_b + dyn_b;
 
 
@@ -273,77 +270,6 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %ELIMINATION is the matrix elimination lemma used?
             el = obj.config.syn.elimination;               
         end
-
-        function [cons, objective, con_M] = e2e_target(obj, vars, cons, diss)
-            %E2E_TARGET: use a Schur complement to minimize the energy to
-            %energy gain of the transfer function
-            
-
-            %get the variables of the problem
-            G = obj.get_storage(vars.diss, vars.reg);
-            
-            %IMPORTANT!
-            %hook up the internal model
-            %(maybe it should happen at a higher level?)
-            P = obj.reg.connect_model(diss.plant, diss.rho);
-
-            sys_cl = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
-            
-            %index the quadratic specification
-            vars_spec = vars.spec{diss.spec.id};
-            M_quad = -diss.iqc_rob.M;            
-
-            [ind_q, ind_p] = get_idx_performance(obj, diss);
-            
-            mu_l2 = vars.spec{diss.spec.id}.mu_l2;
-
-            quad_rob = obj.quad_objective(M_quad, ind_p, ind_q);
-
-            %adapt the quadratic objective for the e2e target
-            nwp = length(diss.spec.iwp);
-            nzp = length(diss.spec.izp);
-            
-            Q_e2e = -eye(nzp) * mu_l2;
-            T_e2e = eye(nwp);
-            S_e2e = zeros(nzp, nwp);
-            U_e2e = -eye(nzp) * mu_l2;
-
-            Q_new = blkdiag(quad_rob.Q, Q_e2e);
-            T_new = blkdiag(quad_rob.T, T_e2e);
-            S_new = blkdiag(quad_rob.S, S_e2e);
-            U_new = blkdiag(quad_rob.U, U_e2e);
-
-            quad = struct('Q', Q_new, 'T', T_new, 'S', S_new, 'U', U_new);
-
-            
-            %formulation from ParDynSyn notes (parametric dynamic
-            %synthesis)
-
-
-            %the quadratic objective
-            supp_b = obj.supply_block(sys_cl, quad);
-
-            %the storage
-            stor_b = obj.storage_block(sys_cl, quad, G, G);
-
-            %the dynamics
-            dyn_b = obj.dynamics_block(sys_cl, quad);
-            
-            %wrap it all together
-            objective = mu_l2;
-            con_M = stor_b + supp_b + dyn_b;
-
-
-            sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
-
-            %impose sign constraint            
-            cons = obj.con_terminal(G, cons, [], diss.iqc_rob);
-            
-            
-           
-        end
-
 
         function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
             %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear

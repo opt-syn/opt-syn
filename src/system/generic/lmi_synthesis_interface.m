@@ -604,31 +604,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         end
 
-        function [quad] = quad_objective(obj, M_quad, ind_p, ind_q)
-            %QUAD_OBJECTIVE untangle the quadratic objective into a
-            %linearizable formulation
-
-            %R = T' U^-1 T, R >0
-
-
-            
-            %use eigenvalue arguments here
-
-            Qq = M_quad(ind_q, ind_q);
-            Sq = M_quad(ind_q, ind_p);
-            Rq = M_quad(ind_p, ind_p);
-
-
-            [RqV, RqD] = eig(Rq);
-            eRq = diag(RqD);
-            ind_pos = find(abs(eRq) > 1e-12);
-
-            Tq = RqV(:, ind_pos)';
-            Uq = diag(1./eRq(ind_pos));
-
-            quad = struct('Q', Qq, 'S', Sq, 'U', Uq, 'T', Tq);
-        end
-
         function sys_cl = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
             %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
             %transformation
@@ -668,6 +643,18 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
         end
+
+
+        function [cons, objective, con_M] = e2e_target(obj, vars, cons, diss)
+            %E2E_target: energy to energy gain
+
+            %is a special case of quadratic performance
+            [cons, objective, con_M] = obj.quad(vars, cons, diss);
+
+            %maybe keep this separate for analysis?
+            
+        end
+
         %% common specification calls
 
         

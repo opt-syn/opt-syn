@@ -82,10 +82,6 @@ classdef lmi_dispatch_interface < handle
                     ' is not supported for ', spt, 'systems.'];
                 error('msg', 'OPT:spec_unsupported');
             end
-
-
-            
-    
         end
 
         %% helper functions
@@ -112,6 +108,41 @@ classdef lmi_dispatch_interface < handle
             % Mdiag = blkdiag(iqc_op.M, sp.supply);
         end
 
+        function [quad] = quad_objective(obj, M_quad, ind_p, ind_q)
+            %QUAD_OBJECTIVE untangle the quadratic objective into a
+            %linearizable formulation
+
+            %maybe get rid of this, replace by quad_objective_decomp
+
+            %R = T' U^-1 T, R >0            
+            %use eigenvalue arguments here
+
+            Qq = M_quad(ind_q, ind_q);
+            Sq = M_quad(ind_q, ind_p);
+            Rq = M_quad(ind_p, ind_p);
+
+
+            [RqV, RqD] = eig(Rq);
+            eRq = diag(RqD);
+            ind_pos = find(abs(eRq) > 1e-12);
+
+            Tq = RqV(:, ind_pos)';
+            Uq = diag(1./eRq(ind_pos));
+
+            quad = struct('Q', Qq, 'S', Sq, 'U', Uq, 'T', Tq);
+        end
+
+        function quad_m = merge_quad_neg(obj, M_rob, M_spec)
+            %merge together quadratic performance specifications;
+
+
+            Qq= -blkdiag(M_rob.Q, M_spec.Q);
+            Sq= -blkdiag(M_rob.S, M_spec.S);
+            Tq= blkdiag(M_rob.T, M_spec.T);
+            Uq= -blkdiag(M_rob.U, M_spec.U);
+
+            quad_m = struct('Q', Qq, 'S', Sq, 'U', Uq, 'T', Tq);
+        end
 
 
 

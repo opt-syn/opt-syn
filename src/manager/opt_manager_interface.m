@@ -122,13 +122,15 @@ classdef (Abstract) opt_manager_interface < handle
                 %time. Why is this the case?
 
                 
-                % ncons = length(cons.lmim);
-                % sol.blocks = cell(ncons, 1);
-                % sol.eb = zeros(ncons, 1);
-                % for i = 1:length(cons.lmim)
-                %     sol.blocks{i} = -double(double(cons.lmim(i), lmi_out));
-                %     sol.eb(i) = min(eig(sol.blocks{i}));
-                % end
+                if obj.config.recovery.blocks
+                    ncons = length(cons.lmim);
+                    sol.blocks = cell(ncons, 1);
+                    sol.eb = zeros(ncons, 1);
+                    for i = 1:length(cons.lmim)
+                        sol.blocks{i} = -double(double(cons.lmim(i), lmi_out));
+                        sol.eb(i) = min(eig(sol.blocks{i}));
+                    end
+                end
                 
             else %YALMIP
                 opt = sdpsettings('verbose', obj.gen.config.verbose, 'solver', obj.config.gen.solver);

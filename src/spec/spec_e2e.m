@@ -34,6 +34,27 @@ classdef spec_e2e < spec_interface
             M = blkdiag(My, Mu);
         end
 
+       function [quad, objective] = supply_quad(obj, vars_spec)
+           %SUPPLY_QUAD decomposed quadratic performance specification
+
+           if obj.target
+               nwp = length(obj.iwp);
+               nzp = length(obj.izp);
+
+               Q_e2e = -eye(nwp) * vars_spec.mu_l2;
+               T_e2e = eye(nzp);
+               S_e2e = zeros(nzp, nwp);
+               U_e2e = -eye(nzp) * vars_spec.mu_l2;
+
+               quad = struct('Q', Q_e2e, 'T', T_e2e, 'S', S_e2e, 'U', U_e2e);
+
+               objective  = vars_spec.mu_l2;
+
+           else
+               quad = supply_quad@spec_interface(obj, vars_spec);
+           end
+       end
+
        function [obj] = set_p(obj, p)
             %SET_P set a parameter when performing bisection
             %

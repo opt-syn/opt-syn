@@ -8,8 +8,8 @@ classdef opt_config
         %generic options (for both analysis and synthesis)
         
         gen = struct('solver', 'lmilab', ...
-            'verbose', 0, ...
-            'impose_X', 1)       %terminal cost sign constraint
+            'verbose', false, ...
+            'impose_X', true)       %terminal cost sign constraint
 
         %analysis only options        
         ana = struct('normalize_margin', 0.05);

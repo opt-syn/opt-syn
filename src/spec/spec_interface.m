@@ -62,6 +62,25 @@ classdef spec_interface
             %SUPPLY quadratic performance specification
             M = [];
         end
+
+
+
+        function [quad, objective] = supply_quad(obj, vars_spec)
+            %SUPPLY_QUAD decomposed quadratic performance specification
+
+            M = obj.supply(vars_spec);
+            objective = 0;
+            if isempty(M)
+                quad = struct('Q', [], 'S', [], 'U', [], 'T', []);
+            else
+                nzp = length(obj.izp);
+                nwp = length(obj.iwp);
+                quad = quad_objective_decomp(M, 1:nzp, nzp + (1:nwp));
+
+                % quad = struct('Q', Qq, 'S', Sq, 'U', Uq, 'T', Tq);
+            end
+            
+        end
         
 
         function [obj] = set_p(obj, p)
