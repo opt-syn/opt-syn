@@ -11,6 +11,7 @@ classdef op_sim
         f = @(z, param) [];  %function value (or function values in a game)
         id = 0;
         EQUALITY = false;
+        c=1;
     end
     
     methods

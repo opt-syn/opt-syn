@@ -241,16 +241,40 @@ classdef regulator_interface
             %assemble the regulator equation system
 
 
-            [reg_mat_dyn, reg_mat_S, reg_ans] = obj.reg_sys_indiv([]);            
+            [reg_mat_dyn, reg_ans] = obj.reg_sys_indiv();            
 
+            reg_mat_S = obj.reg_sys_next();
             reg_mat = reg_mat_dyn - reg_mat_S;
         end
 
-        function [reg_mat_dyn, reg_mat_S, reg_ans] = reg_sys_indiv(obj, param)
+        function reg_mat_S = reg_sys_next(obj, param)
             %REG_SYS the system to be regulated, forming the regulator
             %equations
-            %the system to be regulated
-            if nargin < 1
+            %the system to be regulated (the next state/sylvester expression)
+
+            if nargin < 2
+
+                param = [];
+            end
+
+            [S, R] = obj.exosystem(param);
+            N = obj.get_consensus();
+            [sN, dN] = size(N);
+
+            reg_mat_RR = S;
+            n = obj.sys.nxn;
+            reg_mat_RL = blkdiag(speye(n), sparse(sN, sN));
+
+            
+            reg_mat_S = kron(reg_mat_RR', reg_mat_RL);
+
+        end
+
+        function [reg_mat_dyn, reg_ans] = reg_sys_indiv(obj, param)
+            %REG_SYS the system to be regulated, forming the regulator
+            %equations
+            %the system to be regulated (dynamics expression)
+            if nargin < 2
 
                 param = [];
             end
@@ -274,18 +298,13 @@ classdef regulator_interface
             reg_ans = reshape(reg_ans_mat, [], 1);
             
             reg_mat_L = [A, B2; C1, D12];
-            reg_mat_RR = S;
-            reg_mat_RL = blkdiag(speye(size(A, 1)), sparse(sN, sN));
-
             reg_mat_dyn = kron(speye(ns), reg_mat_L);
-            reg_mat_S = kron(reg_mat_RR', reg_mat_RL);
-            
 
 
         end
 
         % 
-        function [Bd, Dyd, Dyu] = d_influence(obj, param)
+        function [Bd, Ded, Dyd] = d_influence(obj, param)
            %D_INFLUENCE how does the system get affected by the
            %disturbance?
            %
@@ -300,8 +319,8 @@ classdef regulator_interface
             [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
 
             Bd = [zeros(n, size(Rbeta, 2)), B1*N];
-            Dyd = [ones(sN, 1)*Rbeta, D11*N];
-            Dyu = [ones(sN, 1)*Rbeta, D21*N];
+            Ded = [ones(sN, 1)*Rbeta, D11*N];
+            Dyd = [zeros(sN, 1)*Rbeta, D21*N];
 
         end
         % 
@@ -322,11 +341,14 @@ classdef regulator_interface
 
             [reg_mat, reg_ans] = obj.reg_K_sys_all();
             
-            try                    
-                reg_sol= reg_mat \ reg_ans;
-            catch
+            % try                    
+                reg_sol= lsqminnorm(reg_mat, reg_ans);
+            % catch
+            reg_err = reg_mat * reg_sol - reg_ans;
+            if norm(reg_err) > 1e-8
                 warning('Regulator equation cannot be solved')
             end
+            % end
 
             [Pi, Gam, Phi, Th] = obj.sol_K_reg_all(reg_sol);
 
@@ -355,13 +377,36 @@ classdef regulator_interface
         function [reg_mat, reg_ans] = reg_K_sys_all(obj)
             %assemble the regulator equation system
 
-            [reg_mat_dyn, reg_mat_S, reg_ans] = obj.reg_K_sys_indiv([]);            
+            [reg_mat_dyn, reg_ans] = obj.reg_K_sys_indiv();            
 
+            reg_mat_S = obj.reg_K_sys_next();
             reg_mat = reg_mat_dyn - reg_mat_S;
         end
 
-        function [reg_mat_dyn, reg_mat_S, reg_ans] = reg_K_sys_indiv(obj, param)
+        function [reg_mat_S] = reg_K_sys_next(obj, param)
             %control regulator equation checks
+            %next expression
+            if nargin < 2
+                param = [];
+            end
+
+            [S, R] = obj.exosystem(param);
+
+            N = obj.get_consensus();
+            [sN, dN] = size(N);
+
+            reg_mat_RR = S;
+            nxi = obj.sys.nxi;
+            reg_mat_RL = [speye(nxi); sparse(sN, nxi)];
+
+
+            reg_mat_S = kron(reg_mat_RR', reg_mat_RL);
+
+        end
+
+        function [reg_mat_dyn, reg_ans] = reg_K_sys_indiv(obj, param)
+            %control regulator equation checks
+            %dynamics expression
             %this excludes nullspace (for now)
 
             if nargin < 2
@@ -380,20 +425,16 @@ classdef regulator_interface
             Gam = obj.get_Gam(param);
             Phi= obj.get_Phi(param);
 
-            reg_ans = reshape([-Bk*Gam; Phi - Dk*Gam], [], 1);
+            reg_ans = reshape([-Bk*Phi; Gam - Dk*Phi], [], 1);
 
             
             %system for 
             nxi = size(Ak, 1);
             ns = obj.ns;
             reg_mat_L = [Ak; Ck];
-            reg_mat_RR = S;
-            reg_mat_RL = [speye(nxi); sparse(sN, nxi)];
-
 
             reg_mat_dyn = kron(speye(ns), reg_mat_L);            
 
-            reg_mat_S = kron(reg_mat_RR', reg_mat_RL);
 
 
             % Gam0 = obj.sys.get_Gam_basis(param);
@@ -418,7 +459,7 @@ classdef regulator_interface
                 param =[];
             end
 
-            Pi  = obj.get_Gam(param);
+            Pi  = obj.get_Pi(param);
             Gam = obj.get_Gam(param);
             Phi = obj.get_Phi(param);
 
