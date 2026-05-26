@@ -42,6 +42,25 @@ classdef spec_ergodic < spec_interface
             
         end
 
+        function [vars, cons] = create_vars(obj, cons, name, config)
+            %CREATE_VARS form the variables for the problem                        
+            if nargin < 3
+                name = [];
+            end
+
+            if config.LMILAB
+                erg_pass = lmim(['erg_pass', name], 1, 1);            
+            else
+                erg_pass = sdpvar(1, 1);            
+            end
+
+            vars = struct('erg_pass', erg_pass);
+            % if ~obj.target
+                % cons = append_lmi(cons, obj.gain - mu_l2, config.LMILAB);
+            % end
+        end
+    
+
         function M = supply(obj, vars_spec)
             %SUPPLY generate the supply rate
             %

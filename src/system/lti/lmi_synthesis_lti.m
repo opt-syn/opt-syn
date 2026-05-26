@@ -103,71 +103,47 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                     U_cl = {U_cl0, []};
                     V_cl = {[], V_cl0};
                 end
+                
+                ntri = length(U_cl);                    
 
-                % if true
-                    %triangular elimination
+                U_elim = cell(ntri, 1);
+                V_elim = cell(ntri, 1);
+                con_M_null = cell(ntri, 1);
+                V_accum = [];
+                null_accum = cell(ntri, 1);
+                for i = 1:ntri
 
-                    %from Lemma 4 of https://arxiv.org/pdf/1305.1746
-
-                    ntri = length(U_cl);                    
-
-                    U_elim = cell(ntri, 1);
-                    V_elim = cell(ntri, 1);
-                    con_M_null = cell(ntri, 1);
-                    V_accum = [];
-                    null_accum = cell(ntri, 1);
-                    for i = 1:ntri
-
-                        if ~isempty(U_cl{i})
-                            U_elim{i} = U_cl{i} * U_outer;
-                        end
-                        if ~isempty(V_cl{i})
-                            V_elim{i} = V_cl{i} * V_outer;
-                        end
-                        V_accum = [V_accum; V_cl{i}];
-                        
-                        %get the nullspace
-                        if isempty(V_accum)
-                            elim_curr = U_elim{i}; %used in elimination
-                            null_store = eye(ssize(con_M, 1));       %stored for recovery
-                        else
-                            elim_curr = [V_accum * V_outer; U_elim{i}];
-                            null_store = null(V_accum * V_outer, 'rational');
-                        end
-                        null_accum{i} = null_store;
-
-                        null_curr = null(elim_curr, 'rational');
-
-
-                        %form and enforce the constraint
-                        con_M_curr = null_curr'* con_M * null_curr;
-
-                        sU = ssize(con_M_curr, 1);
-                        con_M_null{i} = con_M_curr;
-                        
-                        cons = append_lmi(cons, con_M_curr - obj.config.tol.M*eye(sU), obj.LMILAB); 
-
+                    if ~isempty(U_cl{i})
+                        U_elim{i} = U_cl{i} * U_outer;
                     end
-                % else
-                %     %standard elimination
-                %     V_elim = V_cl * V_outer;
-                %     U_elim = U_cl * U_outer;
-                % 
-                % 
-                %     U_null = null(U_elim, 'rational');
-                %     V_null = null(V_elim, 'rational');
-                % 
-                %     con_M_U = U_null' * con_M * U_null;
-                %     con_M_V = V_null' * con_M * V_null;
-                % 
-                %     sMU = ssize(con_M_U,1);
-                %     sMV = ssize(con_M_V,1);
-                % 
-                %     cons = append_lmi(cons, con_M_U - obj.config.tol.M*eye(sMU), obj.LMILAB); 
-                %     cons = append_lmi(cons, con_M_V - obj.config.tol.M*eye(sMV), obj.LMILAB); 
+                    if ~isempty(V_cl{i})
+                        V_elim{i} = V_cl{i} * V_outer;
+                    end
+                    V_accum = [V_accum; V_cl{i}];
+                    
+                    %get the nullspace
+                    if isempty(V_accum)
+                        elim_curr = U_elim{i}; %used in elimination
+                        null_store = eye(ssize(con_M, 1));       %stored for recovery
+                    else
+                        elim_curr = [V_accum * V_outer; U_elim{i}];
+                        null_store = null(V_accum * V_outer, 'rational');
+                    end
+                    null_accum{i} = null_store;
 
-                % end
-                %store the data
+                    null_curr = null(elim_curr, 'rational');
+
+
+                    %form and enforce the constraint
+                    con_M_curr = null_curr'* con_M * null_curr;
+
+                    sU = ssize(con_M_curr, 1);
+                    con_M_null{i} = con_M_curr;
+                    
+                    cons = append_lmi(cons, con_M_curr - obj.config.tol.M*eye(sU), obj.LMILAB); 
+
+                end
+
                 con_M_0 = con_M;
 
                 con_M = struct;
@@ -177,14 +153,6 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                 con_M.V = V_elim;
                 con_M.null = null_accum;
                 con_M.Mnull = con_M_null;
-                % con_M.U = U_elim;
-                % con_M.V = V_elim;
-
-                %subsidiaries for error checking
-                % con_M.U_null = U_null;
-                % con_M.V_null = U_null;
-                % con_M.M_U = con_M_U;
-                % con_M.M_V = con_M_V;
             else
                 sM = ssize(con_M,1);
                 cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
