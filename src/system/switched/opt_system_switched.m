@@ -76,6 +76,7 @@ classdef  opt_system_switched < opt_system_interface
         end
 
         function Scurr = get_P(obj, param)
+            %GET_P get the plant
             Pcurr = obj.P{param.mode};
             Scurr = Pcurr.ss();
         end
@@ -197,27 +198,7 @@ classdef  opt_system_switched < opt_system_interface
 
                       
 
-        end 
-
-        %% regulator equation
-        %TODO: implement regulator equation
-
-        function regulator = form_internal_model(obj)
-            %FORM_INTERNAL_MODEL create the internal model by solving the regulator
-            %equation. Inputs are the system (P, bind, tracking, op)
-            %
-            %op is important for which oracles are equaltiy constarints and
-            %which are inequality constraints
-            regulator = [];
-        end
-
-        function [regulator_closed] = check_regulator(obj)
-            %CHECK_REGULATOR does the closed-loop system obey the regulator
-            %equation? (direct interconnection)
-            regulator_closed = [];
-        end
-        
-        %TODO: implement LMIs
+        end              
 
     end
 end
