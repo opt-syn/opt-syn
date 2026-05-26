@@ -327,15 +327,14 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             sys_cl = obj.system_closed_loop(P, vslack.diss, vslack.reg, vars.K{diss.ind_curr});
             
             %index the quadratic specification
-            vars_spec = vars.spec{diss.spec.id};
-            M_quad = -obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
+            np = diss.iqc_rob.np;
+            nq = diss.iqc_rob.nq;
 
+            M_quad_rob = quad_objective_decomp(diss.iqc_rob.M, 1:np, np + (1:nq));
+            [M_quad_spec, objective] = diss.spec.supply_quad(vars_spec);
 
-            [ind_q, ind_p] = obj.get_idx_performance(diss);
-
-            
-            quad = obj.quad_objective(M_quad, ind_p, ind_q);
-                       
+            quad = obj.merge_quad_neg(M_quad_rob, M_quad_spec);
+           
             %formulation from ParDynSyn notes (parametric dynamic
             %synthesis)
 
