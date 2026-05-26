@@ -35,6 +35,8 @@ classdef  opt_system < opt_system_interface
             %nxi: number of states in controller
             dimn = length(obj.K.A);
         end
+
+
         
 
         %% getters
@@ -51,6 +53,8 @@ classdef  opt_system < opt_system_interface
                 Kcurr = obj.K;
             end
         end
+
+        
 
         %% build the plant
         function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, rho)

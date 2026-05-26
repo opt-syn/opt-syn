@@ -181,6 +181,11 @@ classdef  opt_system_interface
         
         %must define get_P, get_K
 
+        function [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj, param)
+            %get state space matrices at the current parameter values
+            [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P.ss_zy_wu();
+        end
+
         function sys_alg = get_alg(obj, param)
             %close the loop of the algorithm
             if nargin < 2
@@ -262,7 +267,7 @@ classdef  opt_system_interface
         end
 
 
-        function [Sbeta, Rbeta] = get_tracked_opt(obj)
+        function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
             %GET_TRACKED_OPT get the tracked position of the optimal
             %solution
             if isempty(obj.tracking)

@@ -51,64 +51,423 @@ classdef regulator_interface
             NS = length(obj.S);
         end
 
+        function sys = fetch_model(obj, S, Phi, Gam)
+            %FETCH_MODEL: fetch an internal model from data
+            [nu, ns] = ssize(Gam);
+            ny = ssize(Phi, 1);
+
+
+            Am = S;
+            Bm = [zeros(ns, ny), eye(ns), zeros(ns, nu)];
+            Cm = [-Gam; Phi];
+            Dm = [zeros(nu, ny), zeros(nu, ns), eye(nu);
+                eye(ny), zeros(ny, ns), zeros(ny, nu)];
+
+            n = struct;
+            n.nw = ny;
+            n.nz = nu;
+            n.nu = nu + ns;
+            n.ny = ny;
+            n.nzp = 0;
+            n.nwp = 0;
+
+            if isnumeric(Phi) && isnumeric(Gam) && isnumeric(S)
+                P = ss(Am, Bm, Cm, Dm, 1);
+            else
+                P = sdpss(Am, Bm, Cm, Dm);
+            end
+
+            sys = genplant(P, n);
+        end
+
+        
+        %% solve the regulator equations (open loop)
+        function obj = form_internal_model(obj)
+            %FORM_INTERNAL_MODEL create the internal model by solving the regulator
+            %equation. Inputs are the system (P, bind, tracking, op)
+            %
+            %op is important for which oracles are equaltiy constarints and
+            %which are inequality constraints
+
+            %TODO: break this up into common routines
+ 
+                
+            [S, R] = obj.exosystem();
+            obj.S = S;
+            obj.R = R;
+
+            [reg_mat, reg_ans] = obj.reg_sys();
+            
+            try                    
+                reg_sol= reg_mat \ reg_ans;
+            catch
+                warning('Regulator equation cannot be solved')
+            end
+
+                
+            [Pi0, Gam0, Phi0] = obj.sol_reg_all(reg_sol);
+            [Pi_basis, Gam_basis, Phi_basis] = obj.null_reg(reg_mat);
+
+            
+            obj.Pi = Pi0;
+            obj.Gam = Gam0;
+            obj.Phi = Phi0;
+            obj.Pi_basis = Pi_basis;
+            obj.Gam_basis = Gam_basis;
+            obj.Phi_basis = Phi_basis;       
+        end
+
+        function [reg_mat, reg_ans] = reg_sys_all(obj)
+            %assemble the regulator equation system
+
+            [reg_mat, reg_ans] = obj.reg_sys_indiv([]);            
+
+        end
+
+        function [Pi, Gam, Phi] = sol_reg_all(obj, reg_sol)
+            %recover the solution to the regulator equation system
+
+            ns = obj.ns;
+            reg_sol = reshape(reg_sol, [], ns);
+            [Pi, Gam, Phi] = obj.sol_reg_index(reg_sol);
+        end
+
+        % individual regulator terms
+        function N = get_consensus(obj)
+            %get the consensus matrix
+            Npre = obj.sys.get_consensus(obj.sys.op, obj.sys.bind);
+            c = obj.sys.op{1}.c; %coordinate lifts: change this later?
+            N = kron(Npre, eye(c));
+        end
+
+        function[Pi, Gam, Phi] = sol_reg_index(obj, reg_sol, param)
+            %index the solution to the regulator equation
+            if nargin < 3
+                param =[];
+            end
+
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
+            [Bd, Ded, Dyd] = obj.d_influence(param);
+            n = length(A);
+            Pi = reg_sol(1:n, :);
+            Gam = reg_sol(n+1:end, :);        
+            Phi = Dyd + D22*Gam + C2*Pi;
+        end
+
+        function [Pi_basis, Gam_basis, Phi_basis] = null_reg(obj, reg_mat)
+            %NULL_REG nullspace of the regulator equations: freedom to move
+
+            if nargin < 3
+                param =[];
+            end
+            
+            null_basis = null(reg_mat, 'rational');
+            nnull = size(null_basis, 2);
+
+            if nnull                
+                [Pi_basis, Gam_basis, Phi_basis] = null_reg_index(null_basis, param);
+            else
+                Pi_basis = [];
+                Gam_basis = [];
+                Phi_basis = [];
+            end
+                
+
+        end
+
+        function [Pi_basis, Gam_basis, Phi_basis] = null_reg_index(obj, null_basis, param);
+            %NULL_REG_TYPE a separate nullspace indexer for each type of
+            %subsystem
+
+            if nargin < 3
+                param =[];
+            end
+
+            ns = obj.ns;
+            n = obj.sys.n;
+
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
+
+            Pi_basis = reshape(null_basis(1:n*ns, :), n , ns);
+            Gam_basis = reshape(null_basis(ns*n+1:end, :), n, []);
+            Phi_basis = D22*Gam_basis + C2*Pi_basis;   
+
+        end
+
+        function [S, R] = exosystem(obj, param)
+
+            %get the exosystem at each mode/internal model
+            N = obj.get_consensus();
+            [sN, dN] = size(N);
+    
+
+            if nargin == 2
+                [Sbeta, Rbeta] = obj.sys.get_tracked_opt(param);                   
+    
+                S = blkdiag(Sbeta, eye(dN));
+                R = blkdiag(Rbeta, eye(dN));
+            else
+                [Sbeta, Rbeta] = obj.sys.get_tracked_opt();
+                if iscell(Sbeta)
+                    S = cell(size(Sbeta));
+                    R = cell(size(Rbeta));
+                    for i = numel(S)
+                        S{i} = blkdiag(Sbeta{i}, eye(dN));
+                        R{i} = blkdiag(Rbeta{i}, eye(dN));
+                    end
+                else
+                    S = blkdiag(Sbeta, eye(dN));
+                    R = blkdiag(Rbeta, eye(dN));
+                end
+            end
+        end
+
+        function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
+
+            %get the part of the exosystem corresponding to tracking the
+            %optimal solution at each mode/internal model            
+
+            if nargin == 2
+                [Sbeta, Rbeta] = obj.sys.get_tracked_opt(param);                   
+                   
+            else
+                [Sbeta, Rbeta] = obj.sys.get_tracked_opt();
+            end
+        end
+
+        function [reg_mat, reg_ans] = reg_sys(obj)
+            %assemble the regulator equation system
+
+
+            [reg_mat_dyn, reg_mat_S, reg_ans] = obj.reg_sys_indiv([]);            
+
+            reg_mat = reg_mat_dyn - reg_mat_S;
+        end
+
+        function [reg_mat_dyn, reg_mat_S, reg_ans] = reg_sys_indiv(obj, param)
+            %REG_SYS the system to be regulated, forming the regulator
+            %equations
+            %the system to be regulated
+            if nargin < 1
+
+                param = [];
+            end
+
+            
+            
+
+            [Sbeta, Rbeta] = obj.get_tracked_opt(param);
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
+
+            [Bd, Ded, Dyd] = obj.d_influence(param);
+            [S, R] = obj.exosystem(param);
+            ns = length(S);
+
+            N = obj.get_consensus();
+            [sN, dN] = size(N);
+            %form the system
+    
+            reg_ans_mat = -[Bd; Ded];
+    
+            reg_ans = reshape(reg_ans_mat, [], 1);
+            
+            reg_mat_L = [A, B2; C1, D12];
+            reg_mat_RR = S;
+            reg_mat_RL = blkdiag(speye(size(A, 1)), sparse(sN, sN));
+
+            reg_mat_dyn = kron(speye(ns), reg_mat_L);
+            reg_mat_S = kron(reg_mat_RR', reg_mat_RL);
+            
+
+
+        end
+        % 
+        % 
+        % 
+        function [Bd, Dyd, Dyu] = d_influence(obj, param)
+           %D_INFLUENCE how does the system get affected by the
+           %disturbance?
+           %
+           %
+           %used for the internal model computation
+
+            N = obj.get_consensus();
+            [sN, dN] = size(N);
+            n = obj.sys.P.nx;
+
+            [Sbeta, Rbeta] = obj.get_tracked_opt(param);
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
+
+            Bd = [zeros(n, size(Rbeta, 2)), B1*N];
+            Dyd = [ones(sN, 1)*Rbeta, D11*N];
+            Dyu = [ones(sN, 1)*Rbeta, D21*N];
+
+        end
+        % 
+        % function rg = reg_ans(obj)
+        %     [Bd, Dyd, Dyu] = obj.d_influence();
+        % 
+        %     rg = -[Bd; Dyd];
+        % end
+
+        %% check the regulator equations (closed-loop)
+
+        function [reg_cl] = check_regulator(obj)
+            %check the regulator equation for a specific system
+            
+            N = obj.get_consensus();
+
+            
+
+            [reg_mat, reg_ans] = obj.reg_K_sys_all();
+            
+            try                    
+                reg_sol= reg_mat \ reg_ans;
+            catch
+                warning('Regulator equation cannot be solved')
+            end
+
+            [Pi, Gam, Phi, Th] = obj.sol_K_reg_all(reg_sol);
+
+            reg_cl = struct;
+            reg_cl.S = obj.S;
+            reg_cl.R = obj.R;
+            reg_cl.Pi = Pi;
+            reg_cl.Gam = Gam;
+            reg_cl.Phi = Phi;
+            reg_cl.Th = Th;
+
+        end
+
+        function Pi_out = get_Pi(obj, param)
+            Pi_out = obj.Pi;
+        end
+
+        function Gam_out = get_Gam(obj, param)            
+            Gam_out = obj.Gam;
+        end
+
+        function Phi_out = get_Phi(obj, param)
+            Phi_out = obj.Phi;
+        end
+
+        function [reg_mat, reg_ans] = reg_K_sys_all(obj)
+            %assemble the regulator equation system
+
+            [reg_mat_dyn, reg_mat_S, reg_ans] = obj.reg_K_sys_indiv([]);            
+
+            reg_mat = reg_mat_dyn - reg_mat_S;
+        end
+
+        function [reg_mat_dyn, reg_mat_S, reg_ans] = reg_K_sys_indiv(obj, param)
+            %control regulator equation checks
+            %this excludes nullspace (for now)
+
+            if nargin < 2
+                param = [];
+            end
+            Kcurr = obj.sys.get_K(param);
+
+            [Ak, Bk, Ck, Dk] = ssdata(Kcurr);
+            [S, R] = obj.exosystem(param);
+
+            N = obj.get_consensus();
+            [sN, dN] = size(N);
+    
+
+            %answer to regulator equation
+            Gam = obj.get_Gam(param);
+            Phi= obj.get_Phi(param);
+
+            reg_ans = reshape([-Bk*Gam; Phi - Dk*Gam], [], 1);
+
+            
+            %system for 
+            nxi = size(Ak, 1);
+            ns = obj.ns;
+            reg_mat_L = [Ak; Ck];
+            reg_mat_RR = S;
+            reg_mat_RL = [speye(nxi); sparse(sN, nxi)];
+
+
+            reg_mat_dyn = kron(speye(ns), reg_mat_L);            
+
+            reg_mat_S = kron(reg_mat_RR', reg_mat_RL);
+
+
+            % Gam0 = obj.sys.get_Gam_basis(param);
+            % Phi0= obj.sys.get_Phi_basis(param);            
+            % for i = 1:length(Gam0)
+            
+            % [Bk * Gam0]
+
+        end
+
+        function [Pi0, Gam0, Phi0, Th0] = sol_K_reg_all(obj, reg_sol)
+            %recover the solution to the regulator equation system
+
+            ns = obj.ns;
+            reg_sol = reshape(reg_sol, [], ns);
+            [Pi0, Gam0, Phi0, Th0] = obj.sol_K_reg_index(reg_sol, []);
+        end
+
+        function[Pi, Gam, Phi, Th] = sol_K_reg_index(obj, reg_sol, param)
+            %index the solution to the regulator equation
+            if nargin < 3
+                param =[];
+            end
+
+            Pi  = obj.get_Gam(param);
+            Gam = obj.get_Gam(param);
+            Phi = obj.get_Phi(param);
+
+            ns = obj.ns;
+            nxi = obj.sys.nxi;
+           
+
+            %todo: finish this, including nullspace entries
+            Th = reshape(reg_sol(1:(ns*nxi)), nxi, ns);
+            
+            
+        end
+
+
+
+        %% incorporate into optimization
         function vars_reg = create_vars(obj)
+            %CREATE_VARS: create variables that parameterize the nullspace
             vars_reg.Pi = obj.Pi;
             vars_reg.Gam = obj.Gam;
             vars_reg.Phi = obj.Phi;
 
             
 
-            nbasis = size(obj.Gam_basis, 2);
-            % if nbasis> 0 
-            if false
-
-
-                %search over solutions
+            
+            if isempty(obj.Gam_basis)==0
+                nbasis = size(obj.Gam_basis, 3);                
                 eta = lmim('reg_param', nbasis, 1, 'full');
 
-                %TODO: parameterization of regulator equation solutions
-                %needs to be debugged (e.g. Laplacian example)
-                Pi_free_vec = obj.Pi_basis*eta;
-                Gam_free_vec = obj.Gam_basis*eta;
-                Phi_free_vec = obj.Phi_basis*eta;
 
-                Pi_free = [];
-                Gam_free = [];
-                Phi_free = [];
+                for i = 1:nbasis
+                    eta_curr = lmim_index(eta, i, 1);
 
-                d = size(vars_reg.Pi, 2);
-                n = size(vars_reg.Pi, 1);
-                nu = size(vars_reg.Gam, 1);
-                ny = size(vars_reg.Phi, 1);
-
-                %parameterization of the nullspace
-                for i = 1:d
-                    Pi_curr = lmim_index(Pi_free_vec, (i-1)*n + (1:n), 1);
-                    Gam_curr = lmim_index(Gam_free_vec, (i-1)*nu + (1:nu), 1);
-                    Phi_curr = lmim_index(Phi_free_vec, (i-1)*ny + (1:ny), 1);
-
-                    Pi_free = [Pi_free, Pi_curr];
-                    Gam_free = [Gam_free, Gam_curr];
-                    Phi_free = [Phi_free, Phi_curr];
+                    vars_reg.Pi = vars_reg.Pi + obj.Pi_basis(:, :, i) * eta_curr;
+                    vars_reg.Gam = vars_reg.Gam + obj.Gam_basis(:, :, i) * eta_curr;
+                    vars_reg.Phi = vars_reg.Phi + obj.Phi_basis(:, :, i) * eta_curr;
                 end
 
-                %add the free nullspace part to the system
-
-                vars_reg.Pi = vars_reg.Pi + Pi_free;
-                vars_reg.Gam = vars_reg.Gam + Gam_free;
-                vars_reg.Phi = vars_reg.Phi + Phi_free;
-                vars_reg.reg_param = eta;
+                vars_reg.eta = eta;
             else
-                vars_reg.reg_param= [];
+                vars_reg.eta= [];
             end
         end
         
     end
 
     methods(Abstract)
-        form_internal_model(obj)
-        check_regulator(obj)
-        get_model(obj)
+        % form_internal_model(obj)
+        % check_regulator(obj)
+        % get_model(obj)
     end
 end
 
