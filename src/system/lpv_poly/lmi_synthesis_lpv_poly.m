@@ -91,18 +91,24 @@ classdef lmi_synthesis_lpv_poly< lmi_synthesis_switched
             %GET_VARS_INVOLVED get variables involved in the current corner
 
             vars_inv_diss= struct;
-            if isscalar(parl) && (parl==0)
+
+            if obj.config.switched.common
                 vars_inv_diss.GX = vars.diss.JX;
                 vars_inv_diss.GY = vars.diss.JY;
                 vars_inv_diss.GS  = vars.diss.JS;
             else
 
-
-
-                vars_inv_diss.GX = obj.reg.weight_sum(vars.diss.GX, parl);
-                vars_inv_diss.GY = obj.reg.weight_sum(vars.diss.GY, parl);
-                vars_inv_diss.GS  = vars.diss.GS{1};
+                if isscalar(parl) && (parl==0)
+                    vars_inv_diss.GX = vars.diss.JX;
+                    vars_inv_diss.GY = vars.diss.JY;
+                    vars_inv_diss.GS  = vars.diss.JS;
+                else
+                    vars_inv_diss.GX = obj.reg.weight_sum(vars.diss.GX, parl);
+                    vars_inv_diss.GY = obj.reg.weight_sum(vars.diss.GY, parl);
+                    vars_inv_diss.GS  = vars.diss.GS{1};
+                end
             end
+            
 
         end
 
@@ -182,7 +188,7 @@ classdef lmi_synthesis_lpv_poly< lmi_synthesis_switched
                 for i = 1:obj.Npair
                     %extract the information of subsystem i
                     diss_curr = diss;
-                    diss_curr.plant = diss.plant{src(i)};
+                    diss_curr.plant = diss.plant{i};
                     
                     diss_curr.ind_par_curr = i;
                     diss_curr.par_curr = obj.sys.pair(i, 1:Np);
@@ -218,30 +224,30 @@ classdef lmi_synthesis_lpv_poly< lmi_synthesis_switched
 
 
             %get the variables of the problem
-            vslack = obj.get_vars_involved(vars, 0);            
-            vcurr = obj.get_vars_involved(vars, diss.par_curr);
-            vnext = obj.get_vars_involved(vars, diss.par_next);
+            vslack = obj.get_vars_involved_diss(vars, 0);            
+            vcurr = obj.get_vars_involved_diss(vars, diss.par_curr);
+            vnext = obj.get_vars_involved_diss(vars, diss.par_next);
             
 
-            Gslack = obj.get_storage(vslack.diss, vslack.reg);
-            Gcurr = obj.get_storage(vcurr.diss, vcurr.reg);
-            Gnext = obj.get_storage(vnext.diss, vnext.reg);
+            Gslack = obj.get_storage(vslack, []);
+            Gcurr = obj.get_storage(vcurr, []);
+            Gnext = obj.get_storage(vnext, []);
 
 
 
             %IMPORTANT!
             %hook up the internal model
             %(maybe it should happen at a higher level?)
-            P = obj.reg.connect_model(diss.plant, diss.ind_curr, diss.rho);            
+            P = obj.reg.connect_model(diss.plant, diss.ind_par, diss.rho);            
 
-            sys_cl = obj.system_closed_loop(P, vslack.diss, vslack.reg, vars.K{diss.ind_curr});
+            sys_cl = obj.system_closed_loop(P, vslack, [], vars.K{diss.ind_par});
             
             %index the quadratic specification
             np = diss.iqc_rob.np;
             nq = diss.iqc_rob.nq;
 
             M_quad_rob = quad_objective_decomp(diss.iqc_rob.M, 1:np, np + (1:nq));
-            [M_quad_spec, objective] = diss.spec.supply_quad(vars_spec);
+            [M_quad_spec, objective] = diss.spec.supply_quad(vars.spec);
 
             quad = obj.merge_quad_neg(M_quad_rob, M_quad_spec);
            

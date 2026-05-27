@@ -82,7 +82,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
                 for i = 1:obj.Nss
                     GX_cell{i} = GX;
                     GY_cell{i} = GY;
-                    S_cell{i} = eye(n);
+                    GS_cell{i} = eye(n);
                 end
 
             else

@@ -233,7 +233,7 @@ classdef regulator_lpv_poly< regulator_interface
 
         end
 
-        function plant_model = connect_model(obj, plant, rho)
+        function plant_model = connect_model(obj, plant, ind_par, rho)
             %connect the model (nominal regulator equation)
 
             if nargin < 3
@@ -251,12 +251,12 @@ classdef regulator_lpv_poly< regulator_interface
 
             %form the model interconnection
             I = eye(obj.Nss);
-            for i = 1:obj.Nss
-                parl = I(i, :);
+            % for i = 1:obj.Nss
+                parl = I(ind_par, :);
                 model = obj.get_model(parl);
                 model_rho = rhotrafo(model, rho);
-                plant_model{i} = lft(plant, model_rho);
-            end
+                plant_model = lft(plant, model_rho);
+            % end
 
         end
         

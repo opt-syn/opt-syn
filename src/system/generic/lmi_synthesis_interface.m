@@ -142,7 +142,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
             n = ssize(alg_psi.A, 1);
-            ns = ssize(obj.reg.S, 1);
+            ns = obj.reg.ns;
 
 
 
@@ -252,7 +252,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             end
 
             n = ssize(alg_psi.A, 1);
-            ns = ssize(obj.reg.S, 1);
+            ns = obj.reg.ns;
             
             if obj.config.syn.reduced_order
                 %TODO: not yet implemented
@@ -430,7 +430,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             s = length(obj.sys.bind);
             
             ny = obj.sys.P.ny;            
-            ns = size(obj.reg.R, 2);
+            ns = obj.reg.ns;
 
 
             c = obj.sys.op{1}.c;

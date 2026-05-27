@@ -16,12 +16,17 @@ classdef regulator_lpv_poly< regulator_interface
     %solve, but does add conservatism in optimization algorithm design)
 
 
-    
+    properties
+        S_corner = [];
+    end
     methods
         function obj = regulator_lpv_poly(sys)
             %REGULATOR_LTI Construct an instance of this class
             %   Detailed explanation goes here
-            obj@regulator_interface(sys)            
+            obj@regulator_interface(sys)    
+
+
+            obj.S_corner = obj.weight_sum_corners(obj.S);
         end
 
         % end
@@ -61,11 +66,11 @@ classdef regulator_lpv_poly< regulator_interface
         end
 
 
-        function P_corn = weight_sum_corners(obj)
+        function P_corn = weight_sum_corners(obj, P)
             %weighted sum over each corner of the polytope
             P_corn = cell(obj.Ncorner, 1);
             for i = 1:obj.Ncorner   
-                P_corn{i} = obj.weight_sum(P, obj.par(i, :));
+                P_corn{i} = obj.weight_sum(P, obj.sys.par(i, :));
             end
         end       
 
@@ -242,7 +247,7 @@ classdef regulator_lpv_poly< regulator_interface
         end
 
         %% acquire the models
-        function sys = get_model(obj, parl, vars_reg)
+        function sys = get_model(obj, parl)
             %get_model
             %fetch the internal model (nominal)
             %
@@ -258,17 +263,18 @@ classdef regulator_lpv_poly< regulator_interface
 
             %TODO: allow for parameterizations based on the variables
             
-            if nargin < 2
-                Phi = obj.Phi;
-                Gam = obj.Gam;
-            else
-                Phi = vars_reg.Phi;
-                Gam = vars_reg.Gam;
-            end
+            % if nargin < 3
+            ind = find(parl);
+                Phi = obj.Phi{ind};
+                Gam = obj.Gam{ind};
+            % else
+                % Phi = vars_reg.Phi;
+                % Gam = vars_reg.Gam;
+            % end
 
-            S = obj.weight_sum(obj.S, parl);
-            Phi = obj.weight_sum(Phi, parl);
-            Gam = obj.weight_sum(Gam, parl);
+            S = obj.S_corner{ind};
+            % Phi = obj.weight_sum(Phi, parl);
+            % Gam = obj.weight_sum(Gam, parl);
 
             sys =obj.fetch_model(S, Phi, Gam);
             % sys = cell(obj.Nss, 1);
@@ -281,30 +287,30 @@ classdef regulator_lpv_poly< regulator_interface
 
 
 
-        function plant_model = connect_model(obj, plant, rho)
+        function plant_model = connect_model(obj, plant, ind, rho)
             %connect the model (nominal regulator equation)
 
             if nargin < 3
                 rho = 1;
             end
 
-            if ~iscell(plant)
-                plant0 = plant;
-                plant = cell(obj.Nss, 1);
-                for i = 1:obj.Nss
-                    plant{i} = plant0;
-                end
-            end
+            % if ~iscell(plant)
+            %     plant0 = plant;
+            %     plant = cell(obj.Nss, 1);
+            %     for i = 1:obj.Nss
+            %         plant{i} = plant0;
+            %     end
+            % end
 
 
             %form the model interconnection
             I = eye(obj.Nss);
-            for i = 1:obj.Nss
-                parl = I(i, :);
+            % for i = 1:obj.Nss
+                parl = I(ind, :);
                 model = obj.get_model(parl);
                 model_rho = rhotrafo(model, rho);
-                plant_model{i} = lft(plant, model_rho);
-            end
+                plant_model = lft(plant, model_rho);
+            % end
 
         end
         

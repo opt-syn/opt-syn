@@ -192,8 +192,13 @@ classdef  opt_system_interface
                 param = [];
             end
             Pcurr = obj.get_P(param);
-            Kcurr = obj.get_K(param);
-            sys_alg = lft(Pcurr, Kcurr);
+            if isempty(obj.K)
+                sys_alg = Pcurr;
+            else
+
+                Kcurr = obj.get_K(param);
+                sys_alg = lft(Pcurr, Kcurr);
+            end
         end
 
         function op_out = get_op(obj, i)
