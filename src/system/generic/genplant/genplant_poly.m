@@ -84,6 +84,10 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
             P_out= ss2tf(obj.ss());
         end
 
+        function [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj, ind)
+
+            [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P{ind}.ss_zy_wu();
+        end
         %% overloads
 
         function b_out = blkdiag(obj, b2)

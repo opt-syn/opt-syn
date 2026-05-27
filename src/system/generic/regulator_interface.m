@@ -98,17 +98,20 @@ classdef regulator_interface
             obj.S = S;
             obj.R = R;
 
-            [reg_mat, reg_ans] = obj.reg_sys();
+            [reg_mat, reg_ans] = obj.reg_sys_all();
             
-            try                    
-                reg_sol= reg_mat \ reg_ans;
-            catch
+            
+            reg_sol= lsqminnorm(reg_mat, reg_ans);
+            % catch
+            reg_err = reg_mat * reg_sol - reg_ans;
+            if norm(reg_err) > 1e-8
+            
                 warning('Regulator equation cannot be solved')
             end
 
                 
             [Pi0, Gam0, Phi0] = obj.sol_reg_all(reg_sol);
-            [Pi_basis, Gam_basis, Phi_basis] = obj.null_reg(reg_mat);
+            [Pi_basis, Gam_basis, Phi_basis] = obj.null_reg_all(reg_mat);
 
             
             obj.Pi = Pi0;
@@ -119,13 +122,7 @@ classdef regulator_interface
             obj.Phi_basis = Phi_basis;       
         end
 
-        function [reg_mat, reg_ans] = reg_sys_all(obj)
-            %assemble the regulator equation system
-
-            [reg_mat, reg_ans] = obj.reg_sys_indiv([]);            
-
-        end
-
+        
         function [Pi, Gam, Phi] = sol_reg_all(obj, reg_sol)
             %recover the solution to the regulator equation system
 
@@ -156,18 +153,18 @@ classdef regulator_interface
             Phi = Dyd + D22*Gam + C2*Pi;
         end
 
-        function [Pi_basis, Gam_basis, Phi_basis] = null_reg(obj, reg_mat)
-            %NULL_REG nullspace of the regulator equations: freedom to move
-
-            if nargin < 3
-                param =[];
-            end
+        function [Pi_basis, Gam_basis, Phi_basis] = null_reg_all(obj, reg_mat)
+            %NULL_REG nullspace of the regulator equations: freedom to move            
             
             null_basis = null(reg_mat, 'rational');
             nnull = size(null_basis, 2);
 
-            if nnull                
-                [Pi_basis, Gam_basis, Phi_basis] = null_reg_index(null_basis, param);
+            if nnull      
+                ns = obj.ns;
+                n = obj.sys.n;
+
+                null_basis = reshape(null_basis, [], ns, nnull);
+                [Pi_basis, Gam_basis, Phi_basis] = null_reg(null_basis);
             else
                 Pi_basis = [];
                 Gam_basis = [];
@@ -176,17 +173,23 @@ classdef regulator_interface
                 
 
         end
+        
+        function [Pi_basis, Gam_basis, Phi_basis] = null_reg(obj, null_basis);
+            %NULL_REG a nullspace indexer (altogether)
 
-        function [Pi_basis, Gam_basis, Phi_basis] = null_reg_index(obj, null_basis, param);
-            %NULL_REG_TYPE a separate nullspace indexer for each type of
-            %subsystem
 
             if nargin < 3
                 param =[];
             end
 
+            [Pi_basis, Gam_basis, Phi_basis] = null_reg_index(obj, squeeze(null_basis), param);
+        end
+
+        function [Pi_basis, Gam_basis, Phi_basis] = null_reg_index(obj, null_basis, param);
+            %NULL_REG_INDEX a  nullspace indexer for each subsystem
+                       
             ns = obj.ns;
-            n = obj.sys.n;
+            n = obj.sys.nxn;
 
             [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
 
@@ -196,54 +199,14 @@ classdef regulator_interface
 
         end
 
-        function [S, R] = exosystem(obj, param)
-
-            %get the exosystem at each mode/internal model
-            N = obj.get_consensus();
-            [sN, dN] = size(N);
-    
-
-            if nargin == 2
-                [Sbeta, Rbeta] = obj.sys.get_tracked_opt(param);                   
-    
-                S = blkdiag(Sbeta, eye(dN));
-                R = blkdiag(Rbeta, eye(dN));
-            else
-                [Sbeta, Rbeta] = obj.sys.get_tracked_opt();
-                if iscell(Sbeta)
-                    S = cell(size(Sbeta));
-                    R = cell(size(Rbeta));
-                    for i = numel(S)
-                        S{i} = blkdiag(Sbeta{i}, eye(dN));
-                        R{i} = blkdiag(Rbeta{i}, eye(dN));
-                    end
-                else
-                    S = blkdiag(Sbeta, eye(dN));
-                    R = blkdiag(Rbeta, eye(dN));
-                end
-            end
-        end
-
-        function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
-
-            %get the part of the exosystem corresponding to tracking the
-            %optimal solution at each mode/internal model            
-
-            if nargin == 2
-                [Sbeta, Rbeta] = obj.sys.get_tracked_opt(param);                   
-                   
-            else
-                [Sbeta, Rbeta] = obj.sys.get_tracked_opt();
-            end
-        end
-
-        function [reg_mat, reg_ans] = reg_sys(obj)
+        function [reg_mat, reg_ans] = reg_sys_all(obj)
             %assemble the regulator equation system
 
 
             [reg_mat_dyn, reg_ans] = obj.reg_sys_indiv();            
 
             reg_mat_S = obj.reg_sys_next();
+            
             reg_mat = reg_mat_dyn - reg_mat_S;
         end
 
@@ -329,6 +292,48 @@ classdef regulator_interface
         % 
         %     rg = -[Bd; Dyd];
         % end
+
+        %% fetch the exosystem
+        function [S, R] = exosystem(obj, param)
+
+            %get the exosystem at each mode/internal model
+            N = obj.get_consensus();
+            [sN, dN] = size(N);
+
+
+            if nargin == 2
+                [Sbeta, Rbeta] = obj.sys.get_tracked_opt(param);                   
+
+                S = blkdiag(Sbeta, eye(dN));
+                R = blkdiag(Rbeta, eye(dN));
+            else
+                [Sbeta, Rbeta] = obj.sys.get_tracked_opt();
+                if iscell(Sbeta)
+                    S = cell(size(Sbeta));
+                    R = cell(size(Rbeta));
+                    for i = 1:numel(S)
+                        S{i} = blkdiag(Sbeta{i}, eye(dN));
+                        R{i} = blkdiag(Rbeta{i}, eye(dN));
+                    end
+                else
+                    S = blkdiag(Sbeta, eye(dN));
+                    R = blkdiag(Rbeta, eye(dN));
+                end
+            end
+        end
+
+        function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
+
+            %get the part of the exosystem corresponding to tracking the
+            %optimal solution at each mode/internal model            
+
+            if nargin == 2
+                [Sbeta, Rbeta] = obj.sys.get_tracked_opt(param);                   
+
+            else
+                [Sbeta, Rbeta] = obj.sys.get_tracked_opt();
+            end
+        end
 
         %% check the regulator equations (closed-loop)
 

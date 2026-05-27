@@ -21,7 +21,7 @@ classdef regulator_switched < regulator_interface
         end
 
         function ns = Nss(obj)
-            %NSS: number of states
+            %NSS: number of subsystems
             ns = obj.sys.Nss;
         end
 
