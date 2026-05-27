@@ -1,125 +1,35 @@
-classdef lmi_synthesis_switched < lmi_synthesis_interface
+classdef lmi_synthesis_lpv_poly< lmi_synthesis_switched
     %LMI_SYNTHESIS_SWITCHED synthesis LMIs for algorithmic interconnections
-    %involving switched linear networks and controllers
-    %
-    %
-    %examples include time-varying delays or coordinate updates
-    %
+    %involving periodic linear networks and controllers
     %
     % w(k) \in F(z(k))
     %
-    % [x(k+1)] = [A(mode(k))    Bw(mode(k))    Bwp(mode(k))   Bu(mode(k))  ][x(k)]   state transition
-    % [z(k)  ] = [Cz(mode(k))   Dzw(mode(k))   Dzwp(mode(k))  Dzu(mode(k)) ][w(k)]   output to oracle
-    % [zp(k) ] = [Czp(mode(k))  Dzpw(mode(k))  Dzpwp(mode(k)) Dzpu(mode(k))][wp(k)]  output to performance
-    % [y(k) ]  = [Cy(mode(k))   Dyw(mode(k))   Dywp(mode(k))  Dyu(mode(k)) ][u(k)]   output to controller
-    %   
-    %
-    %   Implemented
-    %       stability
-    %       e2e
-    %       quad
-    %       p2p
-    %
-    %   TODO:
-    %       h2      
-    %       e2p
-    %       
+    % [x(k+1)] = [A(th(k))    Bw(th(k))    Bwp(th(k))   Bu(th(k))  ][x(k)]   state transition
+    % [z(k)  ] = [Cz(th(k))   Dzw(th(k))   Dzwp(th(k))  Dzu(th(k)) ][w(k)]   output to oracle
+    % [zp(k) ] = [Czp(th(k))  Dzpw(th(k))  Dzpwp(th(k)) Dzpu(th(k))][wp(k)]  output to performance
+    % [y(k) ]  = [Cy(th(k))   Dyw(th(k))   Dywp(th(k))  Dyu(th(k)) ][u(k)]   output to controller
     %    
+    %
+    
 
     methods
-        function obj = lmi_synthesis_switched(sys,config)
+        function obj = lmi_synthesis_lpv_poly(sys,config)
             %LMI_SYNTHESIS_SWITCHED undefined
             %   undefined
-            obj@lmi_synthesis_interface(sys, config);
+            obj@lmi_synthesis_switched(sys, config);
         end
 
         %% definition of variables and helpers
 
-        function ns = Nss(obj)
+        function ns = Npair(obj)
             %NSS: Number of subsystems            
-            ns = obj.sys.Nss;
+            ns = obj.reg.Npair;
         end
 
-        function cm = common(obj)
-            cm = obj.config.switched.common;
+        function ns = Ncorner(obj)
+            %NSS: Number of subsystems            
+            ns = obj.reg.Ncorner;
         end
-
-        function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
-            %create_vars_storage create variables for the dissipation
-            %constraints. One for each subsystem
-            %
-            %
-            %a cell of G(s) functions
-            if nargin < 4
-                name = [];
-            end
-
-
-            
-
-            vars_diss = struct;
-
-
-            
-            % GX_cell = cell(obj.Nss, 1);
-            % GY_cell = cell(obj.Nss, 1);
-            % S_cell = cell(obj.Nss, 1);
-
-            
-
-            if obj.common
-                %common storage function among all subsystems
-                [GX, GY, cons] = obj.define_storage_G(cons, alg_psi{1}, '');
-                vars_diss.JX = GX;
-                vars_diss.JY = GY;
-                
-                n = ssize(GX, 1);
-
-                JS = eye(n);
-    
-                vars_diss.JS = JS;
-
-                for i = 1:obj.Nss
-                    GX_cell{i} = GX;
-                    GY_cell{i} = GY;
-                    S_cell{i} = eye(n);
-                end
-
-            else
-
-                %common (slack) function
-                [JX, JY, cons] = obj.define_storage_G(cons, alg_psi{1}, '_slack');
-                vars_diss.JX = JX;
-                vars_diss.JY = JY;
-
-                n = ssize(JX, 1);
-                vars_diss.JS = lmim(['JS_slack', name], n, n, 'full');                
-
-                
-                %per-mode storage functions, coupled by the mode-independent slack
-                GX_cell = cell(obj.Nss, 1);
-                GY_cell = cell(obj.Nss, 1);
-                GS_cell = cell(obj.Nss, 1);
-                              
-
-
-                for i = 1:obj.Nss
-                    [GX, GY, cons] = obj.define_storage_G(cons, alg_psi{i}, num2str(i));
-                    n = ssize(GX, 1);
-                    GX_cell{i} = GX;
-                    GY_cell{i} = GY;
-                    GS_cell{i} = lmim(['GS_slack', name], n, n, 'full');
-                end
-
-            end
-
-            
-            vars_diss.GX = GX_cell;
-            vars_diss.GY = GY_cell;
-            vars_diss.GS  = GS_cell;
-
-        end
-
 
         function [vars_K, cons] = create_vars_controller(obj, cons, alg_psi, name)
             %CREATE_VARS_CONTROLLER create the nonlinearly-transformed
@@ -127,14 +37,14 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
             %get the dimensions
 
-            vars_K = cell(obj.Nss, 1);
+            vars_K = cell(obj.Ncorner, 1);
 
             if nargin < 4
                 name = [];
             end
 
             D_mask = obj.get_D_mask();            
-            for i = 1:obj.Nss
+            for i = 1:obj.Ncorner
                 name_curr = [name, '_', num2str(i)];
                 alg_curr = alg_psi{i};
                 D_mask_curr = D_mask{i};
@@ -157,8 +67,8 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
             if ~iscell(D_mask_0)
                 D_mask_0_orig = D_mask_0;
-                D_mask_0 = cell(obj.Nss, 1);
-                for i = 1:obj.Nss
+                D_mask_0 = cell(obj.Ncorner, 1);
+                for i = 1:obj.Ncorner
                     if isempty(D_mask_0_orig)
                         D_mask_0{i} = D_mask_default;
                     else
@@ -170,36 +80,44 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
             %WARNING: do a better conversion on the coordinate lifts
             c = obj.sys.op{1}.c;
-            D_mask = cell(obj.Nss, 1);
-            for i = 1:obj.Nss
+            D_mask = cell(obj.Ncorner, 1);
+            for i = 1:obj.Ncorner
                 D_mask{i} = kron(D_mask_0{i}, ones(c));
             end
 
         end
 
-        function vars_inv= get_vars_involved(obj, vars, ind)
-            %GET_VARS_INVOLVED get variables involved in the current mode
+        function vars_inv_diss= get_vars_involved_diss(obj, vars, parl)
+            %GET_VARS_INVOLVED get variables involved in the current corner
 
-            vars_inv= struct;
-            if ind==0
-                vars_inv.diss.GX = vars.diss.JX;
-                vars_inv.diss.GY = vars.diss.JY;
-                vars_inv.diss.GS  = vars.diss.JS;
+            vars_inv_diss= struct;
+            if isscalar(parl) && (parl==0)
+                vars_inv_diss.GX = vars.diss.JX;
+                vars_inv_diss.GY = vars.diss.JY;
+                vars_inv_diss.GS  = vars.diss.JS;
             else
-                vars_inv.diss.GX = vars.diss.GX{ind};
-                vars_inv.diss.GY = vars.diss.GY{ind};
-                vars_inv.diss.GS  = vars.diss.GS{ind};
+
+
+
+                vars_inv_diss.GX = obj.reg.weight_sum(vars.diss.GX, parl);
+                vars_inv_diss.GY = obj.reg.weight_sum(vars.diss.GY, parl);
+                vars_inv_diss.GS  = vars.diss.GS{1};
             end
 
+        end
 
-
+        function vars_inv_reg = get_vars_invovled_reg(obj, vars, ind)
+            %get regulator equation variables (or just solutions to the
+            %regulator equations)
+            vars_inv_reg = struct;
             if ind 
-                vars_inv.reg.Pi = vars.reg.Pi{ind};
-                vars_inv.reg.Gam = vars.reg.Gam{ind};
-                vars_inv.reg.Phi = vars.reg.Phi{ind};
+                vars_inv_reg.Pi = vars.reg.Pi{ind};
+                vars_inv_reg.Gam = vars.reg.Gam{ind};
+                vars_inv_reg.Phi = vars.reg.Phi{ind};
             else
-                vars_inv.reg =[];
+                vars_inv_reg =[];
             end
+
 
         end
 
@@ -229,22 +147,19 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
             %Upper-levels: iterate over the systems
             objective = 0;
-
-            ds = obj.sys.get_discount();
+            
             if obj.common
 
-                for i = 1:obj.Nss
+                for i = 1:obj.Ncorner
                     %extract the information of subsystem i
                     diss_curr = diss;
-                    diss_curr.plant = diss.plant{i};
-                    diss_curr.ind_curr = (i);
-                    diss_curr.ind_next = (i);
+                    diss_curr.plant = diss.plant{i};                    
+                    diss_curr.ind_par = i;
+                    diss_curr.par_next = [];
+                    diss_curr.par_curr = [];
 
-                    if ds(i)
-                        diss_curr.rho = diss.rho;
-                    else
-                        diss_curr.rho = 1;
-                    end
+                    diss_curr.rho = diss.rho;
+
 
 
                     [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
@@ -260,24 +175,19 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
                 end 
 
             else
-                [src, dst] = obj.sys.get_arcs();
-                Narcs = length(src);
+                % [src, dst] = obj.sys.get_arcs();
+                % Narcs = length(src);
 
-                for i = 1:Narcs
+                Np = obj.Nss;
+                for i = 1:obj.Npair
                     %extract the information of subsystem i
                     diss_curr = diss;
                     diss_curr.plant = diss.plant{src(i)};
-                    diss_curr.ind_curr = src(i);
-                    diss_curr.ind_next = dst(i);
-
                     
-    
-                    if ds(src(i))
-                        diss_curr.rho = diss.rho;
-                    else
-                        diss_curr.rho = 1;
-                    end
-    
+                    diss_curr.ind_par_curr = i;
+                    diss_curr.par_curr = obj.sys.pair(i, 1:Np);
+                    diss_curr.par_next= obj.sys.pair(i, Np + (1:Np));
+
                     [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
     
     
@@ -291,8 +201,10 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
                 end 
 
                 %impose sign constraint    
-                for i = 1:obj.Nss
-                    vcurr = obj.get_vars_involved(vars, i);
+                for i = 1:obj.Ncorner
+                    vcurr =struct;
+                    vcurr.store = obj.get_vars_involved_diss(vars, obj.sys.par(i, :));
+                    vcurr.reg = obj.get_vars_involved_reg(vars, obj.sys.par(i, :));
                     Gcurr = obj.get_storage(vcurr.diss, vcurr.reg);
                     cons = obj.con_terminal(Gcurr, cons, [], diss.iqc_rob);
                 end
@@ -307,8 +219,8 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
             %get the variables of the problem
             vslack = obj.get_vars_involved(vars, 0);            
-            vcurr = obj.get_vars_involved(vars, diss.ind_curr);
-            vnext = obj.get_vars_involved(vars, diss.ind_next);
+            vcurr = obj.get_vars_involved(vars, diss.par_curr);
+            vnext = obj.get_vars_involved(vars, diss.par_next);
             
 
             Gslack = obj.get_storage(vslack.diss, vslack.reg);

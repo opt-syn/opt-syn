@@ -1,29 +1,23 @@
 classdef regulator_lpv_poly< regulator_interface
     %REGULATOR_LPV_POLY Regulator for Polytopic LPV systems
-    %
-    %
-    %This is a constant solution to the regulator equation
-    %the regulator equation conditions can get bilinear and tricky if 
-    %parameter-dependent solutions are allowed. Mode-dependent solutions
-    %are fine for switched systems though.
-
-    %[A(th),  Bd(th),  Bu(th) ][Pi]  = [Pi S(th_next)]
-    %[Ce(th), Ded(th), Deu(th)][I]   = [0]
-    %[Cy(th), Dyd(th), Dyu(th)][Gam] = [Phi(th)]
-    %
-    %
-    %[Pi, Gam] are independent of theta (makes the formulation easier to
-    %solve, but does add conservatism in optimization algorithm design)
-
+    
 
     
     methods
         function obj = regulator_lpv_poly(sys)
             %REGULATOR_LTI Construct an instance of this class
             %   Detailed explanation goes here
-            obj@regulator_interface(sys)            
-        end
+            obj@regulator_interface(sys)
 
+            % [obj.par, obj.pair] = obj.form_polytope();
+        end
+        % 
+        % function [par, pair] = form_polytope(obj, sys)
+        %     % Initialize parameters for the polytope representation
+        %     par = obj.sys.par; % Placeholder for parameters
+        %     pair = obj.sys.pair; % Placeholder for pairs
+        % 
+        % 
         % end
 
         
@@ -65,12 +59,13 @@ classdef regulator_lpv_poly< regulator_interface
             %weighted sum over each corner of the polytope
             P_corn = cell(obj.Ncorner, 1);
             for i = 1:obj.Ncorner   
-                P_corn{i} = obj.weight_sum(P, obj.par(i, :));
+                P_corn = obj.weight_sum(P, obj.par(i, :));
             end
         end       
 
 
         %% routines to compute the internal model
+
         function [reg_mat_all, reg_ans_all] = reg_sys_all(obj)
             %assemble the regulator equation system
 
@@ -95,7 +90,11 @@ classdef regulator_lpv_poly< regulator_interface
                 reg_mat_S_next = obj.reg_sys_next(par_next);
 
 
+                %take kroneckers to find the per-subsystem contributions
                 reg_ans = reg_ans_curr;
+                reg_mat_dyn = kron(par_curr, reg_mat_dyn_curr);
+                reg_mat_S = kron(par_next, reg_mat_S_next);
+                
 
                 %append the answer
                 reg_ans_all = [reg_ans_all; reg_ans];
@@ -103,10 +102,7 @@ classdef regulator_lpv_poly< regulator_interface
                 %load in to the matrix               
                 % reg_mat_expand = ;
                 
-                %parameter-independent regulator equation solution
-                reg_mat_all = [reg_mat_all; reg_mat_dyn_curr - reg_mat_S_next];
-
-                % reg_mat_all = [reg_mat_all; reg_mat_dyn - reg_mat_S];
+                reg_mat_all = [reg_mat_all; reg_mat_dyn - reg_mat_S];
             end
 
 
@@ -160,60 +156,18 @@ classdef regulator_lpv_poly< regulator_interface
 
             count = 0;
             I = eye(obj.Nss);
-            Pi = cell(obj.Ncorner, 1);
-            Gam = cell(obj.Ncorner, 1);
-            Phi = cell(obj.Ncorner, 1);
+            Pi = cell(obj.Nss, 1);
+            Gam = cell(obj.Nss, 1);
+            Phi = cell(obj.Nss, 1);
+            for i = 1:obj.Nss
 
-            % Pi0 = reg_sol(1:nxn, :);
-            % Gam0 = reg_sol(nxn + (1:nu), :);
-            reg_sol_curr = reg_sol(count + (1:(nxn + nu)), :);
-            for i = 1:obj.Ncorner                                              
-                % parl = I(i, :);
-                % count = count + nxn + nu;
-                [Pi{i}, Gam{i}, Phi{i}] = obj.sol_reg_index(reg_sol_curr, obj.sys.par(i, :));
+                reg_sol_curr = reg_sol(count + (1:(nxn + nu)), :);
+                parl = I(i, :);
+
+                count = count + nxn + nu;
+                [Pi{i}, Gam{i}, Phi{i}] = obj.sol_reg_index(reg_sol_curr, parl);
             end
-
-        end
-
-        function [reg_mat_all, reg_ans_all] = reg_K_sys_all(obj)
-            %assemble the regulator equation system
-
-            reg_mat_all = [];
-            reg_ans_all = [];
-
             
-            for i = 1:obj.Npair
-    
-                %form the transition constraint
-                pair_curr = obj.sys.pair(i, :);
-                par_curr = pair_curr(:, 1:obj.Nss);
-                par_next = pair_curr(:, (obj.Nss+1):end);
-
-
-
-                reg_mat_S = [];
-                reg_mat_dyn = [];
-                reg_ans = 0;
-
-                [reg_mat_dyn_curr, reg_ans_curr] = obj.reg_K_sys_indiv(par_curr);    
-                reg_mat_S_next = obj.reg_sys_next(par_next);
-
-
-                reg_ans = reg_ans_curr;
-
-                %append the answer
-                reg_ans_all = [reg_ans_all; reg_ans];
-
-                %load in to the matrix               
-                % reg_mat_expand = ;
-                
-                %parameter-independent regulator equation solution
-                reg_mat_all = [reg_mat_all; reg_mat_dyn_curr - reg_mat_S_next];
-
-                % reg_mat_all = [reg_mat_all; reg_mat_dyn - reg_mat_S];
-            end
-
-
         end
 
         function [Pi_basis, Gam_basis, Phi_basis] = null_reg(obj, null_basis);
@@ -278,8 +232,6 @@ classdef regulator_lpv_poly< regulator_interface
             
 
         end
-
-
 
         function plant_model = connect_model(obj, plant, rho)
             %connect the model (nominal regulator equation)

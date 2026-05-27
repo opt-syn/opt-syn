@@ -100,6 +100,31 @@ classdef  opt_system_lpv_poly < opt_system_interface
             dimn = obj.P.nx;
         end
 
+        function dimn = nzp(obj)
+            %nzp: number of performance outputs
+            dimn = obj.P.nzp;
+        end
+        function dimn = nz(obj)
+            %nzp: number of nonlinearoutputs
+            dimn = obj.P.nz;
+        end
+        function dimn = nw(obj)
+            %nzp: number of performance outputs
+            dimn = obj.P.nw;
+        end
+        function dimn = nwp(obj)
+            %nzp: number of performance outputs
+            dimn = obj.P.nwp;
+        end
+        function dimn = ny(obj)
+            %nzp: number of performance outputs
+            dimn = obj.P.nw;
+        end
+        function dimn = nu(obj)
+            %nzp: number of performance outputs
+            dimn = obj.P.nu;
+        end
+
         function dimn = nxi(obj)
             %nxi: number of states in controller
             dimn = length(obj.K{1}.A);
@@ -108,8 +133,23 @@ classdef  opt_system_lpv_poly < opt_system_interface
         %% get component functions
         function Scurr = get_P(obj, param)
             %GET_P get the plant at the current parameters
-            Pcurr = obj.weight_sum(P, param.par);            
-            Scurr = Pcurr.ss();
+            % Pcurr = obj.weight_sum(obj.P, param.par);            
+
+            Ak = zeros(obj.nxn, obj.nxn);
+            Bk = zeros(obj.nxn, obj.nw + obj.nwp + obj.nu);
+            Ck = zeros(obj.nz + obj.nzp + obj.ny, obj.nxn);
+            Dk = zeros(obj.nz + obj.nzp + obj.ny, obj.nw + obj.nwp + obj.nu);
+            for i = 1:obj.Nss   
+
+                [Ac, Bc, Cc, Dc] = ssdata(obj.P{i});
+                Ak = Ak + Ac * param.par(i);
+                Bk = Bk + Bc * param.par(i);
+                Ck = Ck + Cc * param.par(i);
+                Dk = Dk + Dc * param.par(i);
+                
+            end
+            Scurr = ss(Ak, Bk, Ck, Dk, 1);
+            % Scurr = Pcurr.ss();
         end
 
         function [A, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj, param)
@@ -148,11 +188,11 @@ classdef  opt_system_lpv_poly < opt_system_interface
 
             %solve using linear programming
 
-            Aeq = [ones(Ncorn, 1); obj.par'];
+            Aeq = [ones(1, Ncorn); obj.par'];
             beq = [1, par_desired];
 
             Aineq = -eye(Ncorn);
-            bineq = zeros(0, Ncorn);
+            bineq = zeros(Ncorn, 1);
 
 
             
