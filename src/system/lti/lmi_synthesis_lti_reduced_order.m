@@ -44,7 +44,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
         function Pb = Pibar(obj, vars_reg)
             %similarity transformation for optimization over Pi
             %used in regulator (reduced-order)            
-            n = length(obj.sys.A);
+            n = length(obj.sys.P.A);
             np = ssize(vars_reg.Pi, 1);
             ns = ssize(vars_reg.Pi, 2);
             
