@@ -52,7 +52,15 @@ classdef (Abstract) opt_manager_interface < handle
             
             tp = sys.get_type();
             clname = ['lmi_', obj.task, '_', tp];
+
+            
+            %hard-code override for reduced-order synthesis
+            if strcmp(clname, 'lmi_synthesis_lti') && obj.config.syn.reduced_order
+                clname = 'lmi_synthesis_lti_reduced_order';
+            end
+
             lmi_hand = str2func(clname);
+            
 
             lmi_handler = lmi_hand(sys, obj.config);
 

@@ -20,8 +20,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
     %       p2p
     %       h2      
     %       e2p
-    %       
-    %
+
     
     methods
         function obj = lmi_synthesis_lti(sys, config)
@@ -48,10 +47,11 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             
             [GX, GY, cons] = obj.define_storage_G(cons, alg_psi, name);
             n = ssize(GX, 1);
-            vars_diss= struct('GX', GX, 'GY', GY, 'GS', eye(n));
+
+            GS = eye(n);
+            vars_diss= struct('GX', GX, 'GY', GY, 'GS', GS);
 
         end
-
 
         %% Quadratic performance (infinite horizon)        
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
@@ -63,7 +63,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %IMPORTANT!
             %hook up the internal model
             %(maybe it should happen at a higher level?)
-            P = obj.reg.connect_model(diss.plant, diss.rho);
+            P = obj.connect_model(diss.plant, diss.rho);
 
             [sys_cl, U_cl, V_cl] = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
             
@@ -159,6 +159,40 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
         end        
 
 
+        %% reduced-order control
+
+        function ys = get_GY_dim(obj, n, ns)
+            %dimension of the GY term
+            if obj.reduced_order
+                ys = n;
+            else
+                ys = n +ns;
+            end
+        end
+
+
+
+       function G = get_storage(obj, vars_diss, vars_reg)
+            %GET_STORAGE get the storage function matrix G
+
+            % 
+            %
+            GX = vars_diss.GX;
+            GY = vars_diss.GY;
+            % if obj.reduced_order
+                % GS = obj.Pibar(vars_reg);
+            % else
+                GS = vars_diss.GS;
+            % end                       
+        
+            G = [GY, GS; GS', GX];                
+            
+       end
+
+        
+
+        %% recovery
+
         function vars_new = augment_vars(obj, vars, diss, con_M)
             %AUGMENT_VARS add new variables/terms for recovery (useful for 
             %matrix elimination)                      
@@ -181,8 +215,6 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
                 if obj.config.syn.elimination_type == 2
                     Knull = vars_rec.elim.null;
-
-                    
 
                     M_accum = M0;
 
@@ -214,9 +246,6 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
                     %now index the block
 
-                    
-                    
-                    
                     Ak = K_block(nu + (1:nxi), 1:nxi);
                     Bk = K_block(nu + (1:nxi), (nxi+1):end);
 
@@ -314,7 +343,6 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                     nxi = ssize(GY, 1);
 
                     %closed loop without [Ak, Bk; Ck1, Dk1]
-
 
                     Acal = [A*GY ,  A ;
                         zeros(nxi), GX*A];

@@ -81,9 +81,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         function [vars, cons] = create_vars(obj, vars, cons, alg_psi, specs)
             %CREATE_VARS create the variables for the problem
 
-            [vars.diss, cons] = obj.create_vars_storage(cons, alg_psi);
-            [vars.spec, cons] = obj.create_vars_spec(cons, specs);
             [vars.reg]  = obj.create_vars_regulator();
+            [vars.diss, cons] = obj.create_vars_storage(cons, alg_psi);
+            [vars.spec, cons] = obj.create_vars_spec(cons, specs);            
             [vars.K, cons]    = obj.create_vars_controller(cons, alg_psi);
         end
 
@@ -119,59 +119,71 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %systems with more outputs than oracles can have freedom in the            
             %regulator equations (such as optimization problems with known 
             % Laplacian matrices)
-
             
-
-            
-            
-            
-            vars_reg = obj.reg.create_vars();
-            
+            vars_reg = obj.reg.create_vars();            
 
         end
 
 
-        function [GX, GY, cons] = define_storage_G(obj, cons, alg_psi,  name)
+        function [GX, GY, cons] = define_storage_G(obj, cons, alg_psi, name)
             %DEFINE_STORAGE_G storage function for a specific subsystem
 
             %without terminal cost:
-            %
-            %[GX, I;
-            %[I, GY] is PD
-            %
-
-
             n = ssize(alg_psi.A, 1);
             ns = obj.reg.ns;
 
-
-
             nX = n + ns;
-
+           
+            [GX, cons] = define_storage_GX(obj, cons, alg_psi, name);
+            [GY, cons] = define_storage_GY(obj, cons, alg_psi, name);
             
-            if obj.config.syn.reduced_order
-                %TODO: not yet implemented
-                nY = n;
-            else
-                nY = n + ns;
-            end
+        end
 
+
+        function [GX, cons] = define_storage_GX(obj, cons, alg_psi, name);
+             %DEFINE_STORAGE_GX primal storage function for a specific subsystem
+             n = ssize(alg_psi.A, 1);
+             ns = obj.reg.ns;
+
+             nX = n + ns;
              GX = lmim(['GX', name], nX, nX, 'sym');
-            
           
+
+             if obj.config.tol.G_max < Inf                   
+                cons = append_lmi(cons, obj.config.tol.GX_max*eye(nX)  - GX, obj.config.LMILAB);                            
+                cons = append_lmi(cons, -obj.config.tol.G_min*eye(nX)  + GX, obj.config.LMILAB);                            
+            end 
+        end
+
+        function [GY, cons] = define_storage_GY(obj, cons, alg_psi, name);
+            %DEFINE_STORAGE_GY dual storage function for a specific subsystem            
+            n = ssize(alg_psi.A, 1);
+            ns = obj.reg.ns;
+            
+            nY = obj.get_GY_dim(n, ns);
 
             GY = lmim(['GY', name], nY, nY, 'sym');
 
-            %TODO the terminal constraints with the coupling condition?
 
-
-            %bound the entries of the GX and GY matrices
             if obj.config.tol.G_max < Inf                   
-                cons = append_lmi(cons, obj.config.tol.GX_max*eye(nX)  - GX, obj.config.LMILAB);                            
                 cons = append_lmi(cons, obj.config.tol.GY_max*eye(nY)  - GY, obj.config.LMILAB);                
-                cons = append_lmi(cons, -obj.config.tol.G_min*eye(nX)  + GX, obj.config.LMILAB);                            
                 cons = append_lmi(cons, -obj.config.tol.G_min*eye(nY)  + GY, obj.config.LMILAB);                
-            end            
+            end 
+
+        end
+
+        function ys = get_GY_dim(obj, n, ns)
+            %dimension of the GY term
+            ys = n +ns;
+        end
+
+        function verdict = reduced_order(obj)
+            verdict = obj.config.syn.reduced_order;
+        end
+
+        function P_model = connect_model(obj, plant, rho)
+
+            P_model = obj.reg.connect_model(plant, rho);
         end
 
         function G = get_storage(obj, vars_diss, vars_reg)
@@ -183,20 +195,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             GY = vars_diss.GY;
             GS = vars_diss.GS;
             
-            nx = ssize(GX, 1);
-            % ns = ssize(obj.reg.S, 1);
-
-
-            if obj.config.syn.reduced_order
-                %TODO: not yet implemented
-                %some sort of indexing on Pi
-                Pi = vars.reg.Pi;
-                G = [GY, GS; GS', GX];
-            else
-                %
-                G = [GY, GS; GS', GX];                
-            end
+            G = [GY, GS; GS', GX];                
+            
         end
+
 
         function [vars_spec, cons] = create_vars_spec(obj, cons, specs)
             %CREATE_VARS_SPEC declare variables for the specifications
@@ -227,9 +229,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %CON_SPREAD increase numerical conditioning by separating the 
             %primal and dual blocks
             %invoke this over multiple subsystems
-            if ~obj.config.syn.reduced_order
+            % if ~obj.config.syn.reduced_order
                 cons = obj.con_spread_single(cons, vars.diss.GX, vars.diss.GY);
-            end
+            % end
         end
 
         function el = elimination(obj)
