@@ -181,9 +181,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             verdict = obj.config.syn.reduced_order;
         end
 
-        function P_model = connect_model(obj, plant, rho)
+        function P_model = connect_model(obj, diss)
 
-            P_model = obj.reg.connect_model(plant, rho);
+            P_model = obj.reg.connect_model(diss.plant, diss.rho);
         end
 
         function G = get_storage(obj, vars_diss, vars_reg)

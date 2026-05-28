@@ -139,7 +139,7 @@ classdef opt_analysis < opt_manager_interface
 
         end
            
-        function [diss] = index_specs(obj, alg_psi, iqc_op, specs)
+        function [diss] = index_specs(obj, alg_psi, iqc_data, specs)
 
             %INDEX_SPECS:  index into the performance specifications
             %
@@ -162,6 +162,7 @@ classdef opt_analysis < opt_manager_interface
                 target_ind = 0;
             end
 
+            iqc_op = iqc_data.iqc_op;
 
             diss = cell(length(specs), 1);
             %determine the indices for each performance specification

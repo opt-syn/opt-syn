@@ -41,6 +41,29 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
            
         end
 
+        function P_model = connect_model(obj, diss)
+            %CONNECT_MODEL connect the plant to the internal model
+
+            %but this is reduced-order, so we play a different game here.
+
+            % P_model is the augmented system following the loop
+            % transformation and filter processing
+            %
+            % w  -> z
+            % wp -> zp
+            % d  -> e
+            % u  -> y
+            
+
+            sys_aug = obj.sys;
+            sys_aug.P = diss.plant_reg;
+
+            [Plant, ~, alg_loop_aug] = sys_aug.build_plant(diss.iqc_data, diss.rho);
+
+            P_model = struct('P', Plant, 'rho', diss.rho);
+            % P_model = obj.reg.connect_model(diss.plant, diss.rho);
+        end
+
         function Pb = Pibar(obj, vars_reg)
             %similarity transformation for optimization over Pi
             %used in regulator (reduced-order)            
@@ -73,17 +96,69 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             cons = [];
         end
-        
-        function supp_b = supply_block(obj, sys_cl, quad)
-            error('reduced_order: supply block not yet supported')
-        end
 
-        function stor_b = storage_block(obj, sys_cl, quad, G1, G2)
-            error('reduced_order: storage block not yet supported')
-        end
+        function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, Pr, vars_diss, vars_reg, vars_K);
+            
+            %acquire the transformed regulated expression
+            
+            GX = vars_diss.GX;
+            GY = vars_diss.GY;
 
-        function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, P, vars_diss, vars_reg, vars_K);
-            error('reduced_order: system closed loop block not yet supported')
+            
+            P = Pr.P;
+
+            rho = Pr.rho;
+
+            [S, R] = obj.reg.exosystem();
+
+            rhoi = (1/rho);
+
+            Pibar = obj.Pibar(vars_reg);
+
+            
+            [A, B, C, D] = ssdata(P);
+            iu = P.index_u;
+            iw = [P.index_w];
+
+            iy = P.index_y;
+            iz = [P.index_z];
+
+
+            ie = P.index_zp;
+            id = P.index_wp;
+            ns = size(S, 2);
+            n = size(A, 1);
+
+            % calligraphic matrices
+            % from  convexification
+            % [Y' Acl Y,  Y'Bcl ]
+            % [Ccl Y,      Dcl  ]
+
+
+            Ak = vars_K.A;
+            Bk = vars_K.B;
+            Ck = vars_K.C;
+            Dk = vars_K.D;
+            
+            Aaug = [A, B(:, id); zeros(ns, n), rhoi * S];
+            Caug = [C(iy, :), rhoi * D(iy, id)];
+
+            Creg = [C(iw, :), C(iw, :) * vars_reg.Pi + D(iw, iu) * vars_reg.Gam];
+
+            Acal = [A*GY + B(:, iu)*Ck,  Pibar * A + B(:, iu)*Dk*Caug;
+                Ak, GX*Aaug + Bk*Caug];
+            Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
+                GX*B(:, iw) + Bk*D(iy, iw)];
+            Ccal = [C(iz, :)*GY+ D(iz, iu)*Ck, Creg + D(iz, iu)*Dk*Caug];
+            Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);
+
+
+            sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
+
+            U_cl = [];
+            V_cl = [];
+
+            % error('reduced_order: system closed loop block not yet supported')
         end
         
         %% recovery

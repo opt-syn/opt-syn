@@ -48,7 +48,9 @@ classdef regulator_lti < regulator_interface
 
         function alg_aug = sys_regulated_aug(obj)
             %SYS_REGULATED_AUG augment the system by the regulated
-            %disturbance
+            %disturbance.
+
+            %ONLY used for reduced-order control
 
             % if nargin < 3
             %      =[];
@@ -82,8 +84,14 @@ classdef regulator_lti < regulator_interface
             alg_aug_P = ss(A, B_aug, C_aug, D_aug, 1);
 
             nn = obj.sys.P.dump_dim();
-            nn.nwp = nn.nwp + size(Bwp, 2);
-            nn.nzp = nn.nzp + size(Ded, 1);
+
+
+            %place together w and wp, separate d into a new channel group
+            %(wp)
+            nn.nw = nn.nw + nn.nwp;
+            nn.nz = nn.nz + nn.nzp;
+            nn.nwp = size(Bd, 2);
+            nn.nzp = size(Ded, 1);
 
             alg_aug = genplant(alg_aug_P, nn);
         end

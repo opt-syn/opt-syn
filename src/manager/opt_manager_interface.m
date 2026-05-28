@@ -91,10 +91,11 @@ classdef (Abstract) opt_manager_interface < handle
 
 
 
+            iqc_data.iqc_op = iqc_op;
             [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, sperf);
 
             %the dissipation can change
-            [vars, cons, objective] = obj.cons_dynamic(vars, cons, alg_psi, iqc_op, sperf);
+            [vars, cons, objective] = obj.cons_dynamic(vars, cons, alg_psi, iqc_data, sperf);
 
             %add spreading constraint
             cons = obj.lmi.con_spread(cons, vars);
@@ -474,7 +475,7 @@ classdef (Abstract) opt_manager_interface < handle
 
         
 
-        function [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_op, specs)
+        function [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_data, specs)
             %CONS_DYNAMIC: form the dynamical dissipation relations for the
             %system (at the current set of specifications)
             %
@@ -482,9 +483,9 @@ classdef (Abstract) opt_manager_interface < handle
             %   vars:       variables
             %   cons:       accumulated constraints
             %   objective:  single value to be minimized in inner loop (not
-            %               the outer loop of bisection)
+            %               the outer loop of bisection)            
 
-            [diss] = obj.index_specs(alg_psi, iqc_op, specs);
+            [diss] = obj.index_specs(alg_psi, iqc_data, specs);
             ndiss = length(diss);
 
             %dissipation relations

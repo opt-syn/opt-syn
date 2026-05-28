@@ -290,6 +290,11 @@ classdef regulator_interface
             Dyd = [zeros(sN, 1)*Rbeta, D21*N];
 
         end
+
+        function saug = sys_regulated_aug(obj)
+            %the enriched system with the disturbance channel
+            saug = [];
+        end
         % 
         % function rg = reg_ans(obj)
         %     [Bd, Dyd, Dyu] = obj.d_influence();

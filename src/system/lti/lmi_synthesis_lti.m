@@ -63,7 +63,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %IMPORTANT!
             %hook up the internal model
             %(maybe it should happen at a higher level?)
-            P = obj.connect_model(diss.plant, diss.rho);
+            P = obj.connect_model(diss);
 
             [sys_cl, U_cl, V_cl] = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
             
