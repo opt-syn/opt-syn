@@ -276,13 +276,15 @@ classdef opt_synthesis < opt_manager_interface
                 %factor the iqcs from analysis for use in synthesis
                 iqc_curr = cell(length(sol_ana.iqc_op), 1);
                 
-                for j = 1:numel(iqc_curr)
-                    if isnumeric(sol_ana.iqc_op{j})
-                        iqc_curr{j} = sol_ana.iqc_op{j};
-                    else
-                        iqc_curr{j} = sol_ana.iqc_op{j}.factor();
-                    end
-                end                
+                if i < Niter
+                    for j = 1:numel(iqc_curr)
+                        if isnumeric(sol_ana.iqc_op{j})
+                            iqc_curr{j} = sol_ana.iqc_op{j};
+                        else
+                            iqc_curr{j} = sol_ana.iqc_op{j}.factor();
+                        end
+                    end        
+                end
 
             end
 

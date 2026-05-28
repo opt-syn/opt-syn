@@ -74,9 +74,10 @@ classdef op_gen  < operator_interface
             % cs = ones(1, n) * vars.cM * ones(m, 1);
 
             cs = 0;
-            for i = 1:obj.prop_count
-                cs = cs + trace(vars.cM{i}) + trace(vars.cX{i});
-            end
+            % for i = 1:obj.prop_count
+                % cs = cs + trace(vars.cM{i}) + trace(vars.cX{i});
+            % end
+            cs = 1;
 
         end
 
@@ -158,7 +159,7 @@ classdef op_gen  < operator_interface
                         case 'cocoercive'
                             beta = obj.prop{p, 2};
 
-                            Mcurr = [zz, cDBM; cDBM', -csym*beta];
+                            Mcurr = [-csym*(beta), cDBM'; cDBM, zz];
                             Mloop = loop_mat'*Mcurr*loop_mat;
     
                         case 'lipschitz'
@@ -166,12 +167,12 @@ classdef op_gen  < operator_interface
                             % M11 = M11 - (cDBM + cDBM'); 
                             % M22 = M22 + cDBM * L2; 
 
-                            Mcurr = [L2*csym, zz; zz', -csym];
+                            Mcurr = [-csym, zz; zz', L2*csym];
                             Mloop = loop_mat'*Mcurr*loop_mat;
     
                         case 'inv_lipschitz'
                             L2 = obj.prop{p, 2}^2;
-                            Mcurr = [-csym, zz; zz', L2*csym];
+                            Mcurr = [L2*csym, zz; zz', -csym];
                                                         
                             Mloop = loop_mat'*Mcurr*loop_mat;
                         
