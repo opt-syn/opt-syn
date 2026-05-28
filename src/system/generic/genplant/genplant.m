@@ -89,6 +89,11 @@ classdef genplant
             B0 = obj.B;
             B = B0(:, obj.index_w());
         end
+
+        function B = Bwp(obj)
+            B0 = obj.B;
+            B = B0(:, obj.index_wp());
+        end
         
         function B = Bu(obj)
             B0 = obj.B;
@@ -98,6 +103,10 @@ classdef genplant
         function C = Cz(obj)
             C0 = obj.C;
             C = C0(obj.index_z(), :);
+        end
+        function C = Czp(obj)
+            C0 = obj.C;
+            C = C0(obj.index_zp(), :);
         end
         
         function C = Cy(obj)
@@ -134,6 +143,24 @@ classdef genplant
             D = D0(iy, iw);
         end
 
+        function D = Dywp(obj)
+            %oracle output to controller input
+            iw = obj.index_wp();
+            iy = obj.index_y();
+
+            D0 = obj.P.D;
+            D = D0(iy, iw);
+        end
+
+       function D = Dzpwp(obj)
+            %oracle output to controller input
+            iw = obj.index_wp();
+            izp = obj.index_zp();
+
+            D0 = obj.P.D;
+            D = D0(izp, iw);
+        end
+
 
         function D = Dyu(obj)
             %controller output to controller input
@@ -144,24 +171,7 @@ classdef genplant
             D = D0(iy, iu);
         end
 
-        function D = Dywp(obj)
-            %performance input to controller input
-            iwp = obj.index_wp();
-            iy = obj.index_y();
-
-            D0 = obj.P.D;
-            D = D0(iy, iwp);
-        end
-
-        function D = Dzpwp(obj)
-            %performance input to performance output
-            iwp = obj.index_wp();
-            izp = obj.index_zp();
-
-            D0 = obj.P.D;
-            D = D0(izp, iwp);
-        end
-
+ 
         function D = Dzwp(obj)
             %performance input to oracle input
             iwp = obj.index_wp();

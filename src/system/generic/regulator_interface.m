@@ -153,6 +153,7 @@ classdef regulator_interface
             Phi = Dyd + D22*Gam + C2*Pi;
         end
 
+
         function [Pi_basis, Gam_basis, Phi_basis] = null_reg_all(obj, reg_mat)
             %NULL_REG nullspace of the regulator equations: freedom to move            
             
