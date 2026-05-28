@@ -273,6 +273,9 @@ classdef regulator_interface
            %
            %
            %used for the internal model computation
+           if nargin < 2
+               param =[];
+           end
 
             N = obj.get_consensus();
             [sN, dN] = size(N);
