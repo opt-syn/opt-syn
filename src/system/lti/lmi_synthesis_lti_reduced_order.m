@@ -41,6 +41,67 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
            
         end
 
+        function sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
+            %recover the controller
+
+            if nargin < 5
+                diss = [];
+            end
+            
+            %override this with other system types
+
+            %this code is with a full-order controller: duplication of the
+            %number of internal model states
+            %TODO: reduced order controller synthesis and recovery
+
+            %get the system with the internal model
+            % dissend = struct('plant', diss{1}.plant_reg, 'rho', sol.rho);
+            P_trans =  obj.connect_model(diss{1});
+            
+            %evaluate the variables
+            [sol] = obj.recover_subcontroller(alg_psi, P_trans.P, sol);
+                      
+            %verify performance of the algorithm
+            %TODO: a postprocessing LMI (?) to check that the recovered 
+            %algorithm satisfies the performance specifications 
+        end
+
+        function [sol] = recover_subcontroller(obj, alg_psi, P_aug, sol)
+            %RECOVER_SUBCONTROLLER recover the subcontroller of the current
+            %mode/control
+            %
+            %
+            %Input:
+            %
+            %Output:
+            %   K_feed: the subcontroller with direct feedthrough, before
+            %           exponential discounting    
+            %(not yet exponentially undiscounted, this happens later)
+
+            vars_rec = sol.vars;
+            rho = sol.rho;
+
+            [K_nofeed] = recover_subcontroller_warp(obj, P_aug, vars_rec);
+
+
+            
+            model = obj.reg.get_model(vars_rec.reg);
+            modelrho = rhotrafo(model, sol.rho);
+            P_trans = lft(alg_psi, modelrho);
+
+            K_report = obj.K_alg_report(P_trans, K_nofeed, model, rho);
+            
+            sol.alg_trans = K_report.alg_trans;
+            sol.alg = lft(obj.sys.P, K_report.K);
+            sol.model = K_report.model;           
+            sol.K= K_report.K;
+            sol.K_sub = K_report.K_sub;
+
+            sol.gain = obj.validate_recovery_gain(sol.alg_trans, sol.iqc_op_all);
+
+            
+        end
+
         function P_model = connect_model(obj, diss)
             %CONNECT_MODEL connect the plant to the internal model
 
@@ -64,6 +125,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             % P_model = obj.reg.connect_model(diss.plant, diss.rho);
         end
 
+        
+
         function Pb = Pibar(obj, vars_reg)
             %similarity transformation for optimization over Pi
             %used in regulator (reduced-order)            
@@ -71,8 +134,103 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             np = ssize(vars_reg.Pi, 1);
             ns = ssize(vars_reg.Pi, 2);
             
+            Pisign = -1;
+
             Pb = [[eye(n-np), zeros(n-np, n+ns)];
-                   [zeros(np, n-np), eye(np), vars_reg.Pi]];
+                   [zeros(np, n-np), eye(np), Pisign*vars_reg.Pi]];
+
+        end
+
+        function [vars_K, cons] = create_vars_controller(obj, cons, alg_psi, name, D_mask)
+            %CREATE_VARS_CONTROLLER create the nonlinearly-transformed
+            %controller matrices
+
+            %get the dimensions
+
+
+            if nargin < 4
+                name = [];
+            end
+
+            if nargin < 5
+                D_mask = obj.get_D_mask;
+            end
+
+            n = ssize(alg_psi.A, 1);
+            ns = obj.reg.ns;
+            
+            [ny, nu] = size(D_mask);
+
+
+            %TODO: not yet implemented
+            nc = n;
+            nC = ny;
+            include_Dk1 = false;
+
+
+            % ny = obj.sys.P.ny;
+            % nu = obj.sys.P.nu;
+
+
+            
+            %declare the variables
+            vars_K = struct;
+            %easy: ABC
+            
+
+            if obj.elimination
+                vars_K.A = [];                
+
+                
+                %     %remove all terms [Ak, Bk; Ck, Dk]
+                %     %using triangular elimination (in development)
+                %     %lemma 4 of https://arxiv.org/pdf/1305.1746
+                    vars_K.B = [];  
+                    vars_K.C = [];  
+                    vars_K.D = [];  
+                % elseif obj.config.syn.elimination_type == 1                                    
+                %     %remove [Ak, Bk; Ck1, Dk1]    
+                %     vars_K.B = [];  
+                %     vars_K.C = lmim(['Ck', name], ny, nc);                    
+                %     vars_K.D = obj.form_Dk(alg_psi, D_mask, [], include_Dk1);
+                %     kq = [vars_K.C, vars_K.D];
+                % else
+                %     %remove [Ak; Ck]
+                %     vars_K.C = [];
+                %     vars_K.B = lmim(['Bk', name], nc+ns, ny);
+                %     vars_K.D = obj.form_Dk(alg_psi, D_mask, [], include_Dk1);
+                %     kq = [vars_K.B;            
+                %     vars_K.D];
+                %     cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
+                % 
+                % 
+                % end
+            else
+                
+                if nc == 0
+                    %static network and no filter dynamics: static output
+                    %feedback subcontroller (before the internal model)
+                    vars_K.A = zeros(nc+ns, nc);                    
+                    vars_K.C = zeros(nC, nc);
+                else
+                    vars_K.A = lmim(['Ak', name], nc+ns, nc, 'full');                      
+                    vars_K.C = lmim(['Ck', name], nC, nc, 'full');
+                end
+                vars_K.B = lmim(['Bk', name], nc+ns, ny, 'full');    
+                vars_K.D = obj.form_Dk(alg_psi, D_mask, [], include_Dk1);
+
+                kq = [vars_K.A, vars_K.B;            
+                    vars_K.C,  vars_K.D];
+                cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
+
+            end
+
+            
+            
+            %TODO: better interface here: number of inputs
+            
+            %bound entries of the controllers
+            
 
         end
 
@@ -90,11 +248,11 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %CON_SPREAD_SINGLE increase numerical conditioning by separating the 
             %primal and dual blocks
             % np = ssize(GX, 1);
-            % spr = obj.config.tol.spread+1;
+            % spr = obj.config.tol.spread+1;           
             % cons_PH = [GX, (spr)*eye(np); (spr)*eye(np), GY];
             % cons = append_lmi(cons, cons_PH, obj.LMILAB);
 
-            cons = [];
+            % cons = [];
         end
 
         function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, Pr, vars_diss, vars_reg, vars_K);
@@ -134,31 +292,185 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             % [Y' Acl Y,  Y'Bcl ]
             % [Ccl Y,      Dcl  ]
 
+            %follows formulation of (26) in 
+            %https://www.sciencedirect.com/science/article/pii/S0005109808005402
 
             Ak = vars_K.A;
             Bk = vars_K.B;
             Ck = vars_K.C;
             Dk = vars_K.D;
             
-            Aaug = [A, B(:, id); zeros(ns, n), rhoi * S];
+            Aaug = [A, B(:, id); 
+                zeros(ns, n), rhoi * S];
+
+            Bpaug = [B(:, iw); 
+                zeros(ns, length(iw))];
             Caug = [C(iy, :), rhoi * D(iy, id)];
 
-            Creg = [C(iw, :), C(iw, :) * vars_reg.Pi + D(iw, iu) * vars_reg.Gam];
+            Creg = [C(iw, :), -C(iw, :) * vars_reg.Pi- D(iw, iu) * vars_reg.Gam];
 
-            Acal = [A*GY + B(:, iu)*Ck,  Pibar * A + B(:, iu)*Dk*Caug;
-                Ak, GX*Aaug + Bk*Caug];
-            Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
-                GX*B(:, iw) + Bk*D(iy, iw)];
-            Ccal = [C(iz, :)*GY+ D(iz, iu)*Ck, Creg + D(iz, iu)*Dk*Caug];
-            Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);
+            if obj.elimination
+
+                if n ==0
+                    %no filters nor network dynamics 
+                    Acal = [zeros(size(Ak)), GX*Aaug];
+                    Bcal = (GX*Bpaug);
+                    Ccal = (Creg);
+                else
+                    %some filter or network dynamics
+                    Acal = [A*GY,  Pibar * Aaug ;
+                        Ak, GX*Aaug];
+                    Bcal = [B(:, iw);
+                        GX*Bpaug];
+                    Ccal = [C(iz, :)*GY, Creg];
+                end
+                Dcal = D(iz, iw);                
+
+                %construct the outer factors
+
+                nxn = size(B, 1);
+                nxiU = n + ns;
+                nu = length(iu);
+                nz = length(iz);
+                nw = length(iw);
+                ny = length(iy);
+                U_cl_base = [B(:, iu), zeros(nxn, nxiU);
+                    zeros(nxiU, nu), eye(nxiU);
+                    D(iz, iu), zeros(nz, nxiU)]';
+
+                nxiV = n;
+                V_cl_base = [eye(nxiV), zeros(nxiV, nxn), zeros(nxiV, nw);
+                    zeros(ny, nxiV), Caug, D(iy, iw)];
+
+                    %triangular decomposition
+                    [U_coord, V_coord] = obj.get_K_tri_basis([nxiU, nxiV]);
+
+                    ntri= length(V_coord);
+                    U_cl = cell(ntri+1, 1);
+                    V_cl = cell(ntri+1, 1);
+
+                    for i = 1:ntri
+                        U_cl{i} = U_coord{i} * U_cl_base;
+                        V_cl{i+1} = V_coord{i} * V_cl_base;
+                    end
+
+                % error('reduced_order: elimination not yet supported')
+            else
+                if n ==0
+                    %no filters nor network dynamics 
+                    Acal = [Ak, GX*Aaug + Bk*Caug];
+                    Bcal = (GX*Bpaug + Bk*D(iy, iw));
+                    Ccal = (Creg + D(iz, iu)*Dk*Caug);
+                else
+                    %some filter or network dynamics
+                    Acal = [A*GY + B(:, iu)*Ck,  Pibar * Aaug + B(:, iu)*Dk*Caug;
+                        Ak, GX*Aaug + Bk*Caug];
+                    Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
+                        GX*Bpaug + Bk*D(iy, iw)];
+                    Ccal = [C(iz, :)*GY+ D(iz, iu)*Ck, Creg + D(iz, iu)*Dk*Caug];
+                end
+                Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);
+
+                U_cl = [];
+                V_cl = [];
+            end
 
 
+
+            %this is a FORMAL system, `Acal' is rectangular and not square
+            %due to the reduced-order structure
             sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
 
-            U_cl = [];
-            V_cl = [];
+
 
             % error('reduced_order: system closed loop block not yet supported')
+        end
+
+        function [Ak, Bk, Ck, Dk] = recover_K_from_elim(obj, vars_rec)
+            %recover the eliminated matrices in the controller            
+            if obj.elimination
+                
+                % https://www.sciencedirect.com/science/article/pii/0167691194000919
+                %reconstruct the eliminated controller block
+                M0 = vars_rec.elim.M0;
+                U = vars_rec.elim.U;
+                V = vars_rec.elim.V;                                
+
+                
+                    Knull = vars_rec.elim.null;
+
+                    M_accum = M0;
+
+                    ns = obj.reg.ns;
+                    nu = obj.sys.nu;
+                    ny = obj.sys.ny;
+
+                    nxi1 = size(vars_rec.diss.GX, 1);
+                    nxi2 = size(vars_rec.diss.GY, 1);
+
+                    nxi = [nxi1; nxi2];
+                    % K_block = zeros(ns + nxi(1) + nu, nxi(2) + ny);
+
+                    [U_coord, V_coord] = obj.get_K_tri_basis(nxi);
+
+                    K_block = zeros(size(U_coord{1}, 2), size(V_coord{1}, 2));
+                    for i = (length(U)-1):-1:1
+                        
+                        %recover the current portion of the triangular
+                        %controller
+                        null_curr = Knull{i};
+                        M_curr = null_curr' * M_accum * null_curr;
+                        K_frag_curr = basiclmi(-M_curr, -U{i} * null_curr, V{i+1} * null_curr, 'Xmin');
+
+                        K_embed_curr = U_coord{i}' * K_frag_curr * V_coord{i};
+                        K_outer_curr = U{i}' * K_frag_curr * V{i+1};
+                        K_block = K_block + K_embed_curr;
+
+                        %prep for the next recovery step
+                        M_accum = M_accum + K_outer_curr + K_outer_curr'; 
+                    end
+
+                    %now index the block
+
+                    Ak = K_block(nu + (1:nxi(1)), 1:nxi(2));
+                    Bk = K_block(nu + (1:nxi(1)), (nxi(2)+1):end);
+
+
+                    Ck = K_block(1:nu, 1:nxi(2));
+                    Dk = K_block(1:nu, (nxi(2)+1):end);
+
+                    
+            else
+                [Ak, Bk, Ck, Dk] = recover_K_from_elim@lmi_synthesis_interface(obj, vars_rec);
+            end
+        end
+
+        function K_mask = get_K_mask(obj, nxi)
+            %K_mask: controller sparsity pattern
+            %
+            %[Ck2, Dk2
+            % Ak,  Bk
+            % Ck1, Dk1]
+            %
+            %Input: 
+            %   nxi: number of controller states
+            %Output:
+            %   pattern K_mask
+
+            %used for matrix elimination lemma for LTI systems
+
+            if isscalar(nxi)
+                nxi = nxi * [1, 1];
+            end
+
+            D_mask = obj.get_D_mask();
+
+            ns = size(obj.reg.R, 2);
+            nu = obj.sys.nu;
+            ny = obj.sys.ny;
+            
+            K_mask = logical([ones(nu + nxi(1), nxi(2)), [D_mask; ones(nxi(1), ny)]]);
+
         end
         
         %% recovery
@@ -181,84 +493,89 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             % sys_cal = ss(G \ Acl, G \ Bcl, Ccl, Dcl, 1);
 
 
-            error('reduced_order: recovery not yet supported')
+            
+            %get the regulator equation solution
+            Pibar = obj.Pibar(vars_rec.reg);
+            Gam = vars_rec.reg.Gam;
+            
+            %get the base subcontroller
+
+            %TODO: implement this
+            [Ak, Bk, Ck, Dk] = obj.recover_K_from_elim(vars_rec);                        
+
+            Yred = vars_rec.diss.GY;
+            X = vars_rec.diss.GX;
+
+            n = ssize(Yred, 1);
+            ns = obj.reg.ns;
+            E = [eye(n); zeros(ns, n)]';
+            Et = [zeros(ns, n), eye(ns)];
+
+            if n==0
+                Winv = [];
+                Y = inv(X);
+            else
+                W = Yred - Pibar * inv(X) * Pibar';
+                Winv = inv(W);
+                Y = inv(X) + E' * Winv * E;
+            end
+            Z = Et*inv(X)*Pibar';
+
+
+
+            %index the system
             [A, B, C, D] = ssdata(P_trans);
 
-            iz = [P_trans.index_z(), P_trans.index_zp()];
-            iw = [P_trans.index_w(), P_trans.index_wp()];
-            iu = P_trans.index_u();
-            iy = P_trans.index_y();           
+            iu = P_trans.index_u;
+            iw = [P_trans.index_w];
+            iy = P_trans.index_y;
+            iz = [P_trans.index_z];
+
+            ie = P_trans.index_zp;
+            id = P_trans.index_wp;        
 
             nz = length(iz);
             nw = length(iw);
             nu = length(iu);
             ny = length(iy);
+
+            rhoi = 1/vars_rec.rho;
+
+            %augmented system from the regulation conditions
+            [S, R] = obj.reg.exosystem();
+            Aaug = [A, B(:, id); zeros(ns, n), rhoi * S];
+            Bpaug = [B(:, iw); zeros(ns, length(iw))];
+            Caug = [C(iy, :), rhoi * D(iy, id)];
                         
 
-            [Ak, Bk, Ck, Dk] = obj.recover_K_from_elim(vars_rec);                        
 
-            S = (vars_rec.diss.GS);
-            n = ssize(Ak, 1);
-
-            Y = vars_rec.diss.GY;
-            X = vars_rec.diss.GX;
+            %perform controller recovery
 
 
-            J = S - X * Y;
-            [Up, Sig, Vp] = svd(J);
 
-            % U = Up*Sig;
-            ssig = sqrt(Sig);
-            srsig = diag(1./(diag(ssig)));
+            %(33-34) of https://www.sciencedirect.com/science/article/pii/S0005109808005402
+            if n==0
+                Akt = Ak;
+                Ckt = Ck;
+            else
+                Akt = (X \ Ak - Aaug*Y*Pibar');
+                Ckt = Ck - Gam*Z;
+            end
 
-
-            V = Vp*ssig;
-            U = Up*ssig;
-
-            Uinv = srsig*Up';
-            Vinv = srsig*Vp';
-
-
-            %similarity transformation
-
-            % 
-            % %get right-side entries
-            % I = eye(n);
-            % Z1 = (Vinv*(I - X * Y')')';
-            % Z2 = (Vinv* (-U * Y')')';
-            % 
-            % Z34 = [X, Z1; U, Z2] \ [zeros(n); eye(n)];
-            % 
-            % Z3 = Z34(1:n, :);
-            % Z4 = Z34((n+1):end, :);
-            % 
-            % T = [eye(n), Y'; zeros(n), V'];
-            % Ti = [eye(n), -Y' * Vinv'; zeros(n), Vinv'];
-            % 
-            % SimG = [X, Z1; U, Z2];
-            % SimGi = [Y', Z3; V', Z4];
-
-            %controller recovery
-
-            Lblock = [Uinv, -Uinv*X*B(:, iu);
-                zeros(nu, size(V, 2)), eye(nu)];
-
-            LblockI = [U, X*B(:, iu); 
-                zeros(nu, size(V, 2)), eye(nu)];
-
-            Cblock = [Ak - X*A*Y, Bk;
-                Ck, Dk];
-
-            RblockI = [V' , zeros(size(V, 2), ny);
-                C(iy, :)*Y, eye(ny)];
-
-            Rblock = [Vinv', zeros(size(V, 2), ny);
-                -C(iy, :)*Y*Vinv', eye(ny)];
+            Bkt = X \ Bk;
+            Dkt = Dk;
 
 
-            % Kblock0 = inv(LblockI)* (Cblock) * inv(RblockI);
-            % Kblock1 = LblockI) \ Cblock) * inv(RblockI);
-            % Kblockinv = RblockI') \ LblockI) \ Cblock)')';
+
+            Lblock = [Pibar, -B(:, iu);
+                zeros(ns, n), eye(ns), zeros(ns, nu);
+                zeros(nu, n), zeros(nu, ns), eye(nu)];
+
+            Cblock = [Akt, Bkt;
+                Ckt, Dkt];
+
+            Rblock = [-Winv, zeros(size(Winv, 1), ny);
+                Caug * Y * Pibar' * Winv, eye(ny)];
 
             Kblock = Lblock * Cblock * Rblock;
 

@@ -68,7 +68,7 @@ classdef (Abstract) opt_manager_interface < handle
 
 
 
-        function [vars, cons, objective, alg_psi, rho] = build_program(obj, specs)
+        function [vars, cons, objective, alg_psi, rho, diss] = build_program(obj, specs)
             %BUILD_PROGRAM set up the algorithm analysis or synthesis problem
 
             if nargin < 2
@@ -95,7 +95,7 @@ classdef (Abstract) opt_manager_interface < handle
             [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, sperf);
 
             %the dissipation can change
-            [vars, cons, objective] = obj.cons_dynamic(vars, cons, alg_psi, iqc_data, sperf);
+            [vars, cons, objective, diss] = obj.cons_dynamic(vars, cons, alg_psi, iqc_data, sperf);
 
             %add spreading constraint
             cons = obj.lmi.con_spread(cons, vars);
@@ -226,7 +226,7 @@ classdef (Abstract) opt_manager_interface < handle
             obj = obj.process_argument(arg);            
             obj = obj.add_specifications(specs);
             
-            [vars, cons, objective, alg_psi, rho] = obj.build_program(); 
+            [vars, cons, objective, alg_psi, rho, diss] = obj.build_program(); 
 
             % objective = obj.get_objective(vars);
             
@@ -257,7 +257,7 @@ classdef (Abstract) opt_manager_interface < handle
                     end
                 end
 
-                sol = obj.process_recovery(sol, sol.lmi_out, alg_psi);
+                sol = obj.process_recovery(sol, sol.lmi_out, alg_psi, diss);
                 
             end
 
@@ -475,7 +475,7 @@ classdef (Abstract) opt_manager_interface < handle
 
         
 
-        function [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_data, specs)
+        function [vars, cons, objective, diss] = cons_dynamic(obj, vars, cons, alg_psi, iqc_data, specs)
             %CONS_DYNAMIC: form the dynamical dissipation relations for the
             %system (at the current set of specifications)
             %
@@ -521,7 +521,7 @@ classdef (Abstract) opt_manager_interface < handle
 
     methods (Abstract)   
         process_argument(obj, arg); %inputs to run the routine
-        process_recovery(obj, sol, lmi_out, alg_psi); %get the solution
+        process_recovery(obj, sol, lmi_out, alg_psi, diss); %get the solution
         index_specs(obj, alg_psi, iqc_op, specs); %index the performance specifications
     end
 end

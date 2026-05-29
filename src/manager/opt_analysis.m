@@ -251,7 +251,7 @@ classdef opt_analysis < opt_manager_interface
         
 
         %% extract the solution                   
-        function  sol = process_recovery(obj, sol, lmi_out, alg_psi);
+        function  sol = process_recovery(obj, sol, lmi_out, alg_psi, diss);
             %PROCESS_RECOVERY recover the IQCs from the solution
             %
             
