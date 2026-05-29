@@ -237,10 +237,11 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
         function Ph = Pihat(obj, vars_reg)
             %similarity transformation for reduced-order control
             %used in regulator (reduced-order)
-            n = length(obj.sys.A);
+            n = length(obj.sys.P.A);
             np = ssize(vars_reg.Pi, 1);
             ns = ssize(vars_reg.Pi, 2);
             
+            Pb = obj.Pibar(vars_reg);
             Ph = [Pb; [zeros(ns, n), eye(ns)]];
         end
 
@@ -496,6 +497,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             
             %get the regulator equation solution
             Pibar = obj.Pibar(vars_rec.reg);
+            Pihat= obj.Pihat(vars_rec.reg);
             Gam = vars_rec.reg.Gam;
             
             %get the base subcontroller
@@ -503,6 +505,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %TODO: implement this
             [Ak, Bk, Ck, Dk] = obj.recover_K_from_elim(vars_rec);                        
 
+
+            %get the closed-loop regulator equation
             Yred = vars_rec.diss.GY;
             X = vars_rec.diss.GX;
 
@@ -514,13 +518,45 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             if n==0
                 Winv = [];
                 Y = inv(X);
+                W = [];
             else
                 W = Yred - Pibar * inv(X) * Pibar';
                 Winv = inv(W);
                 Y = inv(X) + E' * Winv * E;
+                
             end
             Z = Et*inv(X)*Pibar';
 
+
+            %check the closed-loop system
+            Ycal = [Yred, Pibar;
+                   Z, [zeros(ns, n), eye(ns)];
+                   -W', zeros(n, ns+n)];
+            Ycalinv = inv(Ycal);
+            Gcl = obj.get_storage(vars_rec.diss, vars_rec.reg)
+
+            Ut = X(:, 1:n);
+            Vt = [-W; zeros(ns, n)];
+            St = W;
+            Ht = St + Ut'*inv(X)*Ut;
+
+            ihat = inv(Pihat);
+            Xcal = [ihat'*X*ihat, ihat'*Ut;
+                Ut'*ihat, St + Ut'*inv(X)*Ut];
+
+            Xcalinv = [Pihat*Y*Pihat', Pihat*Vt;
+                Vt'*Pihat', Ht + Vt'*inv(Y)*Vt];
+
+
+            %Xcal and Xcalinv are inverses of each other when n=0
+            % They are not when n>0. Something is wrong. Fix it.
+
+            diss_trans = struct('P', P_trans, 'rho', 0.99)
+            [sys_cl, U_cl, V_cl] = system_closed_loop(obj, diss_trans, vars_rec.diss, vars_rec.reg, vars_rec.K);
+
+
+
+            Acal = Ycalinv' * (Gcl);
 
 
             %index the system
