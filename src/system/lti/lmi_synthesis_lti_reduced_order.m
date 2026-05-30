@@ -602,7 +602,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
 
 
-            diss_trans = struct('P', P_trans, 'rho', 0.99);
+            diss_trans = struct('P', P_trans, 'rho', vars_rec.rho);
             sys_cl = obj.system_closed_loop(diss_trans, vars_rec.diss, vars_rec.reg, vars_rec.K);
 
             XAcl = Ycalinv' * sys_cl.A * Ycalinv;
@@ -621,7 +621,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             Sblock = kron([0, 1; 1, 0], eye(nw));
             Xblock = blkdiag(Xhatcal, -Xhatcal);
             Cblock = [Ccl, Dcl; zeros(nw, 2*n+ns), eye(nw)];
-            Ablock'*Xblock*Ablock + Cblock'*Sblock*Cblock;
+            ANTI = Ablock'*Xblock*Ablock + Cblock'*Sblock*Cblock;
 
 
 
@@ -696,72 +696,96 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %having trouble finding such a realization. Maybe there's a
             %coordinate transformation matrix occurring?
 
-            % reg2 = obj.reg;
-            % reg2.Gam = Gam;
-            % reg2.Pi = Pi;
-            % reg2.Phi = reg2.compute_Phi(Pi, Gam, []);
-            % 
-            % P_orc = P_trans.drop_performance;
-            % 
-            % P_model = reg2.connect_model(P_orc, 1/rhoi);
-            % 
-            % iu0 = P_model.index_u();
-            % iu1 = iu0(1:ns);
-            % iu2 = iu((ns+1):end);
-            % 
-            % nxn = n + ns;
-            % nxi = n;
-            % 
-            % U_cl_base = [zeros(nxn, nxi), P_model.Bu;
-            %      eye(nxi), zeros(nxi, nu + ns);
-            %     zeros(nz, nxi), P_model.Dzu]';
-            % 
-            % V_cl_base = [eye(nxi), zeros(nxi, nxn), zeros(nxi, nw);
-            %     zeros(ny, nxi), P_model.Cy, P_model.Dyw];
-            % 
-            % Omega_base = [P_model.A, zeros(nxn, nxi), P_model.Bw;
-            %     zeros(nxi, nxn), zeros(nxi), zeros(nxi, nw);
-            %     P_model.Cz, zeros(nw, nxi), P_model.Dzw];
-            % 
-            % 
-            % Omega_cl = [Acl, Bcl; Ccl, Dcl] - Omega_base;
-            % 
-            % Mat_sys = kron(V_cl_base, U_cl_base)';
-            % ans_sys = reshape(Omega_cl, [], 1);
-            % 
-            % K_block_vec = lsqminnorm(Mat_sys, ans_sys);
-            % K_block = reshape(K_block_vec, n + length(iu0), n + ny);
-            % 
-            % rec_error = norm(Mat_sys*K_block_vec - ans_sys);
+            reg2 = obj.reg;
+            reg2.Gam = Gam;
+            reg2.Pi = Pi;
+            reg2.Phi = reg2.compute_Phi(Pi, Gam, []);
+
+            P_orc = P_trans.drop_performance;
+
+            P_model = reg2.connect_model(P_orc, 1/rhoi);
+
+            iu0 = P_model.index_u();
+            iu1 = iu0(1:ns);
+            iu2 = iu((ns+1):end);
+
+            nxn = n + ns;
+            nxi = n;
+
+            U_cl_base = [zeros(nxn, nxi), P_model.Bu;
+                 eye(nxi), zeros(nxi, nu + ns);
+                zeros(nz, nxi), P_model.Dzu]';
+
+            V_cl_base = [zeros(nxi, n + ns),  eye(nxi), zeros(nxi, nw);
+                P_model.Cy, zeros(ny, nxi), P_model.Dyw];
+
+            Omega_base = [P_model.A, zeros(nxn, nxi), P_model.Bw;
+                zeros(nxi, nxn), zeros(nxi), zeros(nxi, nw);
+                P_model.Cz, zeros(nw, nxi), P_model.Dzw];
 
 
-            if n==0
-                Akt = X \ Ak;                
-            else
-                Akt = X \ Ak - Aaug * Y * Pibar';
+            Omega_cl = [Acl, Bcl; Ccl, Dcl] - Omega_base;
 
-            end
-            Bkt = X \ Bk;
-            Ckt = Ck + Gam*Z;
-            Dkt = Dk;
+            Mat_sys = kron(V_cl_base, U_cl_base)';
+            ans_sys = reshape(Omega_cl, [], 1);
 
 
-            %no Pi present here?
+            %TODO: enforce the D_mask constraint in the system realization           
+            [ii, jj] = find(obj.get_D_mask());
+            ND0 = length(ii);
+
+            ind_i = sparse(1:ND0, ii, ones(ND0, 1), ND0, nu);
+            ind_j = sparse(1:ND0, jj, ones(ND0, 1), ND0, nu);
+
+            Mat_D = kron(ind_j, ind_i);
+            
+            % Mat_all = [Mat_sys; Mat_D];
+            % ans_all = [ans_sys; zeros(ND0)];
+
+
+            Mat_all = [Mat_sys];
+            ans_all = [ans_sys];
+
+            %solve for a system in the subspace and verify
+            Kblock_vec = lsqminnorm(Mat_sys, ans_sys);
+            Kblock = reshape(Kblock_vec, n + length(iu0), n + ny);
+
+            rec_error = norm(Mat_all*Kblock_vec - ans_all);
+
+            
+            % 
+            % if n==0
+            %     Akt = X \ Ak;                
+            % else
+            %     Akt = X \ Ak - Aaug * Y * Pibar';
+            % 
+            % end
+            % Bkt = X \ Bk;
+            % Ckt = Ck + Gam*Z;
+            % Dkt = Dk;
+            % 
+            % 
+            % no Pi present here?
             % LblockI = [eye(n), zeros(n, ns), B(:, iu);
-                % zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
-                % zeros(nu, n), zeros(nu, ns), eye(nu)];
-
-            LblockI = [eye(n), zeros(n, ns), B(:, iu);
-            zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
-            zeros(nu, n), zeros(nu, ns), eye(nu)];
-
-            Cblock = [Akt, Bkt;
-                Ckt, Dkt];
-
-            Rblock = [-Winv, zeros(size(Winv, 1), ny);
-                Creg * Y * Pibar' * Winv, eye(ny)]; %E or Pibar?
-
-            Kblock = LblockI \ (Cblock * Rblock);
+            %     zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
+            %     zeros(nu, n), zeros(nu, ns), eye(nu)];
+            % 
+            % LblockI = [eye(n), zeros(n, ns), B(:, iu);
+            % zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
+            % zeros(nu, n), zeros(nu, ns), eye(nu)];
+            % 
+            % 
+            % LblockI = [eye(n), rhoi * Pi, B(:, iu);
+            %     zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
+            %     zeros(nu, n), zeros(nu, ns), eye(nu)];
+            % 
+            % Cblock = [Akt, Bkt;
+            %     Ckt, Dkt];
+            % 
+            % Rblock = [-Winv, zeros(size(Winv, 1), ny);
+            %     Creg * Y * Pibar' * Winv, eye(ny)]; %E or Pibar?
+            % 
+            % Kblock = LblockI \ (Cblock * Rblock);
 
             %extraction and exponential weighting
             Ac = Kblock(1:n, 1:n);
