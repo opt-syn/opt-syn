@@ -374,7 +374,7 @@ classdef (Abstract) opt_manager_interface < handle
 
                 sol_best.vars = vrec;
 
-                sol_best = obj.process_recovery(sol_best, sol_best.lmi_out, sol.alg_psi);
+                sol_best = obj.process_recovery(sol_best, sol_best.lmi_out, sol.alg_psi, sol.diss);
                 sol_best.objective = double(double(sol_best.objective, sol_best.lmi_out));
             end
 
@@ -412,7 +412,7 @@ classdef (Abstract) opt_manager_interface < handle
 
             spec_curr = obj.modify_spec(pcurr, spec, b_opts);
 
-            [vars, cons, objective, alg_psi, rho] = obj.build_program(spec_curr); 
+            [vars, cons, objective, alg_psi, rho, diss] = obj.build_program(spec_curr); 
             %form the plant
             % [iqc_data] = obj.iqc_op_all();
             %TODO: modify this for different exponential weighting
@@ -428,6 +428,7 @@ classdef (Abstract) opt_manager_interface < handle
             sol.rho = rho;
             sol.alg_psi = alg_psi;
             sol.vars = vars;
+            sol.diss = diss;
         end
 
         %% Constraint optimization

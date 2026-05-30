@@ -127,14 +127,23 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
         
 
-        function Pb = Pibar(obj, vars_reg)
+        function Pb = Pibar(obj, vars_reg, invPi)
             %similarity transformation for optimization over Pi
-            %used in regulator (reduced-order)            
+            %used in regulator (reduced-order)  
+
+            if nargin < 3
+                invPi = false;
+            end
             n = length(obj.sys.P.A);
             np = ssize(vars_reg.Pi, 1);
             ns = ssize(vars_reg.Pi, 2);
             
-            Pisign = -1;
+            if invPi
+                Pisign = 1;
+            else
+                Pisign = -1;
+            end
+
 
             Pb = [[eye(n-np), zeros(n-np, n+ns)];
                    [zeros(np, n-np), eye(np), Pisign*vars_reg.Pi]];
@@ -234,16 +243,22 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
         end
 
-        function Ph = Pihat(obj, vars_reg)
+        function Ph = Pihat(obj, vars_reg, invPi)
             %similarity transformation for reduced-order control
             %used in regulator (reduced-order)
+
+            if nargin < 3
+                invPi = false;
+            end
             n = length(obj.sys.P.A);
             np = ssize(vars_reg.Pi, 1);
             ns = ssize(vars_reg.Pi, 2);
             
-            Pb = obj.Pibar(vars_reg);
+            Pb = obj.Pibar(vars_reg, invPi);
             Ph = [Pb; [zeros(ns, n), eye(ns)]];
         end
+
+
 
         function cons = con_spread_single(obj, cons, GX, GY)
             %CON_SPREAD_SINGLE increase numerical conditioning by separating the 
@@ -273,6 +288,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             rhoi = (1/rho);
 
             Pibar = obj.Pibar(vars_reg);
+            Pihat = obj.Pihat(vars_reg);
+            Pihatinv = obj.Pihat(vars_reg, true);
 
             
             [A, B, C, D] = ssdata(P);
@@ -315,14 +332,14 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 if n ==0
                     %no filters nor network dynamics 
                     Acal = [zeros(size(Ak)), GX*Aaug];
-                    Bcal = (GX*Bpaug);
+                    Bcal = (GX*Pihatinv * Bpaug);
                     Ccal = (Creg);
                 else
                     %some filter or network dynamics
                     Acal = [A*GY,  Pibar * Aaug ;
                         Ak, GX*Aaug];
                     Bcal = [B(:, iw);
-                        GX*Bpaug];
+                        GX*Pihatinv * Bpaug];
                     Ccal = [C(iz, :)*GY, Creg];
                 end
                 Dcal = D(iz, iw);                
@@ -360,14 +377,14 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 if n ==0
                     %no filters nor network dynamics 
                     Acal = [Ak, GX*Aaug + Bk*Caug];
-                    Bcal = (GX*Bpaug + Bk*D(iy, iw));
+                    Bcal = (GX * Pihatinv * Bpaug + Bk*D(iy, iw));
                     Ccal = (Creg + D(iz, iu)*Dk*Caug);
                 else
                     %some filter or network dynamics
                     Acal = [A*GY + B(:, iu)*Ck,  Pibar * Aaug + B(:, iu)*Dk*Caug;
                         Ak, GX*Aaug + Bk*Caug];
                     Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
-                        GX*Bpaug + Bk*D(iy, iw)];
+                        GX * Pihatinv * Bpaug + Bk*D(iy, iw)];
                     Ccal = [C(iz, :)*GY+ D(iz, iu)*Ck, Creg + D(iz, iu)*Dk*Caug];
                 end
                 Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);
@@ -491,14 +508,15 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %specifications
             % sys_cl = obj.system_closed_loop(P_trans, sol.vars.diss, sol.vars.reg, sol.vars.K);
 
-            % sys_cal = ss(G \ Acl, G \ Bcl, Ccl, Dcl, 1);
-
 
             
             %get the regulator equation solution
             Pibar = obj.Pibar(vars_rec.reg);
             Pihat= obj.Pihat(vars_rec.reg);
+            ihat = obj.Pihat(vars_rec.reg, true);
+
             Gam = vars_rec.reg.Gam;
+            Pi = vars_rec.reg.Pi;
             
             %get the base subcontroller
 
@@ -508,7 +526,13 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             %get the closed-loop regulator equation
             Yred = vars_rec.diss.GY;
-            X = vars_rec.diss.GX;
+            Xhat = vars_rec.diss.GX;
+
+            Pibar = obj.Pibar(vars_rec.reg);
+            
+
+            %transform back to the original coordinates
+            X = ihat' * Xhat * ihat;
 
             n = ssize(Yred, 1);
             ns = obj.reg.ns;
@@ -522,7 +546,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             else
                 W = Yred - Pibar * inv(X) * Pibar';
                 Winv = inv(W);
-                Y = inv(X) + E' * Winv * E;
+                Y = inv(X) + E' * W * E;
                 
             end
             Z = Et*inv(X)*Pibar';
@@ -533,19 +557,39 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                    Z, [zeros(ns, n), eye(ns)];
                    -W', zeros(n, ns+n)];
             Ycalinv = inv(Ycal);
-            Gcl = obj.get_storage(vars_rec.diss, vars_rec.reg)
+            
+            %the similarity-transformed reduced-order storage matrix
+            %what is solved in the program, should be positive definite (as
+            %enforced by tolerances in config.tol)
+            Gcl = obj.get_storage(vars_rec.diss, vars_rec.reg);
+
+            %the original (full-order) storage matrix, should be positive
+            %semidefinite (the reduced-order formalism relies on dropping
+            %out modes)
+            Gcl_large = [Y, eye(ns+n); eye(ns+n), X];
 
             Ut = X(:, 1:n);
             Vt = [-W; zeros(ns, n)];
             St = W;
-            Ht = St + Ut'*inv(X)*Ut;
+            Ht = inv(St) + Ut'*inv(X)*Ut;
 
             ihat = inv(Pihat);
-            Xcal = [ihat'*X*ihat, ihat'*Ut;
-                Ut'*ihat, St + Ut'*inv(X)*Ut];
 
-            Xcalinv = [Pihat*Y*Pihat', Pihat*Vt;
-                Vt'*Pihat', Ht + Vt'*inv(Y)*Vt];
+
+            %Xcal is the reduced-order storage matrices with inverse
+            %Xcalinv. If they are not inverses of each other, then there is
+            %a problem with the prior routines.            
+            Xcal = [X, Ut;
+                Ut', inv(St) + Ut'*(X \ Ut)];
+
+            Xcalinv = [Y, Vt;
+                Vt', inv(Ht) + Vt'*(Y \ Vt)];
+
+            % Xcal = [ihat'*X*ihat, ihat'*Ut;
+            %     Ut'*ihat, St + Ut'*inv(X)*Ut];
+            % 
+            % Xcalinv = [Pihat*Y*Pihat', Pihat*Vt;
+            %     Vt'*Pihat', Ht + Vt'*inv(Y)*Vt];
 
 
             %Xcal and Xcalinv are inverses of each other when n=0
@@ -555,9 +599,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             [sys_cl, U_cl, V_cl] = system_closed_loop(obj, diss_trans, vars_rec.diss, vars_rec.reg, vars_rec.K);
 
 
-
-            Acal = Ycalinv' * (Gcl);
-
+            %recovery by transformation (preferred) or by solving a second
+            %LMI with the given storage function Xcal (a bailout option)
 
             %index the system
             [A, B, C, D] = ssdata(P_trans);
@@ -579,10 +622,14 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             %augmented system from the regulation conditions
             [S, R] = obj.reg.exosystem();
-            Aaug = [A, B(:, id); zeros(ns, n), rhoi * S];
+            Aaug = [A, B(:, id); zeros(ns, n), rhoi * S];            
             Bpaug = [B(:, iw); zeros(ns, length(iw))];
             Caug = [C(iy, :), rhoi * D(iy, id)];
                         
+
+            %original matrices in the system
+            Agam = [A, -B(:, iu)*Gam; zeros(ns, n), rhoi * S];Z
+            Creg = [C(iw, :), -C(iw, :) * Pi- D(iw, iu) * Gam];
 
 
             %perform controller recovery
@@ -590,28 +637,30 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
 
             %(33-34) of https://www.sciencedirect.com/science/article/pii/S0005109808005402
+            %
+            %modified for sign changes
             if n==0
-                Akt = Ak;
-                Ckt = Ck;
+                Akt = X \ (ihat' * Ak);                
             else
-                Akt = (X \ Ak - Aaug*Y*Pibar');
-                Ckt = Ck - Gam*Z;
+                Akt = X \ ((ihat' * Ak) - Agam*Y*Pibar');
+                
             end
-
-            Bkt = X \ Bk;
+            Bkt = X \ (ihat' *  Bk);
+            Ckt = Ck + Gam*Z;
             Dkt = Dk;
 
 
 
-            Lblock = [Pibar, -B(:, iu);
-                zeros(ns, n), eye(ns), zeros(ns, nu);
+            %no Pi present here?
+            Lblock = [eye(n), zeros(n, ns),  B(:, iu);
+                zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
                 zeros(nu, n), zeros(nu, ns), eye(nu)];
 
             Cblock = [Akt, Bkt;
                 Ckt, Dkt];
 
             Rblock = [-Winv, zeros(size(Winv, 1), ny);
-                Caug * Y * Pibar' * Winv, eye(ny)];
+                Creg * Y * E' * Winv, eye(ny)];
 
             Kblock = Lblock * Cblock * Rblock;
 
