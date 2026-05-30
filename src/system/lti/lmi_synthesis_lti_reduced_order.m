@@ -323,7 +323,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             Bpaug = [B(:, iw); 
                 zeros(ns, length(iw))];
-            Caug = [C(iy, :), rhoi * D(iy, id)];
+            Caug = [C(iy, :), D(iy, id)];
 
             Creg = [C(iw, :), -C(iw, :) * vars_reg.Pi- D(iw, iu) * vars_reg.Gam];
 
@@ -506,7 +506,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %this is the (nonlinearly-warped) system that is certified as
             %possessing the desired performance and robustness
             %specifications
-            % sys_cl = obj.system_closed_loop(P_trans, sol.vars.diss, sol.vars.reg, sol.vars.K);
+            
 
 
             
@@ -526,13 +526,14 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             %get the closed-loop regulator equation
             Yred = vars_rec.diss.GY;
-            Xhat = vars_rec.diss.GX;
+            X = vars_rec.diss.GX;
 
             Pibar = obj.Pibar(vars_rec.reg);
             
 
             %transform back to the original coordinates
-            X = ihat' * Xhat * ihat;
+            % X = ihat' * Xhat * ihat;
+            Xhat = X;
 
             n = ssize(Yred, 1);
             ns = obj.reg.ns;
@@ -558,6 +559,9 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                    -W', zeros(n, ns+n)];
             Ycalinv = inv(Ycal);
             
+
+
+
             %the similarity-transformed reduced-order storage matrix
             %what is solved in the program, should be positive definite (as
             %enforced by tolerances in config.tol)
@@ -567,6 +571,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %semidefinite (the reduced-order formalism relies on dropping
             %out modes)
             Gcl_large = [Y, eye(ns+n); eye(ns+n), X];
+
+
 
             Ut = X(:, 1:n);
             Vt = [-W; zeros(ns, n)];
@@ -583,21 +589,44 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 Ut', inv(St) + Ut'*(X \ Ut)];
 
             Xcalinv = [Y, Vt;
-                Vt', inv(Ht) + Vt'*(Y \ Vt)];
-
-            % Xcal = [ihat'*X*ihat, ihat'*Ut;
-            %     Ut'*ihat, St + Ut'*inv(X)*Ut];
-            % 
-            % Xcalinv = [Pihat*Y*Pihat', Pihat*Vt;
-            %     Vt'*Pihat', Ht + Vt'*inv(Y)*Vt];
+                Vt', inv(Ht) + Vt'*(Y \ Vt)];    
 
 
-            %Xcal and Xcalinv are inverses of each other when n=0
-            % They are not when n>0. Something is wrong. Fix it.
 
-            diss_trans = struct('P', P_trans, 'rho', 0.99)
-            [sys_cl, U_cl, V_cl] = system_closed_loop(obj, diss_trans, vars_rec.diss, vars_rec.reg, vars_rec.K);
+            Xhatcal = blkdiag(ihat', eye(n)) * Xcal * blkdiag(ihat, eye(n));
+            Xhatcalinv = blkdiag(Pihat, eye(n)) * Xcalinv * blkdiag(Pihat', eye(n));  
+            
 
+            %verify the closed-loop behavior (for bugchecking) 
+            cl_error = Ycal' * Xhatcal * Ycal - Gcl;
+
+
+
+
+            diss_trans = struct('P', P_trans, 'rho', 0.99);
+            sys_cl = obj.system_closed_loop(diss_trans, vars_rec.diss, vars_rec.reg, vars_rec.K);
+
+            XAcl = Ycalinv' * sys_cl.A * Ycalinv;
+            XBcl = Ycalinv' * sys_cl.B;
+            Ccl = sys_cl.C * Ycalinv;
+            Dcl = sys_cl.D;
+
+            Acl = Xhatcalinv * XAcl;
+            Bcl = Xhatcalinv * XBcl;
+
+            %this is the closed-loop response (after loop transformations
+            % and multiplier augmentation), should satisfy the desired
+            %performance specifications.
+            sys_cl_rec = ss(Acl, Bcl, Ccl, Dcl, 1);
+
+            A_rec = Acl(end-n+1 : end, end-n+1 : end); %this is the controller A matrix,             
+            % should match with later recovery.
+
+            %the performance of the recovered controller should match the
+            %closed-loop quantity
+            pass_rec = -getPassiveIndex(-sys_cl_rec, 'input');
+
+            %now reconstruct a controller
 
             %recovery by transformation (preferred) or by solving a second
             %LMI with the given storage function Xcal (a bailout option)
@@ -624,11 +653,11 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             [S, R] = obj.reg.exosystem();
             Aaug = [A, B(:, id); zeros(ns, n), rhoi * S];            
             Bpaug = [B(:, iw); zeros(ns, length(iw))];
-            Caug = [C(iy, :), rhoi * D(iy, id)];
+            Caug = [C(iy, :), D(iy, id)];
                         
 
             %original matrices in the system
-            Agam = [A, -B(:, iu)*Gam; zeros(ns, n), rhoi * S];Z
+            Agam = [A, -B(:, iu)*Gam; zeros(ns, n), rhoi * S];
             Creg = [C(iw, :), -C(iw, :) * Pi- D(iw, iu) * Gam];
 
 
@@ -639,30 +668,85 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %(33-34) of https://www.sciencedirect.com/science/article/pii/S0005109808005402
             %
             %modified for sign changes
+            % if n==0
+            %     Akt = X \ (ihat' * Ak);                
+            % else
+            %     Akt = X \ ((ihat' * Ak) - Agam*Y*E');
+            % 
+            % end
+            % Bkt = X \ (ihat' *  Bk);
+            % Ckt = Ck + Gam*Z;
+            % Dkt = Dk;
+
+            %The transformation recovery is causing many issues.
+            %but we have the closed-loop response already. Use that:
+            %subspace arguments to extract the controller.
+
+            % reg2 = obj.reg;
+            % reg2.Gam = Gam;
+            % reg2.Pi = Pi;
+            % reg2.Phi = reg2.compute_Phi(Pi, Gam, []);
+            % 
+            % P_orc = P_trans.drop_performance;
+            % 
+            % P_model = reg2.connect_model(P_orc, 1/rhoi);
+            % 
+            % iu0 = P_model.index_u();
+            % iu1 = iu0(1:ns);
+            % iu2 = iu((ns+1):end);
+            % 
+            % nxn = n + ns;
+            % nxi = n;
+            % 
+            % U_cl_base = [zeros(nxn, nxi), P_model.Bu;
+            %      eye(nxi), zeros(nxi, nu + ns);
+            %     zeros(nz, nxi), P_model.Dzu]';
+            % 
+            % V_cl_base = [eye(nxi), zeros(nxi, nxn), zeros(nxi, nw);
+            %     zeros(ny, nxi), P_model.Cy, P_model.Dyw];
+            % 
+            % Omega_base = [P_model.A, zeros(nxn, nxi), P_model.Bw;
+            %     zeros(nxi, nxn), zeros(nxi), zeros(nxi, nw);
+            %     P_model.Cz, zeros(nw, nxi), P_model.Dzw];
+            % 
+            % 
+            % Omega_cl = [Acl, Bcl; Ccl, Dcl] - Omega_base;
+            % 
+            % Mat_sys = kron(V_cl_base, U_cl_base)';
+            % ans_sys = reshape(Omega_cl, [], 1);
+            % 
+            % K_block_vec = lsqminnorm(Mat_sys, ans_sys);
+            % K_block = reshape(K_block_vec, n + length(iu0), n + ny);
+
+
+
             if n==0
-                Akt = X \ (ihat' * Ak);                
+                Akt = X \ Ak;                
             else
-                Akt = X \ ((ihat' * Ak) - Agam*Y*Pibar');
-                
+                Akt = X \ Ak - Aaug * Y * Pibar';
+
             end
-            Bkt = X \ (ihat' *  Bk);
+            Bkt = X \ Bk;
             Ckt = Ck + Gam*Z;
             Dkt = Dk;
 
 
-
             %no Pi present here?
-            Lblock = [eye(n), zeros(n, ns),  B(:, iu);
-                zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
-                zeros(nu, n), zeros(nu, ns), eye(nu)];
+            % LblockI = [eye(n), zeros(n, ns), B(:, iu);
+                % zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
+                % zeros(nu, n), zeros(nu, ns), eye(nu)];
+
+            LblockI = [eye(n), zeros(n, ns), B(:, iu);
+            zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
+            zeros(nu, n), zeros(nu, ns), eye(nu)];
 
             Cblock = [Akt, Bkt;
                 Ckt, Dkt];
 
             Rblock = [-Winv, zeros(size(Winv, 1), ny);
-                Creg * Y * E' * Winv, eye(ny)];
+                Creg * Y * Pibar' * Winv, eye(ny)]; %E or Pibar?
 
-            Kblock = Lblock * Cblock * Rblock;
+            Kblock = LblockI \ (Cblock * Rblock);
 
             %extraction and exponential weighting
             Ac = Kblock(1:n, 1:n);

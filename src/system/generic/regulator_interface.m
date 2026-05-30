@@ -145,11 +145,20 @@ classdef regulator_interface
                 param =[];
             end
 
-            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
-            [Bd, Ded, Dyd] = obj.d_influence(param);
-            n = length(A);
+            
+            
+            n = obj.sys.nxn;
             Pi = reg_sol(1:n, :);
             Gam = reg_sol(n+1:end, :);        
+            Phi = obj.compute_Phi(Pi, Gam);
+        end
+
+        function [Phi] = compute_Phi(obj, Pi, Gam, param)
+            if nargin < 4
+                param = [];
+            end
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
+            [Bd, Ded, Dyd] = obj.d_influence(param);
             Phi = Dyd + D22*Gam + C2*Pi;
         end
 

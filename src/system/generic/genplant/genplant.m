@@ -81,7 +81,7 @@ classdef genplant
 
         function T = Ts(obj)
             %Ts sample time
-            Ts = obj.P.Ts;
+            T = obj.P.Ts;
         end
 
         %% extract matrices       
@@ -216,6 +216,23 @@ classdef genplant
             Do = obj.P.D;
         end
 
+
+        function sys_drop = drop_performance(obj)
+            %DROP_PERFORMANCE remove the performance channel
+            [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj);
+            
+            A = Aa;
+            
+            B = [B1, B2];
+            C = [C1; C2];
+            D = [D11,D12; D21, D22];
+            n = obj.dump_dim;
+            n.nzp = 0;
+            n.nwp = 0;
+
+            sys_drop = genplant(ss(A, B, C, D, obj.Ts), n);
+            
+        end
         function [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj)
             %get plant matrices for the [wu] -> [zy] subsytsem
             
