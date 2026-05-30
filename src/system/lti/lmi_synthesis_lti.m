@@ -76,7 +76,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             M_quad_rob = quad_objective_decomp(diss.iqc_rob.M, 1:np, np + (1:nq));
             [M_quad_spec, objective] = diss.spec.supply_quad(vars_spec);
 
-            quad = obj.merge_quad_neg(M_quad_rob, M_quad_spec);
+            quad = obj.merge_quad(M_quad_rob, M_quad_spec);
 
             %the quadratic objective
             supp_b = obj.supply_block(sys_cl, quad);
@@ -88,7 +88,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             [dyn_b, U_outer, V_outer] = obj.dynamics_block(sys_cl, quad);
             
             %wrap it all together           
-            con_M = stor_b + supp_b + dyn_b;
+            con_M = -(stor_b + supp_b + dyn_b);
 
 
             if obj.elimination

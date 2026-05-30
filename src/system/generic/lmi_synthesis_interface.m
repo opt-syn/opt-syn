@@ -547,12 +547,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             nz = ssize(sys_cl.D, 1);
             nt = ssize(quad.U, 1);
 
-            outer_curr = [eye(n, n); zeros(nw, n); zeros(n, n); eye(nt, n)];
+            outer_curr = [eye(n, n); zeros(nw, n); zeros(n, n); zeros(nt, n)];
 
-            outer_next = [zeros(n, n); zeros(nw, n); eye(n); eye(nt, n)];
+            outer_next = [zeros(n, n); zeros(nw, n); eye(n); zeros(nt, n)];
             
-            stor_b = outer_curr * G_curr * outer_curr'; 
-            stor_b = stor_b + outer_next* G_next * outer_next'; 
+            stor_b = -outer_curr * G_curr * outer_curr'; 
+            stor_b = stor_b - outer_next* G_next * outer_next'; 
         end
 
 
@@ -573,7 +573,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             outer_cl_left = [zeros(n), zeros(n, nz);
                 zeros(nw, n), quad.S;
-                eye(n), zeros(n, nz);
+                eye(n), zeros(n, nz); %check the sign here
                 zeros(nt, n), quad.T];
 
 
@@ -592,7 +592,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             dyn_b = outer_cl_left * center_cl * outer_cl_right; 
             dyn_b_he = dyn_b + dyn_b';
 
-            U_outer = outer_cl_left';
+            U_outer = -outer_cl_left';
             V_outer = outer_cl_right;
 
         end
@@ -609,12 +609,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             outer_Q = [zeros(n, nw); eye(nw); zeros(n, nw); zeros(nt, nw)];
 
             
-            supp_b = -outer_Q * (quad.Q + obj.config.tol.input_diss*eye(ssize(quad.Q, 1))) * outer_Q';
+            supp_b = outer_Q * (quad.Q + obj.config.tol.input_diss*eye(ssize(quad.Q, 1))) * outer_Q';
 
             outer_U = [zeros(n, nt); zeros(nw, nt); zeros(n, nt); eye(nt, nt)];
 
             if nt
-                supp_b = supp_b + outer_U * quad.U * outer_U';
+                supp_b = supp_b - outer_U * quad.U * outer_U';
             end
 
         end

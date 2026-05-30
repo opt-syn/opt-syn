@@ -244,7 +244,7 @@ classdef opt_synthesis < opt_manager_interface
                 sol_history{1, i} = sol_syn;
                 vr_history{1, i} = vr_syn;
 
-                if sol_syn.status
+                if isempty(sol_syn) || sol_syn.status
                     break
                 end
                 
