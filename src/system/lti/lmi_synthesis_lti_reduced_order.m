@@ -37,7 +37,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             [vars, cons]  = create_vars@lmi_synthesis_interface(obj, vars, cons, alg_psi, specs);
 
            
-            vars.diss.GS = obj.Pibar(vars.reg);
+            vars.diss.GS = obj.Pibar(vars.diss, vars.reg);
            
         end
 
@@ -127,17 +127,19 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
         
 
-        function Pb = Pibar(obj, vars_reg, invPi)
+        function Pb = Pibar(obj, vars_diss, vars_reg, invPi)
             %similarity transformation for optimization over Pi
             %used in regulator (reduced-order)  
 
-            if nargin < 3
+            if nargin < 4
                 invPi = false;
             end
-            n = length(obj.sys.P.A);
-            np = ssize(vars_reg.Pi, 1);
+            
+            nxn = ssize(vars_reg.Pi, 1);
             ns = ssize(vars_reg.Pi, 2);
             
+            nf = ssize(vars_diss.GX, 1) - nxn - ns;
+
             if invPi
                 Pisign = 1;
             else
@@ -145,8 +147,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             end
 
 
-            Pb = [[eye(n-np), zeros(n-np, n+ns)];
-                   [zeros(np, n-np), eye(np), Pisign*vars_reg.Pi]];
+            Pb = [[eye(nf), zeros(nf, nxn+ns)];
+                   [zeros(nxn, nf), eye(nxn), Pisign*vars_reg.Pi]];
 
         end
 
@@ -243,19 +245,21 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
         end
 
-        function Ph = Pihat(obj, vars_reg, invPi)
+        function Ph = Pihat(obj, vars_diss, vars_reg, invPi)
             %similarity transformation for reduced-order control
             %used in regulator (reduced-order)
 
-            if nargin < 3
+            if nargin < 4
                 invPi = false;
             end
-            n = length(obj.sys.P.A);
-            np = ssize(vars_reg.Pi, 1);
+            nxn = ssize(vars_reg.Pi, 1);
             ns = ssize(vars_reg.Pi, 2);
             
-            Pb = obj.Pibar(vars_reg, invPi);
-            Ph = [Pb; [zeros(ns, n), eye(ns)]];
+            nf = ssize(vars_diss.GX, 1) - nxn - ns;
+
+            
+            Pb = obj.Pibar(vars_diss, vars_reg, invPi);
+            Ph = [Pb; [zeros(ns, nf + nxn), eye(ns)]];
         end
 
 
@@ -287,9 +291,9 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             rhoi = (1/rho);
 
-            Pibar = obj.Pibar(vars_reg);
-            Pihat = obj.Pihat(vars_reg);
-            Pihatinv = obj.Pihat(vars_reg, true);
+            Pibar = obj.Pibar(vars_diss, vars_reg);
+            Pihat = obj.Pihat(vars_diss, vars_reg);
+            Pihatinv = obj.Pihat(vars_diss, vars_reg, true);
 
             
             [A, B, C, D] = ssdata(P);
@@ -511,9 +515,9 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             
             %get the regulator equation solution
-            Pibar = obj.Pibar(vars_rec.reg);
-            Pihat= obj.Pihat(vars_rec.reg);
-            ihat = obj.Pihat(vars_rec.reg, true);
+            Pibar = obj.Pibar(vars_rec.diss, vars_rec.reg);
+            Pihat= obj.Pihat(vars_rec.diss, vars_rec.reg);
+            ihat = obj.Pihat(vars_rec.diss, vars_rec.reg, true);
 
             Gam = vars_rec.reg.Gam;
             Pi = vars_rec.reg.Pi;
@@ -528,7 +532,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             Yred = vars_rec.diss.GY;
             X = vars_rec.diss.GX;
 
-            Pibar = obj.Pibar(vars_rec.reg);
+            Pibar = obj.Pibar(vars_rec.diss, vars_rec.reg);
             
 
             %transform back to the original coordinates
@@ -712,11 +716,11 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             nxn = n + ns;
             nxi = n;
 
-            U_cl_base = [zeros(nxn, nxi), P_model.Bu;
+            base_left = [zeros(nxn, nxi), P_model.Bu;
                  eye(nxi), zeros(nxi, nu + ns);
-                zeros(nz, nxi), P_model.Dzu]';
+                zeros(nz, nxi), P_model.Dzu];
 
-            V_cl_base = [zeros(nxi, n + ns),  eye(nxi), zeros(nxi, nw);
+            base_right = [zeros(nxi, n + ns),  eye(nxi), zeros(nxi, nw);
                 P_model.Cy, zeros(ny, nxi), P_model.Dyw];
 
             Omega_base = [P_model.A, zeros(nxn, nxi), P_model.Bw;
@@ -726,33 +730,37 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             Omega_cl = [Acl, Bcl; Ccl, Dcl] - Omega_base;
 
-            Mat_sys = kron(V_cl_base, U_cl_base)';
+            Mat_sys = kron(base_right', base_left);
             ans_sys = reshape(Omega_cl, [], 1);
 
 
             %TODO: enforce the D_mask constraint in the system realization           
-            [ii, jj] = find(obj.get_D_mask());
+            [ii, jj] = find(~obj.get_D_mask());
             ND0 = length(ii);
 
-            ind_i = sparse(1:ND0, ii, ones(ND0, 1), ND0, nu);
-            ind_j = sparse(1:ND0, jj, ones(ND0, 1), ND0, nu);
-
-            Mat_D = kron(ind_j, ind_i);
+            ind_D2 = sub2ind([n+nu+ns, n+ny], n+ns+ii, n+jj);
+            Nmasked = length(ind_D2);
             
-            % Mat_all = [Mat_sys; Mat_D];
-            % ans_all = [ans_sys; zeros(ND0)];
+            Mat_D = sparse(1:Nmasked, ind_D2, ones(Nmasked, 1), Nmasked, (n+nu+ns)*(n+ny));
+            ans_D = zeros(Nmasked, 1);
+            
+            Mat_all = [Mat_sys; Mat_D];
+            ans_all = [ans_sys; ans_D];
 
 
-            Mat_all = [Mat_sys];
-            ans_all = [ans_sys];
+            % Mat_all = [Mat_sys];
+            % ans_all = [ans_sys];
 
             %solve for a system in the subspace and verify
-            Kblock_vec = lsqminnorm(Mat_sys, ans_sys);
+            Kblock_vec = lsqminnorm(Mat_all, ans_all);
+            Kblock_vec(ind_D2) = 0; %make sure the zero entries are zero.
             Kblock = reshape(Kblock_vec, n + length(iu0), n + ny);
+            
 
             rec_error = norm(Mat_all*Kblock_vec - ans_all);
 
             
+
             % 
             % if n==0
             %     Akt = X \ Ak;                
@@ -793,8 +801,14 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             Cc = Kblock(n+1:end, 1:n);
             Dc = Kblock(n+1:end, n+1:end);
 
+
+
             K_nofeed_full = ss(Ac, Bc, Cc, Dc, 1);
             K_nofeed = K_nofeed_full;            
+
+            if norm(rec_error) > 1e-6
+                error('Reduced Order LTI: failure of subspace-based controller reconstruction')
+            end
         end
 
 

@@ -374,7 +374,7 @@ classdef (Abstract) opt_manager_interface < handle
 
                 sol_best.vars = vrec;
 
-                sol_best = obj.process_recovery(sol_best, sol_best.lmi_out, sol.alg_psi, sol.diss);
+                sol_best = obj.process_recovery(sol_best, sol_best.lmi_out, sol_best.alg_psi, sol_best.diss);
                 sol_best.objective = double(double(sol_best.objective, sol_best.lmi_out));
             end
 
