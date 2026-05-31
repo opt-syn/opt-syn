@@ -329,7 +329,11 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 zeros(ns, length(iw))];
             Caug = [C(iy, :), D(iy, id)];
 
-            Creg = [C(iw, :), -C(iw, :) * vars_reg.Pi- D(iw, iu) * vars_reg.Gam];
+            ns = size(vars_reg.Pi, 2);
+            nf = n - size(vars_reg.Pi, 1);
+            
+            Piaug = [zeros(nf, ns); vars_reg.Pi];
+            Creg = [C(iw, :), -C(iw, :) * Piaug- D(iw, iu) * vars_reg.Gam];
 
             if obj.elimination
 
@@ -673,7 +677,16 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             %original matrices in the system
             Agam = [A, -B(:, iu)*Gam; zeros(ns, n), rhoi * S];
-            Creg = [C(iw, :), -C(iw, :) * Pi- D(iw, iu) * Gam];
+            
+            
+            
+            % ns = size(vars_reg.Pi, 2);
+            nf = n - size(Pi, 1);
+
+            Piaug = [zeros(nf, ns); Pi];
+            Creg = [C(iw, :), -C(iw, :) * Piaug- D(iw, iu) * Gam];
+
+            % Creg = [C(iw, :), -C(iw, :) * Pi- D(iw, iu) * Gam];
 
 
             %perform controller recovery
