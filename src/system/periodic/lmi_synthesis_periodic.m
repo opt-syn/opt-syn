@@ -173,7 +173,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
         end
 
         %% main call
-        function [cons, objective, vars, con_M] = cons_dynamic(obj, vars, cons, diss)
+        function [vars, cons, objective] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
             %Input:
@@ -248,7 +248,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             nq = diss.iqc_rob.nq;
 
             M_quad_rob = quad_objective_decomp(diss.iqc_rob.M, 1:np, np + (1:nq));
-            [M_quad_spec, objective] = diss.spec.supply_quad(vars_spec);
+            [M_quad_spec, objective] = diss.spec.supply_quad(vars.spec);
 
             quad = obj.merge_quad_neg(M_quad_rob, M_quad_spec);
       
@@ -266,7 +266,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             dyn_b = obj.dynamics_block(sys_cl, quad);
             
             %wrap it all together
-            objective = 0;
+%             objective = 0;
 
             con_M = stor_b + supp_b + dyn_b;
 
@@ -283,6 +283,16 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
         %% Recovery
         % Call the recovery method to finalize the synthesis process
         % [cons, objective, con_M] = obj.recovery(vars, cons, diss);
+
+        function cons = con_spread(obj, cons, vars)
+            %CON_SPREAD increase numerical conditioning by separating the 
+            %primal and dual blocks
+            %invoke this over multiple subsystems
+%             if ~obj.config.syn.reduced_order
+            for i = 1:obj.Nss
+                cons = obj.con_spread_single(cons, vars.diss.GX{i}, vars.diss.GY{i});                
+            end
+        end
 
         function [sol] = recover_subcontroller(obj, P_trans, sol)
             %RECOVER_SUBCONTROLLER recover the subcontroller of the current

@@ -325,6 +325,38 @@ classdef regulator_switched < regulator_interface
             
         end
 
+        function vars_reg = create_vars(obj)
+            %CREATE_VARS: create variables that parameterize the nullspace
+            vars_reg.Pi = obj.Pi;
+            vars_reg.Gam = obj.Gam;
+            vars_reg.Phi = obj.Phi;
+
+            
+
+            
+            if isempty(obj.Gam_basis{1})==0
+                nbasis = size(obj.Gam_basis{1}, 3);                
+                eta = [];
+%                 lmim('reg_param', nbasis, 1, 'full');
+
+
+%                 for i = 1:nbasis
+%                     eta_curr = lmim_index(eta, i, 1);
+% 
+%                     vars_reg.Pi = vars_reg.Pi + obj.Pi_basis(:, :, i) * eta_curr;
+%                     vars_reg.Gam = vars_reg.Gam + obj.Gam_basis(:, :, i) * eta_curr;
+%                     vars_reg.Phi = vars_reg.Phi + obj.Phi_basis(:, :, i) * eta_curr;
+%                 end
+
+                vars_reg.eta = eta;
+            else
+                vars_reg.eta= [];
+            end
+        end
+        
+    
+
+
 
 
     end

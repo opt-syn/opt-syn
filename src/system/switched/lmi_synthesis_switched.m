@@ -329,7 +329,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             nq = diss.iqc_rob.nq;
 
             M_quad_rob = quad_objective_decomp(diss.iqc_rob.M, 1:np, np + (1:nq));
-            [M_quad_spec, objective] = diss.spec.supply_quad(vars_spec);
+            [M_quad_spec, objective] = diss.spec.supply_quad(vars.spec);
 
             quad = obj.merge_quad_neg(M_quad_rob, M_quad_spec);
            
@@ -348,7 +348,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             dyn_b = obj.dynamics_block(sys_cl, quad);
             
             %wrap it all together
-            objective = 0;
+%             objective = 0;
 
             con_M = stor_b + supp_b + dyn_b;
 

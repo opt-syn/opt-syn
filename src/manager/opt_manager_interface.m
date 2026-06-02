@@ -482,7 +482,7 @@ classdef (Abstract) opt_manager_interface < handle
             %dissipation relations
             objective = 0;
             for i = 1:ndiss
-                [cons, objective_curr, vars, con_M] = obj.lmi.cons_dynamic(vars, cons, diss{i});                                 
+                [vars, cons, objective_curr] = obj.lmi.cons_dynamic(vars, cons, diss{i});                                 
 
                 objective = objective + objective_curr;
 

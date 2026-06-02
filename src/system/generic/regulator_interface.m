@@ -493,7 +493,8 @@ classdef regulator_interface
             
 
             
-            if isempty(obj.Gam_basis)==0
+%             if isempty(obj.Gam_basis)==0
+            if false
                 nbasis = size(obj.Gam_basis, 3);                
                 eta = lmim('reg_param', nbasis, 1, 'full');
 

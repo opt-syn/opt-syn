@@ -39,7 +39,7 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
 
 
         %% main call
-        function [cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
+        function [vars, cons, objective] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
             %Input:
