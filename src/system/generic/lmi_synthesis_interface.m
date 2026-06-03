@@ -81,9 +81,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         function [vars, cons] = create_vars(obj, vars, cons, alg_psi, specs)
             %CREATE_VARS create the variables for the problem
 
-            [vars.diss, cons] = obj.create_vars_storage(cons, alg_psi);
-            [vars.spec, cons] = obj.create_vars_spec(cons, specs);
             [vars.reg]  = obj.create_vars_regulator();
+            [vars.diss, cons] = obj.create_vars_storage(cons, alg_psi);
+            [vars.spec, cons] = obj.create_vars_spec(cons, specs);            
             [vars.K, cons]    = obj.create_vars_controller(cons, alg_psi);
         end
 
@@ -119,59 +119,76 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %systems with more outputs than oracles can have freedom in the            
             %regulator equations (such as optimization problems with known 
             % Laplacian matrices)
-
             
-
-            
-            
-            
-            vars_reg = obj.reg.create_vars();
-            
+            vars_reg = obj.reg.create_vars();            
 
         end
 
 
-        function [GX, GY, cons] = define_storage_G(obj, cons, alg_psi,  name)
+        function [GX, GY, cons] = define_storage_G(obj, cons, alg_psi, name)
             %DEFINE_STORAGE_G storage function for a specific subsystem
 
             %without terminal cost:
-            %
-            %[GX, I;
-            %[I, GY] is PD
-            %
-
-
             n = ssize(alg_psi.A, 1);
             ns = obj.reg.ns;
 
-
-
             nX = n + ns;
-
+           
+            [GX, cons] = define_storage_GX(obj, cons, alg_psi, name);
+            [GY, cons] = define_storage_GY(obj, cons, alg_psi, name);
             
-            if obj.config.syn.reduced_order
-                %TODO: not yet implemented
-                nY = n;
-            else
-                nY = n + ns;
-            end
+        end
 
+
+        function [GX, cons] = define_storage_GX(obj, cons, alg_psi, name);
+             %DEFINE_STORAGE_GX primal storage function for a specific subsystem
+             n = ssize(alg_psi.A, 1);
+             ns = obj.reg.ns;
+
+             nX = n + ns;
              GX = lmim(['GX', name], nX, nX, 'sym');
-            
           
 
-            GY = lmim(['GY', name], nY, nY, 'sym');
-
-            %TODO the terminal constraints with the coupling condition?
-
-
-            %bound the entries of the GX and GY matrices
-            if obj.config.tol.G_max < Inf                   
+             if obj.config.tol.G_max < Inf                   
                 cons = append_lmi(cons, obj.config.tol.GX_max*eye(nX)  - GX, obj.config.LMILAB);                            
-                cons = append_lmi(cons, obj.config.tol.GY_max*eye(nY)  - GY, obj.config.LMILAB);                
                 cons = append_lmi(cons, -obj.config.tol.G_min*eye(nX)  + GX, obj.config.LMILAB);                            
-                cons = append_lmi(cons, -obj.config.tol.G_min*eye(nY)  + GY, obj.config.LMILAB);                
-            end            
+            end 
+        end
+
+        function [GY, cons] = define_storage_GY(obj, cons, alg_psi, name);
+            %DEFINE_STORAGE_GY dual storage function for a specific subsystem            
+            n = ssize(alg_psi.A, 1);
+            ns = obj.reg.ns;
+            
+            nY = obj.get_GY_dim(n, ns);
+
+            if nY > 0
+                GY = lmim(['GY', name], nY, nY, 'sym');
+            
+
+    
+                if obj.config.tol.G_max < Inf                   
+                    cons = append_lmi(cons, obj.config.tol.GY_max*eye(nY)  - GY, obj.config.LMILAB);                
+                    cons = append_lmi(cons, -obj.config.tol.G_min*eye(nY)  + GY, obj.config.LMILAB);                
+                end 
+            else
+                GY = [];
+            end
+
+        end
+
+        function ys = get_GY_dim(obj, n, ns)
+            %dimension of the GY term
+            ys = n +ns;
+        end
+
+        function verdict = reduced_order(obj)
+            verdict = obj.config.syn.reduced_order;
+        end
+
+        function P_model = connect_model(obj, diss)
+
+            P_model = obj.reg.connect_model(diss.plant, diss.rho);
         end
 
         function G = get_storage(obj, vars_diss, vars_reg)
@@ -183,20 +200,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             GY = vars_diss.GY;
             GS = vars_diss.GS;
             
-            nx = ssize(GX, 1);
-            % ns = ssize(obj.reg.S, 1);
-
-
-            if obj.config.syn.reduced_order
-                %TODO: not yet implemented
-                %some sort of indexing on Pi
-                Pi = vars.reg.Pi;
-                G = [GY, GS; GS', GX];
-            else
-                %
-                G = [GY, GS; GS', GX];                
-            end
+            G = [GY, GS; GS', GX];                
+            
         end
+
 
         function [vars_spec, cons] = create_vars_spec(obj, cons, specs)
             %CREATE_VARS_SPEC declare variables for the specifications
@@ -227,9 +234,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %CON_SPREAD increase numerical conditioning by separating the 
             %primal and dual blocks
             %invoke this over multiple subsystems
-            if ~obj.config.syn.reduced_order
+            % if ~obj.config.syn.reduced_order
                 cons = obj.con_spread_single(cons, vars.diss.GX, vars.diss.GY);
-            end
+            % end
         end
 
         function el = elimination(obj)
@@ -254,17 +261,22 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             n = ssize(alg_psi.A, 1);
             ns = obj.reg.ns;
             
-            if obj.config.syn.reduced_order
-                %TODO: not yet implemented
-                nc = n;
-            else
+            include_Dk1 = true;
+            [ny, nu] = size(D_mask);
+            % if obj.config.syn.reduced_order
+            %     %TODO: not yet implemented
+            %     nc = n;
+            %     nC = ny;
+            %     include_Dk1 = false;
+            % else
+                nC = ns + ny;
                 nc = n + ns;
-            end
+            % end
 
             % ny = obj.sys.P.ny;
             % nu = obj.sys.P.nu;
 
-            [ny, nu] = size(D_mask);
+            
 
             
             %declare the variables
@@ -286,13 +298,14 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                     %remove [Ak, Bk; Ck1, Dk1]    
                     vars_K.B = [];  
                     vars_K.C = lmim(['Ck', name], ny, nc);
-                    vars_K.D = obj.form_Dk(alg_psi, D_mask, [], false);
+                    include_Dk1 = false;
+                    vars_K.D = obj.form_Dk(alg_psi, D_mask, [], include_Dk1);
                     kq = [vars_K.C, vars_K.D];
                 else
                     %remove [Ak; Ck]
                     vars_K.C = [];
                     vars_K.B = lmim(['Bk', name], nc, ny);
-                    vars_K.D = obj.form_Dk(alg_psi, D_mask);
+                    vars_K.D = obj.form_Dk(alg_psi, D_mask, [], include_Dk1);
                     kq = [vars_K.B;            
                     vars_K.D];
                     cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
@@ -303,8 +316,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 
                 vars_K.A = lmim(['Ak', name], nc, nc);
                 vars_K.B = lmim(['Bk', name], nc, ny);    
-                vars_K.C = lmim(['Ck', name], ns + ny, nc);
-                vars_K.D = obj.form_Dk(alg_psi, D_mask);
+                vars_K.C = lmim(['Ck', name], nC, nc);
+                vars_K.D = obj.form_Dk(alg_psi, D_mask, [], include_Dk1);
 
                 kq = [vars_K.A, vars_K.B;            
                     vars_K.C,  vars_K.D];
@@ -369,6 +382,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %to apply Lemma 4 of https://arxiv.org/pdf/1305.1746
 
             
+            USE_LAST = all(nxi~=0);
             %get the mask for the permuted controller matrix
             K_mask = obj.get_K_mask(nxi);
             sz = size(K_mask);
@@ -391,8 +405,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
             %store the identity indexers            
             nc = size(coord_first, 1);
-            U = cell(nc+1, 1);
-            V = cell(nc+1, 1);            
+            U = cell(nc+USE_LAST, 1);
+            V = cell(nc+USE_LAST, 1);            
             for i = 1:nc  
                 % U{i} = speye(sz(1) - coord_shift(i), sz(1));
                 U{i} = [sparse(sz(1)- coord_shift(i), coord_shift(i)),  speye(sz(1) - coord_shift(i))];
@@ -402,10 +416,11 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
             % U{nc+1} = speye(sz(1) - coord_last+1, sz(1));
 
-            U{nc+1} = [sparse(sz(1)-coord_last+1, coord_last - 1),  speye(sz(1) - coord_last+1)];
-            hi = sz(2) - sum(cellfun(@(n) size(n, 1), V(1:end-1))); %not ideal
-            V{nc+1} = sparse(1:hi, sum(h_first) + (1:hi), ones(hi, 1), hi, sz(2));
-
+            if USE_LAST
+                U{nc+1} = [sparse(sz(1)-coord_last+1, coord_last - 1),  speye(sz(1) - coord_last+1)];
+                hi = sz(2) - sum(cellfun(@(n) size(n, 1), V(1:end-1))); %not ideal
+                V{nc+1} = sparse(1:hi, sum(h_first) + (1:hi), ones(hi, 1), hi, sz(2));
+            end
         end
 
 
@@ -532,12 +547,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             nz = ssize(sys_cl.D, 1);
             nt = ssize(quad.U, 1);
 
-            outer_curr = [eye(n, n); zeros(nw, n); zeros(n, n); eye(nt, n)];
+            outer_curr = [eye(n, n); zeros(nw, n); zeros(n, n); zeros(nt, n)];
 
-            outer_next = [zeros(n, n); zeros(nw, n); eye(n); eye(nt, n)];
+            outer_next = [zeros(n, n); zeros(nw, n); eye(n); zeros(nt, n)];
             
-            stor_b = outer_curr * G_curr * outer_curr'; 
-            stor_b = stor_b + outer_next* G_next * outer_next'; 
+            stor_b = -outer_curr * G_curr * outer_curr'; 
+            stor_b = stor_b - outer_next* G_next * outer_next'; 
         end
 
 
@@ -558,7 +573,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             outer_cl_left = [zeros(n), zeros(n, nz);
                 zeros(nw, n), quad.S;
-                eye(n), zeros(n, nz);
+                eye(n), zeros(n, nz); %check the sign here
                 zeros(nt, n), quad.T];
 
 
@@ -577,7 +592,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             dyn_b = outer_cl_left * center_cl * outer_cl_right; 
             dyn_b_he = dyn_b + dyn_b';
 
-            U_outer = outer_cl_left';
+            U_outer = -outer_cl_left';
             V_outer = outer_cl_right;
 
         end
@@ -594,12 +609,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             outer_Q = [zeros(n, nw); eye(nw); zeros(n, nw); zeros(nt, nw)];
 
             
-            supp_b = -outer_Q * (quad.Q + obj.config.tol.input_diss*eye(ssize(quad.Q, 1))) * outer_Q';
+            supp_b = outer_Q * (quad.Q + obj.config.tol.input_diss*eye(ssize(quad.Q, 1))) * outer_Q';
 
             outer_U = [zeros(n, nt); zeros(nw, nt); zeros(n, nt); eye(nt, nt)];
 
             if nt
-                supp_b = supp_b + outer_U * quad.U * outer_U';
+                supp_b = supp_b - outer_U * quad.U * outer_U';
             end
 
         end
@@ -662,8 +677,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         %Quadratic performance (defined on a per-system basis)
 
         %% Controller Recovery
-        function sol = process_recovery(obj, sol, lmi_out, alg_psi)
+        function sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
             %recover the controller
+
+            if nargin < 5
+                diss = [];
+            end
             
             %override this with other system types
 
@@ -672,10 +691,11 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %TODO: reduced order controller synthesis and recovery
 
             %get the system with the internal model
-            P_trans =  obj.reg.connect_model(alg_psi, sol.rho);
+            dissend = struct('plant', alg_psi, 'rho', sol.rho);
+            P_trans =  obj.connect_model(dissend);
             
             %evaluate the variables
-            [sol] = obj.recover_subcontroller(P_trans, sol);
+            [sol] = obj.recover_subcontroller(alg_psi, P_trans, sol);
                       
             %verify performance of the algorithm
             %TODO: a postprocessing LMI (?) to check that the recovered 
@@ -683,7 +703,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
 
-        function [sol] = recover_subcontroller(obj, P_trans, sol)
+        function [sol] = recover_subcontroller(obj, alg_psi, P_trans, sol)
             %RECOVER_SUBCONTROLLER recover the subcontroller of the current
             %mode/control
             %

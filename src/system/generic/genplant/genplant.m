@@ -81,13 +81,18 @@ classdef genplant
 
         function T = Ts(obj)
             %Ts sample time
-            Ts = obj.P.Ts;
+            T = obj.P.Ts;
         end
 
         %% extract matrices       
         function B = Bw(obj)
             B0 = obj.B;
             B = B0(:, obj.index_w());
+        end
+
+        function B = Bwp(obj)
+            B0 = obj.B;
+            B = B0(:, obj.index_wp());
         end
         
         function B = Bu(obj)
@@ -98,6 +103,10 @@ classdef genplant
         function C = Cz(obj)
             C0 = obj.C;
             C = C0(obj.index_z(), :);
+        end
+        function C = Czp(obj)
+            C0 = obj.C;
+            C = C0(obj.index_zp(), :);
         end
         
         function C = Cy(obj)
@@ -134,6 +143,24 @@ classdef genplant
             D = D0(iy, iw);
         end
 
+        function D = Dywp(obj)
+            %oracle output to controller input
+            iw = obj.index_wp();
+            iy = obj.index_y();
+
+            D0 = obj.P.D;
+            D = D0(iy, iw);
+        end
+
+       function D = Dzpwp(obj)
+            %oracle output to controller input
+            iw = obj.index_wp();
+            izp = obj.index_zp();
+
+            D0 = obj.P.D;
+            D = D0(izp, iw);
+        end
+
 
         function D = Dyu(obj)
             %controller output to controller input
@@ -144,24 +171,7 @@ classdef genplant
             D = D0(iy, iu);
         end
 
-        function D = Dywp(obj)
-            %performance input to controller input
-            iwp = obj.index_wp();
-            iy = obj.index_y();
-
-            D0 = obj.P.D;
-            D = D0(iy, iwp);
-        end
-
-        function D = Dzpwp(obj)
-            %performance input to performance output
-            iwp = obj.index_wp();
-            izp = obj.index_zp();
-
-            D0 = obj.P.D;
-            D = D0(izp, iwp);
-        end
-
+ 
         function D = Dzwp(obj)
             %performance input to oracle input
             iwp = obj.index_wp();
@@ -206,6 +216,23 @@ classdef genplant
             Do = obj.P.D;
         end
 
+
+        function sys_drop = drop_performance(obj)
+            %DROP_PERFORMANCE remove the performance channel
+            [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj);
+            
+            A = Aa;
+            
+            B = [B1, B2];
+            C = [C1; C2];
+            D = [D11,D12; D21, D22];
+            n = obj.dump_dim;
+            n.nzp = 0;
+            n.nwp = 0;
+
+            sys_drop = genplant(ss(A, B, C, D, obj.Ts), n);
+            
+        end
         function [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj)
             %get plant matrices for the [wu] -> [zy] subsytsem
             

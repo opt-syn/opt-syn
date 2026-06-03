@@ -63,7 +63,7 @@ classdef opt_synthesis < opt_manager_interface
             end
         end
 
-        function [diss] = index_specs(obj, alg_psi, iqc_op, specs)
+        function [diss] = index_specs(obj, alg_psi, iqc_data, specs)
 
             %INDEX_SPECS:  index into the performance specifications
             %
@@ -87,6 +87,8 @@ classdef opt_synthesis < opt_manager_interface
             end
 
             [rho, sperf] = obj.perf_specs(specs);
+
+            iqc_op = iqc_data.iqc_op;
 
             diss = cell(length(sperf), 1);
             %determine the indices for each performance specification
@@ -118,12 +120,6 @@ classdef opt_synthesis < opt_manager_interface
                
                 sp_ind_w = iwp_iqc;
                 sp_ind_r = ir_iqc0;
-
-
-                
-                    
-
-
                 
                 if iscell(alg_psi)
                     %TODO: change to genplant_poly type?
@@ -182,10 +178,13 @@ classdef opt_synthesis < opt_manager_interface
                     
                 end
 
+                iqc_data_rump = rmfield(iqc_data, 'iqc_op');
+
 
                 diss{i} = struct('iqc_rob', iqc_op, ...
-                    'spec', sp, 'rho', rho);
+                    'spec', sp, 'rho', rho, 'iqc_data', iqc_data_rump);
                 diss{i}.plant = alg_screen;
+                diss{i}.plant_reg = obj.lmi.reg.sys_regulated_aug();
                 diss{i}.ndiss = length(specs);
                 % %need to permute the entries of Mdiag for the partition
 
@@ -203,12 +202,13 @@ classdef opt_synthesis < opt_manager_interface
         end
 
         %% extract the solution                   
-        function  sol = process_recovery(obj, sol, lmi_out, alg_psi)
+        function  sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
             %PROCESS_RECOVERY recover the controller from the solution
             
             sol.iqc_op = obj.iqc_op;
             sol.iqc_op_all = obj.iqc_op_all;
-            sol = obj.lmi.process_recovery(sol, lmi_out, alg_psi);            
+            sol.vars.rho = sol.rho;
+            sol = obj.lmi.process_recovery(sol, lmi_out, alg_psi, diss);            
         end
 
         %% alternating design
@@ -244,7 +244,7 @@ classdef opt_synthesis < opt_manager_interface
                 sol_history{1, i} = sol_syn;
                 vr_history{1, i} = vr_syn;
 
-                if sol_syn.status
+                if isempty(sol_syn) || sol_syn.status
                     break
                 end
                 
