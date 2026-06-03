@@ -97,7 +97,7 @@ classdef alg_plotter
     
                 xlabel('$k$', 'interpreter', 'latex', 'fontsize', obj.FS)
                 ylabel(obj.get_name(sig), 'interpreter', 'latex', 'fontsize', obj.FS)
-            
+                title(obj.get_title(sig), 'interpreter', 'latex', 'fontsize', obj.FST)
                 if ismember(sig, {'res_w', 'res_z'})
                     set(ax, 'YScale', 'log');
                 end
@@ -109,8 +109,41 @@ classdef alg_plotter
             
         end
 
+        function name = get_title(obj, sig)
+            %GET_TITLE get the title for the plot
+            switch sig
+                case 'f' 
+                    name = 'Function Value';
+                case 'x'
+                    name = 'State';
+                case 'z'
+                    name = 'Iterate';
+                case 'w'
+                    name = 'Oracle Output';
+                case 'w_p'
+                    name = 'Performance Input';
+                case 'z_p'
+                    name = 'Performance Output';
+                case 'mode'
+                    name = 'Switching Mode';
+                case 'delay'
+                    name = 'Time Delay';
+                case 'res_w'
+                    name = 'Optimality Error';
+                case 'res_z'
+                    name = 'Consensus Error';
+                case 'xi'
+                    name = 'State (Controller)';
+                case 'xn'
+                    name = 'State (Network)';
+                case 'eq'
+                    name = 'Primal Feasibility';
+            end
+        end
+
         function name = get_name(obj, sig)
-            %get the name of the signal in latex-formatted strings
+            %GET_NAME the name of the signal in latex-formatted strings
+            %for use in y-axis labels
             if length(sig)==1
                 name_mid = ['$', sig, '$'];
             elseif strcmp(sig(2), '_')

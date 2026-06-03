@@ -204,7 +204,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
         end
 
         %% main call
-        function [cons, objective, vars, con_M] = cons_dynamic(obj, vars, cons, diss)
+        function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
             %Input:
@@ -331,7 +331,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             M_quad_rob = quad_objective_decomp(diss.iqc_rob.M, 1:np, np + (1:nq));
             [M_quad_spec, objective] = diss.spec.supply_quad(vars.spec);
 
-            quad = obj.merge_quad_neg(M_quad_rob, M_quad_spec);
+            quad = obj.merge_quad(M_quad_rob, M_quad_spec);
            
             %formulation from ParDynSyn notes (parametric dynamic
             %synthesis)
