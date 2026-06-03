@@ -35,7 +35,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
         
-        function [cons, objective, vars, con_M] = cons_dynamic(obj, vars, cons, diss)
+        function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
             %Input:
@@ -62,7 +62,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 error('Matrix Elimination (opt_config.syn.elimination=true) cannot be used if there is more than performance specification');
             end
 
-            [cons, objective, vars, con_M] = cons_dynamic@lmi_dispatch_interface(obj, vars, cons, diss);
+            [vars, cons, objective, con_M] = cons_dynamic@lmi_dispatch_interface(obj, vars, cons, diss);
 
             
 

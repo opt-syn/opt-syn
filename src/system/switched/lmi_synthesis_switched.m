@@ -204,7 +204,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
         end
 
         %% main call
-        function [cons, objective, vars, con_M] = cons_dynamic(obj, vars, cons, diss)
+        function [vars, cons, objective,  con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
             %Input:
