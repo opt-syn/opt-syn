@@ -577,18 +577,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 zeros(nt, n), quad.T];
 
 
-
-            % outer_cl_left = [zeros(n), zeros(n, nw);
-            %     zeros(nw, n), quad.S';
-            %     eye(n), zeros(n, nw);
-            %     zeros(nt, n), quad.T'];
-            % 
-            % outer_cl_right= [[eye(n), zeros(n, nz);
-            %     zeros(nz, n), eye(nz)], zeros(n+nz, n+nt)];
-
-
-
-
             dyn_b = outer_cl_left * center_cl * outer_cl_right; 
             dyn_b_he = dyn_b + dyn_b';
 
@@ -666,8 +654,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %is a special case of quadratic performance
             [cons, objective, con_M] = obj.quad(vars, cons, diss);
 
-            %maybe keep this separate for analysis?
-            
+            %maybe keep this separate for analysis?           
         end
 
         %% common specification calls
@@ -691,7 +678,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %TODO: reduced order controller synthesis and recovery
 
             %get the system with the internal model
-            dissend = struct('plant', alg_psi, 'rho', sol.rho);
+            dissend = struct;
+            dissend.plant = alg_psi;
+            dissend.rho = sol.rho;
             P_trans =  obj.connect_model(dissend);
             
             %evaluate the variables

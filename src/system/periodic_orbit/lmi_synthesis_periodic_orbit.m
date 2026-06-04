@@ -238,7 +238,7 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_periodic
             %wrap it all together
             objective = 0;
 
-            con_M = stor_b + supp_b + dyn_b;
+            con_M = -(stor_b + supp_b + dyn_b);
 
 
             sM = ssize(con_M,1);

@@ -71,7 +71,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             %wrap it all together
             objective = 0;
 
-            con_M = sysb + suppb;
+            con_M = -(sysb + suppb);
 
 
             sM = ssize(con_M,1);

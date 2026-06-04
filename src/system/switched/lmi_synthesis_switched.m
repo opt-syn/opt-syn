@@ -350,7 +350,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             %wrap it all together
 %             objective = 0;
 
-            con_M = stor_b + supp_b + dyn_b;
+            con_M = -(stor_b + supp_b + dyn_b);
 
 
             sM = ssize(con_M,1);
@@ -375,7 +375,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
         % Call the recovery method to finalize the synthesis process
         % [cons, objective, con_M] = obj.recovery(vars, cons, diss);
 
-        function [sol] = recover_subcontroller(obj, P_trans, sol)
+        function [sol] = recover_subcontroller(obj, alg_psi, P_trans, sol)
             %RECOVER_SUBCONTROLLER recover the subcontroller of the current
             %mode/control
             %
