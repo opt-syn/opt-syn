@@ -132,14 +132,14 @@ classdef lmi_dispatch_interface < handle
             quad = struct('Q', Qq, 'S', Sq, 'U', Uq, 'T', Tq);
         end
 
-        function quad_m = merge_quad_neg(obj, M_rob, M_spec)
+        function quad_m = merge_quad(obj, M_rob, M_spec)
             %merge together quadratic performance specifications;
 
 
-            Qq= -blkdiag(M_rob.Q, M_spec.Q);
-            Sq= -blkdiag(M_rob.S, M_spec.S);
+            Qq= blkdiag(M_rob.Q, M_spec.Q);
+            Sq= blkdiag(M_rob.S, M_spec.S);
             Tq= blkdiag(M_rob.T, M_spec.T);
-            Uq= -blkdiag(M_rob.U, M_spec.U);
+            Uq= blkdiag(M_rob.U, M_spec.U);
 
             quad_m = struct('Q', Qq, 'S', Sq, 'U', Uq, 'T', Tq);
         end

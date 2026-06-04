@@ -111,7 +111,7 @@ classdef opt_analysis < opt_manager_interface
             cons = append_lmi(cons, -cs + nop*(1+marg), obj.config.LMILAB);
         end
 
-        function [vars, cons, objective, alg_psi, rho] = build_program(obj, specs)
+        function [vars, cons, objective, alg_psi, rho, diss] = build_program(obj, specs)
 
 
             if nargin < 2
@@ -119,7 +119,7 @@ classdef opt_analysis < opt_manager_interface
             end
 
             %BUILD_PROGRAM set up the algorithm analysis problem
-            [vars, cons, objective, alg_psi, rho] = build_program@opt_manager_interface(obj, specs); 
+            [vars, cons, objective, alg_psi, rho, diss] = build_program@opt_manager_interface(obj, specs); 
 
 
             %load in the filter constraints      
@@ -139,7 +139,7 @@ classdef opt_analysis < opt_manager_interface
 
         end
            
-        function [diss] = index_specs(obj, alg_psi, iqc_op, specs)
+        function [diss] = index_specs(obj, alg_psi, iqc_data, specs)
 
             %INDEX_SPECS:  index into the performance specifications
             %
@@ -162,6 +162,7 @@ classdef opt_analysis < opt_manager_interface
                 target_ind = 0;
             end
 
+            iqc_op = iqc_data.iqc_op;
 
             diss = cell(length(specs), 1);
             %determine the indices for each performance specification
@@ -250,7 +251,7 @@ classdef opt_analysis < opt_manager_interface
         
 
         %% extract the solution                   
-        function  sol = process_recovery(obj, sol, lmi_out, alg_psi);
+        function  sol = process_recovery(obj, sol, lmi_out, alg_psi, diss);
             %PROCESS_RECOVERY recover the IQCs from the solution
             %
             

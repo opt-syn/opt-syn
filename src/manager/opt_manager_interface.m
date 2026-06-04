@@ -52,7 +52,15 @@ classdef (Abstract) opt_manager_interface < handle
             
             tp = sys.get_type();
             clname = ['lmi_', obj.task, '_', tp];
+
+            
+            %hard-code override for reduced-order synthesis
+            if strcmp(clname, 'lmi_synthesis_lti') && obj.config.syn.reduced_order
+                clname = 'lmi_synthesis_lti_reduced_order';
+            end
+
             lmi_hand = str2func(clname);
+            
 
             lmi_handler = lmi_hand(sys, obj.config);
 
@@ -60,7 +68,7 @@ classdef (Abstract) opt_manager_interface < handle
 
 
 
-        function [vars, cons, objective, alg_psi, rho] = build_program(obj, specs)
+        function [vars, cons, objective, alg_psi, rho, diss] = build_program(obj, specs)
             %BUILD_PROGRAM set up the algorithm analysis or synthesis problem
 
             if nargin < 2
@@ -83,10 +91,11 @@ classdef (Abstract) opt_manager_interface < handle
 
 
 
+            iqc_data.iqc_op = iqc_op;
             [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, sperf);
 
             %the dissipation can change
-            [vars, cons, objective] = obj.cons_dynamic(vars, cons, alg_psi, iqc_op, sperf);
+            [vars, cons, objective, diss] = obj.cons_dynamic(vars, cons, alg_psi, iqc_data, sperf);
 
             %add spreading constraint
             cons = obj.lmi.con_spread(cons, vars);
@@ -217,7 +226,7 @@ classdef (Abstract) opt_manager_interface < handle
             obj = obj.process_argument(arg);            
             obj = obj.add_specifications(specs);
             
-            [vars, cons, objective, alg_psi, rho] = obj.build_program(); 
+            [vars, cons, objective, alg_psi, rho, diss] = obj.build_program(); 
 
             % objective = obj.get_objective(vars);
             
@@ -248,7 +257,7 @@ classdef (Abstract) opt_manager_interface < handle
                     end
                 end
 
-                sol = obj.process_recovery(sol, sol.lmi_out, alg_psi);
+                sol = obj.process_recovery(sol, sol.lmi_out, alg_psi, diss);
                 
             end
 
@@ -365,7 +374,7 @@ classdef (Abstract) opt_manager_interface < handle
 
                 sol_best.vars = vrec;
 
-                sol_best = obj.process_recovery(sol_best, sol_best.lmi_out, sol.alg_psi);
+                sol_best = obj.process_recovery(sol_best, sol_best.lmi_out, sol_best.alg_psi, sol_best.diss);
                 sol_best.objective = double(double(sol_best.objective, sol_best.lmi_out));
             end
 
@@ -403,7 +412,7 @@ classdef (Abstract) opt_manager_interface < handle
 
             spec_curr = obj.modify_spec(pcurr, spec, b_opts);
 
-            [vars, cons, objective, alg_psi, rho] = obj.build_program(spec_curr); 
+            [vars, cons, objective, alg_psi, rho, diss] = obj.build_program(spec_curr); 
             %form the plant
             % [iqc_data] = obj.iqc_op_all();
             %TODO: modify this for different exponential weighting
@@ -419,6 +428,7 @@ classdef (Abstract) opt_manager_interface < handle
             sol.rho = rho;
             sol.alg_psi = alg_psi;
             sol.vars = vars;
+            sol.diss = diss;
         end
 
         %% Constraint optimization
@@ -466,7 +476,7 @@ classdef (Abstract) opt_manager_interface < handle
 
         
 
-        function [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_op, specs)
+        function [vars, cons, objective, diss] = cons_dynamic(obj, vars, cons, alg_psi, iqc_data, specs)
             %CONS_DYNAMIC: form the dynamical dissipation relations for the
             %system (at the current set of specifications)
             %
@@ -474,9 +484,9 @@ classdef (Abstract) opt_manager_interface < handle
             %   vars:       variables
             %   cons:       accumulated constraints
             %   objective:  single value to be minimized in inner loop (not
-            %               the outer loop of bisection)
+            %               the outer loop of bisection)            
 
-            [diss] = obj.index_specs(alg_psi, iqc_op, specs);
+            [diss] = obj.index_specs(alg_psi, iqc_data, specs);
             ndiss = length(diss);
 
             %dissipation relations
@@ -512,7 +522,7 @@ classdef (Abstract) opt_manager_interface < handle
 
     methods (Abstract)   
         process_argument(obj, arg); %inputs to run the routine
-        process_recovery(obj, sol, lmi_out, alg_psi); %get the solution
+        process_recovery(obj, sol, lmi_out, alg_psi, diss); %get the solution
         index_specs(obj, alg_psi, iqc_op, specs); %index the performance specifications
     end
 end

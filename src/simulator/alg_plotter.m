@@ -78,8 +78,6 @@ classdef alg_plotter
                 sig_curr = [obj.sim.xn; obj.sim.xi];
             elseif strcmp(sig, 'delay')
                 sig_curr = obj.sim.mode - 1;
-            elseif strcmp(sig, 'coord')
-                sig_curr = obj.sim.mode;
             end
                
                 %TODO: plot the regulation signals
@@ -105,7 +103,7 @@ classdef alg_plotter
                 end
                 xlim([k(1), k(end)])
                 
-                if strcmp(sig, 'delay') || strcmp(sig, 'coord')
+                if strcmp(sig, 'delay')
                     yticks(1:max(sig_plot));                    
                 end
             
@@ -130,8 +128,6 @@ classdef alg_plotter
                     name = 'Switching Mode';
                 case 'delay'
                     name = 'Time Delay';
-                case 'coord'
-                    name = 'Coordinate';
                 case 'res_w'
                     name = 'Optimality Error';
                 case 'res_z'
@@ -166,8 +162,6 @@ classdef alg_plotter
                 name_mid = 'mode';
             elseif strcmp(sig, 'delay')
                 name_mid = 'delay';
-            elseif strcmp(sig, 'coord')
-                name_mid = 'coord';
             elseif strcmp(sig, 'res_w')
                 if obj.EQUALITY
                     % name_mid = '$||\text{Proj}_{\text{null} \ E} (1^{\top} w)||_2$';

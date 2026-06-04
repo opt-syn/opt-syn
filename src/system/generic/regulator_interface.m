@@ -145,13 +145,23 @@ classdef regulator_interface
                 param =[];
             end
 
-            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
-            [Bd, Ded, Dyd] = obj.d_influence(param);
-            n = length(A);
+            
+            
+            n = obj.sys.nxn;
             Pi = reg_sol(1:n, :);
             Gam = reg_sol(n+1:end, :);        
+            Phi = obj.compute_Phi(Pi, Gam);
+        end
+
+        function [Phi] = compute_Phi(obj, Pi, Gam, param)
+            if nargin < 4
+                param = [];
+            end
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
+            [Bd, Ded, Dyd] = obj.d_influence(param);
             Phi = Dyd + D22*Gam + C2*Pi;
         end
+
 
         function [Pi_basis, Gam_basis, Phi_basis] = null_reg_all(obj, reg_mat)
             %NULL_REG nullspace of the regulator equations: freedom to move            
@@ -288,6 +298,11 @@ classdef regulator_interface
             Ded = [ones(sN, 1)*Rbeta, D11*N];
             Dyd = [zeros(sN, 1)*Rbeta, D21*N];
 
+        end
+
+        function saug = sys_regulated_aug(obj)
+            %the enriched system with the disturbance channel
+            saug = [];
         end
         % 
         % function rg = reg_ans(obj)

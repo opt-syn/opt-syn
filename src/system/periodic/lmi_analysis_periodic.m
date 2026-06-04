@@ -114,7 +114,7 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
             %wrap it all together
             objective = 0;
 
-            con_M = sysb + suppb;
+            con_M = -(sysb + suppb);
 
 
             sM = ssize(con_M,1);
@@ -197,7 +197,6 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
                 
             else
                 %define a storage function for each subsystem
-
                 for i = 1:obj.Nss
                     [G_curr, cons] = obj.define_storage_G(cons, alg_psi{i}, num2str(i));
                     G_cell{i} = G_curr;
@@ -214,18 +213,14 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
             %CREATE_VARS_SPEC declare variables for the specifications
 
             %maybe put this somewhere else?
-            %
+            
             %right now the variables are in the (spec) object.
             nspec = length(specs);
 
-            vars_spec = cell(nspec, 1);
-            % vars_spec = cell(nspec, obj.Nss);
-            for i = 1:nspec
-                % for j = 1:obj.Nss
-                    % name = ['_', num2str(j)];
+            vars_spec = cell(nspec, 1);            
+            for i = 1:nspec                
                     name = [];
-                    [vars_spec{i}, cons] = specs{i}.create_vars(cons, name, obj.config);
-                % end
+                    [vars_spec{i}, cons] = specs{i}.create_vars(cons, name, obj.config);                
             end
         end
     end

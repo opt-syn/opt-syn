@@ -105,8 +105,7 @@ classdef lmi_analysis_periodic_orbit < lmi_analysis_periodic
             %wrap it all together
             objective = 0;
 
-            con_M = sysb + suppb;
-
+            con_M = -(sysb + suppb);
 
             sM = ssize(con_M,1);
             cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB); 
