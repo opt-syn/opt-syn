@@ -77,7 +77,7 @@ classdef regulator_lti < regulator_interface
             
 
             D_aug = [D11, Dzwp, Ded, D12;
-                     Dzpw, Dzpwp, zeros(nzp, nd), Dzpu;
+                     Dzpw, Dzpwp, zeros(nzp, size(Ded, 2)), Dzpu;
                      D11, Dzwp, Ded, D12;
                      D21, Dywp, Dyd, D22];
 

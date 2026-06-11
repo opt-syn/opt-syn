@@ -22,7 +22,7 @@ classdef lmi_dispatch_interface < handle
         
         %KYP lemma terms, commonly found matrices
         
-        function [cons, objective, vars, con_M] = cons_dynamic(obj, vars, cons, diss)
+        function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
             %Input:

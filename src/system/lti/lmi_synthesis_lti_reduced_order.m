@@ -12,16 +12,17 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
     % performance specification: wp -> zp from (spec)
     %
     %   Implemented:
-    %
-    %   TODO:
+    %       quad
     %       stability
     %       e2e
-    %       quad
+    %
+    %   TODO:
     %       p2p
     %       h2      
     %       e2p
-    %       
     %
+    %
+    % Also need to figure out recovery
     
     methods
         function obj = lmi_synthesis_lti_reduced_order(sys, config)
@@ -680,135 +681,114 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             
             
             
-            % ns = size(vars_reg.Pi, 2);
             nf = n - size(Pi, 1);
 
             Piaug = [zeros(nf, ns); Pi];
-            Creg = [C(iw, :), -C(iw, :) * Piaug- D(iw, iu) * Gam];
-
-            % Creg = [C(iw, :), -C(iw, :) * Pi- D(iw, iu) * Gam];
 
 
             %perform controller recovery
 
 
 
+
+            % 
+            % %The transformation recovery is causing many issues.
+            % %but we have the closed-loop response already. Use that:
+            % %subspace arguments to extract the controller.
+            % 
+            % %having trouble finding such a realization. Maybe there's a
+            % %coordinate transformation matrix occurring?
+            % 
+            % reg2 = obj.reg;
+            % reg2.Gam = Gam;
+            % reg2.Pi = Pi;
+            % reg2.Phi = reg2.compute_Phi(Pi, Gam, []);
+            % 
+            % P_orc = P_trans.drop_performance;
+            % 
+            % P_model = reg2.connect_model(P_orc, 1/rhoi);
+            % 
+            % iu0 = P_model.index_u();
+            % iu1 = iu0(1:ns);
+            % iu2 = iu((ns+1):end);
+            % 
+            % nxn = n + ns;
+            % nxi = n;
+            % 
+            % base_left = [zeros(nxn, nxi), P_model.Bu;
+            %      eye(nxi), zeros(nxi, nu + ns);
+            %     zeros(nz, nxi), P_model.Dzu];
+            % 
+            % base_right = [zeros(nxi, n + ns),  eye(nxi), zeros(nxi, nw);
+            %     P_model.Cy, zeros(ny, nxi), P_model.Dyw];
+            % 
+            % Omega_base = [P_model.A, zeros(nxn, nxi), P_model.Bw;
+            %     zeros(nxi, nxn), zeros(nxi), zeros(nxi, nw);
+            %     P_model.Cz, zeros(nw, nxi), P_model.Dzw];
+            % 
+            % 
+            % Omega_cl = [Acl, Bcl; Ccl, Dcl] - Omega_base;
+            % 
+            % Mat_sys = kron(base_right', base_left);
+            % ans_sys = reshape(Omega_cl, [], 1);
+            % 
+            % 
+            % %TODO: enforce the D_mask constraint in the system realization           
+            % [ii, jj] = find(~obj.get_D_mask());
+            % ND0 = length(ii);
+            % 
+            % ind_D2 = sub2ind([n+nu+ns, n+ny], n+ns+ii, n+jj);
+            % Nmasked = length(ind_D2);
+            % 
+            % Mat_D = sparse(1:Nmasked, ind_D2, ones(Nmasked, 1), Nmasked, (n+nu+ns)*(n+ny));
+            % ans_D = zeros(Nmasked, 1);
+            % 
+            % Mat_all = [Mat_sys; Mat_D];
+            % ans_all = [ans_sys; ans_D];
+            % 
+            % %solve for a system in the subspace and verify
+            % Kblock_vec = lsqminnorm(Mat_all, ans_all);
+            % Kblock_vec(ind_D2) = 0; %make sure the zero entries are zero.
+            % Kblock = reshape(Kblock_vec, n + length(iu0), n + ny);
+            % 
+            % 
+            % rec_error = norm(Mat_all*Kblock_vec - ans_all);
+
+            
+
             %(33-34) of https://www.sciencedirect.com/science/article/pii/S0005109808005402
-            %
-            %modified for sign changes
-            % if n==0
-            %     Akt = X \ (ihat' * Ak);                
-            % else
-            %     Akt = X \ ((ihat' * Ak) - Agam*Y*E');
-            % 
-            % end
-            % Bkt = X \ (ihat' *  Bk);
-            % Ckt = Ck + Gam*Z;
-            % Dkt = Dk;
 
-            %The transformation recovery is causing many issues.
-            %but we have the closed-loop response already. Use that:
-            %subspace arguments to extract the controller.
+            if n==0
+                Akt = X \ Ak;                
+            else
+                Akt = X \ Ak - Aaug * Y * Pibar';
 
-            %having trouble finding such a realization. Maybe there's a
-            %coordinate transformation matrix occurring?
+            end
+            Bkt = X \ Bk;
+            Ckt = Ck + Gam*Z;
+            Dkt = Dk;
 
-            reg2 = obj.reg;
-            reg2.Gam = Gam;
-            reg2.Pi = Pi;
-            reg2.Phi = reg2.compute_Phi(Pi, Gam, []);
+            LblockI = [eye(n), rhoi * Pi, B(:, iu);
+                zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
+                zeros(nu, n), zeros(nu, ns), eye(nu)];
 
-            P_orc = P_trans.drop_performance;
-
-            P_model = reg2.connect_model(P_orc, 1/rhoi);
-
-            iu0 = P_model.index_u();
-            iu1 = iu0(1:ns);
-            iu2 = iu((ns+1):end);
-
-            nxn = n + ns;
-            nxi = n;
-
-            base_left = [zeros(nxn, nxi), P_model.Bu;
-                 eye(nxi), zeros(nxi, nu + ns);
-                zeros(nz, nxi), P_model.Dzu];
-
-            base_right = [zeros(nxi, n + ns),  eye(nxi), zeros(nxi, nw);
-                P_model.Cy, zeros(ny, nxi), P_model.Dyw];
-
-            Omega_base = [P_model.A, zeros(nxn, nxi), P_model.Bw;
-                zeros(nxi, nxn), zeros(nxi), zeros(nxi, nw);
-                P_model.Cz, zeros(nw, nxi), P_model.Dzw];
+            Cblock = [Akt, Bkt;
+                Ckt, Dkt];
 
 
-            Omega_cl = [Acl, Bcl; Ccl, Dcl] - Omega_base;
-
-            Mat_sys = kron(base_right', base_left);
-            ans_sys = reshape(Omega_cl, [], 1);
+            % RblockI = [-W, zeros(size(Winv, 1), ny);
+            %       Caug * Y * Pibar', eye(ny)];
 
 
-            %TODO: enforce the D_mask constraint in the system realization           
-            [ii, jj] = find(~obj.get_D_mask());
-            ND0 = length(ii);
+            %recovery conditions involve Caug, not Creg.
+            Rblock = [-Winv, zeros(size(Winv, 1), ny);
+                Caug * Y * Pibar' * Winv, eye(ny)];
 
-            ind_D2 = sub2ind([n+nu+ns, n+ny], n+ns+ii, n+jj);
-            Nmasked = length(ind_D2);
-            
-            Mat_D = sparse(1:Nmasked, ind_D2, ones(Nmasked, 1), Nmasked, (n+nu+ns)*(n+ny));
-            ans_D = zeros(Nmasked, 1);
-            
-            Mat_all = [Mat_sys; Mat_D];
-            ans_all = [ans_sys; ans_D];
-
-
-            % Mat_all = [Mat_sys];
-            % ans_all = [ans_sys];
-
-            %solve for a system in the subspace and verify
-            Kblock_vec = lsqminnorm(Mat_all, ans_all);
-            Kblock_vec(ind_D2) = 0; %make sure the zero entries are zero.
-            Kblock = reshape(Kblock_vec, n + length(iu0), n + ny);
-            
-
-            rec_error = norm(Mat_all*Kblock_vec - ans_all);
-
-            
-
-            % 
-            % if n==0
-            %     Akt = X \ Ak;                
-            % else
-            %     Akt = X \ Ak - Aaug * Y * Pibar';
-            % 
-            % end
-            % Bkt = X \ Bk;
-            % Ckt = Ck + Gam*Z;
-            % Dkt = Dk;
-            % 
-            % 
-            % no Pi present here?
-            % LblockI = [eye(n), zeros(n, ns), B(:, iu);
-            %     zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
-            %     zeros(nu, n), zeros(nu, ns), eye(nu)];
-            % 
-            % LblockI = [eye(n), zeros(n, ns), B(:, iu);
-            % zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
-            % zeros(nu, n), zeros(nu, ns), eye(nu)];
-            % 
-            % 
-            % LblockI = [eye(n), rhoi * Pi, B(:, iu);
-            %     zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
-            %     zeros(nu, n), zeros(nu, ns), eye(nu)];
-            % 
-            % Cblock = [Akt, Bkt;
-            %     Ckt, Dkt];
-            % 
-            % Rblock = [-Winv, zeros(size(Winv, 1), ny);
-            %     Creg * Y * Pibar' * Winv, eye(ny)]; %E or Pibar?
-            % 
-            % Kblock = LblockI \ (Cblock * Rblock);
+            Kblock = LblockI \ (Cblock * Rblock);
 
             %extraction and exponential weighting
+
+
             Ac = Kblock(1:n, 1:n);
             Bc = Kblock(1:n, n+1:end);
             Cc = Kblock(n+1:end, 1:n);
@@ -819,9 +799,9 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             K_nofeed_full = ss(Ac, Bc, Cc, Dc, 1);
             K_nofeed = K_nofeed_full;            
 
-            if norm(rec_error) > 1e-6
-                error('Reduced Order LTI: failure of subspace-based controller reconstruction')
-            end
+            % if norm(rec_error) > 1e-6
+            %     error('Reduced Order LTI: failure of subspace-based controller reconstruction')
+            % end
         end
 
 
