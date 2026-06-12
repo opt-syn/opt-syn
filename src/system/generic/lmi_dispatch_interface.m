@@ -264,6 +264,13 @@ classdef lmi_dispatch_interface < handle
 
         end
 
+        function [cons, objective, con_M] = passivity(obj, vars, cons, diss)
+            %passivity: strict passivity specification
+ 
+                [cons, objective, con_M] = obj.quad(vars, cons, diss);
+           
+        end
+
 
         function [cons, objective, con_M] = e2e(obj, vars, cons, diss)
             %E2E: energy to energy gain
