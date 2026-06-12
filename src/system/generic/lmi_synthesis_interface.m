@@ -732,14 +732,14 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
             %for debugging
-            % G = obj.get_storage(sol.vars.diss, sol.vars.reg);
+            G = obj.get_storage(vars_rec.diss, vars_rec.reg);
 
             %this is the (nonlinearly-warped) system that is certified as
             %possessing the desired performance and robustness
             %specifications
-            % sys_cl = obj.system_closed_loop(P_trans, sol.vars.diss, sol.vars.reg, sol.vars.K);
+            sys_cl = obj.system_closed_loop(P_trans, vars_rec.diss, vars_rec.reg, vars_rec.K);
 
-            % sys_cal = ss(G \ Acl, G \ Bcl, Ccl, Dcl, 1);
+            sys_cal = ss(G \ sys_cl.A, G \ sys_cl.B, sys_cl.C, sys_cl.D, 1);
 
 
             [A, B, C, D] = ssdata(P_trans);

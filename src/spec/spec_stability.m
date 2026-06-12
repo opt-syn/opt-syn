@@ -3,8 +3,7 @@ classdef spec_stability < spec_interface
     %interconnection (linear convergence)
     
     properties
-        type = 'stability';
-        rho = 1;
+        type = 'stability';       
     end
     
     methods

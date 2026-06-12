@@ -219,6 +219,7 @@ classdef (Abstract) opt_manager_interface < handle
 
             for i =1:length(sperf)
                 sperf{i}.id = i;
+                sperf{i}.rho = rho;
             end
 
 

@@ -86,7 +86,9 @@ classdef opt_synthesis < opt_manager_interface
                 target_ind = 0;
             end
 
-            [rho, sperf] = obj.perf_specs(specs);
+            % [rho, sperf] = obj.perf_specs(specs);
+            sperf = specs;
+            rho = sperf{1}.rho;
 
             iqc_op = iqc_data.iqc_op;
 

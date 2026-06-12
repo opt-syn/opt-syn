@@ -18,6 +18,8 @@ classdef spec_interface
         id = 0;
         target = false; %should this be the target of optimization (within 
                         %bisection iterations)?
+        
+        rho = 1; %exponential discounting of specification
     end
     
     methods
