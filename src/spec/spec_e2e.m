@@ -27,9 +27,15 @@ classdef spec_e2e < spec_interface
         function M = supply(obj, vars_spec)
             %SUPPLY quadratic performance specification
             gamma = obj.gain;
+<<<<<<< Updated upstream
             Mu = -eye(obj.nwp)*gamma;
             
             My = eye(obj.nzp)/(gamma);
+=======
+            Mu = eye(obj.nwp)/gamma;
+            
+            My = -eye(obj.nzp)*(gamma);
+>>>>>>> Stashed changes
 
             M = blkdiag(My, Mu);
         end
