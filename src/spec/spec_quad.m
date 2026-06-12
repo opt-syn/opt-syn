@@ -3,7 +3,7 @@ classdef spec_quad < spec_interface
     %
     %
     %
-    %[zp]' [Q  S]  [zp] > 0
+    %[zp]' [Q  S]  [zp] < 0
     %[wp]  [S' R]  [wp] 
 
     

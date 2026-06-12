@@ -36,7 +36,7 @@ classdef spec_passivity < spec_interface
             %SUPPLY quadratic performance specification
             %for passivity indices
 
-            M0 = -[-obj.ind_w, 1; 1, -obj.ind_z];
+            M0 = [-obj.ind_z, 1; 1, -obj.ind_w];
 
             M = kron(M0, eye(obj.nwp));
         end
