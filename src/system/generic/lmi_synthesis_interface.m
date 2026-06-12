@@ -382,7 +382,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %to apply Lemma 4 of https://arxiv.org/pdf/1305.1746
 
             
-            USE_LAST = all(nxi~=0);
+            
             %get the mask for the permuted controller matrix
             K_mask = obj.get_K_mask(nxi);
             sz = size(K_mask);
@@ -402,6 +402,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             coord_shift = coords(:, 2);
             coord_shift(1) = 0;
             
+            USE_LAST = all(nxi~=0) || (size(coords, 1)==1);
             
             %store the identity indexers            
             nc = size(coord_first, 1);
@@ -414,8 +415,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 V{i} = sparse(1:hi, sum(h_first(1:i-1)) + (1:hi), ones(hi, 1), hi, sz(2));    
             end
             
-            % U{nc+1} = speye(sz(1) - coord_last+1, sz(1));
-
             if USE_LAST
                 U{nc+1} = [sparse(sz(1)-coord_last+1, coord_last - 1),  speye(sz(1) - coord_last+1)];
                 hi = sz(2) - sum(cellfun(@(n) size(n, 1), V(1:end-1))); %not ideal
