@@ -115,13 +115,22 @@ classdef (Abstract) opt_manager_interface < handle
             
             if obj.LMILAB
                 if ~isnumeric(objective)
-                    lmis(cons, objective, 'c');
+                    cons = lmis(cons, objective, 'c');
+                    OBJECTIVE = true;
+                else
+                    OBJECTIVE = false;
                 end
 
                 [lmi_out,info_out]=lmisolve(cons);
                 
-                
-                sol.dia = lmi_out.dia;
+                if OBJECTIVE
+                    sol.dia = lmi_out.dia(2);
+                    sol.objective = lmi_out.dia(1);
+                else
+                    sol.dia = lmi_out.dia;
+                    sol.objective = 0;
+                end
+
                 STATUS = (lmi_out.status || (sol.dia > obj.config.tol.dia));
                 sol.info = info_out;
                 sol.cons = cons;

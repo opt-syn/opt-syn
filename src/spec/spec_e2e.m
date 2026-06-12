@@ -42,7 +42,7 @@ classdef spec_e2e < spec_interface
                nwp = length(obj.iwp);
                nzp = length(obj.izp);
 
-               Q_e2e = drep(vars_spec.mu_l2, nwp);
+               Q_e2e = -drep(vars_spec.mu_l2, nwp);
                T_e2e = eye(nzp);
                S_e2e = zeros(nzp, nwp);
                U_e2e = drep(vars_spec.mu_l2, nzp);
@@ -83,6 +83,9 @@ classdef spec_e2e < spec_interface
             vars = struct('mu_l2', mu_l2);
             if ~obj.target
                 cons = append_lmi(cons, obj.gain - mu_l2, config.LMILAB);
+            else
+                cons = append_lmi(cons, 300 - mu_l2, config.LMILAB);
+                cons = append_lmi(cons, mu_l2, config.LMILAB);
             end
         end
     end

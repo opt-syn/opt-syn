@@ -669,12 +669,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             if nargin < 5
                 diss = [];
             end
-            
-            %override this with other system types
-
-            %this code is with a full-order controller: duplication of the
-            %number of internal model states
-            %TODO: reduced order controller synthesis and recovery
 
             %get the system with the internal model
             dissend = struct;
@@ -685,9 +679,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %evaluate the variables
             [sol] = obj.recover_subcontroller(alg_psi, P_trans, sol);
                       
-            %verify performance of the algorithm
-            %TODO: a postprocessing LMI (?) to check that the recovered 
-            %algorithm satisfies the performance specifications 
+            
         end
 
 
@@ -907,7 +899,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             %closed-loop and weighted system
             P = alg_trans.P(alg_trans.index_z, alg_trans.index_w);
-
 
             M = iqc_op_all.iqc.M;
             M = (M + M')/2;
