@@ -627,7 +627,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             % calligraphic matrices
             % from  convexification
-            % [Y' Acl Y,  Y'Bcl ]
+            % [Y' X Acl Y,  Y' X Bcl ]
             % [Ccl Y,      Dcl  ]
 
 
