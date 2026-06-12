@@ -338,50 +338,58 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             if obj.elimination
 
-                % if n ==0
-                %     %no filters nor network dynamics 
-                %     Acal = [zeros(size(Ak)), GX*Aaug];
-                %     Bcal = (GX*Pihatinv * Bpaug);
-                %     Ccal = (Creg);
-                % else
-                %     %some filter or network dynamics
-                %     Acal = [A*GY,  Pibar * Aaug ;
-                %         Ak, GX*Aaug];
-                %     Bcal = [B(:, iw);
-                %         GX*Pihatinv * Bpaug];
-                %     Ccal = [C(iz, :)*GY, Creg];
-                % end
-                % Dcal = D(iz, iw);                
-                % 
-                % %construct the outer factors
-                % 
-                % nxn = size(B, 1);
-                % nxiU = n + ns;
-                % nu = length(iu);
-                % nz = length(iz);
-                % nw = length(iw);
-                % ny = length(iy);
-                % U_cl_base = [B(:, iu), zeros(nxn, nxiU);
-                %     zeros(nxiU, nu), eye(nxiU);
-                %     D(iz, iu), zeros(nz, nxiU)]';
-                % 
-                % nxiV = n;
-                % V_cl_base = [eye(nxiV), zeros(nxiV, nxn), zeros(nxiV, nw);
-                %     zeros(ny, nxiV), Caug, D(iy, iw)];
-                % 
-                %     %triangular decomposition
-                %     [U_coord, V_coord] = obj.get_K_tri_basis([nxiU, nxiV]);
-                % 
-                %     ntri= length(V_coord);
-                %     U_cl = cell(ntri+1, 1);
-                %     V_cl = cell(ntri+1, 1);
-                % 
-                %     for i = 1:ntri
-                %         U_cl{i} = U_coord{i} * U_cl_base;
-                %         V_cl{i+1} = V_coord{i} * V_cl_base;
-                %     end
+                if n ==0
+                    %no filters nor network dynamics 
+                    Acal = [zeros(size(Ak)), GX*Aaug];
+                    Bcal = (GX*Pihatinv * Bpaug);
+                    Ccal = (Creg);
+
+                    
+                else
+                    %some filter or network dynamics
+                    Acal = [A*GY,  Pibar * Aaug ;
+                        zeros(n+nf+ns, n), GX*Aaug];
+                    Bcal = [B(:, iw);
+                        GX*Pihatinv * Bpaug];
+                    Ccal = [C(iz, :)*GY, Creg];
+                end
+                Dcal = D(iz, iw);                
+
+                %construct the outer factors
+
+                nxn = size(B, 1);
+                nxiU = n + ns;
+                nu = length(iu);
+                nz = length(iz);
+                nw = length(iw);
+                ny = length(iy);
+                U_cl_base = [B(:, iu), zeros(nxn, nxiU);
+                    zeros(nxiU, nu), eye(nxiU);
+                    D(iz, iu), zeros(nz, nxiU)]';
+
+                nxiV = n;
+                V_cl_base = [eye(nxiV), zeros(nxiV, nxn + ns), zeros(nxiV, nw);
+                    zeros(ny, nxiV), Caug, D(iy, iw)];
+
+                %triangular decomposition
+                [U_coord, V_coord] = obj.get_K_tri_basis([nxiU, nxiV]);
+
+                ntri= length(V_coord);
+                U_cl = cell(ntri+1, 1);
+                V_cl = cell(ntri+1, 1);
+
+                for i = 1:ntri
+                    U_cl{i} = U_coord{i} * U_cl_base;
+                    V_cl{i+1} = V_coord{i} * V_cl_base;
+                end
 
                 % error('reduced_order: elimination not yet supported')
+
+                sys_cl = struct;
+                sys_cl.A = Acal;
+                sys_cl.B = Bcal;
+                sys_cl.C = Ccal;
+                sys_cl.D = Dcal;
             else
                 if n ==0
                     %no filters nor network dynamics 
@@ -400,13 +408,14 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
                 U_cl = [];
                 V_cl = [];
+                sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
             end
 
 
 
             %this is a FORMAL system, `Acal' is rectangular and not square
             %due to the reduced-order structure
-            sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
+            
 
 
 
