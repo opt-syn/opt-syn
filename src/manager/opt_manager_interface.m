@@ -123,18 +123,26 @@ classdef (Abstract) opt_manager_interface < handle
 
                 [lmi_out,info_out]=lmisolve(cons);
                 
+                
+
+                STATUS = (lmi_out.status || (lmi_out.dia(1+OBJECTIVE) > obj.config.tol.dia));
+                sol.info = info_out;
+                sol.cons = cons;
+
+                
                 if OBJECTIVE
-                    sol.dia = lmi_out.dia(2);
-                    sol.objective = lmi_out.dia(1);
+                    if STATUS
+                        sol.dia = lmi_out.dia;
+                        sol.objective = Inf;
+                    else
+                        sol.objective = lmi_out.dia(1);
+                        sol.dia = lmi_out.dia(2);
+                    end
+                    
                 else
                     sol.dia = lmi_out.dia;
                     sol.objective = 0;
                 end
-
-                STATUS = (lmi_out.status || (sol.dia > obj.config.tol.dia));
-                sol.info = info_out;
-                sol.cons = cons;
-
 
                 %explicitly forming the blocks in recovery takes a long
                 %time. Why is this the case?
