@@ -36,7 +36,7 @@ classdef spec_passivity < spec_interface
             %SUPPLY quadratic performance specification
             %for passivity indices
 
-            M0 = [-obj.ind_w, 1; -obj.ind_z, 1];
+            M0 = -[-obj.ind_w, 1; 1, -obj.ind_z];
 
             M = kron(M0, eye(obj.nwp));
         end
@@ -48,15 +48,16 @@ classdef spec_passivity < spec_interface
                nwp = length(obj.iwp);
                nzp = length(obj.izp);
                
-               Q_pass = -drep(vars_spec.ind_pass, nwp);
+
+               Q_pass = drep(vars_spec.ind_pass, nwp);
                
-               S_pass = eye(nzp, nwp);
+               S_pass = -eye(nzp, nwp);
 
                if obj.ind_z ~= 0
                    T_pass = eye(nzp);
-                   U_pass = -1/obj.ind_z;
+                   U_pass = 1/obj.ind_z;
                else
-                   T_pass = zeros(nzp, 0);
+                   T_pass = zeros(0, nzp);
                    U_pass = [];
                end
 
@@ -66,6 +67,8 @@ classdef spec_passivity < spec_interface
 
            else
                quad = supply_quad@spec_interface(obj, vars_spec);
+               objective = 0;
+
            end
        end
 
