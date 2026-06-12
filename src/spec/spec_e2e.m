@@ -27,9 +27,9 @@ classdef spec_e2e < spec_interface
         function M = supply(obj, vars_spec)
             %SUPPLY quadratic performance specification
             gamma = obj.gain;
-            Mu = -eye(obj.nwp)*gamma;
+            Mu = eye(obj.nwp)*gamma;
             
-            My = eye(obj.nzp)/(gamma);
+            My = -eye(obj.nzp)/(gamma);
 
             M = blkdiag(My, Mu);
         end
@@ -41,10 +41,10 @@ classdef spec_e2e < spec_interface
                nwp = length(obj.iwp);
                nzp = length(obj.izp);
 
-               Q_e2e = -drep(vars_spec.mu_l2, nwp);
+               Q_e2e = drep(vars_spec.mu_l2, nwp);
                T_e2e = eye(nzp);
                S_e2e = zeros(nzp, nwp);
-               U_e2e = -drep(vars_spec.mu_l2, nzp);
+               U_e2e = drep(vars_spec.mu_l2, nzp);
 
                quad = struct('Q', Q_e2e, 'T', T_e2e, 'S', S_e2e, 'U', U_e2e);
 
@@ -52,6 +52,7 @@ classdef spec_e2e < spec_interface
 
            else
                quad = supply_quad@spec_interface(obj, vars_spec);
+               objective = 0;
            end
        end
 
