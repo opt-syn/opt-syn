@@ -124,7 +124,7 @@ classdef op_gen  < operator_interface
             %BUILD_COST create the matrices M and X
 
 
-            %IQC: [x; g] with g \in F(x)
+            %IQC: [g; x] with g \in F(x)
             %
             %
             sz = ssize(var_curr{1}, 1);                                 
@@ -138,7 +138,8 @@ classdef op_gen  < operator_interface
             if isempty(mu)
                 loop_mat = eye(sz*2);
             else
-                loop_mat = [eye(sz), zz; mu*eye(sz), eye(sz)];
+                loop_mat = kron([mu, 1; 1, 0], eye(sz));
+                % loop_mat = [eye(sz), zz; mu*eye(sz), eye(sz)];
                 % loop_mat = inv([eye(sz), zz; -mu * eye(sz), eye(sz)]);
             end
 
@@ -154,6 +155,8 @@ classdef op_gen  < operator_interface
                             % M12 = M12 + cDBM;
                             Mcurr = [zz, cDBM; cDBM', zz];
                             Mloop = Mcurr;
+
+
                             % M22 = M22 - (cDBM + cDBM') * (mu); 
                             % 
                         case 'cocoercive'
