@@ -159,7 +159,6 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
         end        
 
 
-        %% reduced-order control
 
         function ys = get_GY_dim(obj, n, ns)
             %dimension of the GY term
@@ -179,15 +178,71 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %
             GX = vars_diss.GX;
             GY = vars_diss.GY;
-            % if obj.reduced_order
-                % GS = obj.Pibar(vars_reg);
-            % else
-                GS = vars_diss.GS;
-            % end                       
-        
+            
+            GS = vars_diss.GS;
+            
             G = [GY, GS; GS', GX];                
             
        end
+
+       %% Peak-to-Peak norm (at each finite horizon)
+
+
+       function [cons, objective, con_M] = p2p(obj, vars, cons, diss)
+            %p2p: certificate of finite-horizon peak-to-peak norm bounds
+            % when starting at a zero (steady state) initial condition, not
+            % transient performance.
+            
+            %get the variables of the problem
+            G = obj.get_storage(vars.diss, vars.reg);
+            
+            %IMPORTANT!            
+            P = obj.connect_model(diss);
+
+            [sys_cl, U_cl, V_cl] = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
+            
+            %index the quadratic specification
+            vars_spec = vars.spec{diss.spec.id};
+
+            np = diss.iqc_rob.np;
+            nq = diss.iqc_rob.nq;
+
+            M_quad_rob = quad_objective_decomp(diss.iqc_rob.M, 1:np, np + (1:nq));
+            [M_quad_spec, objective] = diss.spec.supply_quad(vars_spec);
+
+            quad = obj.merge_quad(M_quad_rob, M_quad_spec);
+
+            %the quadratic objective
+            supp_b = obj.supply_block(sys_cl, quad);
+
+            %the storage
+            stor_b = obj.storage_block(sys_cl, quad, G, G);
+
+            %the dynamics
+            [dyn_b, U_outer, V_outer] = obj.dynamics_block(sys_cl, quad);
+            
+            %wrap it all together           
+            con_M = -(stor_b + supp_b + dyn_b);
+
+            sM = ssize(con_M,1);
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
+            
+
+            
+            %now do the terminal constraints
+            stor_b2 = obj.storage_block(sys_cl, quad, G, G);
+
+            quad = obj.merge_quad(M_quad_rob, M_quad_spec);
+
+            Mterm = quad_terminal(obj, vars_spec);
+
+            %weighting the running cost            
+            quad_term = obj.merge_quad(M_quad_rob, Mterm);
+            
+            
+            %impose positivity constraint            
+            cons = obj.con_terminal(G, cons, [], diss.iqc_rob);
+        end        
 
         
 
@@ -444,21 +499,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
         end
 
 
-        %% Peak-to-Peak norm (at each finite horizon)
 
-        function [cons, objective, con_M] = p2p(obj, vars, cons, diss)
-            %p2p: certificate of peak to peak induced norm
-            %
-            % sup norm(zp, 2) / norm(wp, 2) <= objective
-
-            % verification by Theorem 4 of https://www.sciencedirect.com/science/article/pii/S2405896323008194
-
-            %TODO: fix exponential rate here
-            %storage matrix
-
-            error('LTI synthesis: p2p target not yet supported')
-            
-        end
 
 
         

@@ -11,6 +11,7 @@ classdef spec_p2p < spec_interface
     properties
         type='p2p';
         gain = 1;
+        weight = 0.5; %used for the terminal cost (theorem 3 of Schwenkel 2026)
     end
 
     methods
@@ -26,27 +27,62 @@ classdef spec_p2p < spec_interface
 
         function M = supply(obj, vars_spec)
             %SUPPLY quadratic performance specification
-            %
-            %if the gain is fixed
-            gamma = obj.gain;
-            mu = vars_spec.mu_p2p;
-            rrecip = obj.rho/(1-obj.rho);
-            Mu = eye(obj.nwp) * rrecip * (gamma - mu);
-            My = -eye(obj.nzp) * rrecip / gamma;
+            %for passivity indices
 
-            M = blkdiag(My, Mu);
+            M0 = -obj.gain;
+
+            M = kron(M0, eye(obj.nwp));
         end
 
-        function [obj] = set_p(obj, p)
-            %SET_P set a parameter when performing bisection
+        function Mt = quad_terminal(obj, vars_spec)
+            %matrix for  the terminal p2p expression
             %
-            %
-            %Example: Peak-to-Peak norm certifier
-            %or l2 Gain bound
+            alpha = obj.rho^2 / (1-obj.rho^2);
 
-            obj.gain = p;
+            if obj.target
+                Q0 = -obj.weight*alpha * (vars_spec.gam_p2p - vars_spec.mu_p2p);
+                U0 = vars_spec.gam_p2p / (obj.weight*alpha);
+                Q_term = drep(Q0, nwp);
+                U_term = drep(U0, nzp);
+            else
+                
+                Q0 = -obj.weight * alpha * (obj.gain - vars_spec.mu_p2p);
+                U0 = obj.gain / (obj.weight*alpha);
+                Q_term = drep(Q0, nwp);
+                U_term = drep(U0, nzp);
+                
+            end
 
-        end
+            T_term = eye(nzp);
+            S_term = zeros(nzp, nwp);
+
+            
+            quad = struct('Q', Q_term, 'U', U_term, 'T', T_term, 'S', S_term);
+       end
+
+       function [quad, objective] = supply_quad(obj, vars_spec)
+           %SUPPLY_QUAD decomposed quadratic performance specification
+
+           if obj.target
+               nwp = length(obj.iwp);
+               
+               Q_l2 = -vars_spec.mu_l2;
+               
+               S_l2 = -zeros(nwp, 0);
+              T_l2 = [];
+               U_l2 = [];
+  
+
+               quad = struct('Q', Q_l2, 'T', T_l2, 'S', S_l2, 'U', U_l2);
+
+               objective  = vars_spec.gam_l2;
+
+           else
+               quad = supply_quad@spec_interface(obj, vars_spec);
+               objective = 0;
+
+           end
+       end
 
         function [vars, cons] = create_vars(obj, cons, name, config)
             %CREATE_VARS form the variables for the problem                        
