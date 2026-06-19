@@ -105,15 +105,21 @@ classdef opt_synthesis < opt_manager_interface
                 count_iqc_in = (iqc_op.nw);
                 count_iqc_out = (iqc_op.np);
 
-                if isempty(sp.izp) || isempty(sp.iwp)
+                %any performance outputs?
+                if isempty(sp.izp)
                     ir_iqc_first_r =[];
+                    
+                else
+                    ir_iqc_first_r = count_iqc_out  + (sp.izp);
+                    count_iqc_out = count_iqc_out + length(sp.izp);
+                end
+                
+                %any performance inputs?
+                if isempty(sp.iwp)
                     iw_iqc_first_r = [];
                 else
                     iw_iqc_first_r = count_iqc_in + (sp.iwp);
-                    count_iqc_in = count_iqc_in + length(sp.iwp);
-
-                    ir_iqc_first_r = count_iqc_out  + (sp.izp);
-                    count_iqc_out = count_iqc_out + length(sp.izp);
+                    count_iqc_in = count_iqc_in + length(sp.iwp);                    
                 end
 
                 iwp_iqc = [iwp_iqc; iw_iqc_first_r];
@@ -140,8 +146,11 @@ classdef opt_synthesis < opt_manager_interface
                 nww = nww + length(sp.iwp);
 
                 
-                E_r = blkdiag(full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr)), eye(ny));
-                E_w = blkdiag(full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww)), eye(nu));
+                E_r = blkdiag(full(sparse(1:length(sp_ind_r), sp_ind_r, ...
+                    ones(1, length(sp_ind_r)), length(sp_ind_r), nwr)), eye(ny));
+
+                E_w = blkdiag(full(sparse(1:length(sp_ind_w), sp_ind_w, ...
+                    ones(1, length(sp_ind_w)), length(sp_ind_w), nww)), eye(nu));
 
                 
 

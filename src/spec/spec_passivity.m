@@ -1,8 +1,9 @@
 classdef spec_passivity < spec_interface
-    %SPEC_PASSIVITY specification for an passivity specification
+    %SPEC_PASSIVITY specification for a passivity specification
     %
-    %limsup_{T -> inf} sum_{k=0}^T (zp_k)' (wp_k) > 
-    %                               sum_{k=0}^T ind_w |wp_k|^2 + ind_z |zp_k|^2
+    %at all T when x=0:
+    %
+    %sum_{k=0}^T (zp_k)' (wp_k) >  sum_{k=0}^T ind_w |wp_k|^2 + ind_z |zp_k|^2
     %
 
 
