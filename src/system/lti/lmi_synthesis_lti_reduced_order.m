@@ -97,7 +97,6 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             sol.model = K_report.model;           
             sol.K= K_report.K;
             sol.K_sub = K_report.K_sub;
-
             sol.gain = obj.validate_recovery_gain(sol.alg_trans, sol.iqc_op_all);
 
             

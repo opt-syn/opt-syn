@@ -75,11 +75,43 @@ classdef regulator_interface
 
             if isnumeric(Phi) && isnumeric(Gam) && isnumeric(S)
                 P = ss(Am, Bm, Cm, Dm, 1);
+
+                statename = {};
+                inputname = {};
+                outputname = {};
+                for i = 1:ns
+                    statename{i} = ['v', num2str(i)];
+                end
+
+                for i = 1:ny+ns+nu
+                    if i <= ny
+                        inputname{i} = ['y', num2str(i)];
+                    elseif i <= ns + ny
+                        inputname{i} = ['um1_', num2str(i - ns)];
+                    else
+                        inputname{i} = ['um2_', num2str(i-ns-ny)];
+                    end
+                end
+
+                for i = 1:ny+nu
+                    if i <= nu
+                        outputname{i} = ['u', num2str(i)];
+                    else
+                        outputname{i} = ['ym', num2str(i - nu)];
+                    end
+                end
+                   
+                P.StateName = statename;
+                P.InputName = inputname;
+                P.OutputName = outputname;
+                % P.InputNames = 
             else
                 P = sdpss(Am, Bm, Cm, Dm);
             end
 
             sys = genplant(P, n);
+
+
         end
 
         

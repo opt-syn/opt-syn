@@ -272,6 +272,14 @@ classdef lmi_dispatch_interface < handle
         end
 
 
+        function [cons, objective, con_M] = l2_stability(obj, vars, cons, diss)
+            %l2_stability: bounded l2 gain (input to state stability)
+ 
+                [cons, objective, con_M] = obj.quad(vars, cons, diss);
+           
+        end
+
+
         function [cons, objective, con_M] = e2e(obj, vars, cons, diss)
             %E2E: energy to energy gain
 

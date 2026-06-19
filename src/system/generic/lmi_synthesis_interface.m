@@ -679,7 +679,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %evaluate the variables
             [sol] = obj.recover_subcontroller(alg_psi, P_trans, sol);
                       
-            
+            sol.G = obj.get_storage(sol.vars.diss, sol.vars.reg);
         end
 
 
@@ -832,6 +832,42 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             K_nofeed =minreal(K_nofeed_full,1e-5);
         end
 
+        function K_feed = name_K_feed(obj, K_in)
+            %NAME_K_FEED
+            %assign names to the channels of the subcontroller
+            
+            [n, m] = size(K_in.B);
+            p = size(K_in.C);
+            inputnames = {};
+            outputnames = {};
+            statenames = {};
+            for i = 1:n
+                statenames{i} = ['xc', num2str(i)];
+            end
+
+            ns = obj.reg.ns;
+
+            for i = 1:p
+                if i <= ns
+                    outputnames{i} = ['u1m', num2str(i)];
+                else
+                    outputnames{i} = ['u2m', num2str(i-ns)];
+                end
+            end
+
+            for i = 1:m
+                inputnames{i} = ['ym', num2str(i)];
+            end
+
+
+
+            K_feed = K_in;
+            K_feed.StateName = statenames;
+            K_feed.InputName = inputnames;
+            K_feed.OutputName = outputnames;
+            
+        end
+
 
         function K_report = K_alg_report(obj, P_trans, K_nofeed, model, rho)
             %K_ALG_REPORT recover the algorithmic interconnection and the
@@ -864,6 +900,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             K_feed = lft(T_feed, K_nofeed, nu, ny);
             % K_feed_full = lft(T_feed, K_nofeed_full, nu, ny);
 
+            
+            K_feed = obj.name_K_feed(K_feed);
+
 
             alg_trans = lft(P_trans, K_feed);
             alg_trans_nofeed = lft(P_trans_nofeed, K_nofeed);
@@ -882,12 +921,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             % alg_full = lft(obj.sys.P, K_full);
 
 
-            K_report = struct;
-            
+            K_report = struct;            
             K_report.K = K;
             K_report.model = model;
             K_report.K_sub = K_sub;
-
             K_report.alg_trans = alg_trans;  
 
         end

@@ -7,6 +7,7 @@ classdef alg_plotter
         FS = 16;  %fontsize for axes
         FST = 20; %fontsize for title  
         EQUALITY;
+        opt_sig; 
     end
     
     methods
@@ -14,7 +15,7 @@ classdef alg_plotter
             %ALG_PLOTTER Construct an instance of this class
             %   Detailed explanation goes here
             obj.sim = sim;
-            obj.EQUALITY = ~isempty(sim.eq);
+            obj.EQUALITY = ~isempty(sim.eq);            
         end
         
         function fig = plot(obj,traces, fignum)
@@ -66,6 +67,33 @@ classdef alg_plotter
             fig = obj.plot(sigs, fignum);
         end
 
+
+        function fig = plot_4_err(obj, fignum)
+            if nargin < 2
+                fignum = [];
+            end
+            sigs = {'xnerr', 'uerr', 'xierr', 'yerr'};
+            fig = obj.plot(sigs, fignum);
+        end
+
+        function fig = plot_3_err(obj, fignum)
+            if nargin < 2
+                fignum = [];
+            end
+            sigs = {'xerr','uerr', 'yerr'};
+            fig = obj.plot(sigs, fignum);
+        end
+
+        function obj = add_opt_sig(obj, reg_cl, dstar)
+            %add the optimal trajectory
+            
+            obj.sim.xnerr = obj.sim.xn -  reg_cl.Pi * dstar;
+            obj.sim.xierr = obj.sim.xi  - reg_cl.Th * dstar;
+            obj.sim.yerr = obj.sim.y - reg_cl.Phi * dstar;
+            obj.sim.uerr = obj.sim.u- reg_cl.Gam * dstar;            
+
+        end
+
         function ax = plot_tile(obj, ax, sig)
             %PLOT_TILE plot the signal 'sig' v.s. time
 
@@ -76,6 +104,8 @@ classdef alg_plotter
                 sig_curr = getfield(obj.sim, sig);
             elseif strcmp(sig, 'x')
                 sig_curr = [obj.sim.xn; obj.sim.xi];
+            elseif strcmp(sig, 'xerr')
+                sig_curr = [obj.sim.xnerr; obj.sim.xierr];
             elseif strcmp(sig, 'delay')
                 sig_curr = obj.sim.mode - 1;
             end
@@ -138,6 +168,17 @@ classdef alg_plotter
                     name = 'State (Network)';
                 case 'eq'
                     name = 'Primal Feasibility';
+                case 'xerr'
+                    name = 'State Error';
+                case 'xierr'
+                    name = 'State (Controller) Error';
+                case 'xnerr'
+                    name = 'State (Network) Error';
+                case 'uerr'
+                    name = 'Input Error';
+                case 'yerr'
+                    name = 'Output Error';
+
             end
         end
 
@@ -162,6 +203,16 @@ classdef alg_plotter
                 name_mid = 'mode';
             elseif strcmp(sig, 'delay')
                 name_mid = 'delay';
+            elseif strcmp(sig, 'xierr')
+                name_mid = '$\xi - \xi^*$';
+            elseif strcmp(sig, 'xerr')
+                name_mid = '$x - x^*$';
+            elseif strcmp(sig, 'xnerr')
+                name_mid = '$x_N - x_N^*$';
+            elseif strcmp(sig, 'uerr')
+                name_mid = '$u - u^*$';
+            elseif strcmp(sig, 'yerr')
+                name_mid = '$y - y^*$';
             elseif strcmp(sig, 'res_w')
                 if obj.EQUALITY
                     % name_mid = '$||\text{Proj}_{\text{null} \ E} (1^{\top} w)||_2$';

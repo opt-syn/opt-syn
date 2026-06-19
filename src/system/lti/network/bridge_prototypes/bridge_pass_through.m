@@ -24,7 +24,7 @@ classdef bridge_pass_through < genplant
             obj@genplant(G0, n);
 
             
-            % [obj.P.InputName, obj.P.OutputName] = obj.P_names(s, c);
+            [obj.P.InputName, obj.P.OutputName] = obj.P_names(s, c);
         end
 
 

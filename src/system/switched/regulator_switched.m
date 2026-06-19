@@ -163,6 +163,10 @@ classdef regulator_switched < regulator_interface
             %CHECK_REGULATOR is the regulator equation satisfied?
             sys_cl = lft(obj.sys.P, obj.sys.K);
 
+            %if the system is convergent, then the regulator equation
+            %solution in closed loop is unique
+            
+
             % error('Switched regulator: regulator check not yet done')
             Npre = obj.sys.get_consensus(obj.sys.op, obj.sys.bind);
             c = size(sys_cl{1}.D, 1)/length(obj.sys.bind); %coordinate lifts: change this later?
@@ -228,8 +232,7 @@ classdef regulator_switched < regulator_interface
                     error('Regulator equation cannot be solved')
                 end
             
-                nnull = size(null_basis, 2);
-
+      
                 %extract the solution
 
                 Pi0 = cell(obj.Nss, 1);
@@ -254,6 +257,8 @@ classdef regulator_switched < regulator_interface
             
             regulator_closed.Pi = Pi0;
             regulator_closed.Th = Th0;
+            regulator_closed.Gam = obj.Gam;
+            regulator_closed.Phi = obj.Phi;
                 
         
 

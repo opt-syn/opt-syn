@@ -22,7 +22,7 @@ classdef bridge_random < bridge_pass_through
                 obj.P.StateName{i} = sprintf('x%d', i);
             end
 
-            % [obj.P.InputName, obj.P.OutputName] = obj.P_names(s);
+            [obj.P.InputName, obj.P.OutputName] = obj.P_names(s);
         end
 
 

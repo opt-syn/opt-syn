@@ -10,7 +10,7 @@ classdef spec_l2< spec_interface
     
     
     properties
-        type='passivity';        
+        type='l2_stability';        
         ind_w = 0;        
         search_type = 'in';
         gain = 1e4;
