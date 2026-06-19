@@ -31,9 +31,13 @@ classdef alg_plotter
             clf
 
             nplt = length(traces);
-            nrows = floor(sqrt(nplt));
-            ncols = ceil(sqrt(nplt));
-
+            if nplt ==3
+                nrows = 1;
+                ncols = 3;
+            else
+                nrows = floor(sqrt(nplt));
+                ncols = ceil(sqrt(nplt));
+            end
             tiledlayout(nrows, ncols)
             axlist = cell(nplt, 1);
             for r = 1:nplt
@@ -84,6 +88,22 @@ classdef alg_plotter
             fig = obj.plot(sigs, fignum);
         end
 
+        function fig = plot_4_sq_err(obj, fignum)
+            if nargin < 2
+                fignum = [];
+            end
+            sigs = {'sq_xnerr', 'sq_uerr', 'sq_xierr', 'sq_yerr'};
+            fig = obj.plot(sigs, fignum);
+        end
+
+        function fig = plot_3_sq_err(obj, fignum)
+            if nargin < 2
+                fignum = [];
+            end
+            sigs = {'sq_xerr','sq_uerr', 'sq_yerr'};
+            fig = obj.plot(sigs, fignum);
+        end
+
         function obj = add_opt_sig(obj, reg_cl, dstar)
             %add the optimal trajectory
             
@@ -91,6 +111,14 @@ classdef alg_plotter
             obj.sim.xierr = obj.sim.xi  - reg_cl.Th * dstar;
             obj.sim.yerr = obj.sim.y - reg_cl.Phi * dstar;
             obj.sim.uerr = obj.sim.u- reg_cl.Gam * dstar;            
+
+            fs = @(sig) squeeze(sum(sig.^2, [1, 2]));
+
+            obj.sim.sq_xnerr = fs(obj.sim.xnerr);
+            obj.sim.sq_xierr = fs(obj.sim.xierr);
+            obj.sim.sq_yerr = fs(obj.sim.yerr);
+            obj.sim.sq_uerr = fs(obj.sim.uerr);            
+
 
         end
 
@@ -106,6 +134,8 @@ classdef alg_plotter
                 sig_curr = [obj.sim.xn; obj.sim.xi];
             elseif strcmp(sig, 'xerr')
                 sig_curr = [obj.sim.xnerr; obj.sim.xierr];
+            elseif strcmp(sig, 'sq_xerr')
+                sig_curr = obj.sim.sq_xnerr +  obj.sim.sq_xierr;
             elseif strcmp(sig, 'delay')
                 sig_curr = obj.sim.mode - 1;
             end
@@ -128,7 +158,8 @@ classdef alg_plotter
                 xlabel('$k$', 'interpreter', 'latex', 'fontsize', obj.FS)
                 ylabel(obj.get_name(sig), 'interpreter', 'latex', 'fontsize', obj.FS)
                 title(obj.get_title(sig), 'interpreter', 'latex', 'fontsize', obj.FST)
-                if ismember(sig, {'res_w', 'res_z'})
+                if ismember(sig, {'res_w', 'res_z', 'sq_xierr', 'sq_xerr', ...
+                        'sq_xnerr', 'sq_uerr', 'sq_yerr'})
                     set(ax, 'YScale', 'log');
                 end
                 xlim([k(1), k(end)])
@@ -179,12 +210,26 @@ classdef alg_plotter
                 case 'yerr'
                     name = 'Output Error';
 
+                %squared errors
+                case 'sq_xerr'
+                    name = 'State Error';
+                case 'sq_xierr'
+                    name = 'State (Controller) Error';
+                case 'sq_xnerr'
+                    name = 'State (Network) Error';
+                case 'sq_uerr'
+                    name = 'Input Error';
+                case 'sq_yerr'
+                    name = 'Output Error';
+
             end
         end
 
         function name = get_name(obj, sig)
             %GET_NAME the name of the signal in latex-formatted strings
             %for use in y-axis labels
+
+            %specific channels
             if length(sig)==1
                 name_mid = ['$', sig, '$'];
             elseif strcmp(sig(2), '_')
@@ -199,10 +244,14 @@ classdef alg_plotter
                 name_mid = '$x_{N}$';
             elseif strcmp(sig, 'eq')
                 name_mid = '$|| E z - b||_2$';
+
+            %switching
             elseif strcmp(sig, 'mode')
                 name_mid = 'mode';
             elseif strcmp(sig, 'delay')
                 name_mid = 'delay';
+
+            %tracking    
             elseif strcmp(sig, 'xierr')
                 name_mid = '$\xi - \xi^*$';
             elseif strcmp(sig, 'xerr')
@@ -213,6 +262,21 @@ classdef alg_plotter
                 name_mid = '$u - u^*$';
             elseif strcmp(sig, 'yerr')
                 name_mid = '$y - y^*$';
+
+            %tracking residuals
+            elseif strcmp(sig, 'sq_xierr')
+                name_mid = '$||\xi - \xi^*||^2_2$';
+            elseif strcmp(sig, 'sq_xerr')
+                name_mid = '$||x - x^*||^2_2$';
+            elseif strcmp(sig, 'sq_xnerr')
+                name_mid = '$||x_N - x_N^*||^2_2$';
+            elseif strcmp(sig, 'sq_uerr')
+                name_mid = '$||u - u^*||^2_2$';
+            elseif strcmp(sig, 'sq_yerr')
+                name_mid = '$||y - y^*||^2_2$';
+
+
+            %residuals
             elseif strcmp(sig, 'res_w')
                 if obj.EQUALITY
                     % name_mid = '$||\text{Proj}_{\text{null} \ E} (1^{\top} w)||_2$';
