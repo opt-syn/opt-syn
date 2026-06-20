@@ -212,14 +212,29 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
             quad = obj.merge_quad(M_quad_rob, M_quad_spec);
 
+            
+            nzp = length(diss.spec.izp);
+            nz = ssize(sys_cl.D, 1) - nzp;
+            nwp = length(diss.spec.iwp);
+            nw = ssize(sys_cl.D, 2) - nwp;
+
+            Iout = eye(nz+nzp);
+            Ez = Iout(1:nz, :);
+            Ezp = Iout(nz + (1:nzp), :);
+
+
+            sys_cl_run = Ez * sys_cl;
+            
+
+
             %the quadratic objective
-            supp_b = obj.supply_block(sys_cl, quad);
+            supp_b = obj.supply_block(sys_cl_run, quad);
 
             %the storage
-            stor_b = obj.storage_block(sys_cl, quad, G, G);
+            stor_b = obj.storage_block(sys_cl_run, quad, G, G);
 
             %the dynamics
-            [dyn_b, U_outer, V_outer] = obj.dynamics_block(sys_cl, quad);
+            [dyn_b, U_outer, V_outer] = obj.dynamics_block(sys_cl_run, quad);
             
             %wrap it all together           
             con_M = -(stor_b + supp_b + dyn_b);
@@ -230,15 +245,34 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
             
             %now do the terminal constraints
-            stor_b2 = obj.storage_block(sys_cl, quad, G, G);
 
-            quad = obj.merge_quad(M_quad_rob, M_quad_spec);
-
-            Mterm = quad_terminal(obj, vars_spec);
+            Mterm = diss.spec.quad_terminal(vars_spec);
 
             %weighting the running cost            
             quad_term = obj.merge_quad(M_quad_rob, Mterm);
+
+            nt  = ssize(quad_term.U, 1);
+            cterm_block = blkdiag(-G, zeros(nw+nwp+nt));
             
+            n = ssize(G, 1);
+
+            outer_cl_right= [[ zeros(n, nw+nwp);
+               eye(nw+nwp)], zeros(n+nw+nwp, n+nt)];
+
+            outer_cl_left = [quad_term.S;
+               zeros(n, nz+nzp); %check the sign here
+                quad_term.T];
+
+            center_cl = [sys_cl.C, sys_cl.D];
+
+            term_b = outer_cl_left * center_cl * outer_cl_right; 
+            term_b_he = term_b + term_b';
+
+
+            con_p2p = term_b_he + cterm_block;   
+            sp2p = ssize(con_p2p, 1);
+            cons = append_lmi(cons, con_p2p - obj.config.tol.M*eye(sp2p), obj.LMILAB); 
+
             
             %impose positivity constraint            
             cons = obj.con_terminal(G, cons, [], diss.iqc_rob);

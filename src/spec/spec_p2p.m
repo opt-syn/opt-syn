@@ -34,14 +34,16 @@ classdef spec_p2p < spec_interface
             M = kron(M0, eye(obj.nwp));
         end
 
-        function Mt = quad_terminal(obj, vars_spec)
+        function quad = quad_terminal(obj, vars_spec)
             %matrix for  the terminal p2p expression
             %
             alpha = obj.rho^2 / (1-obj.rho^2);
+            nwp = length(obj.iwp);
+            nzp = length(obj.izp);
 
             if obj.target
                 Q0 = -obj.weight*alpha * (vars_spec.gam_p2p - vars_spec.mu_p2p);
-                U0 = vars_spec.gam_p2p / (obj.weight*alpha);
+                U0 = vars_spec.gam_p2p *  (1/(obj.weight*alpha));
                 Q_term = drep(Q0, nwp);
                 U_term = drep(U0, nzp);
             else
@@ -49,7 +51,7 @@ classdef spec_p2p < spec_interface
                 Q0 = -obj.weight * alpha * (obj.gain - vars_spec.mu_p2p);
                 U0 = obj.gain / (obj.weight*alpha);
                 Q_term = drep(Q0, nwp);
-                U_term = drep(U0, nzp);
+                U_term = kron(U0, eye(nzp));
                 
             end
 
@@ -63,22 +65,24 @@ classdef spec_p2p < spec_interface
        function [quad, objective] = supply_quad(obj, vars_spec)
            %SUPPLY_QUAD decomposed quadratic performance specification
 
-           if obj.target
+           
                nwp = length(obj.iwp);
                
-               Q_l2 = -vars_spec.mu_l2;
+               Q_p2p = -vars_spec.mu_p2p;
                
-               S_l2 = -zeros(nwp, 0);
-              T_l2 = [];
-               U_l2 = [];
+               S_p2p = -zeros(nwp, 0);
+               T_p2p = [];
+               U_p2p = [];
   
 
-               quad = struct('Q', Q_l2, 'T', T_l2, 'S', S_l2, 'U', U_l2);
-
-               objective  = vars_spec.gam_l2;
+               quad = struct('Q', Q_p2p, 'T', T_p2p, 'S', S_p2p, 'U', U_p2p);
+        
+           
+           if obj.target
+               objective  = vars_spec.gam_p2p;
 
            else
-               quad = supply_quad@spec_interface(obj, vars_spec);
+               
                objective = 0;
 
            end

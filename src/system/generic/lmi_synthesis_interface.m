@@ -837,7 +837,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %assign names to the channels of the subcontroller
             
             [n, m] = size(K_in.B);
-            p = size(K_in.C);
+            p = size(K_in.C, 1);
             inputnames = {};
             outputnames = {};
             statenames = {};
