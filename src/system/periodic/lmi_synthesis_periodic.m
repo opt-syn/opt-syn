@@ -309,7 +309,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             
         
             %recover the controller
-            [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec);
+            [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec);
 
 
             %package it up
@@ -328,12 +328,14 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
                 sol.K_sub{i} = K_report.K_sub;                
 
             end
+            sol.Gcl = Gcl;
+            sol.Ycl = Ycl;
 
 
             sol.gain = obj.validate_recovery_gain(sol.alg_trans, sol.iqc_op_all);
         end
 
-        function [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec)
+        function [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec)
 
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
             %controller 
@@ -341,7 +343,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
 
 
             %for debugging
-            % G = obj.get_storage(sol.vars.diss, sol.vars.reg);
+            
 
             %this is the (nonlinearly-warped) system that is certified as
             %possessing the desired performance and robustness
@@ -359,7 +361,12 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             Uinv = cell(obj.Nss, 1);
             Vinv = cell(obj.Nss, 1);            
 
+            Gcl = cell(obj.Nss, 1);
+            Ycl = cell(obj.Nss, 1);          
+
             K_nofeed = cell(obj.Nss, 1);        
+
+            % G = obj.get_storage(sol.vars.diss, sol.vars.reg);
 
             for i = 1:obj.Nss
                 Y{i} = vars_rec.diss.GY{i};
@@ -370,6 +377,12 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
                 J = S - X{i} * Y{i};
                 [Up, Sig, Vp] = svd(J);
 
+                n = size(Y{i}, 1);
+                
+                Ycl{i} = [Y{i}, eye(n); Vp', zeros(n)];
+
+                iYcl = inv(Ycl{i}); 
+                Gcl{i} = iYcl' * [Y{i}, eye(n); eye(n), X{i}] * iYcl;
                 % U = Up*Sig;
                 ssig = sqrt(Sig);
                 srsig = diag(1./(diag(ssig)));

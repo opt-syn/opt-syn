@@ -392,13 +392,15 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             rho = sol.rho;
                     
             %recover the controller
-            [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec);
+            [K_nofeed,Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec);
 
             %package it up
             K_report = cell(obj.Nss, 1);
 
             ds = obj.sys.get_discount;
 
+            sol.Gcl = Gcl;
+            sol.Ycl = Ycl;
             for i = 1:obj.Nss
 
                 if ds(i)
@@ -416,7 +418,8 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
                 sol.alg{i} = lft(obj.sys.P{i}, K_report.K);
                 sol.model{i} = K_report.model;           
                 sol.K{i}= K_report.K;
-                sol.K_sub{i} = K_report.K_sub;                
+                sol.K_sub{i} = K_report.K_sub;  
+                
 
             end
 
@@ -424,7 +427,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             sol.gain = obj.validate_recovery_gain(sol.alg_trans, sol.iqc_op_all);
         end
 
-        function [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec)
+        function [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec)
 
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
             %controller 
@@ -446,8 +449,6 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
             K_nofeed = cell(obj.Nss, 1);        
 
-
-
             JS = vars_rec.diss.JS;
             JX = vars_rec.diss.JX;
             JY = vars_rec.diss.JY;
@@ -466,7 +467,17 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             Uinv = srsig*Up';
             Vinv = srsig*Vp';
             
+            %get the similarity transformation
+            n = size(J, 1);
             
+            Ycl = [JY, eye(n); V', zeros(n)];
+            iYcl = inv(Ycl);
+            Gcl = cell(obj.Nss, 1);
+            
+            for i = 1:obj.Nss
+                Gcl{i} = iYcl' * [vars_rec.diss.GY{i}, eye(n); eye(n), vars_rec.diss.GX{i}] * iYcl;
+            end
+
             %get the indexers
             Pt = P_trans{1};            
 

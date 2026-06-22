@@ -82,7 +82,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             vars_rec = sol.vars;
             rho = sol.rho;
 
-            [K_nofeed] = recover_subcontroller_warp(obj, P_aug, vars_rec);
+            [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_aug, vars_rec);
 
 
             
@@ -99,6 +99,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             sol.K_sub = K_report.K_sub;
             sol.gain = obj.validate_recovery_gain(sol.alg_trans, sol.iqc_op_all);
 
+            sol.Gcl = Gcl;
+            sol.Ycl = Ycl;
             
         end
 
@@ -510,7 +512,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
         
         %% recovery
 
-        function [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec)
+        function [K_nofeed, Xcal, Ycal] = recover_subcontroller_warp(obj, P_trans, vars_rec)
 
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
             %controller 

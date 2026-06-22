@@ -36,11 +36,13 @@ classdef bridge_channel_delay < bridge_pass_through
                 obj.P.StateName{i} = sprintf('x%d', i);
             end
 
-            [obj.P.InputName, obj.P.OutputName] = obj.P_names(s);
+            [obj.P.InputName, obj.P.OutputName] = obj.P_names(s, c);
         end
 
 
         function [InputName, OutputName] = P_names(obj, s, c)
+
+            % if nargin 
             InputName = cell(s*c, 1);
             OutputName = cell(s*c, 1);
             for i = 1:(2*s)

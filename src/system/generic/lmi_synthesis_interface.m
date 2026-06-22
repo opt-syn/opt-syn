@@ -679,7 +679,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %evaluate the variables
             [sol] = obj.recover_subcontroller(alg_psi, P_trans, sol);
                       
-            sol.G = obj.get_storage(sol.vars.diss, sol.vars.reg);
+            % sol.G = obj.get_storage(sol.vars.diss, sol.vars.reg);
         end
 
 
@@ -698,7 +698,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             vars_rec = sol.vars;
             rho = sol.rho;
 
-            [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec);
+            [K_nofeed, Gcal, Ycal] = recover_subcontroller_warp(obj, P_trans, vars_rec);
 
             model = obj.reg.get_model(vars_rec.reg);
 
@@ -709,6 +709,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             sol.model = K_report.model;           
             sol.K= K_report.K;
             sol.K_sub = K_report.K_sub;
+            sol.Gcl = Gcal;
+            sol.Ycl = Ycal;
 
             sol.gain = obj.validate_recovery_gain(sol.alg_trans, sol.iqc_op_all);
 
@@ -724,7 +726,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             Dk = vars_rec.K.D;
         end
 
-        function [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec)
+        function [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec)
 
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
             %controller 
@@ -778,6 +780,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             Uinv = srsig*Up';
             Vinv = srsig*Vp';
 
+            Ycl = [Y, eye(n); V', zeros(n)];
+            iYcl = inv(Ycl);
+            Gcl = iYcl' * G * iYcl;
 
             %similarity transformation
 
