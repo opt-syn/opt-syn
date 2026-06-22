@@ -216,8 +216,8 @@ classdef opt_synthesis < opt_manager_interface
         function  sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
             %PROCESS_RECOVERY recover the controller from the solution
             
-            sol.iqc_op = obj.iqc_op;
-            sol.iqc_op_all = obj.iqc_op_all;
+            sol.cert.iqc_op = obj.iqc_op;
+            sol.cert.iqc_op_all = obj.iqc_op_all;
             sol.vars.rho = sol.rho;
             sol = obj.lmi.process_recovery(sol, lmi_out, alg_psi, diss);            
         end

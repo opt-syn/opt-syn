@@ -399,8 +399,9 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
             ds = obj.sys.get_discount;
 
-            sol.Gcl = Gcl;
-            sol.Ycl = Ycl;
+
+            sol.cert.Gcl = Gcl;
+            sol.cert.Ycl = Ycl;
             for i = 1:obj.Nss
 
                 if ds(i)
@@ -413,18 +414,18 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
     
                 K_report = obj.K_alg_report(P_trans{i}, K_nofeed{i}, model, curr_rho);
 
-                %form the algorithm
-                sol.alg_trans{i} = K_report.alg_trans;
-                sol.alg{i} = lft(obj.sys.P{i}, K_report.K);
-                sol.model{i} = K_report.model;           
+                %form the algorithm                
+                sol.cert.alg_trans{i} = K_report.alg_trans;
+                sol.cert.alg{i} = lft(obj.sys.P{i}, K_report.K);
+                sol.cert.model{i} = K_report.model;           
                 sol.K{i}= K_report.K;
-                sol.K_sub{i} = K_report.K_sub;  
+                sol.cert.K_sub{i} = K_report.K_sub;  
                 
 
             end
 
 
-            sol.gain = obj.validate_recovery_gain(sol.alg_trans, sol.iqc_op_all);
+            sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
         end
 
         function [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec)

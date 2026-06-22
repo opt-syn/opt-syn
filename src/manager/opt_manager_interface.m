@@ -127,7 +127,8 @@ classdef (Abstract) opt_manager_interface < handle
 
                 STATUS = (lmi_out.status || (lmi_out.dia(1+OBJECTIVE) > obj.config.tol.dia));
                 sol.info = info_out;
-                sol.cons = cons;
+                sol.info.lmi_out = lmi_out;
+                sol.info.cons = cons;
 
                 
                 if OBJECTIVE
@@ -150,11 +151,12 @@ classdef (Abstract) opt_manager_interface < handle
                 
                 if obj.config.recovery.blocks
                     ncons = length(cons.lmim);
-                    sol.blocks = cell(ncons, 1);
-                    sol.eb = zeros(ncons, 1);
+                    sol.recovery = struct;
+                    sol.recovery.blocks = cell(ncons, 1);
+                    sol.recovery.eb = zeros(ncons, 1);
                     for i = 1:length(cons.lmim)
-                        sol.blocks{i} = -double(double(cons.lmim(i), lmi_out));
-                        sol.eb(i) = min(eig(sol.blocks{i}));
+                        sol.recovery.blocks{i} = -double(double(cons.lmim(i), lmi_out));
+                        sol.recovery.eb(i) = min(eig(sol.recovery.blocks{i}));
                     end
                 end
                 
@@ -255,7 +257,7 @@ classdef (Abstract) opt_manager_interface < handle
             
             if sol.status == 0
                 if obj.LMILAB
-                    [vrec] = rec_vars(vars, sol.lmi_out);
+                    [vrec] = rec_vars(vars, sol.info.lmi_out);
                 else
                     [vrec] = rec_vars(vars);
                 end
@@ -263,17 +265,10 @@ classdef (Abstract) opt_manager_interface < handle
                 sol.vars = vrec;
 
                 sol.rho = rho;
-                sol.alg_psi = alg_psi;
-                sol.objective = double(double(objective, sol.lmi_out));
+                sol.cert.alg_psi = alg_psi;
+                sol.objective = double(double(objective, sol.info.lmi_out));
 
                 ncons = length(cons.lmim);
-
-                if obj.config.recovery.blocks
-                    sol.blocks = cell(ncons, 1);
-                    for i = 1:ncons
-                        sol.blocks{i} = double(double(cons.lmim(i), sol.lmi_out));
-                    end
-                end
 
                 sol = obj.process_recovery(sol, sol.lmi_out, alg_psi, diss);
                 

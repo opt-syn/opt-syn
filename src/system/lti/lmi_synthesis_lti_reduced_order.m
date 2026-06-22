@@ -92,15 +92,15 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             K_report = obj.K_alg_report(P_trans, K_nofeed, model, rho);
             
-            sol.alg_trans = K_report.alg_trans;
-            sol.alg = lft(obj.sys.P, K_report.K);
-            sol.model = K_report.model;           
+            sol.cert.alg_trans = K_report.alg_trans;
+            sol.cert.alg = lft(obj.sys.P, K_report.K);
+            sol.cert.model = K_report.model;           
             sol.K= K_report.K;
-            sol.K_sub = K_report.K_sub;
-            sol.gain = obj.validate_recovery_gain(sol.alg_trans, sol.iqc_op_all);
+            sol.cert.K_sub = K_report.K_sub;
+            sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
 
-            sol.Gcl = Gcl;
-            sol.Ycl = Ycl;
+            sol.cert.Gcl = Gcl;
+            sol.cert.Ycl = Ycl;
             
         end
 
