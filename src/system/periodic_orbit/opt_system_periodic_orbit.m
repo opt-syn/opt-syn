@@ -88,7 +88,7 @@ classdef  opt_system_periodic_orbit < opt_system
         %fetch attributes
         function Pcurr = get_P(obj, param)
             %GET_P get the network P
-            Pcurr = obj.P.ss();
+            Pcurr = obj.P.P;
 
             k = mod(param.mode-1, obj.order+1);           
 
@@ -166,6 +166,30 @@ classdef  opt_system_periodic_orbit < opt_system
                 Rbeta = Rek \ obj.tracking.Rbeta * Rdk;
             end
         end
+
+        function sys_per = export_periodic(obj)
+            %EXPORT_PERIODIC export the periodic-orbit as a periodic system
+            %explicitly list all subsystems
+            n = obj.P.dump_dim();
+
+            nss = obj.Nss;
+            Pper = cell(1, nss);
+            Kper = cell(1, nss);
+
+            for i = 1:nss
+                param_curr = struct('mode', i);
+                Pper_sys = obj.get_P(param_curr);
+                Kper_sys = obj.get_K(param_curr);
+
+
+                Pper{i} = genplant(Pper_sys, n);
+                Kper{i} = Kper_sys;
+            end
+
+            Pper_poly = genplant_poly(Pper, n);
+            
+            sys_per = opt_system_periodic(obj.op, Pper_poly, Kper, obj.bind, obj.tracking);
+        end
         
         function Kcurr = get_K(obj, param)
             %GET_K get the controller K
@@ -176,21 +200,23 @@ classdef  opt_system_periodic_orbit < opt_system
             end
 
 
-            k = mod(param.mode-1, obj.order+1);          
+            if ~isempty(Kcurr)
 
-            [n, m] = size(Kcurr.B);
-            p = size(Kcurr.C, 1);
-            c = size(obj.R, 1);
-
-            Rxk = kron(eye(n/c), obj.R)^k;
-            Ryk = kron(eye(m/c), obj.R)^k;
-            Ruk = kron(eye(p/c), obj.R)^k;
-
-            Kcurr.A = (Rxk) \ Kcurr.A * Rxk;
-            Kcurr.B = (Rxk) \ Kcurr.B * Ruk;
-            Kcurr.C = (Ryk) \ Kcurr.C * Rxk;
-            Kcurr.D = (Ryk) \ Kcurr.D * Ruk;
-
+                k = mod(param.mode-1, obj.order+1);          
+    
+                [n, m] = size(Kcurr.B);
+                p = size(Kcurr.C, 1);
+                c = size(obj.R, 1);
+    
+                Rxk = kron(eye(n/c), obj.R)^k;
+                Ryk = kron(eye(m/c), obj.R)^k;
+                Ruk = kron(eye(p/c), obj.R)^k;
+    
+                Kcurr.A = (Rxk) \ Kcurr.A * Rxk;
+                Kcurr.B = (Rxk) \ Kcurr.B * Ruk;
+                Kcurr.C = (Ryk) \ Kcurr.C * Rxk;
+                Kcurr.D = (Ryk) \ Kcurr.D * Ruk;
+            end
         end
 
 
