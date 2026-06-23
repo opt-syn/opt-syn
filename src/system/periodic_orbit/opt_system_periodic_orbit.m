@@ -28,18 +28,18 @@ classdef  opt_system_periodic_orbit < opt_system
 
     properties
         R = [];
-        sym_order;
+        order = 0;
     end
     
     methods
-        function obj = opt_system_periodic_orbit(op, P, K, bind, tracking)
+        function obj = opt_system_periodic_orbit(op, P, K, R, bind, tracking)
             %OPT_SYSTEM_PERIODIC constructor            
-            if nargin < 5
+            if nargin < 6
                 s = length(op);
                 bind = 1:s;            
             end
 
-            if nargin < 6
+            if nargin < 7
                  tracking = [];
             end
 
@@ -69,7 +69,7 @@ classdef  opt_system_periodic_orbit < opt_system
         end 
 
         function ns = Nss(obj)
-            ns = obj.order;
+            ns = obj.order+1;
         end
 
 
@@ -81,7 +81,7 @@ classdef  opt_system_periodic_orbit < opt_system
 
         function mode_next = next_mode(obj, mode)
             %next mode in the switching sequence
-            nss = obj.P.Nss;
+            nss = obj.Nss;
             mode_next = 1+ mod(mode, nss);
         end
 
@@ -90,20 +90,21 @@ classdef  opt_system_periodic_orbit < opt_system
             %GET_P get the network P
             Pcurr = obj.P.ss();
 
-            k = param.mode-1;            
+            k = mod(param.mode-1, obj.order+1);           
 
 
             [n, m] = size(Pcurr.B);
             p = size(Pcurr.C, 1);
+            c = size(obj.R, 1);
 
             Rxk = kron(eye(n/c), obj.R)^k;
             Ryk = kron(eye(m/c), obj.R)^k;
             Ruk = kron(eye(p/c), obj.R)^k;
 
-            Pcurr.P.A = (Rxk) \ Pcurr.P.A * Rxk;
-            Pcurr.P.B = (Rxk) \ Pcurr.P.A * Ruk;
-            Pcurr.P.C = (Ryk) \ Pcurr.P.A * Rxk;
-            Pcurr.P.D = (Ryk) \Pcurr.P.A * Ruk;
+            Pcurr.A = (Rxk) \ Pcurr.A * Rxk;
+            Pcurr.B = (Rxk) \ Pcurr.B * Ruk;
+            Pcurr.C = (Ryk) \ Pcurr.C * Rxk;
+            Pcurr.D = (Ryk) \ Pcurr.D * Ruk;
 
         end
 
@@ -113,7 +114,7 @@ classdef  opt_system_periodic_orbit < opt_system
 
             [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P.ss_zy_wu();
 
-            k = param.mode-1;          
+            k = mod(param.mode-1, obj.order+1);          
 
 
             [nx, nw] = size(B1);
@@ -149,7 +150,7 @@ classdef  opt_system_periodic_orbit < opt_system
             %GET_TRACKED_OPT get the tracked position of the optimal
             %solution
             c = size(obj.R);
-            k = param.mode-1;          
+            k = mod(param.mode-1, obj.order+1);          
 
             
             if isempty(obj.tracking)
@@ -175,19 +176,20 @@ classdef  opt_system_periodic_orbit < opt_system
             end
 
 
-            k = param.mode-1;            
+            k = mod(param.mode-1, obj.order+1);          
 
             [n, m] = size(Kcurr.B);
             p = size(Kcurr.C, 1);
+            c = size(obj.R, 1);
 
-            Rxk = kron(eye(n), obj.R)^k;
-            Ryk = kron(eye(m), obj.R)^k;
-            Ruk = kron(eye(p), obj.R)^k;
+            Rxk = kron(eye(n/c), obj.R)^k;
+            Ryk = kron(eye(m/c), obj.R)^k;
+            Ruk = kron(eye(p/c), obj.R)^k;
 
-            Kcurr.P.A = (Rxk) \ Kcurr.P.A * Rxk;
-            Kcurr.P.B = (Rxk) \ Kcurr.P.A * Ruk;
-            Kcurr.P.C = (Ryk) \ Kcurr.P.A * Rxk;
-            Kcurr.P.D = (Ryk) \Kcurr.P.A * Ruk;
+            Kcurr.A = (Rxk) \ Kcurr.A * Rxk;
+            Kcurr.B = (Rxk) \ Kcurr.B * Ruk;
+            Kcurr.C = (Ryk) \ Kcurr.C * Rxk;
+            Kcurr.D = (Ryk) \ Kcurr.D * Ruk;
 
         end
 
