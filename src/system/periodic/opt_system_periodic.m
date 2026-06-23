@@ -2,6 +2,16 @@ classdef  opt_system_periodic < opt_system_switched
     %OPT_SYSTEM_PERIODIC interconnection of network and operators
     %
     %a periodic system: repeated and predictable cycle evaluation   
+    %
+    % w(k) \in F(z(k))
+    %
+    % [x(k+1)] = [A(k)    Bw(k)    Bwp(k)   Bu(k)  ][x(k)]   state transition
+    % [z(k)  ] = [Cz(k)   Dzw(k)   Dzwp(k)  Dzu(k) ][w(k)]   output to oracle
+    % [zp(k) ] = [Czp(k)  Dzpw(k)  Dzpwp(k) Dzpu(k)][wp(k)]  output to performance
+    % [y(k)  ] = [Cy(k)   Dyw(k)   Dywp(k)  Dyu(k) ][u(k)]   output to controller
+    %
+    %All matrices periodic: A(k) = A(k+T) for some known time T
+    %(T = number of subsystems)
 
     
     methods
