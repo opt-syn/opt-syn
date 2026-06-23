@@ -490,14 +490,6 @@ classdef regulator_interface
 
             reg_mat_dyn = kron(speye(ns), reg_mat_L);            
 
-
-
-            % Gam0 = obj.sys.get_Gam_basis(param);
-            % Phi0= obj.sys.get_Phi_basis(param);            
-            % for i = 1:length(Gam0)
-            
-            % [Bk * Gam0]
-
         end
 
         function [Pi0, Gam0, Phi0, Th0] = sol_K_reg_all(obj, reg_sol)

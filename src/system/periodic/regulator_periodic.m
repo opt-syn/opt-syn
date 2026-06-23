@@ -20,7 +20,7 @@ classdef regulator_periodic < regulator_interface
         end
 
         function ns = Nss(obj)
-            %NSS: number of states
+            %NSS: number of subsystems
             ns = obj.sys.Nss;
         end
 

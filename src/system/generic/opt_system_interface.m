@@ -183,6 +183,7 @@ classdef  opt_system_interface
 
         function [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj, param)
             %get state space matrices at the current parameter values
+            
             [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P.ss_zy_wu();
         end
 

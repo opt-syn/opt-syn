@@ -1,13 +1,11 @@
 classdef regulator_periodic_orbit < regulator_interface
-    %REGULATOR_PERIODIC Regulator for periodic systems    
+    %REGULATOR_PERIODIC_ORBIT Regulator for periodic systems    
     %
     % [x(k+1)] = [A(k)    Bd(k)    Bu(k)  ][x(k)]   state transition
     % [e(k)  ] = [Ce(k)   Ded(k)   Deu(k) ][d(k)]   output to  regulated error    
     % [zp(k) ] = [Cy(k)   Dyd(k)   Dyu(k) ][u(k)]   output to controller    
 
-
     %A(k) = A(k+T) for some known time T
-    % known matrix 
     %
     %instances of these algorithms include cyclic coordinate descent
     %methods. Periodic systems can also be unrolled into an LTI system
@@ -22,7 +20,7 @@ classdef regulator_periodic_orbit < regulator_interface
         end
 
         function ns = Nss(obj)
-            %NSS: number of states
+            %NSS: number of subsystems
             ns = obj.sys.Nss;
         end
 
@@ -52,8 +50,9 @@ classdef regulator_periodic_orbit < regulator_interface
 
                 %go through each subsystem
                 for i = 1:obj.Nss
-                    Pcurr = obj.sys.P{i};
-                    [A, B1, B2, C1, D11, D12, C2, D21, D22] = Pcurr.ss_zy_wu();
+                    param = struct('mode', i);
+                    Pcurr = obj.sys.get_P(param);
+                    [A, B1, B2, C1, D11, D12, C2, D21, D22] = Pcurr.ss_zy_wu(param);
 
                     reg_ans_curr = [zeros(n, c), -B1*N;  -kron(ones(sN0,1), eye(c)), -D11*N];
                     reg_mat_curr = [A, B2; C1, D12];
@@ -128,6 +127,7 @@ classdef regulator_periodic_orbit < regulator_interface
 
             else
                 error('Periodic regulation: tracking not yet supported')
+                %TODO: to be implemented
             end
 
 
@@ -202,11 +202,11 @@ classdef regulator_periodic_orbit < regulator_interface
                 for i = 1:obj.Nss
                     %get the regulator equation solution                    
                     ind_pi = count + (1:nxn);
-                    ind_th = count + n+ (1:nxi);
+                    ind_th = count + nxn + (1:nxi);
                     Pi0{i} = sol0(ind_pi, :);
                     Th0{i} = sol0(ind_th, :);                    
 
-                    count = count + n + nu;
+                    count = count + nxn + nxi;
 
                 end                                    
             end
