@@ -3,8 +3,7 @@ classdef spec_ergodic < spec_interface
     %interconnection (ergodic/sublinear rates)
     
     properties
-        type = 'ergodic';
-        rho = 1;
+        type = 'ergodic';        
         erg_pass = 0;
         Nw = 1; %weighted consensus matrix
     end
