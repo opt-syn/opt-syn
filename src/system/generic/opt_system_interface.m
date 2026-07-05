@@ -85,7 +85,7 @@ classdef  opt_system_interface
             %use an explicit substitution w = m z rather than w \in F(z)
             ind_same = iqc_data.ind_same;
             
-            ind_diff = setdiff(1:nop, ind_same);
+            ind_diff = setdiff(1:(c*nop), ind_same);
             Pd = eye(nop*c);
             Pd(:, [ind_same, ind_diff]) = Pd;
             n_same = length(ind_same);
@@ -140,7 +140,7 @@ classdef  opt_system_interface
                     n = obj.P.dump_dim;
                     
                     %special case for reduced-order control + performance
-                    if nop == n.nw
+                    if nop*c == n.nw
                         %standard control
                         n.nw = n.nw - length(ind_same);
                         n.nz = n.nz - length(ind_same);
