@@ -335,7 +335,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             nf = n - size(vars_reg.Pi, 1);
             
             Piaug = [zeros(nf, ns); vars_reg.Pi];
-            Creg = [C(iw, :), -C(iw, :) * Piaug- D(iw, iu) * vars_reg.Gam];
+            Creg = [C(iz, :), -C(iz, :) * Piaug- D(iz, iu) * vars_reg.Gam];
 
             if obj.elimination
 
@@ -635,27 +635,30 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
 
             %manual check of antipassivity
-            nw = size(Dcl, 1);
+            [nz, nw] = size(Dcl);
+            
             Ablock = [Acl, Bcl; eye(size(Acl)), zeros(2*n+ns, nw)];
             Sblock = kron([0, 1; 1, 0], eye(nw));
             Xblock = blkdiag(Xhatcal, -Xhatcal);
             Cblock = [Ccl, Dcl; zeros(nw, 2*n+ns), eye(nw)];
-            ANTI = Ablock'*Xblock*Ablock + Cblock'*Sblock*Cblock;
+            if nz == nw
+                ANTI = Ablock'*Xblock*Ablock + Cblock'*Sblock*Cblock;
+            
 
 
 
-            %this is the closed-loop response (after loop transformations
-            % and multiplier augmentation), should satisfy the desired
-            %performance specifications.
-            sys_cl_rec = ss(Acl, Bcl, Ccl, Dcl, 1);
-
-            A_rec = Acl(end-n+1 : end, end-n+1 : end); %this is the controller A matrix,             
-            % should match with later recovery.
-
-            %the performance of the recovered controller should match the
-            %closed-loop quantity
-            pass_rec = -getPassiveIndex(-sys_cl_rec, 'input');
-
+                %this is the closed-loop response (after loop transformations
+                % and multiplier augmentation), should satisfy the desired
+                %performance specifications.
+                sys_cl_rec = ss(Acl, Bcl, Ccl, Dcl, 1);
+    
+                A_rec = Acl(end-n+1 : end, end-n+1 : end); %this is the controller A matrix,             
+                % should match with later recovery.
+    
+                %the performance of the recovered controller should match the
+                %closed-loop quantity
+                pass_rec = -getPassiveIndex(-sys_cl_rec, 'input');
+            end
             %now reconstruct a controller
 
             %recovery by transformation (preferred) or by solving a second

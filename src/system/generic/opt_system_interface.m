@@ -85,7 +85,7 @@ classdef  opt_system_interface
             %use an explicit substitution w = m z rather than w \in F(z)
             ind_same = iqc_data.ind_same;
             
-            ind_diff = setdiff(1:obj.P.nw, ind_same);
+            ind_diff = setdiff(1:(c*nop), ind_same);
             Pd = eye(nop*c);
             Pd(:, [ind_same, ind_diff]) = Pd;
             n_same = length(ind_same);
@@ -136,12 +136,41 @@ classdef  opt_system_interface
         
                     alg_psi = psi * GI; 
                 else
-                    %TODO: implement synthesis                
-    
+
                     n = obj.P.dump_dim;
-                    n.nw = n.nw - length(ind_same);
-                    n.nz = n.nz - length(ind_same);
-                    alg_psi = iqc_op.wrap_synth(alg_loop, n);
+                    
+                    %special case for reduced-order control + performance
+                    if nop*c == n.nw
+                        %standard control
+                        n.nw = n.nw - length(ind_same);
+                        n.nz = n.nz - length(ind_same);
+
+                        alg_psi = iqc_op.wrap_synth(alg_loop, n);
+                    else
+                        %reduced-order control: pop the performance
+                        %channels next to the regulation channels
+                        nwp_orig = n.nw - nop;
+                        nzp_orig = n.nz - nop;
+
+
+                        n.nw = n.nw - nwp_orig;
+                        n.nz = n.nz - nzp_orig;
+                        n.nwp = n.nwp + nwp_orig;
+                        n.nzp = n.nzp + nzp_orig;
+
+
+                        alg_psi = iqc_op.wrap_synth(alg_loop, n);
+
+                        %then put them back
+                        %this is because the reduced-order-control
+                        %implementation is done with a limited set of
+                        %available channels
+                        alg_psi.nw = alg_psi.nw + nwp_orig;
+                        alg_psi.nz = alg_psi.nz + nzp_orig;
+                        alg_psi.nwp = alg_psi.nwp - nwp_orig;
+                        alg_psi.nzp = alg_psi.nzp - nzp_orig;
+                    end
+                    
                 end    
             end
         end
