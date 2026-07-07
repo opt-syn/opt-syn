@@ -61,11 +61,12 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
             %QUAD: certificate of infinite-horizon quadratic performance
 
+            %TODO: figure out why this doesn't work.
 
 
             %get the variables of the problem            
-            Gcurr = obj.get_storage(vars.diss, vars.reg);
             % Gnext = obj.get_storage(vars.diss, vars.reg);
+            Gcurr = obj.get_storage(vars.diss, vars.reg);
 
             n = ssize(vars.diss.GX, 1);
             R = obj.sys.R;
@@ -89,8 +90,8 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
             P = obj.reg.connect_model(diss.plant, 1, diss.rho);
 
             vars_diss = vars.diss;
-            vars_diss.GX = Rkron_small' * vars.diss.GX * Rkron_small;
-            % vars_diss.GY = Rkron_small' * vars.diss.GY * Rkron_small;
+            % vars_diss.GX = Rkron_small' * vars.diss.GX * Rkron_small;
+            % vars_diss.GY = Rkroninv_small' * vars.diss.GY * Rkroninv_small;
 
             sys_cl = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K);
             
@@ -126,6 +127,7 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
             objective = 0;
 
             con_M = -(stor_b + supp_b + dyn_b);
+            % con_M = 2;
 
 
             sM = ssize(con_M,1);

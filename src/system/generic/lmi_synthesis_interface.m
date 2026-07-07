@@ -188,7 +188,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         function P_model = connect_model(obj, diss)
 
-            P_model = obj.reg.connect_model(diss.plant, diss.rho);
+            P_model = obj.reg.connect_model(diss.plant, 1, diss.rho);
         end
 
         function G = get_storage(obj, vars_diss, vars_reg)
