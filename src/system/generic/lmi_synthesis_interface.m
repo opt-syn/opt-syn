@@ -188,7 +188,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         function P_model = connect_model(obj, diss)
 
-            P_model = obj.reg.connect_model(diss.plant, 1, diss.rho);
+            P_model = obj.reg.connect_model(diss.plant, diss.rho);
         end
 
         function G = get_storage(obj, vars_diss, vars_reg)
@@ -555,10 +555,13 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
 
-        function [dyn_b_he, U_outer, V_outer] = dynamics_block(obj, sys_cl, quad)
+        function [dyn_b_he, U_outer, V_outer] = dynamics_block(obj, sys_cl, quad, herm)
             %DYNAMICS_BLOCK form the supply block in a quadratic objective
             % problem
 
+            if nargin < 4
+                herm = true;
+            end
 
             [n, nw] = ssize(sys_cl.B);
             nz = ssize(sys_cl.D, 1);
@@ -577,7 +580,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
             dyn_b = outer_cl_left * center_cl * outer_cl_right; 
-            dyn_b_he = dyn_b + dyn_b';
+
+            if herm
+                dyn_b_he = dyn_b + dyn_b';
+            else
+                dyn_b_he = dyn_b;
+            end
 
             U_outer = -outer_cl_left';
             V_outer = outer_cl_right;

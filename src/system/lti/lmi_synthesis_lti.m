@@ -12,11 +12,11 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
     % performance specification: wp -> zp from (spec)
     %
     %   Implemented:
-    %
-    %   TODO:
     %       stability
     %       e2e
     %       quad
+    %
+    %   TODO:
     %       p2p
     %       h2      
     %       e2p
@@ -222,11 +222,16 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             Ez = Iout(1:nz, :);
             Ezp = Iout(nz + (1:nzp), :);
 
+            % Iin= eye(nw+nwp);
+            % Ew = Iout(:, 1:nw);
+            % Ewp = Iout(:, nw + (1:nwp));
 
+            % sys_cl_run = Ez * sys_cl * Ew;
             sys_cl_run = Ez * sys_cl;
             
 
 
+            %enforce L2 stability
             %the quadratic objective
             supp_b = obj.supply_block(sys_cl_run, quad);
 
@@ -244,32 +249,67 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             
 
             
-            %now do the terminal constraints
-
+            %% now do the terminal constraints
+            % 
             Mterm = diss.spec.quad_terminal(vars_spec);
-
-            %weighting the running cost            
+            % 
+            % %weighting the running cost            
             quad_term = obj.merge_quad(M_quad_rob, Mterm);
 
+
+            %drop the next state evolution  
             nt  = ssize(quad_term.U, 1);
-            cterm_block = blkdiag(-G, zeros(nw+nwp+nt));
+            nx  = ssize(G, 1);
+            supp_b_term_full = obj.supply_block(sys_cl, quad_term);
+            En = eye(ssize(supp_b_term_full, 1));
+            En(:, (end-(nt+nx-1)):(end-nt)) = [];
+
+
+            supp_b_term =  En' * supp_b_term_full * En;
+
+            % 
+            % %the storage
+            % 
+            % Gnextterm = zeros(ssize(G, 1));
+            % stor_b_term = obj.storage_block(sys_cl, quad_term, G, Gnextterm);
+            % 
+            % %the dynamics
+            % [dyn_b_term, U_outer, V_outer] = obj.dynamics_block(sys_cl_run, quad);
+
+
+
             
+            cterm_block = blkdiag(-G, zeros(nw+nwp + nt));
+
             n = ssize(G, 1);
 
             outer_cl_right= [[ zeros(n, nw+nwp);
                eye(nw+nwp)], zeros(n+nw+nwp, n+nt)];
 
             outer_cl_left = [quad_term.S;
-               zeros(n, nz+nzp); %check the sign here
-                quad_term.T];
+                zeros(n, nz+nzp); %check the sign here
+                 quad_term.T];
+
+
+            % supp_b_term = obj.supply_block(sys_cl, quad_term);
+
 
             center_cl = [sys_cl.C, sys_cl.D];
+
+
+            % center_cl = [sys_cl.A, sys_cl.B;
+            %     sys_cl.C, sys_cl.D];
+            % 
+            % outer_cl_right= [[eye(n), zeros(n, nw);
+            %     zeros(nw, n), eye(nw)], zeros(n+nw, n+nt)];
+            % 
+
 
             term_b = outer_cl_left * center_cl * outer_cl_right; 
             term_b_he = term_b + term_b';
 
 
-            con_p2p = term_b_he + cterm_block;   
+            con_p2p = -(term_b_he + cterm_block + supp_b_term);   
             sp2p = ssize(con_p2p, 1);
             cons = append_lmi(cons, con_p2p - obj.config.tol.M*eye(sp2p), obj.LMILAB); 
 

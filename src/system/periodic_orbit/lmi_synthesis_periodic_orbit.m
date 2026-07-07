@@ -58,6 +58,11 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
 
         end
 
+        function P_model = connect_model(obj, diss)
+
+            P_model = obj.reg.connect_model(diss.plant, 1, diss.rho);
+        end
+
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
             %QUAD: certificate of infinite-horizon quadratic performance
 
@@ -87,7 +92,7 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
             %IMPORTANT!
             %hook up the internal model
             %(maybe it should happen at a higher level?)
-            P = obj.reg.connect_model(diss.plant, 1, diss.rho);
+            P = obj.connect_model(diss.plant, diss.rho);
 
             vars_diss = vars.diss;
             % vars_diss.GX = Rkron_small' * vars.diss.GX * Rkron_small;
