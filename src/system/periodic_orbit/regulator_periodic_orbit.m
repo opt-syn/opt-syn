@@ -1,4 +1,4 @@
-classdef regulator_periodic_orbit < regulator_periodic
+classdef regulator_periodic_orbit < regulator_switched
     %REGULATOR_PERIODIC_ORBIT Regulator for periodic systems    
     %
     % [x(k+1)] = [A(k)    Bd(k)    Bu(k)  ][x(k)]   state transition
@@ -18,7 +18,7 @@ classdef regulator_periodic_orbit < regulator_periodic
             %   undefined
 
             sys_per = sys.export_periodic();
-            obj@regulator_periodic(sys_per)
+            obj@regulator_switched(sys_per)
         end
 
     %     function ns = Nss(obj)

@@ -98,8 +98,8 @@ classdef  opt_system_periodic_orbit < opt_system
             c = size(obj.R, 1);
 
             Rxk = kron(eye(n/c), obj.R)^k;
-            Ryk = kron(eye(m/c), obj.R)^k;
-            Ruk = kron(eye(p/c), obj.R)^k;
+            Ryk = kron(eye(p/c), obj.R)^k;
+            Ruk = kron(eye(m/c), obj.R)^k;
 
             Pcurr.A = (Rxk) \ Pcurr.A * Rxk;
             Pcurr.B = (Rxk) \ Pcurr.B * Ruk;
@@ -190,6 +190,18 @@ classdef  opt_system_periodic_orbit < opt_system
             
             sys_per = opt_system_periodic(obj.op, Pper_poly, Kper, obj.bind, obj.tracking);
         end
+
+        function sys_lift = periodic_lift(obj)
+            %PERIODIC_LIFT form a periodic LTI lift of the system
+            %create an equivalent LTI system
+
+            sys_per = obj.export_periodic();
+
+            sys_lift = sys_per.periodic_lift();
+
+        end
+
+
 
         function Kcurr = get_K(obj, param)
             %GET_K get the controller K

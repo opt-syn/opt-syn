@@ -331,6 +331,9 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             sol.cert.Gcl = Gcl;
             sol.cert.Ycl = Ycl;
 
+            n = sol.cert.alg_trans{1}.dump_dim();
+            sol.cert.alg_trans = genplant_poly(sol.cert.alg_trans, n);
+
 
             sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
         end
@@ -455,8 +458,8 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             %constraint (TODO: performance specs)
 
             %use the monodromy system to get specs
-            n = alg_trans{1}.dump_dim();
-            alg_trans_lti = genplant(periodic_lift(alg_trans), n);
+            % n = alg_trans{1}.dump_dim();
+            alg_trans_lti = periodic_lift(alg_trans.P);
 
 
             gain = validate_recovery_gain@lmi_synthesis_interface(obj, alg_trans_lti, iqc_op_all);

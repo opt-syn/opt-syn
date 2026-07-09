@@ -80,11 +80,10 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
             Rkron = kron(eye(2*n/c), R);
             Rkroninv = inv(Rkron);
 
-            Rkroninv_small = Rkroninv(1:n, 1:n);
             Rkron_small = Rkron(1:n, 1:n);
-
-            % Gcurr = Rkroninv' * Gnext * Rkroninv;
+            
             Gnext = Rkron' * Gcurr * Rkron;
+            % Gnext = Gcurr;
 
 
 
@@ -94,18 +93,13 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
             %(maybe it should happen at a higher level?)
             P = obj.connect_model(diss);
 
+            %account for the periodicity
             vars_diss = vars.diss;
-            vars_diss.GX = Rkron_small' * vars.diss.GX * Rkron_small;
-            % vars_diss.GY = Rkron_small' * vars.diss.GY * Rkron_small;
-            % vars_diss.GY = Rkroninv_small' * vars.diss.GY * Rkroninv_small;
+            vars_diss.GX = Rkron_small' * vars.diss.GX * Rkron_small;            
 
-            sys_cl = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K);
+            [sys_cl, U_cl, V_cl] = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K);
             
             %index the quadratic specification
-            vars_spec = vars.spec{diss.spec.id};
-            M_quad = -obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
-
-
             if isempty(diss.spec.izp)
                 ind_p = 1:(diss.iqc_rob.nz);
                 ind_q = diss.iqc_rob.nz + (1:(diss.iqc_rob.nw));
@@ -114,7 +108,16 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
                 ind_q = (diss.iqc_rob.nz + diss.spec.izp) + (1:(diss.iqc_rob.nw + diss.spec.iwp));
             end
             
-            quad = obj.quad_objective(M_quad, ind_p, ind_q);
+            vars_spec = vars.spec{diss.spec.id};
+            np = diss.iqc_rob.np;
+            nq = diss.iqc_rob.nq;
+            M_quad_rob = quad_objective_decomp(diss.iqc_rob.M, 1:np, np + (1:nq));
+
+            [M_quad_spec, objective] = diss.spec.supply_quad(vars_spec);
+
+            quad = obj.merge_quad(M_quad_rob, M_quad_spec);
+
+
                        
             %formulation from ParDynSyn notes (parametric dynamic
             %synthesis)
@@ -129,9 +132,6 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
             %the dynamics
             dyn_b = obj.dynamics_block(sys_cl, quad);
             
-            %wrap it all together
-            objective = 0;
-
             con_M = -(stor_b + supp_b + dyn_b);
             % con_M = 2;
 
@@ -162,7 +162,7 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
             sys_trans.P = alg_trans;
             sys_trans.P.P;
             %TODO: fix this
-            alg_trans_lti = genplant(periodic_lift(sys_trans), n);
+            alg_trans_lti = periodic_lift(sys_trans);
 
 
             gain = validate_recovery_gain@lmi_synthesis_interface(obj, alg_trans_lti, iqc_op_all);
@@ -220,7 +220,7 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
 
 
             %for debugging
-            % G = obj.get_storage(sol.vars.diss, sol.vars.reg);
+            
 
             %this is the (nonlinearly-warped) system that is certified as
             %possessing the desired performance and robustness
@@ -249,17 +249,17 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
 
 
                 V = Vp*ssig;
-                % U = Up*ssig;
+                U = Up*ssig;
 
                 Uinv = srsig*Up';
-                % Vinv = srsig*Vp';
+                Vinv = srsig*Vp';
 
                 n = size(X, 1);
                 c = size(obj.sys.R, 1);
                 Rkron = kron(eye(n/c), obj.sys.R);
-                Rkroninv_small = inv(Rkron);
-                Vinvprev = V * Rkroninv_small; % Store the current Vinv for the next iteration
-                Yprev = Rkroninv_small' * Y * Rkroninv_small; % Update Yprev for the next iteration
+                Rkroninv = inv(Rkron);
+                Uinvnext = Rkroninv' * Uinv * Rkroninv; % Store the current Vinv for the next iteration
+                Xnext = Rkron' * X * Rkron; % Update Yprev for the next iteration
             
             %get the indexers
             Pt = P_trans;            
@@ -274,8 +274,14 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
             nu = length(iu);
             ny = length(iy);
 
-            Gcal = [];
-            Ycal = [];
+            %the storage matrices and transformation
+
+            G = obj.get_storage(vars_rec.diss, vars_rec.reg);
+
+            Ycal = [Y, eye(n); V', zeros(n)];
+            iYcal = inv(Ycal);
+            Gcal = iYcal' * G * iYcal;
+
 
             
                 [A, B, C, D] = ssdata(P_trans);
@@ -291,16 +297,16 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
     
                 %controller recovery
     
-                Lblock = [Uinv, -Uinv*X*B(:, iu);
+                Lblock = [Uinvnext, -Uinvnext*Xnext*B(:, iu);
                     zeros(nu, size(V, 2)), eye(nu)];
     
                 
-                Cblock = [Ak - X*A*Yprev, Bk;
+                Cblock = [Ak - Xnext*A*Y, Bk;
                     Ck, Dk];
   
     
-                Rblock = [Vinvprev', zeros(size(Vinvprev, 2), ny);
-                    -C(iy, :)*Yprev*Vinvprev', eye(ny)];
+                Rblock = [Vinv', zeros(size(Vinv, 2), ny);
+                    -C(iy, :)*Y*Vinv', eye(ny)];
     
     
                 % Kblock0 = inv(LblockI)* (Cblock) * inv(RblockI);

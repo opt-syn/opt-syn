@@ -25,7 +25,19 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
             %form the internal model
-            reg_name = ['regulator_', sys.get_type()];
+            stype = sys.get_type();
+
+            %temporary measure while debugging periodic regulator
+            %conditions
+            % switch stype
+            %     case 'periodic'
+            %         stype = 'switched';
+            %     case 'periodic_orbit'
+            %         stype = 'switched';                    
+            % end
+            reg_name = ['regulator_', stype];
+
+            
 
             reg_handle = str2func(reg_name);
             obj.reg = reg_handle(sys);
@@ -614,7 +626,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         end
 
-        function sys_cl = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
+        function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
             %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
             %transformation
 
@@ -652,6 +664,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
             sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
+
+            U_cl = [];
+            V_cl = [];
         end
 
 

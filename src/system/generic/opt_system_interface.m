@@ -20,7 +20,14 @@ classdef  opt_system_interface
     methods
         function obj = opt_system_interface(op, P, K, bind, tracking)
             %OPT_SYSTEM constructor for the system
+            
+            if ~iscell(op)
+                op =  {op};
+            end
+            
             obj.op = op;
+
+            
             obj.P = P;
             obj.K = K;
             if nargin < 4

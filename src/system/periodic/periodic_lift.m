@@ -2,6 +2,7 @@ function [sys_lti] = periodic_lift(sys)
 %PERIODIC_LIFT lift a periodic linear system into an LTI system
 
 
+
 Nss = length(sys);
 
 A = cell(1, Nss);

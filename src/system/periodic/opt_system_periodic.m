@@ -55,6 +55,60 @@ classdef  opt_system_periodic < opt_system_switched
  
         end
 
+        function sys_lift = periodic_lift(obj)
+
+            %PERIODIC_LIFT form a periodic LTI lift of the system
+            %create an equivalent LTI system
+
+            sys_per = periodic_lift(obj.P.P);
+            
+
+
+            %dimension counters
+            Nss = obj.Nss;
+            n0= obj.P.dump_dim();
+
+            %all dimensions
+            nin = n0.nw + n0.nwp + n0.nu;
+            nout = n0.nz + n0.nzp + n0.ny;
+
+            %index the inputs
+            i0_in = 1:(Nss*nin);
+            ind_in = reshape(1:(Nss*nin), nin, []);
+            ind_w = reshape(ind_in(1:n0.nw, :), [], 1);
+            ind_wp = reshape(ind_in(n0.nw + (1:n0.nwp), :), [], 1);
+            ind_u = reshape(ind_in(n0.nw + n0.nwp + (1:n0.nu), :), [], 1);
+
+            perm_in = i0_in([ind_w; ind_wp; ind_u]);
+
+            %index the outputs
+            i0_out = 1:(Nss*nout);
+            ind_out = reshape(1:(Nss*nout), nin, []);
+            ind_z = reshape(ind_out(1:n0.nz, :), [], 1);
+            ind_zp = reshape(ind_out(n0.nz + (1:n0.nzp), :), [], 1);
+            ind_y = reshape(ind_out(n0.nz + n0.nzp + (1:n0.ny), :), [], 1);
+
+            perm_out = i0_in([ind_z; ind_zp; ind_y]);
+
+            sys_perm = sys_per(perm_out, perm_in);
+
+
+            %track the dimensions
+            n = n0;
+            %outputs
+            n.nz = n.nz * Nss;
+            n.nzp = n.nzp * Nss;
+            n.ny = n.ny * Nss;
+
+            %inputs
+            n.nw = n.nw * Nss;
+            n.nwp = n.nwp * Nss;
+            n.nu= n.nu * Nss;
+            
+
+            sys_lift = genplant(sys_perm, n);
+        end
+
         function tp = get_type(obj)
             %get the type of the switched system
             %is periodic!
