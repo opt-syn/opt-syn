@@ -312,6 +312,7 @@ classdef  opt_system_interface
         function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
             %GET_TRACKED_OPT get the tracked position of the optimal
             %solution
+            c = obj.op{1}.c;
             if isempty(obj.tracking)
                 Sbeta = 1;
                 Rbeta = 1;
@@ -319,6 +320,9 @@ classdef  opt_system_interface
                 Sbeta = obj.tracking.Sbeta;
                 Rbeta = obj.tracking.Rbeta;
             end
+
+            Sbeta = kron(Sbeta, eye(c));
+            Rbeta = kron(Rbeta, eye(c));
         end
 
 
@@ -379,12 +383,16 @@ classdef  opt_system_interface
                 % N0 = [eye(s)];
             end
 
+            % c = op{1}.c;
+
+
             %index based on the bind 
             nbind = length(bind);
             Bind = full(sparse(1:nbind, bind, ~EQ(bind), nbind, nop));
 
 
             N = Bind * N0;
+            % N = kron(N, eye(c));
         end    
 
 

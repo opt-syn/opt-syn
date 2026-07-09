@@ -206,7 +206,7 @@ classdef regulator_interface
                 n = obj.sys.n;
 
                 null_basis = reshape(null_basis, [], ns, nnull);
-                [Pi_basis, Gam_basis, Phi_basis] = null_reg(null_basis);
+                [Pi_basis, Gam_basis, Phi_basis] = obj.null_reg(null_basis);
             else
                 Pi_basis = [];
                 Gam_basis = [];
@@ -235,9 +235,9 @@ classdef regulator_interface
 
             [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
 
-            Pi_basis = reshape(null_basis(1:n*ns, :), n , ns);
-            Gam_basis = reshape(null_basis(ns*n+1:end, :), n, []);
-            Phi_basis = D22*Gam_basis + C2*Pi_basis;   
+            Pi_basis =null_basis(1:n, :, :);
+            Gam_basis = null_basis((n+1):end, :, :);
+            Phi_basis = tensorprod(D22, Gam_basis, 2, 1) + tensorprod(C2, Pi_basis, 2, 1);   
 
         end
 
@@ -322,13 +322,14 @@ classdef regulator_interface
             N = obj.get_consensus();
             [sN, dN] = size(N);
             n = obj.sys.P.nx;
+            c = obj.sys.op{1}.c;
 
             [Sbeta, Rbeta] = obj.get_tracked_opt(param);
             [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
 
             Bd = [zeros(n, size(Rbeta, 2)), B1*N];
-            Ded = [ones(sN, 1)*Rbeta, D11*N];
-            Dyd = [zeros(sN, 1)*Rbeta, D21*N];
+            Ded = [kron(ones(sN/c, 1), eye(c))*Rbeta, D11*N];
+            Dyd = [zeros(sN, c)*Rbeta, D21*N];
 
         end
 
