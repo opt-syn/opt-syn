@@ -190,7 +190,7 @@ classdef  opt_system_periodic_orbit < opt_system
             
             sys_per = opt_system_periodic(obj.op, Pper_poly, Kper, obj.bind, obj.tracking);
         end
-        
+
         function Kcurr = get_K(obj, param)
             %GET_K get the controller K
             if isa(obj.K, 'genplant')

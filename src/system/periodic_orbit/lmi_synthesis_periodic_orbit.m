@@ -92,10 +92,11 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
             %IMPORTANT!
             %hook up the internal model
             %(maybe it should happen at a higher level?)
-            P = obj.connect_model(diss.plant, diss.rho);
+            P = obj.connect_model(diss);
 
             vars_diss = vars.diss;
-            % vars_diss.GX = Rkron_small' * vars.diss.GX * Rkron_small;
+            vars_diss.GX = Rkron_small' * vars.diss.GX * Rkron_small;
+            % vars_diss.GY = Rkron_small' * vars.diss.GY * Rkron_small;
             % vars_diss.GY = Rkroninv_small' * vars.diss.GY * Rkroninv_small;
 
             sys_cl = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K);
@@ -138,6 +139,7 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
             sM = ssize(con_M,1);
             cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
 
+
             %impose sign constraint            
             cons = obj.con_terminal(Gcurr, cons, [], diss.iqc_rob);
         end
@@ -158,6 +160,8 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
             sys_trans = obj.sys;
             sys_trans.K = [];
             sys_trans.P = alg_trans;
+            sys_trans.P.P;
+            %TODO: fix this
             alg_trans_lti = genplant(periodic_lift(sys_trans), n);
 
 
@@ -165,8 +169,50 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
         end
 
         
+        function [sol] = recover_subcontroller(obj, alg_psi, P_trans, sol)
+            %RECOVER_SUBCONTROLLER recover the subcontroller of the current
+            %mode/control
+            %
+            %
+            %Input:
+            %
+            %Output:
+            %   K_feed: the subcontroller with direct feedthrough, before
+            %           exponential discounting    
+            %(not yet exponentially undiscounted, this happens later)
 
-        function [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec)
+
+            vars_rec = sol.vars;
+            rho = sol.rho;
+            
+        
+            %recover the controller
+            [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec);
+
+
+            %package it up
+            
+            model = obj.reg.get_model(1, vars_rec.reg);
+
+            K_report = obj.K_alg_report(P_trans, K_nofeed, model, rho);
+
+            %form the algorithm
+            sol.cert.alg_trans = K_report.alg_trans;
+            sol.cert.alg = lft(obj.sys.P, K_report.K);
+            sol.cert.model = K_report.model;           
+            sol.K= K_report.K;
+            sol.cert.K_sub = K_report.K_sub;                
+
+        
+            sol.cert.Gcl = Gcl;
+            sol.cert.Ycl = Ycl;
+
+
+            sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
+        end
+
+
+        function [K_nofeed, Gcal, Ycal] = recover_subcontroller_warp(obj, P_trans, vars_rec)
 
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
             %controller 
@@ -192,7 +238,7 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
                 Y = vars_rec.diss.GY;
                 X = vars_rec.diss.GX;
 
-                S = vars_rec.diss.S;
+                S = vars_rec.diss.GS;
 
                 J = S - X * Y;
                 [Up, Sig, Vp] = svd(J);
@@ -227,6 +273,9 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_interface
             nw = length(iw);
             nu = length(iu);
             ny = length(iy);
+
+            Gcal = [];
+            Ycal = [];
 
             
                 [A, B, C, D] = ssdata(P_trans);

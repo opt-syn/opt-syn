@@ -734,7 +734,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             Dk = vars_rec.K.D;
         end
 
-        function [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec)
+        function [K_nofeed, Gcl, Ycl] = obj.recover_subcontroller_warp(P_trans, vars_rec)
 
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
             %controller 
