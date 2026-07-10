@@ -197,7 +197,7 @@ classdef  opt_system_periodic_orbit < opt_system
 
             sys_per = obj.export_periodic();
 
-            sys_lift = sys_per.periodic_lift();
+          sys_lift = sys_per.periodic_lift();
 
         end
 

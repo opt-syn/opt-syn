@@ -106,7 +106,22 @@ classdef  opt_system_periodic < opt_system_switched
             n.nu= n.nu * Nss;
             
 
-            sys_lift = genplant(sys_perm, n);
+            %lift of the controller
+            sys_K = periodic_lift(obj.K);
+
+            
+
+            P_lift = genplant(sys_perm, n);
+            %lift of the trackers
+
+            if ~isempty(obj.tracking)
+
+            end
+
+            bind_lift = repmat(obj.bind, 1, Nss);
+            sys_lift = opt_system(obj.op, P_lift, sys_K, bind_lift, obj.tracking);
+
+            % sys_lift = genplant(sys_perm, n);
         end
 
         function tp = get_type(obj)

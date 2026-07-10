@@ -181,7 +181,7 @@ classdef regulator_switched < regulator_interface
             Narcs = length(src);
 
             if isempty(obj.sys.tracking)
-                S = eye(size(N, 2)+1);
+                S = eye(size(N, 2)+c);
                 R = S;
                 reg_ans = [];
                 reg_mat = [];
@@ -196,7 +196,7 @@ classdef regulator_switched < regulator_interface
                     [A, B, C, D] = ssdata(sys_cl.P{src(i)});
 
 
-                    reg_ans_curr = [zeros(n, 1), -B*N;  -ones(sN, 1), -D*N];
+                    reg_ans_curr = [zeros(n, c), -B*N;  -kron(ones(sN0, 1), eye(c)), -D*N];
                     reg_mat_curr = [A; C];
                     reg_mat_next = [-eye(n); zeros(size(C))];
 

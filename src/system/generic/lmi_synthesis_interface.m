@@ -696,7 +696,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %get the system with the internal model
             dissend = struct;
             dissend.plant = alg_psi;
-            dissend.rho = sol.rho;
+            dissend.rho = sol.rho;            
             P_trans =  obj.connect_model(dissend);
             
             %evaluate the variables
@@ -749,7 +749,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             Dk = vars_rec.K.D;
         end
 
-        function [K_nofeed, Gcl, Ycl] = obj.recover_subcontroller_warp(P_trans, vars_rec)
+        function [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec)
 
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
             %controller 
@@ -856,8 +856,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             Cc = Kblock(n+1:end, 1:n);
             Dc = Kblock(n+1:end, n+1:end);
 
-            K_nofeed_full = ss(Ac, Bc, Cc, Dc, 1);
-            K_nofeed =minreal(K_nofeed_full,1e-5);
+            K_nofeed = ss(Ac, Bc, Cc, Dc, 1);
+            % if obj.opts.min
+            % K_nofeed =minreal(K_nofeed_full,1e-5);
         end
 
         function K_feed = name_K_feed(obj, K_in)

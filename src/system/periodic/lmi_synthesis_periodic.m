@@ -345,7 +345,6 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             %dynamics and indexers
 
 
-            %for debugging
             
 
             %this is the (nonlinearly-warped) system that is certified as

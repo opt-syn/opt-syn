@@ -402,7 +402,7 @@ classdef regulator_interface
             % catch
             reg_err = reg_mat * reg_sol - reg_ans;
             if norm(reg_err) > 1e-8
-                warning('Regulator equation cannot be solved')
+                error('Regulator equation cannot be solved')
             end
             % end
 
