@@ -77,16 +77,24 @@ classdef  opt_system_switched < opt_system_interface
 
         function Scurr = get_P(obj, param)
             %GET_P get the plant
-            Pcurr = obj.P{param.mode};
-            Scurr = Pcurr.ss();
+            if isnumeric(param) && isempty(param)
+                Scurr = obj.P;
+            else
+                Pcurr = obj.P{param.mode};
+                Scurr = Pcurr.ss();
+            end
         end
 
         function Kcurr = get_K(obj, param)
             %TODO: override this with parameters
-            if isa(obj.K{param.mode}, 'genplant')
-                Kcurr = obj.K{param.mode}.ss;
+            if isnumeric(param ) && isempty(param)
+                Kcurr = obj.K;
             else
-                Kcurr = obj.K{param.mode};
+                if isa(obj.K{param.mode}, 'genplant')
+                    Kcurr = obj.K{param.mode}.ss;
+                else
+                    Kcurr = obj.K{param.mode};
+                end
             end
         end    
         

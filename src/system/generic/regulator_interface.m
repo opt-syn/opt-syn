@@ -203,8 +203,7 @@ classdef regulator_interface
 
             if nnull      
                 ns = obj.ns;
-                n = obj.sys.n;
-
+  
                 null_basis = reshape(null_basis, [], ns, nnull);
                 [Pi_basis, Gam_basis, Phi_basis] = obj.null_reg(null_basis);
             else
@@ -398,7 +397,7 @@ classdef regulator_interface
             % catch
             reg_err = reg_mat * reg_sol - reg_ans;
             if norm(reg_err) > 1e-8
-                error('Regulator equation cannot be solved')
+                cerror('Regulator equation cannot be solved')
             end
             % end
 

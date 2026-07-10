@@ -108,7 +108,12 @@ classdef  opt_system_periodic < opt_system_switched
             
 
             %lift of the controller
-            sys_K = periodic_lift(obj.K);
+
+            if all(cellfun(@isempty, obj.K))
+                sys_K = [];
+            else
+                sys_K = periodic_lift(obj.K);
+            end
 
             
 
