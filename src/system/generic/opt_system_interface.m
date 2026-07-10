@@ -312,7 +312,7 @@ classdef  opt_system_interface
         function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
             %GET_TRACKED_OPT get the tracked position of the optimal
             %solution
-            c = obj.op{1}.c;
+            
             if isempty(obj.tracking)
                 Sbeta = 1;
                 Rbeta = 1;
@@ -321,6 +321,7 @@ classdef  opt_system_interface
                 Rbeta = obj.tracking.Rbeta;
             end
 
+            c = obj.op{1}.c;
             Sbeta = kron(Sbeta, eye(c));
             Rbeta = kron(Rbeta, eye(c));
         end

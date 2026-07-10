@@ -268,7 +268,9 @@ classdef regulator_interface
 
             reg_mat_RR = S;
             n = obj.sys.nxn;
-            reg_mat_RL = blkdiag(speye(n), sparse(sN, sN));
+            nu = obj.sys.nu;
+            reg_mat_RL = [speye(n), sparse(n, nu);
+                         sparse(sN, n), sparse(sN, nu)];
 
             
             reg_mat_S = kron(reg_mat_RR', reg_mat_RL);
@@ -329,7 +331,7 @@ classdef regulator_interface
 
             Bd = [zeros(n, size(Rbeta, 2)), B1*N];
             Ded = [kron(ones(sN/c, 1), eye(c))*Rbeta, D11*N];
-            Dyd = [zeros(sN, c)*Rbeta, D21*N];
+            Dyd = [zeros(size(D21, 1), c)*Rbeta, D21*N];
 
         end
 
@@ -337,12 +339,6 @@ classdef regulator_interface
             %the enriched system with the disturbance channel
             saug = [];
         end
-        % 
-        % function rg = reg_ans(obj)
-        %     [Bd, Dyd, Dyu] = obj.d_influence();
-        % 
-        %     rg = -[Bd; Dyd];
-        % end
 
         %% fetch the exosystem
         function [S, R] = exosystem(obj, param)
@@ -487,9 +483,17 @@ classdef regulator_interface
             %system for 
             nxi = size(Ak, 1);
             ns = obj.ns;
+            % nu = 
             reg_mat_L = [Ak; Ck];
 
-            reg_mat_dyn = kron(speye(ns), reg_mat_L);            
+            reg_mat_dyn = kron(speye(ns), reg_mat_L);   
+
+            if ~isempty(obj.Gam_basis)
+                nnull = size(obj.Gam_basis, 3);
+                
+                Gam_contract = tensorprod([Bk; Dk], obj.Gam_basis, 2, 1);
+                Phi_contract = tensorprod([Bk; Dk], obj.Phi_basis, 2, 1);
+            end
 
         end
 

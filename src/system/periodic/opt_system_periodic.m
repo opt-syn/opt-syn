@@ -79,19 +79,20 @@ classdef  opt_system_periodic < opt_system_switched
             ind_wp = reshape(ind_in(n0.nw + (1:n0.nwp), :), [], 1);
             ind_u = reshape(ind_in(n0.nw + n0.nwp + (1:n0.nu), :), [], 1);
 
-            perm_in = i0_in([ind_w; ind_wp; ind_u]);
+            % perm_in = i0_in([ind_w; ind_wp; ind_u]);
 
             %index the outputs
             i0_out = 1:(Nss*nout);
-            ind_out = reshape(1:(Nss*nout), nin, []);
+            ind_out = reshape(1:(Nss*nout), nout, []);
             ind_z = reshape(ind_out(1:n0.nz, :), [], 1);
             ind_zp = reshape(ind_out(n0.nz + (1:n0.nzp), :), [], 1);
             ind_y = reshape(ind_out(n0.nz + n0.nzp + (1:n0.ny), :), [], 1);
 
-            perm_out = i0_in([ind_z; ind_zp; ind_y]);
+            % perm_out = i0_out([ind_z; ind_zp; ind_y]);
 
-            sys_perm = sys_per(perm_out, perm_in);
+            % sys_perm = sys_per(perm_out, perm_in);
 
+            sys_perm = sys_per([ind_z; ind_zp; ind_y], [ind_w; ind_wp; ind_u]);
 
             %track the dimensions
             n = n0;
