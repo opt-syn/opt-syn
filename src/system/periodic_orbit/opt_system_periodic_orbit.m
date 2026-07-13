@@ -108,64 +108,64 @@ classdef  opt_system_periodic_orbit < opt_system
 
         end
 
-        function [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj, param)
-            %get state space matrices at the current parameter values
-            
+        % function [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj, param)
+        %     %get state space matrices at the current parameter values
+        % 
+        % 
+        %     [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P.ss_zy_wu();
+        % 
+        %     k = mod(param.mode-1, obj.order+1);          
+        % 
+        % 
+        %     [nx, nw] = size(B1);
+        %     [ny, nu] = size(C2);
+        %     [nz] = size(D11, 1);
+        % 
+        % 
+        %     Rxk = kron(eye(nx/c), obj.R)^k;
+        %     Ryk = kron(eye(ny/c), obj.R)^k;
+        %     Ruk = kron(eye(nu/c), obj.R)^k;
+        %     Rzk = kron(eye(nx/c), obj.R)^k;
+        %     Rwk = kron(eye(ny/c), obj.R)^k;   
+        % 
+        % 
+        %     %perform the operation
+        %     Aa = Rxk \ Aa * Rxk;
+        %     B1 = Rxk \ B1 * Rwk;
+        %     B2 = Rxk \ B2 * Ruk;
+        % 
+        %     C1 = Rzk \ C1 * Rxk;
+        %     D11 = Rzk \ D11 * Rwk;
+        %     D12 = Rzk \ D12 * Ruk;
+        % 
+        %     C2 = Ryk \ C2 * Rxk;
+        %     D21 = Ryk \ D11 * Rwk;
+        %     D22 = Ryk \ D21 * Ruk;
+        % 
+        % 
+        % 
+        % end
 
-            [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P.ss_zy_wu();
-
-            k = mod(param.mode-1, obj.order+1);          
-
-
-            [nx, nw] = size(B1);
-            [ny, nu] = size(C2);
-            [nz] = size(D11, 1);
-            
-
-            Rxk = kron(eye(nx/c), obj.R)^k;
-            Ryk = kron(eye(ny/c), obj.R)^k;
-            Ruk = kron(eye(nu/c), obj.R)^k;
-            Rzk = kron(eye(nx/c), obj.R)^k;
-            Rwk = kron(eye(ny/c), obj.R)^k;   
-
-
-            %perform the operation
-            Aa = Rxk \ Aa * Rxk;
-            B1 = Rxk \ B1 * Rwk;
-            B2 = Rxk \ B2 * Ruk;
-
-            C1 = Rzk \ C1 * Rxk;
-            D11 = Rzk \ D11 * Rwk;
-            D12 = Rzk \ D12 * Ruk;
-
-            C2 = Ryk \ C2 * Rxk;
-            D21 = Ryk \ D11 * Rwk;
-            D22 = Ryk \ D21 * Ruk;
-
-
-
-        end
-
-        function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
-            %GET_TRACKED_OPT get the tracked position of the optimal
-            %solution
-            c = size(obj.R);
-            k = mod(param.mode-1, obj.order+1);          
-
-            
-            if isempty(obj.tracking)
-                Sbeta = eye(c);
-                Rbeta = eye(c);
-            else
-                [ne, nd] = size(obj.tracking.Rbeta);
-
-                Rdk = kron(eye(nd/c), obj.R)^k;
-                Rek = kron(eye(ne/c), obj.R)^k;
-
-                Sbeta = Rdk \ obj.tracking.Sbeta * Rdk;
-                Rbeta = Rek \ obj.tracking.Rbeta * Rdk;
-            end
-        end
+        % function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
+        %     %GET_TRACKED_OPT get the tracked position of the optimal
+        %     %solution
+        %     c = size(obj.R);
+        %     k = mod(param.mode-1, obj.order+1);          
+        % 
+        % 
+        %     if isempty(obj.tracking)
+        %         Sbeta = eye(c);
+        %         Rbeta = eye(c);
+        %     else
+        %         [ne, nd] = size(obj.tracking.Rbeta);
+        % 
+        %         Rdk = kron(eye(nd/c), obj.R)^k;
+        %         Rek = kron(eye(ne/c), obj.R)^k;
+        % 
+        %         Sbeta = Rdk \ obj.tracking.Sbeta * Rdk;
+        %         Rbeta = Rek \ obj.tracking.Rbeta * Rdk;
+        %     end
+        % end
 
         function sys_per = export_periodic(obj)
             %EXPORT_PERIODIC export the periodic-orbit as a periodic system

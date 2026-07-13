@@ -189,7 +189,7 @@ classdef regulator_interface
             if nargin < 4
                 param = [];
             end
-            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.ss_zy_wu(param);
             [Bd, Ded, Dyd] = obj.d_influence(param);
             Phi = Dyd + D22*Gam + C2*Pi;
         end
@@ -232,7 +232,7 @@ classdef regulator_interface
             ns = obj.ns;
             n = obj.sys.nxn;
 
-            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.ss_zy_wu(param);
 
             Pi_basis =null_basis(1:n, :, :);
             Gam_basis = null_basis((n+1):end, :, :);
@@ -289,7 +289,7 @@ classdef regulator_interface
             
 
             [Sbeta, Rbeta] = obj.get_tracked_opt(param);
-            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.ss_zy_wu(param);
 
             [Bd, Ded, Dyd] = obj.d_influence(param);
             [S, R] = obj.exosystem(param);
@@ -326,7 +326,7 @@ classdef regulator_interface
             c = obj.sys.op{1}.c;
 
             [Sbeta, Rbeta] = obj.get_tracked_opt(param);
-            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.ss_zy_wu(param);
 
             Bd = [zeros(n, size(Rbeta, 2)), B1*N];
             Ded = [kron(ones(sN/c, 1), eye(c))*Rbeta, D11*N];
@@ -379,6 +379,15 @@ classdef regulator_interface
             else
                 [Sbeta, Rbeta] = obj.sys.get_tracked_opt();
             end
+        end
+
+        %% fetch the system dynamics
+        function [A, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj, param)
+            %get plant matrices for the system
+            if nargin < 2
+                param = [];
+            end
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
         end
 
         %% check the regulator equations (closed-loop)
