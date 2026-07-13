@@ -1,4 +1,4 @@
-classdef regulator_periodic_orbit < regulator_switched
+classdef regulator_periodic_orbit < regulator_lti
     %REGULATOR_PERIODIC_ORBIT Regulator for periodic systems    
     %
     % [x(k+1)] = [A(k)    Bd(k)    Bu(k)  ][x(k)]   state transition
@@ -17,8 +17,41 @@ classdef regulator_periodic_orbit < regulator_switched
             %REGULATOR_PERIODIC undefined
             %   undefined
 
-            sys_per = sys.export_periodic();
-            obj@regulator_switched(sys_per)
+            % sys_per = sys.export_periodic();
+            obj@regulator_lti(sys)
+        end
+
+        function [A, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj, param)
+            %get plant matrices for the system
+            if nargin < 2
+                param = [];
+            end
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu@regulator_lti(obj, param);
+
+            %go to the rotating coordinate frame
+            c = size(obj.sys.R, 1);
+            n = size(A, 1);
+            Rkron = kron(eye(n/c), obj.sys.R);
+
+            A = Rkron * A;
+            B1 = Rkron * B1;
+            B2 = Rkron * B2;
+        end        
+
+        function [S, R] = exosystem(obj, param)
+            %get the exosystem at each mode/internal model
+            if nargin < 2
+                param = [];
+            end
+            [S, R] = exosystem@regulator_lti(obj, param);
+
+            c = size(obj.sys.R, 1);
+            d = size(S, 1);
+            Rkron = kron(eye(d/c), obj.sys.R);
+
+            %go to the rotating coordinate frame
+            S = Rkron * S;
+
         end
 
     end

@@ -56,7 +56,7 @@ classdef regulator_lti < regulator_interface
             %      =[];
             % end
 
-            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu();
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.ss_zy_wu();
             [Bd, Ded, Dyd] = obj.d_influence();
 
             

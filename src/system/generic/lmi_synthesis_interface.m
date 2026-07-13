@@ -48,7 +48,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         
         function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
-            %CONS form the dissipation and sign constraints
+            %CONS_DYNAMIC form the dissipation and sign constraints
             %
             %Input:
             %   vars:   variables of the problem        
