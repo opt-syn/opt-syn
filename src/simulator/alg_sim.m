@@ -261,7 +261,7 @@ classdef alg_sim
             else
                 ssim.eq = [];
                 %TODO: sums over binds
-                [gg, gc] = groupcounts(obj.sys.bind');
+                [gg, gc] = groupcounts(reshape(obj.sys.bind, [], 1));
                 bind_weight = reshape(1./gg(obj.sys.bind), 1, []);
 
 
