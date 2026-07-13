@@ -41,7 +41,10 @@ classdef lmi_dispatch_interface < handle
             %   objective:  term to be minimized            
             
             
-            %need to look up the right constraint            
+            %multiply the A and B entries of the plant by R
+            %to accomplish the periodic orbit constructions
+
+
 
             %Upper-levels: iterate over the systems
             [cons, objective, con_M] = obj.con_dynamic_single(vars, cons, diss);

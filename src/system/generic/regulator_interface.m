@@ -203,10 +203,9 @@ classdef regulator_interface
 
             if nnull      
                 ns = obj.ns;
-                n = obj.sys.n;
-
+  
                 null_basis = reshape(null_basis, [], ns, nnull);
-                [Pi_basis, Gam_basis, Phi_basis] = null_reg(null_basis);
+                [Pi_basis, Gam_basis, Phi_basis] = obj.null_reg(null_basis);
             else
                 Pi_basis = [];
                 Gam_basis = [];
@@ -235,9 +234,9 @@ classdef regulator_interface
 
             [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
 
-            Pi_basis = reshape(null_basis(1:n*ns, :), n , ns);
-            Gam_basis = reshape(null_basis(ns*n+1:end, :), n, []);
-            Phi_basis = D22*Gam_basis + C2*Pi_basis;   
+            Pi_basis =null_basis(1:n, :, :);
+            Gam_basis = null_basis((n+1):end, :, :);
+            Phi_basis = tensorprod(D22, Gam_basis, 2, 1) + tensorprod(C2, Pi_basis, 2, 1);   
 
         end
 
@@ -268,7 +267,9 @@ classdef regulator_interface
 
             reg_mat_RR = S;
             n = obj.sys.nxn;
-            reg_mat_RL = blkdiag(speye(n), sparse(sN, sN));
+            nu = obj.sys.nu;
+            reg_mat_RL = [speye(n), sparse(n, nu);
+                         sparse(sN, n), sparse(sN, nu)];
 
             
             reg_mat_S = kron(reg_mat_RR', reg_mat_RL);
@@ -322,13 +323,14 @@ classdef regulator_interface
             N = obj.get_consensus();
             [sN, dN] = size(N);
             n = obj.sys.P.nx;
+            c = obj.sys.op{1}.c;
 
             [Sbeta, Rbeta] = obj.get_tracked_opt(param);
             [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.sys.ss_zy_wu(param);
 
             Bd = [zeros(n, size(Rbeta, 2)), B1*N];
-            Ded = [ones(sN, 1)*Rbeta, D11*N];
-            Dyd = [zeros(sN, 1)*Rbeta, D21*N];
+            Ded = [kron(ones(sN/c, 1), eye(c))*Rbeta, D11*N];
+            Dyd = [zeros(size(D21, 1), c)*Rbeta, D21*N];
 
         end
 
@@ -336,12 +338,6 @@ classdef regulator_interface
             %the enriched system with the disturbance channel
             saug = [];
         end
-        % 
-        % function rg = reg_ans(obj)
-        %     [Bd, Dyd, Dyu] = obj.d_influence();
-        % 
-        %     rg = -[Bd; Dyd];
-        % end
 
         %% fetch the exosystem
         function [S, R] = exosystem(obj, param)
@@ -401,7 +397,7 @@ classdef regulator_interface
             % catch
             reg_err = reg_mat * reg_sol - reg_ans;
             if norm(reg_err) > 1e-8
-                warning('Regulator equation cannot be solved')
+                cerror('Regulator equation cannot be solved')
             end
             % end
 
@@ -486,17 +482,17 @@ classdef regulator_interface
             %system for 
             nxi = size(Ak, 1);
             ns = obj.ns;
+            % nu = 
             reg_mat_L = [Ak; Ck];
 
-            reg_mat_dyn = kron(speye(ns), reg_mat_L);            
+            reg_mat_dyn = kron(speye(ns), reg_mat_L);   
 
-
-
-            % Gam0 = obj.sys.get_Gam_basis(param);
-            % Phi0= obj.sys.get_Phi_basis(param);            
-            % for i = 1:length(Gam0)
-            
-            % [Bk * Gam0]
+            if ~isempty(obj.Gam_basis)
+                nnull = size(obj.Gam_basis, 3);
+                
+                Gam_contract = tensorprod([Bk; Dk], obj.Gam_basis, 2, 1);
+                Phi_contract = tensorprod([Bk; Dk], obj.Phi_basis, 2, 1);
+            end
 
         end
 

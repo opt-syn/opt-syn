@@ -20,7 +20,14 @@ classdef  opt_system_interface
     methods
         function obj = opt_system_interface(op, P, K, bind, tracking)
             %OPT_SYSTEM constructor for the system
+            
+            if ~iscell(op)
+                op =  {op};
+            end
+            
             obj.op = op;
+
+            
             obj.P = P;
             obj.K = K;
             if nargin < 4
@@ -85,7 +92,7 @@ classdef  opt_system_interface
             %use an explicit substitution w = m z rather than w \in F(z)
             ind_same = iqc_data.ind_same;
             
-            ind_diff = setdiff(1:nop, ind_same);
+            ind_diff = setdiff(1:(c*nop), ind_same);
             Pd = eye(nop*c);
             Pd(:, [ind_same, ind_diff]) = Pd;
             n_same = length(ind_same);
@@ -140,7 +147,7 @@ classdef  opt_system_interface
                     n = obj.P.dump_dim;
                     
                     %special case for reduced-order control + performance
-                    if nop == n.nw
+                    if nop*c == n.nw
                         %standard control
                         n.nw = n.nw - length(ind_same);
                         n.nz = n.nz - length(ind_same);
@@ -212,6 +219,7 @@ classdef  opt_system_interface
 
         function [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj, param)
             %get state space matrices at the current parameter values
+            
             [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P.ss_zy_wu();
         end
 
@@ -304,6 +312,7 @@ classdef  opt_system_interface
         function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
             %GET_TRACKED_OPT get the tracked position of the optimal
             %solution
+            
             if isempty(obj.tracking)
                 Sbeta = 1;
                 Rbeta = 1;
@@ -311,6 +320,10 @@ classdef  opt_system_interface
                 Sbeta = obj.tracking.Sbeta;
                 Rbeta = obj.tracking.Rbeta;
             end
+
+            c = obj.op{1}.c;
+            Sbeta = kron(Sbeta, eye(c));
+            Rbeta = kron(Rbeta, eye(c));
         end
 
 
@@ -371,12 +384,16 @@ classdef  opt_system_interface
                 % N0 = [eye(s)];
             end
 
+            % c = op{1}.c;
+
+
             %index based on the bind 
             nbind = length(bind);
             Bind = full(sparse(1:nbind, bind, ~EQ(bind), nbind, nop));
 
 
             N = Bind * N0;
+            % N = kron(N, eye(c));
         end    
 
 

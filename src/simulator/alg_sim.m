@@ -261,8 +261,9 @@ classdef alg_sim
             else
                 ssim.eq = [];
                 %TODO: sums over binds
-                [gg, gc] = groupcounts(reshape(obj.sys.bind, [], 1));
-                bind_weight = reshape(1./gg(obj.sys.bind), 1, []);
+                bind = reshape(obj.sys.bind, [], 1);
+                [gg, gc] = groupcounts(bind);
+                bind_weight = reshape(1./gg(bind), 1, []);
 
 
                 wsum2 = pagemtimes(repmat(kron(bind_weight, eye(c)), 1, 1, T),  ssim.w);                       

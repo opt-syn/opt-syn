@@ -1,6 +1,8 @@
-classdef lmi_synthesis_periodic_orbit < lmi_synthesis_periodic
-    %LMI_SYNTHESIS_PERIODIC synthesisLMIs for algorithmic interconnections
+classdef lmi_synthesis_periodic_orbit < lmi_synthesis_lti
+    %LMI_SYNTHESIS_PERIODIC_ORBIT synthesisLMIs for algorithmic interconnections
     %involving periodic linear networks and controllers
+    %
+    % Orbit structure on the periodicity
     %
     % w(k) \in F(z(k))
     %
@@ -15,28 +17,13 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_periodic
     %methods. Periodic systems can also be unrolled into an LTI system
     %(monodromy methods): a single large LMI system rather than multiple 
     % coupled smaller LMI systems
-    %
-    %   Implemented
-    %       stability
-    %       e2e
-    %       quad
-    %       p2p
-    %
-    %   TODO:
-    %       h2      
-    %       e2p
-    %       
-    %
 
-    properties
-        opts = struct("COMMON", false);
-    end
 
     methods
-        function obj = lmi_synthesis_periodic(sys,config)
+        function obj = lmi_synthesis_periodic_orbit(sys,config)
             %LMI_SYNTHESIS_PERIODIC undefined
             %   undefined
-            obj@lmi_synthesis_interface(sys, config);
+            obj@lmi_synthesis_lti(sys, config);
         end
 
         %% definition of variables and helpers
@@ -46,98 +33,8 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_periodic
             ns = obj.sys.Nss;
         end
 
-        function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
-            %create_vars_storage create variables for the dissipation
-            %constraints. One for each subsystem
-            %
-            %
-            %a cell of G(s) functions
-
-
-            if nargin < 4
-                name = [];
-            end
-
-
-            
-
-
-            GX_cell = cell(obj.Nss, 1);
-            GY_cell = cell(obj.Nss, 1);
-            S_cell = cell(obj.Nss, 1);
-
-            if obj.opts.COMMON
-                %common storage function among all subsystems
-                
-                [GX, GY, cons] = obj.define_storage_G(cons, alg_psi{1}, '');
-                n = ssize(GX, 1);
-                % vars_diss= struct('GX', GX, 'GY', GY, 'S', eye(n));
-
-                G = vars_diss.G;
-                GX_cell = cell(obj.Nss, 1);
-                for i = 1:obj.Nss
-                    GX_cell{i} = GX;
-                    GY_cell{i} = GY;
-                    S_cell{i} = eye(n);
-                end
-
-            else
-                %define a storage function for each subsystem
-
-                for i = 1:obj.Nss
-                    [GX, GY, cons] = obj.define_storage_G(cons, alg_psi{i}, num2str(i));
-                    n = ssize(GX, 1);
-                    GX_cell{i} = GX;
-                    GY_cell{i} = GY;
-                    S_cell{i} = eye(n);
-                end
-
-            end
-
-            vars_diss = struct;
-            vars_diss.GX = GX_cell;
-            vars_diss.GY = GY_cell;
-            vars_diss.S  = S_cell;
-
-        end
-
-
-        function [vars_K, cons] = create_vars_controller(obj, cons, alg_psi, name)
-            %CREATE_VARS_CONTROLLER create the nonlinearly-transformed
-            %controller matrices
-
-            %get the dimensions
-
-            vars_K = cell(obj.Nss, 1);
-
-            if nargin < 4
-                name = [];
-            end
-
-            for i = 1:obj.Nss
-                name_curr = [name, '_', num2str(i)];
-                alg_curr = alg_psi{i};
-                [vars_K{i}, cons] = create_vars_controller@lmi_synthesis_interface(obj, cons, alg_curr, name_curr);
-            end
-            
-        end
-
-        function vars_inv= get_vars_involved(obj, vars, ind)
-            %GET_VARS_INVOLVED get variables involved in the current mode
-
-            vars_inv= struct;
-            vars_inv.diss.GX = vars.diss.GX{ind};
-            vars_inv.diss.GY = vars.diss.GY{ind};
-            vars_inv.diss.S  = vars.diss.S{ind};
-
-            vars_inv.reg.Pi = vars.reg.Pi{ind};
-            vars_inv.reg.Gam = vars.reg.Gam{ind};
-            vars_inv.reg.Phi = vars.reg.Phi{ind};
-
-        end
-
         %% main call
-        function [cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
+        function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
             %Input:
@@ -150,119 +47,51 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_periodic
             %               true:  soft constraint (e.g. Schur complement
             %                                       formulation)
             %               false: hard constraint            
-            %       ind_curr:  the index of the current subsystem
-            %       ind_next:  the index of the next subsystem
             %
             %Output:
             %   cons:   accumulated constraints
             %   objective:  term to be minimized            
 
 
-            %need to look up the right constraint            
+            %multiply the A and B entries of the plant by R
+            %to accomplish the periodic orbit constructions
+
+
+            n = size(diss.plant.A, 1);
+            c = size(obj.sys.R, 1);
+
+            diss.R = obj.sys.R;
+
+            
 
             %Upper-levels: iterate over the systems
-            objective = 0;
-            for i = 1:obj.Nss
-                %extract the information of subsystem i
-                diss_curr = diss;
-                diss_curr.plant = diss.plant{i};
-                diss_curr.ind_curr = i;
-                diss_curr.ind_next = 1+mod(i, obj.Nss);
+            [cons, objective, con_M] = obj.con_dynamic_single(vars, cons, diss);
 
 
-                [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
-
-
-                %TODO: take the max over the different subsystems
-                %but the same objective is sent to each subsystem, so it's
-                %all the same? Check this
-                if i==1
-                    objective = objective + objective_curr;
-                end
-            end         
 
         end
 
-        function [cons, objective, con_M] = quad(obj, vars, cons, diss)
-            %QUAD: certificate of infinite-horizon quadratic performance
+        function sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
+            %recover the controller
 
-
-
-            %get the variables of the problem
-            vcurr = obj.get_vars_involved(vars, diss.ind_curr);
-            vnext = obj.get_vars_involved(vars, diss.ind_next);
-            
-            Gcurr = obj.get_storage(vcurr.diss, vcurr.reg);
-            Gnext = obj.get_storage(vnext.diss, vnext.reg);
-
-
-
-            %IMPORTANT!
-            %hook up the internal model
-            %(maybe it should happen at a higher level?)
-            P = obj.reg.connect_model(diss.plant, diss.ind_curr, diss.rho);
-
-            vars_diss = vcurr.diss;
-            vars_diss.GX = vnext.diss.GX;
-
-            sys_cl = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K{diss.ind_curr});
-            
-            %index the quadratic specification
-            vars_spec = vars.spec{diss.spec.id};
-            M_quad = -obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
-
-
-            if isempty(diss.spec.izp)
-                ind_p = 1:(diss.iqc_rob.nz);
-                ind_q = diss.iqc_rob.nz + (1:(diss.iqc_rob.nw));
-            else
-                ind_p = 1:(diss.iqc_rob.nz + diss.spec.izp);
-                ind_q = (diss.iqc_rob.nz + diss.spec.izp) + (1:(diss.iqc_rob.nw + diss.spec.iwp));
+            if nargin < 5
+                diss = [];
             end
-            
-            quad = obj.quad_objective(M_quad, ind_p, ind_q);
-                       
-            %formulation from ParDynSyn notes (parametric dynamic
-            %synthesis)
 
+            %get the system with the internal model
+            dissend = struct;
+            dissend.plant = alg_psi;
+            dissend.rho = sol.rho;
+            dissend.R = obj.sys.R;
+            P_trans =  obj.connect_model(dissend);
 
-            %the quadratic objective
-            supp_b = obj.supply_block(sys_cl, quad);
+            %evaluate the variables
+            [sol] = obj.recover_subcontroller(alg_psi, P_trans, sol);
 
-            %the storage
-            stor_b = obj.storage_block(sys_cl, quad, Gcurr, Gnext);
-
-            %the dynamics
-            dyn_b = obj.dynamics_block(sys_cl, quad);
-            
-            %wrap it all together
-            objective = 0;
-
-            con_M = -(stor_b + supp_b + dyn_b);
-
-
-            sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
-
-            %impose sign constraint            
-            cons = obj.con_terminal(Gcurr, cons, [], diss.iqc_rob);
+            % sol.G = obj.get_storage(sol.vars.diss, sol.vars.reg);
         end
 
-        %TODO: e2e_target
-
-        %% Recovery
-        % Call the recovery method to finalize the synthesis process
-        % [cons, objective, con_M] = obj.recovery(vars, cons, diss);
-
-        function gain = validate_recovery_gain(obj, alg_trans, iqc_op_all);
-
-            %Validation of the LMI
-            %not performed at the moment.
-            gain = 0;
-
-        end
-
-        function [sol] = recover_subcontroller(obj, P_trans, sol)
+        function [sol] = recover_subcontroller(obj, alg_psi, P_trans, sol)
             %RECOVER_SUBCONTROLLER recover the subcontroller of the current
             %mode/control
             %
@@ -274,137 +103,187 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_periodic
             %           exponential discounting    
             %(not yet exponentially undiscounted, this happens later)
 
-
             vars_rec = sol.vars;
             rho = sol.rho;
-            
-        
-            %recover the controller
-            [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec);
 
+            [K_nofeed, Gcal, Ycal] = recover_subcontroller_warp(obj, P_trans, vars_rec);
 
-            %package it up
-            K_report = cell(obj.Nss, 1);
-            for i = 1:obj.Nss
+            model = obj.reg.get_model(1, vars_rec.reg);
 
-                model = obj.reg.get_model(i, vars_rec.reg);
-    
-                K_report = obj.K_alg_report(P_trans{i}, K_nofeed{i}, model, rho);
+            K_report = obj.K_alg_report(P_trans, K_nofeed, model, rho);
 
-                %form the algorithm
-                sol.alg_trans{i} = K_report.alg_trans;
-                sol.alg{i} = lft(obj.sys.P{i}, K_report.K);
-                sol.model{i} = K_report.model;           
-                sol.K{i}= K_report.K;
-                sol.K_sub{i} = K_report.K_sub;                
+            sol.cert.alg_trans = K_report.alg_trans;
+            sol.cert.alg = lft(obj.sys.P, K_report.K);
+            sol.cert.model = K_report.model;           
+            sol.K= K_report.K;
+            sol.cert.K_sub = K_report.K_sub;
+            sol.cert.Gcl = Gcal;
+            sol.cert.Ycl = Ycal;
 
-            end
+            sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
 
 
         end
 
-        function [K_nofeed] = recover_subcontroller_warp(obj, P_trans, vars_rec)
+        function P_model = connect_model(obj, diss)
+            reg_ind = 1;
+            % reg_ind = obj.sys.Nss;
+            P_model = obj.reg.connect_model(diss.plant, reg_ind, diss.rho);
 
-            %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
-            %controller 
-            %dynamics and indexers
+            n = size(P_model.A);           
+            c = size(diss.R, 1);
+            Rkron = kron(eye(n/c), diss.R);
 
+            p2 = P_model.P;
+            p2.A = Rkron * p2.A;
+            p2.B = Rkron * p2.B;
 
-            %for debugging
-            % G = obj.get_storage(sol.vars.diss, sol.vars.reg);
-
-            %this is the (nonlinearly-warped) system that is certified as
-            %possessing the desired performance and robustness
-            %specifications
-            % sys_cl = obj.system_closed_loop(P_trans, sol.vars.diss, sol.vars.reg, sol.vars.K);
-
-            % sys_cal = ss(G \ Acl, G \ Bcl, Ccl, Dcl, 1);
+            P_model.P = p2;
 
 
-            %extract the storage variables and the factorizations
-            Y = cell(obj.Nss, 1);
-            X = cell(obj.Nss, 1);
-            U = cell(obj.Nss, 1);
-            V = cell(obj.Nss, 1);
-            Uinv = cell(obj.Nss, 1);
-            Vinv = cell(obj.Nss, 1);            
+        end
 
-            K_nofeed = cell(obj.Nss, 1);        
+        %% Recovery
+        % Call the recovery method to finalize the synthesis process
+        % [cons, objective, con_M] = obj.recovery(vars, cons, diss);
 
-            for i = 1:obj.Nss
-                Y{i} = vars_rec.diss.GY{i};
-                X{i} = vars_rec.diss.GX{i};
+        % function gain = validate_recovery_gain(obj, alg_trans, iqc_op_all)
+        %     %VALIDATE_RECOVERY validate that the system obeys the stability
+        %     %constraint (TODO: performance specs)
+        % 
+        %     %use the monodromy system to get specs
+        %     n = alg_trans.dump_dim();
+        % 
+        %     sys_trans = obj.sys;
+        %     sys_trans.K = [];
+        %     sys_trans.P = alg_trans;
+        %     sys_trans.P.P;
+        %     %TODO: fix this
+        %     alg_trans_lti = periodic_lift(sys_trans);
+        % 
+        %     P = alg_trans_lti.P; 
+        % 
+        %     c = obj.sys.op{1}.c;
+        % 
+        %     M = kron(iqc_op_all.iqc.M, eye(c));
+        %     M = (M + M')/2;
+        %     nw = floor(size(M, 1)/2);
+        % 
+        %     M11 = M(1:nw, 1:nw);
+        %     M12 = M(nw + (1:nw), 1:nw);
+        %     M22 = M(nw + (1:nw), nw + (1:nw));
+        %     %is the constraint passive?
+        %     is_passive = (norm(M11) + norm(M22) + norm(M12 - eye(nw)))==0;
+        %     is_hinf = (norm(M11-eye(nw)) + norm(M22+eye(nw)) + norm(M12))==0;
+        % 
+        % 
+        %     if is_passive
+        %         gain_passive = -getPassiveIndex(-P, 'input');
+        % 
+        %         E=eye(nw);
+        %         Tinf=[E sqrt(2)*E;sqrt(2)*E E];
+        %         P_inf = lft(Tinf,P,nw,nw);
+        % 
+        %         gain_inf = norm(P_inf, 'inf');
+        %     elseif is_hinf
+        %         gain_inf = norm(P, 'inf');
+        % 
+        %         E=eye(nw);
+        %         Tpass = [-E sqrt(2)*E;sqrt(2)*E -E];
+        %         Ppass = lft(Tpass,P,nw,nw);
+        % 
+        %         gain_passive = -getPassiveIndex(-Ppass, 'input');
+        %     else
+        %         %TODO: advanced validation
+        %         warning('Customized validation is not yet implemented')
+        %         gain_inf = 0;
+        %         gain_passive = 0;
+        %     end
+        % 
+        %     gain = [gain_passive, gain_inf]; 
+        % 
+        % 
+        %     % gain = validate_recovery_gain@lmi_synthesis_periodic(obj, alg_trans, iqc_op_all);
+        % end
+        % 
+        % 
 
-                S = vars_rec.diss.S{i};
-
-                J = S - X{i} * Y{i};
-                [Up, Sig, Vp] = svd(J);
-
-                % U = Up*Sig;
-                ssig = sqrt(Sig);
-                srsig = diag(1./(diag(ssig)));
-
-
-                V{i} = Vp*ssig;
-                U{i} = Up*ssig;
-
-                Uinv{i} = srsig*Up';
-                Vinv{i} = srsig*Vp';
-            end
+        function K_report = K_alg_report(obj, P_trans, K_nofeed, model, rho)
+            %K_ALG_REPORT recover the algorithmic interconnection and the
+            %controller
             
-            %get the indexers
-            Pt = P_trans{1};            
+            D = P_trans.D;
 
-            iz = [Pt.index_z(), Pt.index_zp()];
-            iw = [Pt.index_w(), Pt.index_wp()];
-            iu = Pt.index_u();
-            iy = Pt.index_y();           
+            iz = [P_trans.index_z(), P_trans.index_zp()];
+            iw = [P_trans.index_w(), P_trans.index_wp()];
+            iu = P_trans.index_u();
+            iy = P_trans.index_y();           
 
             nz = length(iz);
             nw = length(iw);
             nu = length(iu);
             ny = length(iy);
 
-            for i = 1:obj.Nss
-                [A, B, C, D] = ssdata(P_trans{i});
-                Ak = vars_rec.K{i}.A;
-                Bk = vars_rec.K{i}.B;
-                Ck = vars_rec.K{i}.C;
-                Dk = vars_rec.K{i}.D;
-    
-                
-                n = ssize(Ak, 1);
-                inext = mod(i, obj.Nss) + 1;
-    
-    
-                %controller recovery
-    
-                Lblock = [Uinv{inext}, -Uinv{inext}*X{inext}*B(:, iu);
-                    zeros(nu, size(V{inext}, 2)), eye(nu)];
-    
-                
-                Cblock = [Ak - X{inext}*A*Y{i}, Bk;
-                    Ck, Dk];
-  
-    
-                Rblock = [Vinv{i}', zeros(size(V{i}, 2), ny);
-                    -C(iy, :)*Y{i}*Vinv{i}', eye(ny)];
-    
-    
-                % Kblock0 = inv(LblockI)* (Cblock) * inv(RblockI);
-                % Kblock1 = LblockI) \ Cblock) * inv(RblockI);
-                % Kblockinv = RblockI') \ LblockI) \ Cblock)')';
-    
-                Kblock = Lblock * Cblock * Rblock;
-    
-                %extraction and exponential weighting
-                Ac = Kblock(1:n, 1:n);
-                Bc = Kblock(1:n, n+1:end);
-                Cc = Kblock(n+1:end, 1:n);
-                Dc = Kblock(n+1:end, n+1:end);
-    
-                K_nofeed{i}= ss(Ac, Bc, Cc, Dc, 1);                
-            end
+            %add the proper term by LFT
+            D22 = D(iy, iu);
+            Dfeed = zeros(nz+ny, nw+nu);            
+            Dfeed(nz+1:end, nw+1:end) = D22;
+
+
+
+            P_trans_nofeed = P_trans.ss;
+            P_trans_nofeed.D = P_trans_nofeed.D - Dfeed;
+
+            T_feed = [zeros(nu, ny), eye(nu); eye(ny), -D22];
+
+            K_feed = lft(T_feed, K_nofeed, nu, ny);
+            % K_feed_full = lft(T_feed, K_nofeed_full, nu, ny);
+
+            
+            K_feed = obj.name_K_feed(K_feed);
+
+
+
+            alg_trans = lft(P_trans, K_feed);
+            alg_trans_nofeed = lft(P_trans_nofeed, K_nofeed);
+
+
+            K_sub= rhotrafo(K_feed, 1/rho);
+
+
+
+            %account for the periodicity
+            n = size(K_sub.A, 1);           
+            c = size(obj.sys.R, 1);
+            Rkron = kron(eye(n/c), obj.sys.R);
+
+            p2 = K_sub;
+            p2.A = Rkron \ p2.A;
+            p2.B = Rkron \ p2.B;
+
+            K_sub = p2;
+            
+            
+            
+            % K_sub_full = rhotrafo(K_feed_full, 1/rho);
+            %connect the internal model: form the controller
+
+            
+
+            K = lft(model, K_sub);
+            % K_full = lft(model, K_sub_full);
+
+
+            % alg_full = lft(obj.sys.P, K_full);
+
+
+            K_report = struct;            
+            K_report.K = K;
+            K_report.model = model;
+            K_report.K_sub = K_sub;
+            K_report.alg_trans = alg_trans;  
+
         end
+               
     end
 end

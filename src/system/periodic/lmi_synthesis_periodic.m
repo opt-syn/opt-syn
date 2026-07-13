@@ -331,6 +331,9 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             sol.cert.Gcl = Gcl;
             sol.cert.Ycl = Ycl;
 
+            n = sol.cert.alg_trans{1}.dump_dim();
+            sol.cert.alg_trans = genplant_poly(sol.cert.alg_trans, n);
+
 
             sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
         end
@@ -342,7 +345,6 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             %dynamics and indexers
 
 
-            %for debugging
             
 
             %this is the (nonlinearly-warped) system that is certified as
@@ -455,11 +457,54 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             %constraint (TODO: performance specs)
 
             %use the monodromy system to get specs
-            n = alg_trans{1}.dump_dim();
-            alg_trans_lti = genplant(periodic_lift(alg_trans), n);
+            % n = alg_trans{1}.dump_dim();
+            alg_trans_lti = periodic_lift(alg_trans.P);
+            c = obj.sys.op{1}.c;
 
 
-            gain = validate_recovery_gain@lmi_synthesis_interface(obj, alg_trans_lti, iqc_op_all);
+            P = alg_trans_lti;
+
+
+            M = kron(iqc_op_all.iqc.M, eye(c));
+            M = (M + M')/2;
+            nw = floor(size(M, 1)/2);
+
+            M11 = M(1:nw, 1:nw);
+            M12 = M(nw + (1:nw), 1:nw);
+            M22 = M(nw + (1:nw), nw + (1:nw));
+            %is the constraint passive?
+            is_passive = (norm(M11) + norm(M22) + norm(M12 - eye(nw)))==0;
+            is_hinf = (norm(M11-eye(nw)) + norm(M22+eye(nw)) + norm(M12))==0;
+
+
+            if is_passive
+                gain_passive = -getPassiveIndex(-P, 'input');
+
+                E=eye(nw);
+                Tinf=[E sqrt(2)*E;sqrt(2)*E E];
+                P_inf = lft(Tinf,P,nw,nw);
+
+                gain_inf = norm(P_inf, 'inf');
+            elseif is_hinf
+                gain_inf = norm(P, 'inf');
+
+                E=eye(nw);
+                Tpass = [-E sqrt(2)*E;sqrt(2)*E -E];
+                Ppass = lft(Tpass,P,nw,nw);
+
+                gain_passive = -getPassiveIndex(-Ppass, 'input');
+            else
+                %TODO: advanced validation
+                warning('Customized validation is not yet implemented')
+                gain_inf = 0;
+                gain_passive = 0;
+            end
+
+            gain = [gain_passive, gain_inf];            
+
         end
+
+        % gain = validate_recovery_gain@lmi_synthesis_interface(obj, alg_trans_lti, iqc_op_all);
+     
     end
 end

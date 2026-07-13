@@ -25,7 +25,19 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
             %form the internal model
-            reg_name = ['regulator_', sys.get_type()];
+            stype = sys.get_type();
+
+            %temporary measure while debugging periodic regulator
+            %conditions
+            % switch stype
+            %     case 'periodic'
+            %         stype = 'switched';
+            %     case 'periodic_orbit'
+            %         stype = 'switched';                    
+            % end
+            reg_name = ['regulator_', stype];
+
+            
 
             reg_handle = str2func(reg_name);
             obj.reg = reg_handle(sys);
@@ -555,10 +567,13 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
 
-        function [dyn_b_he, U_outer, V_outer] = dynamics_block(obj, sys_cl, quad)
+        function [dyn_b_he, U_outer, V_outer] = dynamics_block(obj, sys_cl, quad, herm)
             %DYNAMICS_BLOCK form the supply block in a quadratic objective
             % problem
 
+            if nargin < 4
+                herm = true;
+            end
 
             [n, nw] = ssize(sys_cl.B);
             nz = ssize(sys_cl.D, 1);
@@ -577,7 +592,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
             dyn_b = outer_cl_left * center_cl * outer_cl_right; 
-            dyn_b_he = dyn_b + dyn_b';
+
+            if herm
+                dyn_b_he = dyn_b + dyn_b';
+            else
+                dyn_b_he = dyn_b;
+            end
 
             U_outer = -outer_cl_left';
             V_outer = outer_cl_right;
@@ -606,7 +626,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         end
 
-        function sys_cl = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
+        function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
             %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
             %transformation
 
@@ -644,6 +664,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
             sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
+
+            U_cl = [];
+            V_cl = [];
         end
 
 
@@ -673,7 +696,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %get the system with the internal model
             dissend = struct;
             dissend.plant = alg_psi;
-            dissend.rho = sol.rho;
+            dissend.rho = sol.rho;            
             P_trans =  obj.connect_model(dissend);
             
             %evaluate the variables
@@ -833,8 +856,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             Cc = Kblock(n+1:end, 1:n);
             Dc = Kblock(n+1:end, n+1:end);
 
-            K_nofeed_full = ss(Ac, Bc, Cc, Dc, 1);
-            K_nofeed =minreal(K_nofeed_full,1e-5);
+            K_nofeed = ss(Ac, Bc, Cc, Dc, 1);
+            % if obj.opts.min
+            % K_nofeed =minreal(K_nofeed_full,1e-5);
         end
 
         function K_feed = name_K_feed(obj, K_in)

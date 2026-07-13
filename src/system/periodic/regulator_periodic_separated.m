@@ -1,22 +1,21 @@
-classdef regulator_switched < regulator_interface
-    %REGULATOR_SWITCHED Regulator for switched systems 
+classdef regulator_periodic < regulator_interface
+    %REGULATOR_PERIODIC Regulator for periodic systems    
     %
-    % [x(k+1)] = [A(mode(k))    Bd(mode(k))    Bu(mode(k))  ][x(k)]   state transition
-    % [e(k)  ] = [Ce(mode(k))   Ded(mode(k))   Deu(mode(k)) ][d(k)]   output to  regulated error    
-    % [u(k) ] =  [Cy(mode(k))   Dyd(mode(k))   Dyu(mode(k)) ][u(k)]   output to controller    
+    % [x(k+1)] = [A(k)    Bd(k)    Bu(k)  ][x(k)]   state transition
+    % [e(k)  ] = [Ce(k)   Ded(k)   Deu(k) ][d(k)]   output to  regulated error    
+    % [zp(k) ] = [Cy(k)   Dyd(k)   Dyu(k) ][u(k)]   output to controller    
 
-
-    %The system obeys a switching logic: restricted mode transitions 
-    %from mode(k) to mode(k+1) based on a switching graph (adjacency matrix
-    % sys.adj)
+    %A(k) = A(k+T) for some known time T
     %
-    %instances of these algorithms include optimization algorithms under
-    %a-priori-unknown time-varying delays
+    %instances of these algorithms include cyclic coordinate descent
+    %methods. Periodic systems can also be unrolled into an LTI system
+    %(monodromy methods): a single large LMI system rather than multiple 
+    % coupled smaller LMI systems
 
     methods
-        function obj = regulator_switched(sys)
-            %REGULATOR_SWITCHED build the regulator
-            
+        function obj = regulator_periodic(sys)
+            %REGULATOR_PERIODIC undefined
+            %   undefined
             obj@regulator_interface(sys)
         end
 
@@ -39,61 +38,59 @@ classdef regulator_switched < regulator_interface
             [sN0, dN0] = size(Npre);
             [sN, dN] = size(N);
             n = obj.sys.P.nx;
-            
             nu = obj.sys.P.nu;
-
-            [src, dst] = obj.sys.get_arcs();
-            Narcs = length(src);
 
             [Sbeta, Rbeta] = obj.sys.get_tracked_opt();
 
             if isempty(obj.sys.tracking)
                 S = eye(size(N, 2)+c);
                 R = S;
-                reg_ans = [];
-                reg_mat = [];
+                reg_ans_top = [];
+                reg_mat_top = [];
 
+                reg_ans_bot= [];
+                reg_mat_bot = [];
                 
-                ns = size(S, 1);
+
+
                 %go through each subsystem
-                for i = 1:Narcs
-                    Pcurr = obj.sys.P{src(i)};
+                for i = 1:obj.Nss
+                    Pcurr = obj.sys.P{i};
                     [A, B1, B2, C1, D11, D12, C2, D21, D22] = Pcurr.ss_zy_wu();
 
-                    reg_ans_curr = [zeros(n, c), -B1*N;  -kron(ones(sN0,1), eye(c)), -D11*N];
-                    reg_mat_curr = [A, B2; C1, D12];
+                    reg_ans_curr_bot = [  -kron(ones(sN0,1), eye(c)), -D11*N];
+                    reg_mat_curr_bot = [C1, D12];
+
+                    reg_ans_curr_top = [zeros(n, c), -B1*N];
+                    reg_mat_curr_top = [A, B2];
 
 
-                    reg_mat_next = zeros(size(reg_mat_curr));
-                    reg_mat_next(1:(n), 1:(n)) = -eye(n);
-
-                    sz2 = size(reg_mat_curr, 2);
-                    reg_mat_embed = zeros(size(reg_mat_curr, 1), sz2*obj.Nss);
-
-                    shift_curr = (1:sz2) + (src(i)-1)*sz2;
-                    
-                    reg_mat_embed(:, shift_curr) = reg_mat_curr;
-
-                    if src(i) == dst(i)
-                        reg_mat_embed(:, shift_curr) = reg_mat_embed(:, shift_curr) + reg_mat_next;
-                    else
-                        shift_next = (1:sz2) + (dst(i)-1)*sz2;
-                        reg_mat_embed(:, shift_next) = reg_mat_next;
-                    end
-
-                    % reg_mat_embed(:, shift_curr) = reg_mat_curr + reg_mat_next;
-
-                    reg_ans = [reg_ans; reg_ans_curr];
-
-                    
-                    reg_mat = [reg_mat; reg_mat_embed];
+                    reg_ans_top = blkdiag(reg_ans_top, reg_ans_curr_top);
+                    reg_mat_top = blkdiag(reg_mat_top, reg_mat_curr_top);
+                    reg_ans_bot = blkdiag(reg_ans_bot, reg_ans_curr_bot);
+                    reg_mat_bot = blkdiag(reg_mat_bot, reg_mat_curr_bot);
                 end
-              
+
+                %now collect the shifts
+
+                eye_shift =[eye(n), zeros(n, nu)];
+                next_trans = kron(eye(obj.Nss), eye_shift);
+
+                next_trans = circshift(next_trans, -n, 1);
+
+                reg_mat_top = reg_mat_top - next_trans;
+
+                reg_mat = [reg_mat_top; reg_mat_bot];
+                reg_ans = [reg_ans_top; reg_ans_bot];
+
                 %solve the regulator equation
                 null_basis = null(reg_mat, 'rational');
                 % try                    
                     sol0 = lsqminnorm(reg_mat, reg_ans);
                 % catch
+
+                sol0(abs(sol0) < 1e-13) = 0;
+
                 sol_err = reg_mat * sol0 - reg_ans;
                 if norm(sol_err) > 1e-12
                     error('Regulator equation cannot be solved')
@@ -145,7 +142,8 @@ classdef regulator_switched < regulator_interface
                 
 
             else
-                error('Switched regulation: tracking not yet supported')
+                error('Periodic regulation: tracking not yet supported')
+                %TODO: to be implemented
             end
 
 
@@ -163,83 +161,70 @@ classdef regulator_switched < regulator_interface
             %CHECK_REGULATOR is the regulator equation satisfied?
             sys_cl = lft(obj.sys.P, obj.sys.K);
 
-            %if the system is convergent, then the regulator equation
-            %solution in closed loop is unique
-            
-
-            % error('Switched regulator: regulator check not yet done')
             Npre = obj.sys.get_consensus(obj.sys.op, obj.sys.bind);
             c = size(sys_cl{1}.D, 1)/length(obj.sys.bind); %coordinate lifts: change this later?
             N = kron(Npre, eye(c));
 
 
-            [sN0, dN0] = size(Npre);
-            [sN, dN] = size(N);
-
-
-            [src, dst] = obj.sys.get_arcs();
-            Narcs = length(src);
-
             if isempty(obj.sys.tracking)
-                S = eye(size(N, 2)+c);
+                S = eye(size(N, 2)+1);
                 R = S;
-                reg_ans = [];
-                reg_mat = [];
-
+                reg_ans_top = [];
+                reg_mat_top = [];
+                
+                reg_ans_bot= [];
+                reg_mat_bot = [];
+                
                 n = length(sys_cl{1}.A);
 
                 %go through each subsystem
+                for i = 1:obj.Nss
+                    S = eye(1+size(N, 2));
+                    R = S;
+
+                    [A, B, C, D] = ssdata(sys_cl.P{i});
 
 
-                for i = 1:Narcs
-                    Pcurr = obj.sys.P{src(i)};
-                    [A, B, C, D] = ssdata(sys_cl.P{src(i)});
+                    reg_ans_curr_top = [zeros(n, c), -B*N];
+                    reg_mat_curr_top = [A - eye(n)];
 
+                    reg_ans_curr_bot = [  -kron(ones(size(Npre, 1), 1), eye(c)), -D*N];
+                    reg_mat_curr_bot = [C];
 
-                    reg_ans_curr = [zeros(n, c), -B*N;  -kron(ones(sN0, 1), eye(c)), -D*N];
-                    reg_mat_curr = [A; C];
-                    reg_mat_next = [-eye(n); zeros(size(C))];
-
-                    sz2 = size(reg_mat_curr, 2);
-                   
-                    reg_mat_embed = zeros(size(reg_mat_curr, 1), sz2*obj.Nss);
-
-                    shift_curr = (1:sz2) + (src(i)-1)*sz2;
-
-                    reg_mat_embed(:, shift_curr) = reg_mat_curr;
-
-                    if src(i) == dst(i)
-                        reg_mat_embed(:, shift_curr) = reg_mat_embed(:, shift_curr) + reg_mat_next;
-                    else
-                        shift_next = (1:sz2) + (dst(i)-1)*sz2;
-                        reg_mat_embed(:, shift_next) = reg_mat_next;
-                    end
-
-                    % reg_mat_embed(:, shift_curr) = reg_mat_curr + reg_mat_next;
-
-                    reg_ans = [reg_ans; reg_ans_curr];
-
-
-                    reg_mat = [reg_mat; reg_mat_embed];
+                    reg_ans_top = blkdiag(reg_ans_top, reg_ans_curr_top);
+                    reg_mat_top = blkdiag(reg_mat_top, reg_mat_curr_top);
+                    reg_ans_bot = blkdiag(reg_ans_bot, reg_ans_curr_bot);
+                    reg_mat_bot = blkdiag(reg_mat_bot, reg_mat_curr_bot);
                 end
+
+                %now collect the shifts                
+                next_trans = kron(eye(obj.Nss), eye(n));
+                next_trans = circshift(next_trans, -n, 1);
+
+                reg_mat_top = reg_mat_top - next_trans;
+
+                reg_mat = [reg_mat_top; reg_mat_bot];
+                reg_ans = [reg_ans_top; reg_ans_bot];
 
                 %solve the regulator equation
                 null_basis = null(reg_mat, 'rational');
-                
-                sol0 = reg_mat \ reg_ans;
-                sol_err = reg_mat * sol0 - reg_ans;
-                if norm(sol_err) > 1e-12
-                    error('Regulator equation cannot be solved')
+                try                    
+                    sol0 = reg_mat \ reg_ans;
+                catch
+                    warning('Regulator equation cannot be solved')
                 end
-            
-      
+
+                nnull = size(null_basis, 2);
+
                 %extract the solution
 
                 Pi0 = cell(obj.Nss, 1);
-                Th0 = cell(obj.Nss, 1);               
+                Th0 = cell(obj.Nss, 1);
+                
+
 
                 count = 0;
-                nxn = obj.sys.nxn;                
+                nxn = obj.sys.nxn;
                 nxi = obj.sys.nxi;
                 for i = 1:obj.Nss
                     %get the regulator equation solution                    
@@ -253,13 +238,8 @@ classdef regulator_switched < regulator_interface
                 end                                    
             end
 
-            regulator_closed = struct('S', S, 'R', R);
-            
-            regulator_closed.Pi = Pi0;
-            regulator_closed.Th = Th0;
-            regulator_closed.Gam = obj.Gam;
-            regulator_closed.Phi = obj.Phi;
-                
+            regulator_closed = struct('S', S, 'R', R, 'Pi', Pi0, ...
+                'Th', Th0 );
         
 
         end
@@ -329,38 +309,6 @@ classdef regulator_switched < regulator_interface
 
             
         end
-
-        function vars_reg = create_vars(obj)
-            %CREATE_VARS: create variables that parameterize the nullspace
-            vars_reg.Pi = obj.Pi;
-            vars_reg.Gam = obj.Gam;
-            vars_reg.Phi = obj.Phi;
-
-            
-
-            
-            if isempty(obj.Gam_basis{1})==0
-                nbasis = size(obj.Gam_basis{1}, 3);                
-                eta = [];
-%                 lmim('reg_param', nbasis, 1, 'full');
-
-
-%                 for i = 1:nbasis
-%                     eta_curr = lmim_index(eta, i, 1);
-% 
-%                     vars_reg.Pi = vars_reg.Pi + obj.Pi_basis(:, :, i) * eta_curr;
-%                     vars_reg.Gam = vars_reg.Gam + obj.Gam_basis(:, :, i) * eta_curr;
-%                     vars_reg.Phi = vars_reg.Phi + obj.Phi_basis(:, :, i) * eta_curr;
-%                 end
-
-                vars_reg.eta = eta;
-            else
-                vars_reg.eta= [];
-            end
-        end
-        
-    
-
 
 
 
