@@ -1,4 +1,4 @@
-classdef lmi_synthesis_periodic_orbit < lmi_synthesis_lti
+classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_order
     %LMI_SYNTHESIS_PERIODIC_ORBIT synthesis LMIs for algorithmic interconnections
     %involving periodic linear networks and controllers
     %
@@ -20,10 +20,10 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_lti
 
 
     methods
-        function obj = lmi_synthesis_periodic_orbit(sys,config)
+        function obj = lmi_synthesis_periodic_orbit_reduced_order(sys,config)
             %LMI_SYNTHESIS_PERIODIC undefined
             %   undefined
-            obj@lmi_synthesis_lti(sys, config);
+            obj@lmi_synthesis_lti_reduced_order(sys, config);
         end
 
         function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
@@ -47,11 +47,13 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_lti
             %get the system with the internal model
             dissend = struct;
             dissend.plant = obj.rotate_plant(alg_psi, 1);
-            dissend.rho = sol.rho;            
+            dissend.plant_reg = diss{1}.plant_reg;
+            dissend.rho = sol.rho;      
+            dissend.iqc_data = diss{1}.iqc_data;
             P_trans =  obj.connect_model(dissend);
 
             %evaluate the variables
-            [sol] = obj.recover_subcontroller(alg_psi, P_trans, sol);
+            [sol] = obj.recover_subcontroller(alg_psi, P_trans.P, sol);
 
             % sol.G = obj.get_storage(sol.vars.diss, sol.vars.reg);
         end
@@ -94,7 +96,7 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_lti
             %(not yet exponentially undiscounted, this happens later)
 
 
-            [sol] = recover_subcontroller@lmi_synthesis_lti(obj, alg_psi, P_trans, sol);
+            [sol] = recover_subcontroller@lmi_synthesis_lti_reduced_order(obj, alg_psi, P_trans, sol);
 
 
             %revert the coordinate transformation

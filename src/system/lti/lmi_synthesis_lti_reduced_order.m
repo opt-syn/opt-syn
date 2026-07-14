@@ -86,7 +86,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
 
             
-            model = obj.reg.get_model(vars_rec.reg);
+            model = obj.reg.get_model(vars_rec.reg);            
             modelrho = rhotrafo(model, sol.rho);
             P_trans = lft(alg_psi, modelrho);
 
@@ -569,7 +569,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 Y = inv(X) + E' * W * E;
                 
             end
-            Z = Et*inv(X)*Pibar';
+            Z = Et*(X \ Pibar');
 
 
             %check the closed-loop system
@@ -812,9 +812,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             K_nofeed_full = ss(Ac, Bc, Cc, Dc, 1);
             K_nofeed = K_nofeed_full;            
 
-            % if norm(rec_error) > 1e-6
-            %     error('Reduced Order LTI: failure of subspace-based controller reconstruction')
-            % end
+
         end
 
 

@@ -59,6 +59,10 @@ classdef (Abstract) opt_manager_interface < handle
                 clname = 'lmi_synthesis_lti_reduced_order';
             end
 
+            if strcmp(clname, 'lmi_synthesis_periodic_orbit') && obj.config.syn.reduced_order
+                clname = 'lmi_synthesis_periodic_orbit_reduced_order';
+            end
+
             lmi_hand = str2func(clname);
             
 
