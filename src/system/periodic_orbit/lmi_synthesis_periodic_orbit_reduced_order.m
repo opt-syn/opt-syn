@@ -83,7 +83,7 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
 
         end
 
-        function [sol] = recover_subcontroller(obj, alg_psi, P_trans, sol)
+        function [sol] = recover_subcontroller(obj, alg_psi, P_aug, sol)
             %RECOVER_SUBCONTROLLER recover the subcontroller of the current
             %mode/control
             %
@@ -95,16 +95,43 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
             %           exponential discounting    
             %(not yet exponentially undiscounted, this happens later)
 
+            vars_rec = sol.vars;
+            rho = sol.rho;
 
-            [sol] = recover_subcontroller@lmi_synthesis_lti_reduced_order(obj, alg_psi, P_trans, sol);
+            %get the subcontroller
+            [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_aug, vars_rec);
 
 
+            %get the controller
+            model = obj.reg.get_model(vars_rec.reg); 
+            % model_orig = obj.rotate_plant(model, -1);    
+            
+            modelrho = rhotrafo(model, sol.rho); 
+            P_trans = lft(obj.rotate_plant(alg_psi, 1), modelrho);
+            % K_rot = obj.rotate_plant(K_nofeed, -1);
+
+            K_report = obj.K_alg_report(P_trans, K_nofeed, model, rho);
+            
+            
+            
+
+            %export and validate
+            sol.K=  obj.rotate_plant(K_report.K, -1);
+            sol.cert.alg_trans =  K_report.alg_trans;
+            sol.cert.alg = lft(obj.sys.P, sol.K);
+            sol.cert.model = obj.rotate_plant(model, -1);           
+            
+            sol.cert.K_sub = obj.rotate_plant(K_report.K_sub, -1);
+            sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
+
+            sol.cert.Gcl = Gcl;
+            sol.cert.Ycl = Ycl;
             %revert the coordinate transformation
             
-            sol.cert.alg = obj.rotate_plant(sol.cert.alg, -1);            
-            sol.cert.model = obj.rotate_plant(sol.cert.model, -1);            
-            sol.K= obj.rotate_plant(sol.K, -1);            
-            sol.cert.K_sub = obj.rotate_plant(sol.cert.K_sub, -1);                        
+            % sol.cert.alg = obj.rotate_plant(sol.cert.alg, -1);            
+            % sol.cert.model = obj.rotate_plant(sol.cert.model, -1);            
+            % sol.K= obj.rotate_plant(sol.K, -1);            
+            % sol.cert.K_sub = obj.rotate_plant(sol.cert.K_sub, -1);                        
 
         end
                
