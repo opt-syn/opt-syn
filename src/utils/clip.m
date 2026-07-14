@@ -7,8 +7,8 @@ function xclip =  clip(x, lower, upper)
 
     xclip = x;
     for i = 1:c
-        xclip(sl(i, :)) = lower(i);
-        xclip(su(i, :)) = upper(i);
+        xclip(i, sl(i, :)) = lower(i);
+        xclip(i, su(i, :)) = upper(i);
     end
     
     xclip = reshape(xclip, [], 1);
