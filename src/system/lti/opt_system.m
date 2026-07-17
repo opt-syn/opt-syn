@@ -20,11 +20,6 @@ classdef  opt_system < opt_system_interface
         end    
 
         %% Dimension Counters
-        function nss = Nss(obj)
-            %NSS: number of subsystems
-            nss = 1;
-        end      
-
         function dimn = nxn(obj)
             %nxn: number of states in network
             dimn = length(obj.P.A);

@@ -26,16 +26,16 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_lti
             obj@lmi_synthesis_lti(sys, config);
         end
 
-        function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
-            %CONS_DYNAMIC form the dissipation and sign constraints
-
-
-            %go to the rotating coordinate frame
-            diss.plant = obj.rotate_plant(diss.plant);
-
-            %now call the cons_dynamic routine for LTI systems
-            [vars, cons, objective, con_M] = cons_dynamic@lmi_synthesis_lti(obj, vars, cons, diss);
-        end
+        % function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
+        %     %CONS_DYNAMIC form the dissipation and sign constraints
+        % 
+        % 
+        %     %go to the rotating coordinate frame
+        %     diss.plant = obj.sys.rotate_plant(diss.plant);
+        % 
+        %     %now call the cons_dynamic routine for LTI systems
+        %     [vars, cons, objective, con_M] = cons_dynamic@lmi_synthesis_lti(obj, vars, cons, diss);
+        % end
 
         function sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
             %recover the controller
@@ -46,7 +46,7 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_lti
 
             %get the system with the internal model
             dissend = struct;
-            dissend.plant = obj.rotate_plant(alg_psi, 1);
+            dissend.plant = alg_psi;
             dissend.rho = sol.rho;            
             P_trans =  obj.connect_model(dissend);
 
@@ -54,31 +54,6 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_lti
             [sol] = obj.recover_subcontroller(alg_psi, P_trans, sol);
 
             % sol.G = obj.get_storage(sol.vars.diss, sol.vars.reg);
-        end
-
-
-        function plant_rot = rotate_plant(obj, plant, direction)
-            
-            %rotate_plant: apply the periodic-orbit rotation to the
-            %time-varying system, producing an LTI system
-            if nargin < 3
-                direction = 1;
-            end
-
-            c = size(obj.sys.R, 1);
-            n = size(plant.A, 1);
-            Rkron = kron(eye(n/c), obj.sys.R)^(direction);
-            
-            plant_rot = plant;
-            if isa(plant, 'genplant')
-                plant_rot.P.A = Rkron * plant.P.A;
-                plant_rot.P.B = Rkron * plant.P.B;
-            else
-                plant_rot.A = Rkron * plant.A;
-                plant_rot.B = Rkron * plant.B;
-            end
-
-
         end
 
         function [sol] = recover_subcontroller(obj, alg_psi, P_trans, sol)
@@ -99,10 +74,10 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_lti
 
             %revert the coordinate transformation
             
-            sol.cert.alg = obj.rotate_plant(sol.cert.alg, -1);            
-            sol.cert.model = obj.rotate_plant(sol.cert.model, -1);            
-            sol.K= obj.rotate_plant(sol.K, -1);            
-            sol.cert.K_sub = obj.rotate_plant(sol.cert.K_sub, -1);                        
+            sol.cert.alg = obj.sys.rotate_plant(sol.cert.alg, -1);            
+            sol.cert.model = obj.sys.rotate_plant(sol.cert.model, -1);            
+            sol.K= obj.sys.rotate_plant(sol.K, -1);            
+            sol.cert.K_sub = obj.sys.rotate_plant(sol.cert.K_sub, -1);                        
 
         end
                

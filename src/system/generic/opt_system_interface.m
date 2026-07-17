@@ -229,6 +229,11 @@ classdef  opt_system_interface
                 param = [];
             end
             Pcurr = obj.get_P(param);
+
+            if isnumeric(param) && isempty(param)
+                param = struct('mode', 1);
+            end
+            
             if isempty(obj.K)
                 sys_alg = Pcurr;
             else
@@ -326,7 +331,7 @@ classdef  opt_system_interface
             Rbeta = kron(Rbeta, eye(c));
         end
 
-
+        
         function mode_next = next_mode(obj, mode)
             %next mode in switching
 
@@ -410,14 +415,15 @@ classdef  opt_system_interface
 
             ind_w = indbind;
             [obj.P, iwp] = obj.P.add_oracle_input(obj, indbind, []);
-
-
-            
-
-
-
+ 
         end
 
+        function [iqc_curr, vars_curr,cons_curr] = create_iqc(index, cons, order, rep_curr);
+            %CREATE_IQC: form the iqc for the current operator in the
+            %system description
+            
+            [iqc_curr, vars_curr,cons_curr] = obj.op{index}.create_iqc(cons, order, rep_curr);
+        end
 
 
 
@@ -431,7 +437,7 @@ classdef  opt_system_interface
         nxi(obj)    %number of controller states
 
 
-        build_plant()
+        build_plant() %form the plant to certify dissipation inequalities
     
     end
 end

@@ -32,7 +32,7 @@ classdef (Abstract) operator_interface
 
             %Input: 
             %   order:  order of the IQC [number of lags]
-            %   rep:    number of repetitions of the operator (non-frugal)
+            %   reps:    number of repetitions of the operator (non-frugal)            
             %
             %Output:
             %   vars:   variables of the problem
@@ -40,8 +40,7 @@ classdef (Abstract) operator_interface
             %           variables directly)
 
             if obj.same
-                iqc = obj.get_same(reps);
-                vars = [];
+                iqc_orig = obj.get_same(reps);                
             else
                 [vars] = obj.create_vars(order, reps);
       
@@ -55,9 +54,10 @@ classdef (Abstract) operator_interface
     
                 iqc_orig = iqc_loop_split(psi1, M, loop, psi2, X);
     
-                iqc = iqc_orig.lift(obj.c);
+                
                 % cons = obj.filter_constraints(cons, order, vars, iqc);
             end
+            iqc = iqc_orig.lift(obj.c);
         end
 
         function sm = same(obj)

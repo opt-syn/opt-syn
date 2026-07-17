@@ -324,14 +324,7 @@ classdef (Abstract) opt_manager_interface < handle
             specs = obj.specs;
             vars = obj.vars;
 
-            % %form the plant
-            % [iqc_data] = obj.iqc_op_all();
-            % %TODO: modify this for different exponential weighting
-            % [alg_psi, iqc_op, alg_loop]  = obj.sys.build_plant(iqc_data);
-            % 
-            % [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, specs);            
-            % 
-            
+ 
             
             
             %take the initial step
@@ -430,16 +423,7 @@ classdef (Abstract) opt_manager_interface < handle
             spec_curr = obj.modify_spec(pcurr, spec, b_opts);
 
             [vars, cons, objective, alg_psi, rho, diss] = obj.build_program(spec_curr); 
-            %form the plant
-            % [iqc_data] = obj.iqc_op_all();
-            %TODO: modify this for different exponential weighting
-            % [alg_psi, iqc_op, alg_loop]  = obj.sys.build_plant(iqc_data);
-            % 
-            % [vars, cons] = obj.lmi.create_vars(vars, cons, alg_psi, spec_curr);            
-            % 
-            % [vars, cons, objective] = cons_dynamic(obj, vars, cons, alg_psi, iqc_op, spec_curr);
-            
-            
+ 
             [sol] = obj.run(vars, cons, objective);
             sol.objective = double(double(objective, sol.lmi_out));
             sol.rho = rho;

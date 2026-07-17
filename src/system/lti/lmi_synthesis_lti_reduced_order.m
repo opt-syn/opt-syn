@@ -13,8 +13,6 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
     %
     %   Implemented:
     %       quad
-    %       stability
-    %       e2e
     %
     %   TODO:
     %       p2p
