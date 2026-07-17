@@ -118,6 +118,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             sys_aug = obj.sys;
             sys_aug.P = diss.plant_reg;
+            diss.iqc_data.rotate = 0; %specialization for orbits
 
             [Plant, ~, alg_loop_aug] = sys_aug.build_plant(diss.iqc_data, diss.rho);
 
