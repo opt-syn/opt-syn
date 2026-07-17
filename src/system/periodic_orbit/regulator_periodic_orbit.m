@@ -54,5 +54,24 @@ classdef regulator_periodic_orbit < regulator_lti
 
         end
 
+        function Kcurr = get_K(obj, param)
+            %get the controller
+            if nargin < 2
+                param = [];
+            end
+            Kcurr = obj.sys.get_K(param);
+
+            %go to the rotating coordinate frame
+            c = size(obj.sys.R, 1);
+            n = size(Kcurr.A, 1);
+            Rkron = kron(eye(n/c), obj.sys.R);
+
+            Kcurr.A = Rkron * Kcurr.A;
+            Kcurr.B = Rkron * Kcurr.B;
+
+        end
+
+
+
     end
 end

@@ -464,6 +464,14 @@ classdef regulator_interface
 
         end
 
+        function Kcurr = get_K(obj, param)
+            %get the controller
+            if nargin < 2
+                param = [];
+            end
+            Kcurr = obj.sys.get_K(param);
+        end
+
         function [reg_mat_dyn, reg_ans] = reg_K_sys_indiv(obj, param)
             %control regulator equation checks
             %dynamics expression
@@ -472,7 +480,7 @@ classdef regulator_interface
             if nargin < 2
                 param = [];
             end
-            Kcurr = obj.sys.get_K(param);
+            Kcurr = obj.get_K(param);
 
             [Ak, Bk, Ck, Dk] = ssdata(Kcurr);
             [S, R] = obj.exosystem(param);

@@ -65,7 +65,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             %supply block with {C, D, M}
             vars_spec = vars.spec{diss.spec.id};
             M_quad = obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
-            suppb = obj.supply_block(diss.plant, M_quad);
+            suppb = -obj.supply_block(diss.plant, M_quad);
 
 
             %wrap it all together

@@ -31,7 +31,7 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
 
 
             %go to the rotating coordinate frame
-            diss.plant = obj.rotate_plant(diss.plant);
+            % diss.plant = obj.rotate_plant(diss.plant);
 
             %now call the cons_dynamic routine for LTI systems
             [vars, cons, objective, con_M] = cons_dynamic@lmi_synthesis_lti(obj, vars, cons, diss);
@@ -46,7 +46,7 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
 
             %get the system with the internal model
             dissend = struct;
-            dissend.plant = obj.rotate_plant(alg_psi, 1);
+            % dissend.plant = obj.rotate_plant(alg_psi, 1);
             dissend.plant_reg = diss{1}.plant_reg;
             dissend.rho = sol.rho;      
             dissend.iqc_data = diss{1}.iqc_data;
@@ -54,6 +54,7 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
 
             %evaluate the variables
             [sol] = obj.recover_subcontroller(alg_psi, P_trans.P, sol);
+
 
             % sol.G = obj.get_storage(sol.vars.diss, sol.vars.reg);
         end
@@ -107,7 +108,7 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
             % model_orig = obj.rotate_plant(model, -1);    
             
             modelrho = rhotrafo(model, sol.rho); 
-            P_trans = lft(obj.rotate_plant(alg_psi, 1), modelrho);
+            P_trans = lft(alg_psi, modelrho);
             % K_rot = obj.rotate_plant(K_nofeed, -1);
 
             K_report = obj.K_alg_report(P_trans, K_nofeed, model, rho);

@@ -120,6 +120,10 @@ classdef  opt_system_periodic_orbit < opt_system
                 Kcurr = obj.K;
             end
 
+            if isnumeric(param) && isempty(param)
+                param = struct('mode', 1);
+            end
+
 
             if ~isempty(Kcurr)
 

@@ -173,13 +173,13 @@ classdef lmi_dispatch_interface < handle
         function sb = supply_block(obj, plant, M)
             % SUPPLY_BLOCK supply block used in analysis programs
             %
-            %sb =  [C, D]^T [M] [C D]
+            %sb =  [C, D]^T [-M] [C D]
             %               
 
 
             Cblock = [plant.C, plant.D];   
             
-            sb = Cblock' * (M) * Cblock;
+            sb = Cblock' * (-M) * Cblock;
 
         end
 
