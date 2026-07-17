@@ -21,12 +21,14 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
     %
     %
     % Also need to figure out recovery
-    
+
+
     methods
         function obj = lmi_synthesis_lti_reduced_order(sys, config)
             %LMI_SYNTHESIS_LTI Construct an instance of this class
             %   Detailed explanation goes here
             obj@lmi_synthesis_lti(sys, config);
+            obj.reduced=true;
         end       
         
         %% reduced-order control indexers
@@ -120,6 +122,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             sys_aug.P = diss.plant_reg;
             diss.iqc_data.rotate = 0; %specialization for orbits
 
+            diss.iqc_data.augmented = true;
             [Plant, ~, alg_loop_aug] = sys_aug.build_plant(diss.iqc_data, diss.rho);
 
             P_model = struct('P', Plant, 'rho', diss.rho);

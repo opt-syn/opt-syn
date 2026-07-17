@@ -147,7 +147,7 @@ classdef  opt_system_interface
                     n = obj.P.dump_dim;
                     
                     %special case for reduced-order control + performance
-                    if nop*c == n.nw
+                    if ~iqc_data.augmented
                         %standard control
                         n.nw = n.nw - length(ind_same);
                         n.nz = n.nz - length(ind_same);
@@ -156,12 +156,13 @@ classdef  opt_system_interface
                     else
                         %reduced-order control: pop the performance
                         %channels next to the regulation channels
-                        nwp_orig = n.nw - nop;
-                        nzp_orig = n.nz - nop;
+                        nwp_orig = n.nw - c*nop;
+                        nzp_orig = n.nz - c*nop;
 
+                        norig = n;
 
-                        n.nw = n.nw - nwp_orig;
-                        n.nz = n.nz - nzp_orig;
+                        n.nw = n.nw - nwp_orig - length(ind_same);
+                        n.nz = n.nz - nzp_orig - length(ind_same);
                         n.nwp = n.nwp + nwp_orig;
                         n.nzp = n.nzp + nzp_orig;
 

@@ -8,6 +8,7 @@ classdef lmi_dispatch_interface < handle
     properties
         sys;
         config;
+        reduced = false;
     end
     
     methods

@@ -471,7 +471,9 @@ classdef (Abstract) opt_manager_interface < handle
             iqc_data.iqc = iqc;
             iqc_data.m_same = m_same;
             iqc_data.ind_same = ind_same;
-            iqc_data.task =  obj.task;            
+            iqc_data.task =  obj.task;    
+
+            iqc_data.augmented = false;
 
         end
 
