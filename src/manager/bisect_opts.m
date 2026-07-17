@@ -13,6 +13,7 @@ classdef bisect_opts < handle
         Niter = 4; %number of alternating iterations
 
         backoff = 1e-4;
+        bisect = true;
 
     end
     

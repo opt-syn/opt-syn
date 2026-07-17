@@ -41,6 +41,7 @@ classdef spec_e2e < spec_interface
            if obj.target
                nwp = length(obj.iwp);
                nzp = length(obj.izp);
+               objective  = vars_spec.mu_l2;
 
                Q_e2e = -drep(vars_spec.mu_l2, nwp);
                T_e2e = eye(nzp);
@@ -49,7 +50,7 @@ classdef spec_e2e < spec_interface
 
                quad = struct('Q', Q_e2e, 'T', T_e2e, 'S', S_e2e, 'U', U_e2e);
 
-               objective  = vars_spec.mu_l2;
+               
 
            else
                quad = supply_quad@spec_interface(obj, vars_spec);

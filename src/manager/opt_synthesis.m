@@ -249,7 +249,23 @@ classdef opt_synthesis < opt_manager_interface
             success = false;
             for i = 1:Niter
                 %start with synthesis
-                [sol_syn, vr_syn] = obj.bisect(iqc_curr, specs, b_opts);
+                if b_opts.bisect
+                    [sol_syn, vr_syn] = obj.bisect(iqc_curr, specs, b_opts);
+
+                    %back off a bit
+                    vr_back = vr_syn(2)+ b_opts.backoff;
+
+                    spec_back = obj.modify_spec(vr_back, specs, b_opts);
+
+                    obj.specs= {};
+                    sol_syn_back = obj.solve_single(iqc_curr, spec_back);
+
+                else
+                    [sol_syn] = obj.solve_single(iqc_curr, specs);
+                    vr_syn = sol_syn.objective * [1, 1];
+
+                    sol_syn_back = sol_syn;
+                end
 
                 
                 sol_history{1, i} = sol_syn;
@@ -259,20 +275,18 @@ classdef opt_synthesis < opt_manager_interface
                     break
                 end
                 
-                %back off a bit
-                vr_back = vr_syn(2)+ b_opts.backoff;
 
-                spec_back = obj.modify_spec(vr_back, specs, b_opts);
-
-                obj.specs= {};
-                sol_syn_back = obj.solve_single(iqc_curr, spec_back);
-                
 
                 %then do analysis
                 sys_curr.K = sol_syn_back.K;
 
                 ana = opt_analysis(sys_curr);
-                [sol_ana, vr_ana] = ana.bisect(order, specs, b_opts);
+                if b_opts.bisect
+                    [sol_ana, vr_ana] = ana.bisect(order, specs, b_opts);
+                else
+                    [sol_ana] = ana.solve_single(order, specs);
+                    vr_ana = sol_ana.objective * [1, 1];
+                end
 
                 sol_history{2, i} = sol_ana;
                 vr_history{2, i} = vr_ana;
@@ -304,6 +318,10 @@ classdef opt_synthesis < opt_manager_interface
 
             
         end
+
+
+
+        
     end
 end
 
