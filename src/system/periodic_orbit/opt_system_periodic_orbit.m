@@ -88,6 +88,10 @@ classdef  opt_system_periodic_orbit < opt_system
         %fetch attributes
         function Pcurr = get_P(obj, param)
             %GET_P get the network P
+
+            if isnumeric(param) && isempty(param)
+                param = struct('mode', 1);
+            end
             Pcurr = obj.P.P;
 
             k = mod(param.mode-1, obj.order+1);           
@@ -108,65 +112,110 @@ classdef  opt_system_periodic_orbit < opt_system
 
         end
 
-        % function [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj, param)
-        %     %get state space matrices at the current parameter values
-        % 
-        % 
-        %     [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P.ss_zy_wu();
-        % 
-        %     k = mod(param.mode-1, obj.order+1);          
-        % 
-        % 
-        %     [nx, nw] = size(B1);
-        %     [ny, nu] = size(C2);
-        %     [nz] = size(D11, 1);
-        % 
-        % 
-        %     Rxk = kron(eye(nx/c), obj.R)^k;
-        %     Ryk = kron(eye(ny/c), obj.R)^k;
-        %     Ruk = kron(eye(nu/c), obj.R)^k;
-        %     Rzk = kron(eye(nx/c), obj.R)^k;
-        %     Rwk = kron(eye(ny/c), obj.R)^k;   
-        % 
-        % 
-        %     %perform the operation
-        %     Aa = Rxk \ Aa * Rxk;
-        %     B1 = Rxk \ B1 * Rwk;
-        %     B2 = Rxk \ B2 * Ruk;
-        % 
-        %     C1 = Rzk \ C1 * Rxk;
-        %     D11 = Rzk \ D11 * Rwk;
-        %     D12 = Rzk \ D12 * Ruk;
-        % 
-        %     C2 = Ryk \ C2 * Rxk;
-        %     D21 = Ryk \ D11 * Rwk;
-        %     D22 = Ryk \ D21 * Ruk;
-        % 
-        % 
-        % 
-        % end
+        function Kcurr = get_K(obj, param)
+            %GET_K get the controller K
+            if isa(obj.K, 'genplant')
+                Kcurr = obj.K.ss;
+            else
+                Kcurr = obj.K;
+            end
 
-        % function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
-        %     %GET_TRACKED_OPT get the tracked position of the optimal
-        %     %solution
-        %     c = size(obj.R);
-        %     k = mod(param.mode-1, obj.order+1);          
-        % 
-        % 
-        %     if isempty(obj.tracking)
-        %         Sbeta = eye(c);
-        %         Rbeta = eye(c);
-        %     else
-        %         [ne, nd] = size(obj.tracking.Rbeta);
-        % 
-        %         Rdk = kron(eye(nd/c), obj.R)^k;
-        %         Rek = kron(eye(ne/c), obj.R)^k;
-        % 
-        %         Sbeta = Rdk \ obj.tracking.Sbeta * Rdk;
-        %         Rbeta = Rek \ obj.tracking.Rbeta * Rdk;
-        %     end
-        % end
+            if isnumeric(param) && isempty(param)
+                param = struct('mode', 1);
+            end
 
+
+            if ~isempty(Kcurr)
+
+                k = mod(param.mode-1, obj.order+1);          
+
+                [n, m] = size(Kcurr.B);
+                p = size(Kcurr.C, 1);
+                c = size(obj.R, 1);
+
+                Rxk = kron(eye(n/c), obj.R)^k;
+                Ryk = kron(eye(m/c), obj.R)^k;
+                Ruk = kron(eye(p/c), obj.R)^k;
+
+                Kcurr.A = (Rxk) \ Kcurr.A * Rxk;
+                Kcurr.B = (Rxk) \ Kcurr.B * Ruk;
+                Kcurr.C = (Ryk) \ Kcurr.C * Rxk;
+                Kcurr.D = (Ryk) \ Kcurr.D * Ruk;
+            end
+        end
+ 
+        %% build the plant for the LMIs       
+        function plant_rot = rotate_plant(obj, plant, direction)
+
+            %rotate_plant: apply the periodic-orbit rotation to the
+            %time-varying system, producing an LTI system
+            if nargin < 3
+                direction = 1;
+            end
+
+            c = size(obj.R, 1);
+            n = size(plant.A, 1);
+            Rkron = kron(eye(n/c), obj.R)^(direction);
+
+            plant_rot = plant;
+            if isa(plant, 'genplant')
+                plant_rot.P.A = Rkron * plant.P.A;
+                plant_rot.P.B = Rkron * plant.P.B;
+            else
+                plant_rot.A = Rkron * plant.A;
+                plant_rot.B = Rkron * plant.B;
+            end
+
+
+        end
+
+        function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, rho)
+            %BUILD_PLANT: form the plant to be used for analysis
+            %or synthesis
+            %Input:
+            %   iqc_data: from manager.iqc_op_all, information about the
+            %             operator iqc descriptions
+            %   rho: exponential convergence rate (default 1)
+            %
+            %Output:
+            %   alg_psi:    plant with filters (psi)
+            %   alg_loop:   plant without filters, but after loop
+            %               transformation (should be stable)
+            %   iqc_op:     iqcs for the robust uncertainties
+
+            if nargin < 3
+                rho = 1;
+            end
+
+
+
+            %get the plant and the IQCs.
+
+            if strcmp(iqc_data.task, 'analysis');
+                alg0 = obj.get_alg([]);      
+            else
+                alg0 = obj.P.P;                
+            end
+
+            %rotate the plant
+            if isfield(iqc_data, 'rotate') && (iqc_data.rotate == 0)
+                alg = alg0;
+            else
+                alg = obj.rotate_plant(alg0);
+            end
+            
+
+            %repeat this call multiple times for switched systems. This
+            %function will be overloaded, whereas build_plant_single will
+            %stay the same.
+            [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data, rho);
+
+
+
+        end 
+
+
+        %% exports
         function sys_per = export_periodic(obj)
             %EXPORT_PERIODIC export the periodic-orbit as a periodic system
             %explicitly list all subsystems
@@ -203,33 +252,7 @@ classdef  opt_system_periodic_orbit < opt_system
 
 
 
-        function Kcurr = get_K(obj, param)
-            %GET_K get the controller K
-            if isa(obj.K, 'genplant')
-                Kcurr = obj.K.ss;
-            else
-                Kcurr = obj.K;
-            end
-
-
-            if ~isempty(Kcurr)
-
-                k = mod(param.mode-1, obj.order+1);          
-    
-                [n, m] = size(Kcurr.B);
-                p = size(Kcurr.C, 1);
-                c = size(obj.R, 1);
-    
-                Rxk = kron(eye(n/c), obj.R)^k;
-                Ryk = kron(eye(m/c), obj.R)^k;
-                Ruk = kron(eye(p/c), obj.R)^k;
-    
-                Kcurr.A = (Rxk) \ Kcurr.A * Rxk;
-                Kcurr.B = (Rxk) \ Kcurr.B * Ruk;
-                Kcurr.C = (Ryk) \ Kcurr.C * Rxk;
-                Kcurr.D = (Ryk) \ Kcurr.D * Ruk;
-            end
-        end
+        
 
 
     end
