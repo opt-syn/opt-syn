@@ -152,8 +152,8 @@ classdef lmi_dispatch_interface < handle
         function sb = sys_block(obj, plant, Pnew, Pold)
             % SYS_BLOCK system block used in analysis programs
             %
-            %sb =  [0, I]^T [Pold, 0] [0, I]
-            %      [A, B]   [0,      -Pnew] [A, B]
+            %sb =  [0, I]^T [-Pold, 0] [0, I]
+            %      [A, B]   [0,      Pnew] [A, B]
 
             
             A = plant.A;
@@ -164,7 +164,7 @@ classdef lmi_dispatch_interface < handle
             Ablock = [eye(n), zeros(n, m);
                 A, B];
 
-            Pblock = blkdiag(Pold, -Pnew);
+            Pblock = blkdiag(-Pold, Pnew);
 
             sb = Ablock' * Pblock * Ablock;            
 
@@ -173,13 +173,13 @@ classdef lmi_dispatch_interface < handle
         function sb = supply_block(obj, plant, M)
             % SUPPLY_BLOCK supply block used in analysis programs
             %
-            %sb =  [C, D]^T [-M] [C D]
+            %sb =  [C, D]^T [M] [C D]
             %               
 
 
             Cblock = [plant.C, plant.D];   
             
-            sb = Cblock' * (-M) * Cblock;
+            sb = Cblock' * (M) * Cblock;
 
         end
 

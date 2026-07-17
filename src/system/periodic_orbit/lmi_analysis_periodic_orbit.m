@@ -9,29 +9,18 @@ classdef lmi_analysis_periodic_orbit < lmi_analysis_lti
     % [zp(k) ] = [Czp(k)  Dzpw(k)  Dzpwp(k)][wp(k)]  output to performance
     %
     %A(k) = A(k+T) for some known time T
-    %furthermore, matrices [R, W] are known with 
-    %A(k) = (R^k)' A(0) R^k,  R^T = I (and the same for other channels.
+    %furthermore, matrices [R] are known with 
+    %A(k) = (R^k)' A(0) R^k,  R^h = R (and the same for other channels.
     %
     % this is a specialization of general periodic algorithms
     %
     %
     %
     %instances of these algorithms include cyclic coordinate descent
-    %methods. Periodic systems can also be unrolled into an LTI system
+    %methods. Periodic-orbit systems can also be unrolled into an LTI system
     %(monodromy methods): a single large LMI system rather than multiple 
     % coupled smaller LMI systems
-    %
-    %   Implemented
-    %       stability
-    %       e2e
-    %       quad
-    %       p2p
-    %
-    %   TODO:
-    %       h2      
-    %       e2p
-    %       
-    %
+    
 
 
     properties
@@ -48,6 +37,6 @@ classdef lmi_analysis_periodic_orbit < lmi_analysis_lti
             obj.R = sys.R;
         end
  
- 
+
     end
 end
