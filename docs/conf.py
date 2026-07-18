@@ -36,12 +36,24 @@ primary_domain = 'mat'
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-#httpsdocumentation for theme ://sphinx-book-theme.readthedocs.io/en/latest/
+#documentation for theme https://sphinx-book-theme.readthedocs.io/en/latest/
 html_theme = 'sphinx_book_theme'
 html_static_path = ['_static']
 
 favicons = [    
     "favicon/sun_part_16.svg"
 ]
-#"img/logo/sun_part.icofavicon-16x16.png",
-    #"favicon-32x32.png",
+ 
+ 
+html_theme_options = {
+   "logo": {
+      "image_light": "./opt_syn_logo_light.svg",
+      "image_dark": "./opt_syn_logo_dark.svg",
+   },
+   "repository_url": "https://github.com/jarmill/opt-syn",
+                         "use_repository_button": True
+}
+
+html_title = "opt-syn"
+
+html_sidebars={}
