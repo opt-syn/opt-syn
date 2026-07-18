@@ -1,0 +1,5 @@
+sphinx
+sphinxcontrib-matlabdomain
+sphinxcontrib-bibtex
+sphinx-book-theme
+sphinx_favicon

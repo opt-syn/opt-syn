@@ -1,10 +1,10 @@
-classdef regulator_lpv_poly< regulator_interface
-    %REGULATOR_LPV_POLY Regulator for Polytopic LPV systems
+classdef regulator_lpv_poly_multi< regulator_interface
+    %REGULATOR_LPV_POLY_MULTI Regulator for Polytopic LPV systems
     
 
     
     methods
-        function obj = regulator_lpv_poly(sys)
+        function obj = regulator_lpv_poly_multi(sys)
             %REGULATOR_LTI Construct an instance of this class
             %   Detailed explanation goes here
             obj@regulator_interface(sys)

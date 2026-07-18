@@ -1,0 +1,1 @@
+Images and figures in presentations, papers, and other forms of dissemination.
