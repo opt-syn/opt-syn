@@ -1,8 +1,8 @@
----
+<!-- ---
 
 tocdepth: 1
 
----
+--- -->
 
 
 
@@ -12,3 +12,8 @@ tocdepth: 1
 
 Text goes here
 
+<!-- 
+```{toctree}
+:maxdepth: 1
+:hidden:
+``` -->
