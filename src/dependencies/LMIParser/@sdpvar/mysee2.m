@@ -1,4 +1,4 @@
-function mysee(lmi);
+function mysee2(lmi);
 %display yalmip variable 
 
 v=getvariables(lmi);

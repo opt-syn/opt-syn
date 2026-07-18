@@ -1,11 +1,11 @@
-classdef op_quad < op_sml
+classdef op_quad_passivelmi < op_sml
     %OP_QUAD quadratic function 1/2 x' Q x, with eigenvalues of Q between
     %  m and L.
     
  
     
     methods
-        function obj = op_quad(m, L, c)
+        function obj = op_quad_passivelmi(m, L, c)
             %OP_QUAD Construct an instance of this class
             %   Detailed explanation goes here
             if nargin < 3

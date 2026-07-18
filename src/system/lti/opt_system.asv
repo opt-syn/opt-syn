@@ -1,0 +1,426 @@
+classdef  opt_system < opt_system_interface
+    %OPT_SYSTEM interconnection of network and operators
+    %by default is LTI (linear time invariant)
+ 
+    
+    methods
+        function obj = opt_system(op, P, K, bind, tracking)
+            %OPT_SYSTEM constructor for the system
+            if nargin < 4
+                bind = 1:length(op);
+            end
+            
+            if nargin < 5
+                 tracking = [];
+            end
+
+            obj@opt_system_interface(op, P, K, bind, tracking)
+            
+            obj.type = 'lti';
+        end    
+
+        %% Dimension Counters
+        function nss = Nss(obj)
+            %NSS: number of subsystems
+            nss = 1;
+        end      
+
+        function dimn = nxn(obj)
+            %nxn: number of states in network
+            dimn = length(obj.P.A);
+        end
+
+        function dimn = nxi(obj)
+            %nxi: number of states in controller
+            dimn = length(obj.K.A);
+        end
+        
+
+        %% getters
+        function Pcurr = get_P(obj, param)
+            %GET_P get the network P
+            Pcurr = obj.P.ss();
+        end
+        
+        function Kcurr = get_K(obj, param)
+            %GET_K get the controller K
+            Kcurr = obj.K;
+        end
+
+        %% build the plant
+        function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, task, param)
+            %BUILD_PLANT: form the plant to be used for analysis
+            %or synthesis
+            %Input:
+            %   iqc_data: from manager.iqc_op_all, information about the
+            %             operator iqc descriptions
+            %   task: 'analysis' or 'synthesis'
+            %   param: set of parameters: 
+            %       TODO: this may be unnecessary? Carried entirely by the
+            %       system description.
+            %
+            %Output:
+            %   alg_psi:    plant with filters (psi)
+            %   alg_loop:   plant without filters, but after loop
+            %               transformation (should be stable)
+            %   iqc_op:     iqcs for the robust uncertainties
+
+            if nargin < 3
+                param = [];
+            end
+
+            
+
+            %get the plant and the IQCs.
+            
+            alg = obj.get_alg(param);            
+            
+
+            %repeat this call multiple times for switched systems.
+            [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data);
+
+                      
+
+        end 
+
+        function [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_op, m_same, ind_same)
+            
+
+            %sort oracles based on the bind (exposure of repeated
+            %nonlinearities)
+            nop = length(obj.bind);
+            [~, perm] = sort(obj.bind);
+
+            %TODO: different number of channels per oracle
+            c = obj.op{1}.c;
+            P = eye(nop);
+            P(:, perm) = P;
+            P = kron(P, eye(c));
+
+            Pwp = blkdiag(P', eye(obj.P.nwp));
+            Pzp = blkdiag(P, eye(obj.P.nzp));
+
+            alg_perm = Pzp * alg * Pwp;
+
+            %identify and get rid of the same (m=L) oracles   
+            %use an explicit substitution
+
+
+            ind_diff = setdiff(1:obj.P.nw, ind_same);
+            Pd = eye(nop);
+            Pd(:, [ind_same, ind_diff]) = Pd;
+            n_same = length(ind_same);
+
+            Pwp2 = blkdiag(Pd', eye(obj.P.nwp));
+            Pzp2 = blkdiag(Pd, eye(obj.P.nzp));
+            alg_perm_same = Pzp2 * alg_perm * Pwp2;
+
+            alg_perm_m = lft(m_same, alg_perm_same, n_same, n_same);
+
+            %no loop transformations in performance
+            loop = iqc_op.loop;
+            nloop = length(loop)/2;
+            alg_loop = lft(loop, alg_perm_m, nloop, nloop);
+
+
+            %form the system
+            I = ss(eye(size(alg_loop.D, 2)));
+            GI = [alg_loop; I];
+
+            obj.P.nwp;
+
+
+            %TODO: division between analysis and synthesis
+            Psi1 = iqc_op.Psi1;
+            Psi2 = iqc_op.Psi2;
+            I_zp = eye(obj.P.nzp);
+            I_wp = eye(obj.P.nwp);
+
+            psi = blkdiag(Psi1, I_zp, Psi2, I_wp);
+
+
+            alg_psi = psi * GI; 
+
+        end
+
+
+
+        %% Regulation check and internal models
+
+        %solve the regulator equation for the network (Pi, Gamma, Phi)
+        %   used for verification and internal model control
+        %   find a parameterization of solutions of the regulator equation
+
+        %construct the internal model
+
+        %solve the regulator equation for the controller (Theta) given
+        %(Gamma, Phi): this is verification
+
+        function regulator = form_internal_model(obj)
+            %FORM_INTERNAL_MODEL create the internal model by solving the regulator
+            %equation. Inputs are the system (P, bind, tracking, op)
+            %
+            %op is important for which oracles are equaltiy constarints and
+            %which are inequality constraints
+
+            %TODO: break this up into common routines
+
+
+            %% break down the plant structure
+
+            regulator = [];
+            
+            [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P.ss_zy_wu();
+
+            
+            Npre = obj.get_consensus(obj.op, obj.bind);
+            c = size(D11, 1)/length(obj.bind); %coordinate lifts: change this later?
+            N = kron(Npre, eye(c));
+    
+            [sN, dN] = size(N);
+            n = obj.P.nx;
+
+            [Sbeta, Rbeta] = obj.get_tracked_opt();
+
+            if isempty(obj.tracking)
+                %constant tracking
+                S = eye(size(N, 2)+1);
+                R = S;
+
+
+                reg_ans = [zeros(n, 1), -B1*N;  -ones(sN, 1), -D11*N];
+                reg_mat = [A - eye(n), B2; C1, D12];
+
+
+                null_basis = null(reg_mat, 'rational');
+                try                    
+                    sol0 = reg_mat \ reg_ans;
+                catch
+                    warning('Regulator equation cannot be solved')
+                end
+                nnull = size(null_basis, 2);
+
+                Pi0 = sol0(1:n, :);
+                Gam0 = sol0(n+1:end, :);        
+                Phi0 = D21 * [zeros(sN, 1), N] + D22*Gam0 + C2*Pi0;
+
+                if nnull
+                    Pi_basis_pre = null_basis(1:n, :);
+                    Gam_basis_pre = null_basis(n+1:end, :);
+                    Phi_basis_pre = D22*Gam_basis_pre + C2*Pi_basis_pre;
+
+                    Pi_basis = kron(Pi_basis_pre, eye(nnull));
+                    Gam_basis = kron(Gam_basis_pre, eye(nnull));
+                    Phi_basis = kron(Phi_basis_pre, eye(nnull));
+                else
+                    Pi_basis = [];
+                    Gam_basis = [];
+                    Phi_basis = [];
+                end
+
+            else
+                %dynamical tracking, complicated Rbetalvester
+                Sbeta = kron(Sbeta, eye(c));
+                Rbeta = kron(Rbeta, eye(c));
+
+
+
+                S = blkdiag(Sbeta, eye(dN));
+                R = blkdiag(Rbeta, eye(dN));
+                ns = size(S, 1);
+                nr = size(Rbeta, 2);
+
+                %use kronecker structure to explicitly solve the sylvester
+                %equation
+                reg_ans_mat = [zeros(n, size(Rbeta, 2)), -B1*N; -ones(sN, 1)*Rbeta, -D11*N];
+    
+                reg_ans = reshape(reg_ans_mat, [], 1);
+                
+                reg_mat_L = [A, B2; C1, D12];
+                reg_mat_RR = S;
+                reg_mat_RL = blkdiag(speye(size(A, 1)), sparse(sN, sN));
+
+                reg_mat = kron(speye(ns), reg_mat_L) - kron(reg_mat_RR', reg_mat_RL);
+                
+                null_basis = null(reg_mat, 'rational');
+                nnull = size(null_basis, 2);
+                try                    
+                    reg_sol_vec = reg_mat \ reg_ans;
+                catch
+                    warning('Regulator equation cannot be solved')
+                end
+
+                reg_sol = reshape(reg_sol_vec, size(reg_mat_L, 1), []);
+
+                Pi0 = reg_sol(1:n, :);
+                Gam0 = reg_sol(n+1:end, :);        
+                Phi0 = D21 * [zeros(sN, nr), N] + D22*Gam0 + C2*Pi0;
+
+                if nnull
+                    Pi_basis = null_basis(1:n, :);
+                    Gam_basis = null_basis(n+1:end, :);
+                    Phi_basis = D22*Gam_basis + C2*Pi_basis;
+    
+
+                else
+                    Pi_basis = [];
+                    Gam_basis = [];
+                    Phi_basis = [];
+                end
+
+            end
+
+            regulator = struct('S', S, 'R', R, 'Pi', Pi0, 'Gam', Gam0, 'Phi', Phi0, ...
+                'Pi_basis', Pi_basis, 'Gam_basis', Gam_basis, 'Phi_basis',Phi_basis);
+
+
+        end
+
+        
+        % function [regulator_closed] = verify_regulator(obj)
+        %     %CHECK_REGULATOR does the closed-loop system obey the regulator
+        %     %equation? (direct interconnection)
+        % 
+        %     regulator = obj.form_internal_model();
+        % 
+        %     [Ac, Bc, Cc, Dc] = ssdata(obj.K);
+        % 
+        %     %[Ac, Bc; Cc, Dc][Th; Gam] = [S; 0]Th'
+        % 
+        % 
+        %                 reg_ans_mat = [zeros(n, size(Rbeta, 2)), -B1*N; -ones(sN, 1)*Rbeta, -D11*N];
+        % 
+        %         reg_ans = reshape(reg_ans_mat, [], 1);
+        % 
+        %         reg_mat_L = [A, B2; C1, D12];
+        %         reg_mat_RR = S;
+        %         reg_mat_RL = blkdiag(speye(size(A, 1)), sparse(sN, sN));
+        % 
+        % 
+        % end
+
+        function [regulator_closed] = check_regulator(obj)
+            %CHECK_REGULATOR does the closed-loop system obey the regulator
+            %equation? (direct interconnection)
+
+            % regulator = obj.form_internal_model();
+
+
+            sys_cl = lft(obj.P, obj.K);
+
+            A = sys_cl.A;
+            B = sys_cl.Bw;
+            C = sys_cl.Cz;
+            D = sys_cl.Dzw;
+
+            n = length(A);                
+
+            
+            Npre = obj.get_consensus(obj.op, obj.bind);
+            c = size(D, 1)/length(obj.bind); %coordinate lifts: change this later?
+            N = kron(Npre, eye(c));
+
+
+
+            
+            [sN, dN] = size(N);
+            if isempty(obj.tracking)
+                %constant tracking
+                
+                S = eye(1+size(N, 2));
+                R = S;
+
+                reg_ans = [zeros(n, 1), -B*N;  -ones(sN, 1), -D*N];
+                reg_mat = [A - eye(n); C];
+
+
+                null_basis = null(reg_mat, 'rational');
+                
+                sol0 = reg_mat \ reg_ans;
+                nnull = size(null_basis, 2);
+
+                nx = obj.P.nx;
+                Pi0 = sol0(1:nx, :);
+                Th0 = sol0(nx+1:end, :);        
+
+                if nnull
+                    Pi_basis_pre = null_basis(1:nx, :);
+                    Th_basis_pre = null_basis(nx+1:end, :);
+    
+                    Pi_basis = kron(Pi_basis_pre, eye(nnull));
+                    Th_basis = kron(Th_basis_pre, eye(nnull));
+                else
+                    Pi_basis = [];
+                    Th_basis = [];
+                end
+
+               
+
+            else
+
+                %dynamical tracking, complicated Rbetalvester
+                Sbeta = kron(obj.tracking.Sbeta, eye(c));
+                Rbeta = kron(obj.tracking.Rbeta, eye(c));
+
+
+                
+
+                S = blkdiag(Sbeta, eye(dN));
+                R = blkdiag(Rbeta, eye(dN));
+                ns = size(S, 1);
+                nr = size(Rbeta, 2);
+
+                reg_ans_mat = [zeros(n, size(Rbeta, 2)), -B*N; -ones(sN, 1)*Rbeta, -D*N];
+    
+                reg_ans = reshape(reg_ans_mat, [], 1);
+                
+                reg_mat_L = [A; C];
+                reg_mat_RR = S;
+                reg_mat_RL = [speye(size(A, 1)); zeros(size(C))];
+
+
+                reg_mat = kron(speye(ns), reg_mat_L) - kron(reg_mat_RR', reg_mat_RL);
+                
+                null_basis = null(reg_mat, 'rational');
+                nnull = size(null_basis, 2);
+                try                    
+                    reg_sol_vec = reg_mat \ reg_ans;
+                catch
+                    warning('Regulator equation cannot be solved')
+                end
+
+                reg_sol = reshape(reg_sol_vec, [], ns);
+
+                nx = obj.P.nx;
+                Pi0 = reg_sol(1:nx, :);
+                Th0 = reg_sol(nx+1:end, :);        
+
+                if nnull
+                    Pi_basis_pre = null_basis(1:nx, :);
+                    Th_basis_pre = null_basis(nx+1:end, :);
+    
+                    Pi_basis = kron(Pi_basis_pre, eye(nnull));
+                    Th_basis = kron(Th_basis_pre, eye(nnull));
+                else
+                    Pi_basis = [];
+                    Th_basis = [];
+                end
+            end
+
+
+            
+            % regulator_closed = regulator;
+          regulator_closed = struct('S', S, 'R', R, 'Pi', Pi0, ...
+              'Pi_basis', Pi_basis,...
+              'Th', Th0,  'Th_basis', Th_basis);
+
+            
+
+        end
+
+        
+
+
+    end
+end
+
