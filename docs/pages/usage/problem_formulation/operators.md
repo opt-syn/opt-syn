@@ -1,7 +1,3 @@
- 
-
-
-
 # Operators
 
 :::{caution} 

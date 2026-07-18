@@ -10,7 +10,6 @@ The network and controller.
 
 
 ```{toctree}
-:maxdepth: 1
 Linear Time Invariant <lti>
 Switched <switched>
 Periodic <periodic>
