@@ -21,7 +21,8 @@ extensions = [
     'sphinx.ext.viewcode', 
     'sphinxcontrib.matlab', 
     'sphinx.ext.autodoc',  
-    'sphinx_favicon'
+    'sphinx_favicon', 
+    'myst_parser'
 ]
 
 templates_path = ['_templates']
