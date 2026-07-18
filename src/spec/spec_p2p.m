@@ -11,7 +11,7 @@ classdef spec_p2p < spec_interface
     properties
         type='p2p';
         gain = 1;
-        weight = 0.5; %used for the terminal cost (theorem 3 of Schwenkel 2026)
+        weight = 0.5; 
     end
 
     methods
@@ -37,23 +37,22 @@ classdef spec_p2p < spec_interface
         function quad = quad_terminal(obj, vars_spec)
             %matrix for  the terminal p2p expression
             %
-            alpha = obj.rho^2 / (1-obj.rho^2);
             nwp = length(obj.iwp);
             nzp = length(obj.izp);
 
-            if obj.target
-                Q0 = -obj.weight*alpha * (vars_spec.gam_p2p - vars_spec.mu_p2p);
-                U0 = vars_spec.gam_p2p *  (1/(obj.weight*alpha));
+            % if obj.target
+            %     Q0 = -(vars_spec.gam_p2p - vars_spec.mu_p2p);
+            %     U0 = 1;
+            %     Q_term = drep(Q0, nwp);
+            %     U_term = drep(U0, nzp);
+            % else
+                
+                Q0 =  -(vars_spec.mu_p2p - vars_spec.gam_p2p);
+                U0 = vars_spec.gam_p2p;
                 Q_term = drep(Q0, nwp);
                 U_term = drep(U0, nzp);
-            else
-                
-                Q0 = -obj.weight * alpha * (obj.gain - vars_spec.mu_p2p);
-                U0 = obj.gain / (obj.weight*alpha);
-                Q_term = drep(Q0, nwp);
-                U_term = kron(U0, eye(nzp));
-                
-            end
+                % 
+            % end
 
             T_term = eye(nzp);
             S_term = zeros(nzp, nwp);
@@ -68,9 +67,9 @@ classdef spec_p2p < spec_interface
            
                nwp = length(obj.iwp);
                
-               Q_p2p = -vars_spec.mu_p2p;
+               Q_p2p = -drep(vars_spec.mu_p2p, nwp);
                
-               S_p2p = -zeros(nwp, 0);
+               S_p2p = zeros(nwp, 0);
                T_p2p = [];
                U_p2p = [];
   
