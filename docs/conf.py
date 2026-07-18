@@ -57,3 +57,23 @@ html_theme_options = {
 html_title = "opt-syn"
 
 html_sidebars={}
+
+
+#myst options
+myst_enable_extensions = [
+    "alert",
+    "amsmath",
+    "attrs_inline",
+    "colon_fence",
+    "deflist",
+    "dollarmath",
+    "fieldlist",
+    "gfm_autolink",
+    "html_admonition",
+    "html_image",
+    "replacements",
+    "smartquotes",
+    "strikethrough",
+    "substitution",
+    "tasklist",
+]
