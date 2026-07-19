@@ -11,6 +11,7 @@ Under Construction
 Problem Setup <problem_formulation/index_problem_formulation>
 Solving <solve>
 Validation <validation/validation>
+Simulation <simulation>
 ```
 
 

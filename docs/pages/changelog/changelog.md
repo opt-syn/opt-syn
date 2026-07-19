@@ -1,4 +1,4 @@
-# What's new in opt-syn
+# Changelog
 
 
 ```{toctree}

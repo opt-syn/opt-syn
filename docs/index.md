@@ -28,7 +28,7 @@ How it Works <pages/how_it_works/index_how_it_works>
 How to Use <pages/usage/index_usage>
 Examples <pages/examples>
 Documentation <pages/documentation/documentation>
-What's new <pages/whats_new/whats_new>
+Changelog <pages/changelog/changelog>
 Resources <pages/resources>
 ```
 
