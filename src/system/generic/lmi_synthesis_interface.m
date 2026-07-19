@@ -131,6 +131,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %systems with more outputs than oracles can have freedom in the            
             %regulator equations (such as optimization problems with known 
             % Laplacian matrices)
+
+            if nargin < 2
+                param_null = false;
+            end
             
             vars_reg = obj.reg.create_vars();            
 

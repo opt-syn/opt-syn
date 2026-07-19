@@ -303,7 +303,7 @@ classdef (Abstract) opt_manager_interface < handle
 
 
             sol_best = [];
-            vr = [];
+ 
             %base relations
 
             %bisection options are separate from configuration options
@@ -332,6 +332,9 @@ classdef (Abstract) opt_manager_interface < handle
             
             v = max(b_opts.val_range);
             vr = b_opts.val_range;
+            
+            
+            %TODO: implement warm start logic
             WARM = false;
 
 
@@ -341,10 +344,10 @@ classdef (Abstract) opt_manager_interface < handle
             % f = @(pcurr) bisect_inner(obj, pcurr, vars, cons, alg_psi, iqc_op, specs, b_opts);
             f = @(pcurr) bisect_inner(obj, pcurr, vars, cons, specs, b_opts);
 
-            found_bound = [0, 0];
+            % found_bound = [0, 0];
             sol0 = f(v);
             if sol0.status
-                sol = sol0;
+                sol_best = sol0;
                 vr = [vr(2), Inf];                
             else
 
@@ -363,7 +366,7 @@ classdef (Abstract) opt_manager_interface < handle
                         %if successful, proceed with left interval 
                         vr(2) = v;
                         sol_best = sol;
-                        v_best = v;
+                        % v_best = v;
                     else
                         %if not successful, proceed with right interval
                         vr(1) = v;

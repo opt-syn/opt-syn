@@ -253,17 +253,13 @@ classdef iqc_loop_split
 
             %first determine the type of factorization
             
-            if nargin < 2
-                perturb = 1e-4;
-            end                                
+            % if nargin < 2
+            %     perturb = 1e-4;
+            % end                                
             np = obj.np;
             nq = obj.np;
 
-            %top corner: select passive factorization
-            M11 = obj.M(1:np, 1:np);
-            M12 = obj.M(1:np, np + (1:nq));
-            M22 = obj.M(np + (1:nq), np + (1:nq));
-            
+ 
             %specialized factorization for zames-falb type multipliers
 
 

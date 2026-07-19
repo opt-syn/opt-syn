@@ -544,17 +544,22 @@ classdef regulator_interface
 
 
         %% incorporate into optimization
-        function vars_reg = create_vars(obj)
+        function vars_reg = create_vars(obj, param_null)
             %CREATE_VARS: create variables that parameterize the nullspace
             vars_reg.Pi = obj.Pi;
             vars_reg.Gam = obj.Gam;
             vars_reg.Phi = obj.Phi;
 
+            if nargin < 2
+                param_null = false;
+            end
+
             
 
             
-%             if isempty(obj.Gam_basis)==0
-            if false
+            if (isempty(obj.Gam_basis)==0) && param_null
+            % if false
+                nd = size(obj.Gam_basis, 2);
                 nbasis = size(obj.Gam_basis, 3);                
                 eta = lmim('reg_param', nbasis, 1, 'full');
 
@@ -562,9 +567,10 @@ classdef regulator_interface
                 for i = 1:nbasis
                     eta_curr = lmim_index(eta, i, 1);
 
-                    vars_reg.Pi = vars_reg.Pi + obj.Pi_basis(:, :, i) * eta_curr;
-                    vars_reg.Gam = vars_reg.Gam + obj.Gam_basis(:, :, i) * eta_curr;
-                    vars_reg.Phi = vars_reg.Phi + obj.Phi_basis(:, :, i) * eta_curr;
+                    eta_kron = drep(eta_curr, nd);
+                    vars_reg.Pi = vars_reg.Pi + obj.Pi_basis(:, :, i) * eta_kron;
+                    vars_reg.Gam = vars_reg.Gam + obj.Gam_basis(:, :, i) * eta_kron;
+                    vars_reg.Phi = vars_reg.Phi + obj.Phi_basis(:, :, i) * eta_kron;
                 end
 
                 vars_reg.eta = eta;
