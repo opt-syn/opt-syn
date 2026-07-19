@@ -42,6 +42,20 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
            
         end
 
+        function [vars_reg] = create_vars_regulator(obj)
+            %CREATE_VARS_REGULATOR
+            %parameterize the solutions to the regulator equations
+            %use this as a variable in reduced-order control
+            %
+            %systems with more outputs than oracles can have freedom in the            
+            %regulator equations (such as optimization problems with known 
+            % Laplacian matrices)
+ 
+            %param the nullspace
+            vars_reg = obj.reg.create_vars(true);            
+
+        end
+
         function sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
             %recover the controller
 
@@ -333,8 +347,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 zeros(ns, length(iw))];
             Caug = [C(iy, :), D(iy, id)];
 
-            ns = size(vars_reg.Pi, 2);
-            nf = n - size(vars_reg.Pi, 1);
+            ns = ssize(vars_reg.Pi, 2);
+            nf = n - ssize(vars_reg.Pi, 1);
             
             Piaug = [zeros(nf, ns); vars_reg.Pi];
             Creg = [C(iz, :), -C(iz, :) * Piaug- D(iz, iu) * vars_reg.Gam];
