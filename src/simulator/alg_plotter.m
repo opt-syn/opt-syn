@@ -164,7 +164,7 @@ classdef alg_plotter
                 end
                 xlim([k(1), k(end)])
                 
-                if strcmp(sig, 'delay')
+                if strcmp(sig, 'delay') || strcmp(sig, 'mode') 
                     yticks(1:max(sig_plot));                    
                 end
             
