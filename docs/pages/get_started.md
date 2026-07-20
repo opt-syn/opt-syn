@@ -39,7 +39,7 @@ An instance of this type of composite optimization problem is the [LASSO](https:
 
 The class of functions $\F$ we consider in this demonstration are
 1. $f_1$ is proper, closed, $m$-strongly convex, and has $L$-Lipschitz gradients with parameters $0 < m < L< \infty$; 
-2. $f_2$ is the $0/\infty$ indicator function of a closed, nonempty, convex set $\mathcal{C}$.
+2. $f_2$ is the $0/\infty$ indicator function of a closed, nonempty, convex set $\mathcal{Z}$.
 
 As a result, $\beta^*$ exists and is unique for each pair $(f_1, f_2) \in \F$.
 
@@ -48,7 +48,7 @@ As a result, $\beta^*$ exists and is unique for each pair $(f_1, f_2) \in \F$.
 The Projected Gradient Descent (PGD) algorithm with stepsize $\gamma > 0$ is the iterative procedure
 
 ```{math}
-\beta_{k+1} = \text{proj}_{\mathcal{C}}(\beta_k - \gamma \nabla f_1(\beta_k)).
+\beta_{k+1} = \text{proj}_{\mathcal{Z}}(\beta_k - \gamma \nabla f_1(\beta_k)).
 ```
 
 PGD achieves linear convergence at rate $\rho \in (0, 1]$ if there exists a constant $\gamma_0$ such that $\norm{\beta_{k}-\beta^*}_2  \leq  \gamma_0 \rho^{-k} \norm{\beta_0-\beta^*}$ for all initial points $\beta_0$, functions $(f_1, f_2) \in \F$, and times $k \in \N$.
@@ -61,7 +61,7 @@ The goal of Analysis is to numerically find the least $\rho$ valid for all $f \i
 The iterative procedure for PGD may be equivalently expressed as an interconnection between a linear dynamical system and the oracles $(f_1, f_2)$ as
 ```{math}
 \begin{align*}
- \mat{c}{x_{k} \hl z_k^1 \\ z_k^2} &= \mat{c|cc}{I & -\gamma I & -\gamma I \hl I &0 & 0 \\
+ \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &= \mat{c|cc}{I & -\gamma I & -\gamma I \hl I &0 & 0 \\
  I & -\gamma I & -\gamma I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\nabla f_1(z_k^1) \\ \partial f_2(z_k^2)}
 \end{align*},
 ```
@@ -131,7 +131,7 @@ sol_alt = man_grad.alternate([], {1, 1}, [], b_opts);
 rho_alt = sol_alt{end, end}.rho % 0.5723
 ```
 
-
+<!-- 
 These algorithm require proximal evaluation of the function $f_1$,  due to the nonzero quantity $-0.3161$ between $w_1$ and $z_1$. If only gradient evaluations of $\nabla f_1$ are permitted, then we use the synthesis code
 
 ``` matlab
@@ -151,7 +151,7 @@ to obtain the $\rho \leq 0.8322$ algorithm
   I  & 0 &  0 & 0 \\
  I & 0.3658 I & -0.1153 I & -0.4811 I }   \mat{c}{x_{k+1}^1 \\ x_{k+1}^2 \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\nabla f_1(z_k^1) \\ \partial f_2(z_k^2)}
 \end{align*}.
-```
+``` -->
 
 
 

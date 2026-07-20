@@ -1,4 +1,4 @@
-# Optimization Algorithms as Dynamical Systems
+# Network Dynamics
 
 :::{caution} 
 Under Construction
@@ -7,11 +7,12 @@ Under Construction
 
 ## Algorithmic Interconnection
 
+Content
+
 ## Analysis
+
+Content
 
 ## Synthesis
 
-
-
-Text goes here
-
+Content

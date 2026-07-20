@@ -28,6 +28,7 @@ extensions = [
     'sphinx.ext.napoleon',  
     'sphinx.ext.mathjax',
     'sphinx_favicon',     
+    'sphinxcontrib.bibtex',
     'myst_parser'
 ]
 
@@ -118,6 +119,7 @@ mathjax3_config = {
             "Biginner": [r"\left\langle #1, #2 \right\rangle", 2],
             "mas": [r"\left[\begin{array}{#1}#2\end{array}\right]", 2],
             "mat": [r"\left(\begin{array}{#1}#2\end{array}\right)", 2],
+            "mav": [r"\left\lVert\begin{array}{#1}#2\end{array}\right\rVert", 2],
             "argmax": r"\operatorname*{argmax}",
             "argmin": r"\operatorname*{argmin}",
             "R" : r"\mathbb{R}",
@@ -133,6 +135,13 @@ mathjax3_config = {
             "hdl" : r"\\ \hdashline", 
             "nulls" : r"\textrm{null}",
             "ov": [r"\overline{#1}", 1],
+            "Acl" : r"\mathcal{A}",
+            "Bcl" : r"\mathcal{B}",
+            "Ccl" : r"\mathcal{C}",
+            "Dcl" : r"\mathcal{D}",
         }
     }
 }
+
+#bibtex
+bibtex_bibfiles = ['references .bib']
