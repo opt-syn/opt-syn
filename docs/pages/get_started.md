@@ -132,7 +132,7 @@ rho_alt = sol_alt{end, end}.rho % 0.5723
 ```
 
 
-These algorithm requires proximal evaluation of the function $f_1$ due to the nonzero quantity $-0.3161$ between $w_1$ and $z_1$. If only gradient evaluations of $\nabla f_1$ are permitted, then we use the synthesis code
+These algorithm require proximal evaluation of the function $f_1$,  due to the nonzero quantity $-0.3161$ between $w_1$ and $z_1$. If only gradient evaluations of $\nabla f_1$ are permitted, then we use the synthesis code
 
 ``` matlab
 config_grad = opt_config();
