@@ -9,13 +9,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
     %   periodic
     %   switched robust
     %   switched jump
-    
-    properties
-        reg; %internal model of the controller
-                
-        
-    end
-
+   
     
     methods
         function obj = lmi_synthesis_interface(sys, config)
@@ -24,23 +18,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             obj@lmi_dispatch_interface(sys, config);
 
 
-            %form the internal model
-            stype = sys.get_type();
-
-            %temporary measure while debugging periodic regulator
-            %conditions
-            % switch stype
-            %     case 'periodic'
-            %         stype = 'switched';
-            %     case 'periodic_orbit'
-            %         stype = 'switched';                    
-            % end
-            reg_name = ['regulator_', stype];
-
-            
-
-            reg_handle = str2func(reg_name);
-            obj.reg = reg_handle(sys);
 
             %TODO: better options handling down below
             obj.config = config;

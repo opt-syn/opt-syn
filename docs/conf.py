@@ -1,5 +1,6 @@
 import os
 import sys
+from datetime import date, datetime, timezone
 
 # Configuration file for the Sphinx documentation builder.
 #
@@ -10,20 +11,40 @@ import sys
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'opt-syn'
-copyright = '2026, Jared Miller'
-author = 'Jared Miller'
+author = "opt-syn team"
+copyright = f"{date.today().year}, opt-syn team"
+
 release = '0.1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
+#configuration options are based on https://github.com/AutoLyap/AutoLyap/blob/main/docs/source/conf.py
+
 extensions = [
     'sphinx.ext.viewcode', 
     'sphinxcontrib.matlab', 
     'sphinx.ext.autodoc',  
-    'sphinx_favicon', 
+    'sphinx.ext.napoleon',  
+    'sphinx.ext.mathjax',
+    'sphinx_favicon',     
     'myst_parser'
 ]
+
+html_context = {
+    "seo_site_name":"opt-syn",
+    "seo_site_description": ("opt-syn is a MATLAB package for the analysis and design of first-order methods"),
+    "seo_default_keywords": [
+        "opt-syn",
+        "optimization",
+        "first-order",
+        "design",
+        "synthesis",
+        "convergence",
+        "LMI",
+        "semidefinite programming"
+    ]
+}
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
@@ -77,3 +98,41 @@ myst_enable_extensions = [
     "substitution",
     "tasklist",
 ]
+
+
+
+#math options
+mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
+
+mathjax3_config = {
+    "loader": {
+        "load": ["[tex]/html"],
+    },
+    "tex" : {
+        "packages": {"[+]": ["html", "arydshln"]},
+        "macros":{
+            "abs": [r"\left\lvert #1 \right\rvert", 1],
+            "Bignorm": [r"\left\lVert #1 \right\rVert", 1],
+            "norm": [r"\lVert #1 \rVert", 1],
+            "Biginner": [r"\left\langle #1, #2 \right\rangle", 2],
+            "Biginner": [r"\left\langle #1, #2 \right\rangle", 2],
+            "mas": [r"\left[\begin{array}{#1}#2\end{array}\right]", 2],
+            "mat": [r"\left(\begin{array}{#1}#2\end{array}\right)", 2],
+            "argmax": r"\operatorname*{argmax}",
+            "argmin": r"\operatorname*{argmin}",
+            "R" : r"\mathbb{R}",
+            "Rbar": r"\overline{\mathbb{R}}",
+            "C" : r"\mathbb{C}",
+            "sC" : r"\mathcal{C}",
+            "N" : r"\mathbb{N}",
+            "Z" : r"\mathbb{Z}",
+            "F" : r"\mathcal{F}",
+            "1" : r"\mathbb{1}",
+            "0" : r"\mathbb{0}",
+            "hl" : r"\\ \hline",                    
+            "hdl" : r"\\ \hdashline", 
+            "nulls" : r"\textrm{null}",
+            "ov": [r"\overline{#1}", 1],
+        }
+    }
+}

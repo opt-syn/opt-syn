@@ -797,7 +797,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             Ckt = Ck + Gam*Z;
             Dkt = Dk;
 
-            LblockI = [eye(n), rhoi * Pi, B(:, iu);
+            LblockI = [eye(n), rhoi * [zeros(nf, ns); Pi], B(:, iu);
                 zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
                 zeros(nu, n), zeros(nu, ns), eye(nu)];
 

@@ -22,7 +22,7 @@ classdef opt_synthesis < opt_manager_interface
 
             obj@opt_manager_interface(sys, config);
                         
-            if nargin == 2 || isempty(iqc_op)                
+            if nargin <= 2 || isempty(iqc_op)                
                 %create identity filters, but keep the loop transformations
                 obj.iqc_op = obj.make_blank_iqc;
             else
@@ -238,8 +238,13 @@ classdef opt_synthesis < opt_manager_interface
             
             sys_curr = obj.sys;
 
+
             if ~iscell(specs)
-                specs = {specs};
+                if isempty(specs)
+                    specs = {spec_stability(1)};
+                else
+                    specs = {specs};
+                end
             end
 
             for j = 1:numel(iqc_curr)

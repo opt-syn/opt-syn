@@ -9,6 +9,7 @@ classdef lmi_dispatch_interface < handle
         sys;
         config;
         reduced = false;
+        reg; %regulator
     end
     
     methods
@@ -17,6 +18,13 @@ classdef lmi_dispatch_interface < handle
             %   Detailed explanation goes here
             obj.sys = sys;
             obj.config = config;
+
+            %form the internal model
+            stype = sys.get_type();
+            reg_name = ['regulator_', stype];           
+            reg_handle = str2func(reg_name);
+            obj.reg = reg_handle(sys);
+
         end
         
 
@@ -40,12 +48,9 @@ classdef lmi_dispatch_interface < handle
             %Output:
             %   cons:   accumulated constraints
             %   objective:  term to be minimized            
-            
-            
-            %multiply the A and B entries of the plant by R
-            %to accomplish the periodic orbit constructions
+                      
 
-
+            %this is overridden by inheritance
 
             %Upper-levels: iterate over the systems
             [cons, objective, con_M] = obj.con_dynamic_single(vars, cons, diss);

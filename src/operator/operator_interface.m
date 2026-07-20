@@ -40,8 +40,15 @@ classdef (Abstract) operator_interface
             %           variables directly)
 
             if obj.same
-                iqc_orig = obj.get_same(reps);                
+                iqc_orig = obj.get_same(reps);   
+                iqc = kron(iqc_orig, eye(obj.c));
+                vars = [];
             else
+                if isscalar(order)
+                    order = [order, 0];
+                end
+                
+
                 [vars] = obj.create_vars(order, reps);
       
                 %form the IQC            
@@ -54,10 +61,11 @@ classdef (Abstract) operator_interface
     
                 iqc_orig = iqc_loop_split(psi1, M, loop, psi2, X);
     
+                iqc = iqc_orig.lift(obj.c);
                 
                 % cons = obj.filter_constraints(cons, order, vars, iqc);
             end
-            iqc = iqc_orig.lift(obj.c);
+            
         end
 
         function sm = same(obj)

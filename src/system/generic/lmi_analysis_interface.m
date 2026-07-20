@@ -10,16 +10,25 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
     %   switched robust
     %   switched jump
     
-    % properties
+    properties
+       regcl;  
         
-        
-    % end
+    end
     
     methods
         function obj = lmi_analysis_interface(sys, config)
             %LMI_ANALYSIS_INTERFACE Construct an instance of this class
             %   Detailed explanation goes here
             obj@lmi_dispatch_interface(sys, config);
+
+            %if the regulator equation fails, then the algorithm may
+            %converge to a nonoptimal point.
+            try
+                obj.regcl = obj.reg.check_regulator();
+            catch
+                error('Failure of Regulator Equation: Convergence cannot be assured.')
+            end
+            
         end
 
 

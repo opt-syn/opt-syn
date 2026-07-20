@@ -15,8 +15,8 @@ Configiuration <config>
 
 
 
-<!-- ```{eval-rst}
-.. mat:automodule :: operator
+```{eval-rst}
+.. mat:automodule :: simulator.op_sim
    :members:   
    :show-inheritance:
-``` -->
+```

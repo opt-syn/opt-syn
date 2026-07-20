@@ -1,4 +1,4 @@
-# How to Use
+# Usage
 
 :::{caution} 
 Under Construction

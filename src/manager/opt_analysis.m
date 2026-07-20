@@ -126,7 +126,6 @@ classdef opt_analysis < opt_manager_interface
 
             %this requires a weighting by the exponential discounts            
             rho_pow = rho.^(obj.schedule);
-
             %see if this can be parameterized later
             for i = 1:length(obj.sys.op)
                 cons = obj.sys.op{i}.filter_constraints(cons, obj.order{i}, vars.op{i}, rho_pow, obj.iqc_op{i});
@@ -266,6 +265,7 @@ classdef opt_analysis < opt_manager_interface
 
             end
 
+            sol.sys = obj.sys;
             sol.iqc_op = iqc_rec;
 
             alg_psi_rec = alg_psi;
