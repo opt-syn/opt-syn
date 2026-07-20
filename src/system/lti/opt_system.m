@@ -6,6 +6,18 @@ classdef  opt_system < opt_system_interface
     methods
         function obj = opt_system(op, P, K, bind, tracking)
             %OPT_SYSTEM constructor for the system
+            
+            
+            
+            if nargin < 2
+                P = [];
+                
+            end
+            
+            if nargin < 3
+                K = [];
+            end
+    
             if nargin < 4
                 bind = 1:length(op);
             end
@@ -47,6 +59,19 @@ classdef  opt_system < opt_system_interface
             else
                 Kcurr = obj.K;
             end
+        end
+
+        function sys_sim = sim(obj, op_sim)
+            %
+            % export the system for use in simulation
+            % with the operators (for iqcs) replaced by operators (in
+            % op_sim)
+            %
+            % Args          
+            sys_sim = obj;
+            sys_sim.oop = op_sim;
+
+
         end
 
         

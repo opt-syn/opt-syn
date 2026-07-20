@@ -27,7 +27,7 @@ classdef  opt_system_interface
             
             obj.op = op;
 
-            
+
             obj.P = P;
             obj.K = K;
             if nargin < 4
@@ -36,6 +36,15 @@ classdef  opt_system_interface
             else
                 obj.bind = bind;
             end
+
+
+            if isempty(P)                
+                nbind = length(obj.bind);
+                c = obj.op{1}.c;
+                 
+                obj.P = bridge_pass_through(nbind, c);            
+            end
+
 
             %assign identifiers to the operators
             for i = 1:length(op)

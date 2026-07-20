@@ -308,12 +308,19 @@ classdef (Abstract) opt_manager_interface < handle
 
             %bisection options are separate from configuration options
             %should they be?
+
+            if nargin < 2
+                arg = [];
+            end
+            if nargin < 3 || isempty(specs)
+                specs = {spec_stability(1)};
+            end
+
             if nargin < 4
                 b_opts = bisect_opts;
             end
             
             
-
             %process the inputs and specifications
             obj = obj.process_argument(arg);
             
