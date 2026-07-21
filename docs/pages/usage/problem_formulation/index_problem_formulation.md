@@ -8,8 +8,7 @@ Under Construction
 
 
 ```{toctree}
-:maxdepth: 3
-:hidden:
+:maxdepth: 1
 Operators <operators>
 Dynamical Systems <systems/index_systems>
 Bind <bind>
