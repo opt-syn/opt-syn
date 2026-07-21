@@ -114,7 +114,7 @@ mathjax3_config = {
         "load": ["[tex]/html"],
     },
     "tex" : {
-        "packages": {"[+]": ["html", "arydshln"]},
+        "packages": {"[+]": ["html", "arydshln", "xcolor"]},
         "macros":{
             "abs": [r"\left\lvert #1 \right\rvert", 1],
             "Bignorm": [r"\left\lVert #1 \right\rVert", 1],
@@ -128,6 +128,7 @@ mathjax3_config = {
             "argmin": r"\operatorname*{argmin}",
             "R" : r"\mathbb{R}",
             "Rbar": r"\overline{\mathbb{R}}",
+            "rhoi" : r"\rho^{-1}",
             "C" : r"\mathbb{C}",
             "sC" : r"\mathcal{C}",
             "N" : r"\mathbb{N}",
@@ -144,9 +145,14 @@ mathjax3_config = {
             "Bcl" : r"\mathcal{B}",
             "Ccl" : r"\mathcal{C}",
             "Dcl" : r"\mathcal{D}",
+            "Ac" : r"A_c",
+            "Bc" : r"B_c", #change to make colors
+            "Cc" : r"C_c",
+            "Dc" : r"D_c", 
+            "Kc" : r"K_c", 
         }
     }
 }
 
 #bibtex
-bibtex_bibfiles = ['references .bib']
+bibtex_bibfiles = ['references.bib']

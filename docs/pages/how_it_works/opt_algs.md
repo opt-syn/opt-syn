@@ -76,3 +76,34 @@ We visualize executions of the Douglas-Rachford algorithm to solve an optimizati
  The optimal solution is the black circle. The visualized curves are the outputs $\{z_k^2\}_{k \in \N}$ starting from random initial conditions $x_0$.
 ```
 <!-- :scale: 50 % -->
+
+
+## Operator Classes
+
+The individual operators $F_i$ in the inclusion problem may be contained in known operator classes. The linear system $G$ should ensure that the algorithm $(F, G)$ satisfies the previous properties for all $F$ in a desired class of operators  $\F$. 
+
+
+The two major classes of supported operators are set-valued maps and subdifferentials of functions.
+
+
+### Set-Valued Maps
+ The set-valued maps may optionally possess the properties of 
+- maximal monotonicity,
+- $\mu$-strong-monotonicity $\mu > 0$,
+- $\mu$-hypo-monotonicity with $\mu > 0$,
+- $\beta$-cocoercivity with $\beta>0$,
+- $L$-Lipschitzness with $L > 0$,
+- $R$-Inverse-Lipschitzness with $R > 0$. 
+
+
+### Subdifferentials
+
+The most basic subdifferential operator class is the subdifferential of a proper, closed, convex (p.c.c.) function. 
+The subdifferential class that we use are characterized by constants $-\infty < m < L < \infty$. The class of functions $\mathcal{S}_{m, L}$ is the set where $f - \frac{m}{2}\norm{\cdot}_2^2$ is p.c.c, and $\frac{L}{2} \norm{\cdot} - f$ is p.c.c. if $L < \infty$. 
+
+
+We support 
+- Subdifferentials of $\mathcal{S}_{m, L}$
+- Subdifferentials of quadratics in  $\mathcal{S}_{m, L}$
+- Subdifferentials of known quadratics ($z \mapsto m z - b$)
+
