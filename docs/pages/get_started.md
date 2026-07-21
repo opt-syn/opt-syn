@@ -3,20 +3,17 @@
 
 ## Installation
 
-opt-syn may be downloaded from [github](https://github.com/Jarmill/opt-syn).
+{{osyn}} may be downloaded from [github](https://github.com/Jarmill/opt-syn).
 
-It is tested for MATLAB versions  >= 2024a.
+It is tested for MATLAB versions  $\geq$ 2024a.
 
-:::{caution} 
-Need to make this a MATLAB packages.
-:::
 
 
 ## Workflow
 
 Analysis and Synthesis follow similar workflows:
 1. Define the class of {doc}`operators <usage/problem_formulation/operators>' in the optimization/inclusion problem.
-2. Specify the algorithm (analysis), or the network connecting the operators (synthesis)
+2. Specify the algorithm (analysis), or the network interfacing the operators (synthesis)
 3. Choose the order of the certification (higher order: better bounds, more expensive)
 4. Solve the profiling problem
 5. Validate the solution, and plot sample trajectories
@@ -34,7 +31,7 @@ An optimal point $\beta$ must satisfy the necessary inclusion condition $0 \in \
 An instance of this type of composite optimization problem is the [LASSO](https://en.wikipedia.org/wiki/Lasso_(statistics)) task in regression
 
 ```{math}
-\beta \in \argmin_{||\beta||_2^2 \leq \tau } f_1(\beta).
+\beta \in \argmin_{||\beta||_1 \leq \tau } f_1(\beta).
 ```
 
 The class of functions $\F$ we consider in this demonstration are
@@ -51,7 +48,7 @@ The Projected Gradient Descent (PGD) algorithm with stepsize $\gamma > 0$ is the
 \beta_{k+1} = \text{proj}_{\mathcal{Z}}(\beta_k - \gamma \nabla f_1(\beta_k)).
 ```
 
-PGD achieves linear convergence at rate $\rho \in (0, 1]$ if there exists a constant $\gamma_0$ such that $\norm{\beta_{k}-\beta^*}_2  \leq  \gamma_0 \rho^{-k} \norm{\beta_0-\beta^*}$ for all initial points $\beta_0$, functions $(f_1, f_2) \in \F$, and times $k \in \N$.
+PGD achieves linear convergence at rate $\rho \in (0, 1)$ if there exists a constant $\gamma_0$ such that $\norm{\beta_{k}-\beta^*}_2  \leq  \gamma_0 \rho^{-k} \norm{\beta_0-\beta^*}$ for all initial points $\beta_0$, functions $(f_1, f_2) \in \F$, and times $k \in \N$.
 
 
 
@@ -86,8 +83,8 @@ sys = opt_system({op1, op2}, [], K);
 %run the analysis routine, use bisection to minimize the convergence rate
 man = opt_analysis(sys); 
 order = {1, 1}; % order of the analysis program
-sol_best = man.bisect(order);
-rho = sol_best.rho % 0.8182, matches theory within 4 digits.
+sol = man.bisect(order);
+rho = sol.rho % 0.8182, matches theory within 4 digits.
 ```
 
 ## Synthesis 
@@ -106,8 +103,8 @@ sys = opt_system({op1, op2});
 
 %run the synthesis routine, use bisection to minimize the convergence rate
 man = opt_synthesis(sys); 
-sol_best = man.bisect();
-rho = sol_best.rho % 0.7209
+sol = man.bisect();
+rho = sol.rho % 0.7209
 ```
 
 The generated optimization $\rho \leq 0.7209$  algorithm from synthesis is 
@@ -157,8 +154,8 @@ to obtain the $\rho \leq 0.8322$ algorithm
 
 ## Synthesis with Network Dynamics
 
-The subdifferential oracle $\partial f_1$ is no longer directly accessible by the algorithm, but instead takes a nonzero number of steps to interface. 
-Algorithm design for a 2-step delay on $\partial f_1$ is accomplished by executing
+The gradient oracle $\nabla f_1$ is no longer directly accessible by the algorithm, but instead takes a nonzero number of steps to interface. 
+Algorithm design for a 2-step delay on $\nabla f_1$ is accomplished by executing
 ``` matlab
 %describe the operators 
 m = 1; L = 10;
@@ -176,7 +173,22 @@ sys_delay = opt_system({op1, op2}, network_delay);
 
 %run the synthesis routine, use bisection to minimize the convergence rate
 man_delay = opt_synthesis(sys_delay); 
-sol_best_delay = man_delay.bisect();
-rho = sol_best_delay.rho % 0.9553
+sol = man_delay.bisect();
+rho = sol.rho % 0.9553
 ```
 
+## Validation
+
+The `sol` structure contains information about the solution of analysis/synthesis. The solution is feasible if the following conditions are met
+
+| Name   |  Description  | Valid Condition |
+|----| ---- | ----- | 
+| `STATUS` | Feasibility of problem | 0 if feasible, nonzero if infeasible |
+| `dia` | Constraint violation | `dia`<0 if strictly feasible, `dia`=0 if marginally feasible, `dia` > 0 if infeasible |
+| `gain` | Input passivity index and $H_\infty$ gain | Feasible if `gain(1)` < 0 and `gain(2)` < 1 |
+
+If all of the above conditions are met, then linear convergence is established if and only if `sol.rho` < 1. A finite `sol.rho` > 1 establishes a bounded rate of divergence. No conclusions can be drawn about linear convergence if `sol.rho` = 1. 
+
+<!-- ## Plotting
+
+After these numerical checks, the  -->

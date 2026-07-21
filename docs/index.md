@@ -4,7 +4,7 @@ tocdepth: 1
 
 ---
 
-# opt-syn
+# {{osyn}}
 
 
 
@@ -15,7 +15,7 @@ Analysis and synthesis of first-order algorithms (MATLAB).
 ## Overview
 
 
-opt-syn uses methods from robust control theory to analyze and synthesize first-order optimization algorithms. These algorithms may arise from networked environments including channel memory, constant or time-varying delays, and cross-talk. Target performance criteria for analysis includes worst-case  linear convergence rates and tracking bounds. Synthesis tries to design an optimization algorithm satisfying these desired constraints. 
+{{osyn}} uses methods from robust control theory to analyze and synthesize first-order optimization algorithms. These algorithms may arise from networked environments including channel memory, constant or time-varying delays, and cross-talk. Target performance criteria for analysis includes worst-case  linear convergence rates and tracking bounds. Synthesis tries to design an optimization algorithm satisfying these desired constraints. 
 The analysis and synthesis problems are posed as convex problems with  Linear Matrix Inequality constraints, and are solved using [LMILab](https://www.mathworks.com/help/robust/ug/introduction.html).
 
 ## Get Started

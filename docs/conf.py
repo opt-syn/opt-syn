@@ -98,9 +98,13 @@ myst_enable_extensions = [
     "strikethrough",
     "substitution",
     "tasklist",
+    "substitution"
 ]
 
 
+myst_substitutions = {
+    "osyn" : '<span style="color:#5D93BF">opt</span>-syn'
+}
 
 #math options
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
@@ -131,6 +135,7 @@ mathjax3_config = {
             "F" : r"\mathcal{F}",
             "1" : r"\mathbb{1}",
             "0" : r"\mathbb{0}",
+            "hdots" : r"\cdot \cdot \cdot ",
             "hl" : r"\\ \hline",                    
             "hdl" : r"\\ \hdashline", 
             "nulls" : r"\textrm{null}",
