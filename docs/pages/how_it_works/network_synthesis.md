@@ -14,7 +14,7 @@ The default case of no network dynamics (direct connection to the oracle $F$) is
 ```{math}
 \mat{c}{
         z_k \\ y_k
-    } &= \mat{cc}{0 & I_{cs} \\ I_{cs} & 0} \mat{c}{
+    } &= \mat{cc}{0 & I \\ I & 0} \mat{c}{
         w_k \\ u_k
     }
 ```
@@ -22,14 +22,14 @@ The default case of no network dynamics (direct connection to the oracle $F$) is
 The general network $P$ and controller $K$ have the descrptions
 ```{math}
 \begin{align}
-    P: \mat{c}{
+    P: & & \mat{c}{
     x^N_{k+1}  \hl z_k \\ y_k
     } &= \mat{c|cc}{ A & B_w & B_u \hl
     C_z & D_{zw} & D_{zu} \\
     C_y & D_{yw} & D_{yu} }\mat{c}{
         x^N_k \hl w_k \\ u_k
-    } \\
-    \Kc : \mat{c}{
+    } \\ \\ 
+    \Kc : & & \mat{c}{
         \xi_{k+1}  \hl u_k}&=\mat{c|c}{\Ac & \Bc \hl
     \Cc & \Dc}\mat{c}{
         \xi_k \hl y_k
@@ -65,7 +65,7 @@ Under the Convergence and Regulator Equation conditions, convergence in all sign
 \begin{align}
     \lim_{k \rightarrow \infty}
     \mat{c}{x_k^N \\ \xi_k \hl  y_k \\u_k} & = \mat{c}{\Pi \\ \Theta \hl \Phi \\ \Gamma} \mat{c}{-\beta^* \\ \hat{w}^*}, &   \lim_{k \rightarrow \infty}
-    \mat{c}{z_k \\ w_k } & =  \mat{c}{z^* \\ w^*}.     
+    \mat{c}{z_k \\ w_k } & =  \mat{c}{z^* \\ w^*} = \mat{c}{\1 \otimes \beta^* \\ N \hat{w}^*}.     
 \end{align}
 ```
 
@@ -78,7 +78,7 @@ The fixed-point matrix for the closed-loop system is
 
 ## Synthesis
 
-The Regulator Equation requirement enforces structure on possible controllers. We choose controllers $\Kc$ as the interconnection of an internal model and a subcontroller $K_f$. This interconnection with $K = (\text{Model}, K_f)$ involves
+The Regulator Equation requirement enforces structure on possible controllers. We choose controllers $\Kc$ as the interconnection of an internal model {footcite}`francis1976internal` and a subcontroller $K_f$. This interconnection with $K = (\text{Model}, K_f)$ involves
 ```{math}
 \begin{align*}
     \text{Model}: \mat{c}{
@@ -97,7 +97,10 @@ The Regulator Equation requirement enforces structure on possible controllers. W
     \end{align*}
 ```
 
-With this internal model, any subcontroller $K_f$ will ensure that the Regulator Equation requirement is satisfied. The subcontroller $K_f$ must ensure that the interconnection  $(F, (P, \text{Model}, K_f))$ is well-posed obeys the convergence and performance requirements. Solving for $K_f$ can be accomplished through  IQC synthesis Linear Matrix Inequality methods.
+With this internal model, any subcontroller $K_f$ will ensure that the Regulator Equation requirement is satisfied. The subcontroller $K_f$ must ensure that the interconnection  $(F, (P, \text{Model}, K_f))$ is well-posed obeys the convergence and performance requirements. Solving for $K_f$ can be accomplished through  IQC synthesis methods {footcite}`veenman2011iqc`.
 
 
 Synthesis may also involve selecting a solution $(\Pi, \Gamma, \Phi)$ to the regulator equations.
+
+```{footbibliography}
+```

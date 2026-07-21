@@ -13,4 +13,7 @@ Computational Verification <computational_verification>
 Synthesis and Networks <network_synthesis>
 ```
 
-
+This overview is limited to static optimization problems with time-independent memory/stepsize rules. The `{doc} Problem Formulation <../usage/problem_formulation/problem_formulation>` section in `{doc} Usage<../usage>` documents generalizations to this base construction, including 
+- Time-varying optimization problems
+- Time-varying dynamical systems
+- Repeated operator calls
