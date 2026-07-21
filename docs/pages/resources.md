@@ -17,7 +17,7 @@ Under Construction
 
 ## Other Algorithm Analysis/Synthesis Software
 
-opt-syn is part of a family of computational tools for the analysis and synthesis of optimization algorithms. Other software to perform algorithm analysis and/or synthesis includes:
+{{osyn}} is part of a family of computational tools for the analysis and synthesis of optimization algorithms. Other software to perform algorithm analysis and/or synthesis includes:
 
 | Name | Description |
 | --- | --- |

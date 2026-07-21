@@ -150,6 +150,7 @@ mathjax3_config = {
             "Cc" : r"C_c",
             "Dc" : r"D_c", 
             "Kc" : r"K_c", 
+            "blam" : r"{\color{red} \lambda}", 
         }
     }
 }

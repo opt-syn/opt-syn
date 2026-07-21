@@ -9,7 +9,7 @@ IQCs with terminal cost can be used to prove stability, performance, and invaria
 
 Let $G_R$ =  $(A_R, B_R, C_R, D_R)$ be a linear system, let $\rho> 0$ be a convergence rate, and  $\mathcal{O}$ be an operator.
 The exponentially weighted iterates $(\ov p, \ov q)$ related by $\ov p_k \in \rho^{-k} \mathcal{O}(\rho^{-k} q_k)$ for the operator $\mathcal{O}$. This pair $(\ov p, \ov q)$ satisfies the IQC
-  $(\Psi(\lambda), M(\lambda), X(\lambda))$ for any  $\lambda \in \Lambda(\rho)$.
+  $(\Psi(\blam), M(\blam), X(\blam))$ for any  $\blam \in \Lambda(\rho)$.
 
 The $\rho$-weighted interconnection of $(G_R, \mathcal{O})$ is
 ```{math}
@@ -18,14 +18,14 @@ The $\rho$-weighted interconnection of $(G_R, \mathcal{O})$ is
 \end{align}
 ```
 
-The system $G_\Psi := \Psi(\lambda) \mat{c}{G_R \\ I}$  has  input $q$, output $r$, and states $(\psi, \ov{x})$. The state-space representation of $G_\Psi$ is 
+The system $G_\Psi := \Psi(\blam) \mat{c}{G_R \\ I}$  has  input $q$, output $r$, and states $(\psi, \ov{x})$. The state-space representation of $G_\Psi$ is 
 ```{math}
 \begin{align}
-G_\Psi: & &    \mat{c}{\psi_{k+1} \\ \ov{x}_{k+1} \hl r_k} &= \mat{c|c}{A(\lambda) & B(\lambda) \hl C(\lambda)& D(\lambda)} \mat{c}{\psi_k \\ \ov{x}_k \hl q_k} \\
+G_\Psi: & &    \mat{c}{\psi_{k+1} \\ \ov{x}_{k+1} \hl r_k} &= \mat{c|c}{A(\blam) & B(\blam) \hl C(\blam)& D(\blam)} \mat{c}{\psi_k \\ \ov{x}_k \hl q_k} \\
 & & \mat{c|c}{A & B \hl C& D} & := \mat{cc|c}{
 A_\psi & B_\psi^p C_R & B^p_\psi D_R + B^q_\psi \\
 0 & \rhoi A_R & \rhoi B_R \hl
-C_\psi(\lambda) & D^p_\psi(\lambda) C_R & D^\psi_p(\lambda) D_R + D^\psi_q(\lambda)}
+C_\psi(\blam) & D^p_\psi(\blam) C_R & D^\psi_p(\blam) D_R + D^\psi_q(\blam)}
 \end{align}
 ```
 
@@ -86,37 +86,37 @@ The quadratic function $V$ is expanded into
 V(\ov{x}, \psi) = \mat{c}{\psi \\ \ov{x}}^\top \mat{cc}{P_{\psi \psi} & P_{\psi \ov{x}} \\ P_{\psi \ov{x}}^\top & P_{xx}} \mat{c}{\psi \\ \ov{x}}.
 ```
 
-The IQC Analysis to verify asymptotic convergence of the exponentially weighted interconnection is to find a matrix $P$ and coefficients $\lambda \in \Lambda(\rho)$ such that
+The IQC Analysis to verify asymptotic convergence of the exponentially weighted interconnection is to find a matrix $P$ and coefficients $\blam \in \Lambda(\rho)$ such that
 ```{math}
 \begin{align}
 \mat{cc}{I & 0 \\
-A(\lambda) & B(\lambda) \\
-C(\lambda) & D(\lambda)}^\top \mat{ccc}{-P & 0 & 0\\
+A(\blam) & B(\blam) \\
+C(\blam) & D(\blam)}^\top \mat{ccc}{-P & 0 & 0\\
 0 & P & 0 \\
-0 & 0 & M(\lambda)} \mat{cc}{I & 0 \\
-A(\lambda) & B(\lambda) \\
-C(\lambda) & D(\lambda)} \prec 0
+0 & 0 & M(\blam)} \mat{cc}{I & 0 \\
+A(\blam) & B(\blam) \\
+C(\blam) & D(\blam)} \prec 0
 \end{align}
 ```
 
 ```{math}
 \begin{align}
-\mat{cc}{P_{\psi \psi} - X(\lambda) & P_{\psi \ov{x}} \\ P_{\psi \ov{x}}^\top & P_{xx}} & \succ 0
+\mat{cc}{P_{\psi \psi} - X(\blam) & P_{\psi \ov{x}} \\ P_{\psi \ov{x}}^\top & P_{xx}} & \succ 0
 \end{align}
 ```
 
 Bisection can be used to find a minimal $\rho$ certifying asymptotic convergence.
 
-The analysis program is convex in $\lambda$ for fixed $\rho$ if 
+The analysis program is convex in $\blam$ for fixed $\rho$ if 
 - $\Lambda(\rho)$ is convex for each $\rho$,
-- either $\Psi(\lambda)$ is $\lambda$-independent, or $M(\lambda)$ is $\lambda$-independent. 
+- either $\Psi(\blam)$ is $\blam$-independent, or $M(\blam)$ is $\blam$-independent. 
 
-Parameterizing $A_\Psi(\lambda), B^p_\psi(\lambda), B^q_\psi(\lambda),$ will cause a bilinearity  between the variables  $\lambda$ and $P$. 
+Parameterizing $A_\Psi(\blam), B^p_\psi(\blam), B^q_\psi(\blam),$ will cause a bilinearity  between the variables  $\blam$ and $P$. 
 
 ## Outlook for Optimization
 
 
-The operator class $\F$ satisfies a family of IQCs $(\Psi(\lambda), M(\lambda), X(\lambda))$ with respect to signal transformation matrix $\ell$. These $(\Psi(\lambda), M(\lambda), X(\lambda), \ell)$ terms are assembled from the individual operators $\{F_i\}_{i=1}^s$.
+The operator class $\F$ satisfies a family of IQCs $(\Psi(\blam), M(\blam), X(\blam))$ with respect to signal transformation matrix $\ell$. These $(\Psi(\blam), M(\blam), X(\blam), \ell)$ terms are assembled from the individual operators $\{F_i\}_{i=1}^s$.
  The worst-case linear convergence rate for any algorithm $(F, G)$ with $F \in \F$ can be upper-bounded by solving an IQC analysis problem on the following plant $G_\Psi$  with input $\ov q$ and output $r$: 
 ```{math}
 \begin{align}

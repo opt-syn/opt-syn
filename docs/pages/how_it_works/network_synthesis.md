@@ -51,9 +51,9 @@ The Regulator Equation condition can be expanded into
 ```{math}
 \begin{align}    
         \mat{c|cc:c}{A & 0 & B_w N & B_y \hl
-        C_z  & \1_s \otimes I_c & D_{zw}N &  D_{zy} \hdl
+        C_z  & \1 & D_{zw}N &  D_{zy} \hdl
         C_y & 0 & D_{yz}N & D_{yu}} \mat{c}{\Pi\hl I\hdl \Gamma}&=\mat{c}{\Pi \hl 0 \hdl \Phi}, \label{eq:nominal_regulation_control_sys_plant}  \\
-\mat{cc}{\Ac&\Bc\\ \Cc&\Dc}
+\mat{c|c}{\Ac&\Bc\hl \Cc&\Dc}
 \mat{c}{\Theta\\\Phi}  &= \mat{c}{\Theta \\ \Gamma}. \label{eq:nominal_regulation_control_sys_control}    
 \end{align}
 ```
@@ -69,10 +69,18 @@ Under the Convergence and Regulator Equation conditions, convergence in all sign
 \end{align}
 ```
 
+The fixed-point matrix for the closed-loop system is
+```{math}
+\begin{align}
+\mathbf{X}^* & := \mat{c}{\Pi \\ \Theta}, & \lim_{k \rightarrow \infty} x_k & := \mathbf{X}^* \mat{c}{-\beta^* \\ \hat{w}^*}
+\end{align}
+```
+
 ## Synthesis
 
 The Regulator Equation requirement enforces structure on possible controllers. We choose controllers $\Kc$ as the interconnection of an internal model and a subcontroller $K_f$. This interconnection with $K = (\text{Model}, K_f)$ involves
-\begin{align}
+```{math}
+\begin{align*}
     \text{Model}: \mat{c}{
     v_{k+1} \hl  \tilde{y}_k
     } &= \mat{c|c:cc}{ I & 0 & I & 0 \hl
@@ -86,8 +94,8 @@ The Regulator Equation requirement enforces structure on possible controllers. W
     C_{f2} & D_{f2}}\mat{c}{
         \xi^f_k \hl \tilde{y}_k 
     }.
-    \end{align}
-
+    \end{align*}
+```
 
 With this internal model, any subcontroller $K_f$ will ensure that the Regulator Equation requirement is satisfied. The subcontroller $K_f$ must ensure that the interconnection  $(F, (P, \text{Model}, K_f))$ is well-posed obeys the convergence and performance requirements. Solving for $K_f$ can be accomplished through  IQC synthesis Linear Matrix Inequality methods.
 
