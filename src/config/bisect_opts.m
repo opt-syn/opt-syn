@@ -1,27 +1,24 @@
 classdef bisect_opts < handle
-    %SWEEP_OPTS Summary of this class goes here
-    %   Detailed explanation goes here
+    %BISECT_OPTS options used when applying bisection/alternation in the
+    %manager class    
     
     properties
-        val_range = [1e-4, 2];
-        bisect_rho = true;
-        spec_ind = 1;
-        val_init = [];
+        val_range = [1e-4, 2]; %parameter range used in bisection
+        bisect_rho = true; %should bisection occur on rho
+        spec_ind = 1; %which specification should be bisected
+        val_init = []; %initial value
         tol = 1e-4; %tolerance for upper bound - lower bound in bisection
-        warm_factor = 0.1; %if an initial guess is supplied, expand for an 
-        % initial range
+        warm_factor = 0.1; %if an initial guess is supplied, expand for an initial range
         Niter = 4; %number of alternating iterations
 
-        backoff = 1e-4;
-        bisect = true;
+        backoff = 1e-4; %increase parameter by backoff when switching between analysis and synthesis. Try to ensure feasibility this way.
+        bisect = true;  %use bisection or not
 
     end
     
     methods
         function obj = bisect_opts()
-            %BISECT_OPTS Construct an instance of this class
-            %   Detailed explanation goes here
-            % obj.Property1 = inputArg1 + inputArg2;
+            %Constructor
         end
         
 

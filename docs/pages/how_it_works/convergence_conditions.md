@@ -53,7 +53,7 @@ If these two conditions hold, then
 ```{math}
 \begin{align}
 \lim_{k \rightarrow \infty} (w_k, z_k) &= (w^*, z^*), & 
-\lim_{k \rightarrow \infty} x_k &= X^* \mat{c}{-\beta^* \\ \hat{w^*}
+\lim_{k \rightarrow \infty} x_k &= X^* \mat{c}{-\beta^* \\ \hat{w^*}}
 \end{align}
 ```
 

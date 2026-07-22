@@ -1,7 +1,10 @@
 classdef lmi_synthesis_lti < lmi_synthesis_interface
     %LMI_SYNTHESIS_LTI synthesis LMIs for algorithmic interconnections
     %involving linear-time-invariant (LTI) networks and controllers
-    %
+    
+
+
+    
     % w(k) \in F(z(k))
     %
     % [x(k+1)] = [A    B     Bp     Bu  ][x(k)]   state transition

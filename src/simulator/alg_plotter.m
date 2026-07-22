@@ -3,25 +3,31 @@ classdef alg_plotter
     
     
     properties
-        sim;      %data in the simulation
+        sim_out;     %data in the simulation
         FS = 16;  %fontsize for axes
         FST = 20; %fontsize for title  
-        EQUALITY;
-        opt_sig; 
+        EQUALITY; %is an equality constraint used?        
     end
     
     methods
-        function obj = alg_plotter(sim)
-            %ALG_PLOTTER Construct an instance of this class
-            %   Detailed explanation goes here
-            obj.sim = sim;
-            obj.EQUALITY = ~isempty(sim.eq);            
+        function obj = alg_plotter(sim_out)
+            %ALG_PLOTTER Construct a plotter for a trajectory
+            %
+            % Args:
+            %   sim_out (alg_sim_out): the trajectory from alg_sim
+
+            obj.sim_out = sim_out;
+            obj.EQUALITY = ~isempty(sim_out.eq);            
         end
         
         function fig = plot(obj,traces, fignum)
-            %PLOT: multi-pane display 
-            %Input:
+            %PLOT multi-pane display 
+            %
+            %Args:
             %   traces: signals to plot (e.g. {'x', 'w', 'f'})
+            %   fignum: figure number to display
+            %Returns:
+            %   fig:    figure environment
                         
             if (nargin == 3) && isnumeric(fignum) && ~isempty(fignum)
                 fig = figure(fignum);
@@ -48,6 +54,13 @@ classdef alg_plotter
         end
 
         function fig = plot_6f(obj, fignum)
+            %PLOT_6f plot the signals ('x', 'w', 'res_w', 'f', 'z','res_z')            
+            %Args:            
+            %   fignum: figure number to display
+            %Return:
+            %   fig:    figure environment
+
+
             if nargin < 2
                 fignum = [];
             end
@@ -56,6 +69,13 @@ classdef alg_plotter
         end
 
         function fig = plot_6(obj, fignum)
+            %PLOT_6 plot the signals ('xn', 'w', 'res_w', 'xi', 'z','res_z')            
+            %Args:            
+            %   fignum: figure number to display
+            %Return:
+            %   fig:    figure environment
+
+            
             if nargin < 2
                 fignum = [];
             end
@@ -64,6 +84,13 @@ classdef alg_plotter
         end
 
         function fig = plot_4(obj, fignum)
+            %PLOT_4 plot the signals ('w', 'res_w', 'z','res_z')            
+            %Args:            
+            %   fignum: figure number to display
+            %Return:
+            %   fig:    figure environment
+
+            
             if nargin < 2
                 fignum = [];
             end
@@ -73,6 +100,13 @@ classdef alg_plotter
 
 
         function fig = plot_4_err(obj, fignum)
+            %PLOT_4_err plot the error signals/regulated quantities ('xnerr', 'uerr', 'xierr', 'yerr')            
+            %Args:            
+            %   fignum: figure number to display
+            %Return:
+            %   fig:    figure environment
+
+            
             if nargin < 2
                 fignum = [];
             end
@@ -81,6 +115,11 @@ classdef alg_plotter
         end
 
         function fig = plot_3_err(obj, fignum)
+            %PLOT_3_err plot the error signals/regulated quantities ('xerr', 'uerr', 'yerr')            
+            %Args:            
+            %   fignum: figure number to display
+            %Return:
+            %   fig:    figure environment
             if nargin < 2
                 fignum = [];
             end
@@ -89,6 +128,11 @@ classdef alg_plotter
         end
 
         function fig = plot_4_sq_err(obj, fignum)
+            %PLOT_4_sq_err plot the squared error signals/regulated quantities ('sq_xnerr', 'sq_uerr', 'sq_xierr', 'sq_yerr')            
+            %Args:            
+            %   fignum: figure number to display
+            %Return:
+            %   fig:    figure environment
             if nargin < 2
                 fignum = [];
             end
@@ -97,6 +141,11 @@ classdef alg_plotter
         end
 
         function fig = plot_3_sq_err(obj, fignum)
+            %PLOT_4_sq_err plot the squared error signals/regulated quantities ('sq_xerr', 'sq_uerr', 'sq_yerr')            
+            %Args:            
+            %   fignum: figure number to display
+            %Return:
+            %   fig:    figure environment
             if nargin < 2
                 fignum = [];
             end
@@ -105,42 +154,50 @@ classdef alg_plotter
         end
 
         function obj = add_opt_sig(obj, reg_cl, dstar)
-            %add the optimal trajectory
+            %ADD_OPT_SIG Use the optimal trajectory to define the error signals            
+            %Args:            
+            %   reg_cl: closed-loop regulator equation, output from regulator.check_regulator()            
+            %   dstar:  properties of optimal solution :math:`(-\beta^*, \hat{w}^*)`
+            %Return:
+            %   obj: the plotter
             
-            obj.sim.xnerr = obj.sim.xn -  reg_cl.Pi * dstar;
-            obj.sim.xierr = obj.sim.xi  - reg_cl.Th * dstar;
-            obj.sim.yerr = obj.sim.y - reg_cl.Phi * dstar;
-            obj.sim.uerr = obj.sim.u- reg_cl.Gam * dstar;            
+            obj.sim_out.xnerr = obj.sim_out.xn -  reg_cl.Pi * dstar;
+            obj.sim_out.xierr = obj.sim_out.xi  - reg_cl.Th * dstar;
+            obj.sim_out.yerr = obj.sim_out.y - reg_cl.Phi * dstar;
+            obj.sim_out.uerr = obj.sim_out.u- reg_cl.Gam * dstar;            
 
             fs = @(sig) squeeze(sum(sig.^2, [1, 2]));
 
-            obj.sim.sq_xnerr = fs(obj.sim.xnerr);
-            obj.sim.sq_xierr = fs(obj.sim.xierr);
-            obj.sim.sq_yerr = fs(obj.sim.yerr);
-            obj.sim.sq_uerr = fs(obj.sim.uerr);            
+            obj.sim_out.sq_xnerr = fs(obj.sim_out.xnerr);
+            obj.sim_out.sq_xierr = fs(obj.sim_out.xierr);
+            obj.sim_out.sq_yerr = fs(obj.sim_out.yerr);
+            obj.sim_out.sq_uerr = fs(obj.sim_out.uerr);            
 
 
         end
 
         function ax = plot_tile(obj, ax, sig)
             %PLOT_TILE plot the signal 'sig' v.s. time
+            %Args:
+            %   ax: axis object in plot
+            %   sig: the signal to use
+            %Returns
+            %   ax: axis with the signal
 
-
-            k = obj.sim.k;
+            k = obj.sim_out.k;
             T = length(k);
-            if ismember(sig, fieldnames(obj.sim))
-                sig_curr = getfield(obj.sim, sig);
+            if ismember(sig, fieldnames(obj.sim_out))
+                sig_curr = getfield(obj.sim_out, sig);
             elseif strcmp(sig, 'x')
-                sig_curr = [obj.sim.xn; obj.sim.xi];
+                sig_curr = [obj.sim_out.xn; obj.sim_out.xi];
             elseif strcmp(sig, 'xerr')
-                sig_curr = [obj.sim.xnerr; obj.sim.xierr];
+                sig_curr = [obj.sim_out.xnerr; obj.sim_out.xierr];
             elseif strcmp(sig, 'sq_xerr')
-                sig_curr = obj.sim.sq_xnerr +  obj.sim.sq_xierr;
+                sig_curr = obj.sim_out.sq_xnerr +  obj.sim_out.sq_xierr;
             elseif strcmp(sig, 'delay')
-                sig_curr = obj.sim.mode - 1;
+                sig_curr = obj.sim_out.mode - 1;
             end
                
-                %TODO: plot the regulation signals
 
                 sz_curr = size(sig_curr);
                 sig_flat = reshape(permute(sig_curr, [length(sz_curr), 1:(length(sz_curr)-1)]), T,  []);
@@ -152,7 +209,7 @@ classdef alg_plotter
                     sig_plot = sig_flat(:, i);
                     
 
-                    plot(obj.sim.k, sig_plot)
+                    plot(obj.sim_out.k, sig_plot)
                 end
     
                 xlabel('$k$', 'interpreter', 'latex', 'fontsize', obj.FS)
@@ -172,6 +229,10 @@ classdef alg_plotter
 
         function name = get_title(obj, sig)
             %GET_TITLE get the title for the plot
+            %Args:
+            %   sig: the signal that is plotted
+            %Return:
+            %   name: the title to use
             switch sig
                 case 'f' 
                     name = 'Function Value';
@@ -228,6 +289,11 @@ classdef alg_plotter
         function name = get_name(obj, sig)
             %GET_NAME the name of the signal in latex-formatted strings
             %for use in y-axis labels
+            %
+            %Args:
+            %   sig: the signal that is plotted
+            %Return:
+            %   name: the title to use
 
             %specific channels
             if length(sig)==1
@@ -288,8 +354,7 @@ classdef alg_plotter
                 name_mid = '$||z - z_{avg}||_2$';
             end
 
-            name = name_mid;
-            % name = ['$', name_mid, '$'];
+            name = name_mid;            
         end
     end
 end

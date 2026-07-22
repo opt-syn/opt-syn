@@ -28,7 +28,7 @@ classdef op_sim < op_sim_interface
             end
         end  
 
-        function w = fw(k, z, param)
+        function w = fw(obj, k, z, param)
             %forward evaluation of an oracle w = F(z) 
             %
             %Args: 
@@ -43,7 +43,7 @@ classdef op_sim < op_sim_interface
             w = obj.fw_func(k, z, param);
         end
 
-        function z = bw(k, v, D, param)
+        function z = bw(obj, k, v, D, param)
             %backwards evaluation of an oracle, generalization of a 
             %proximal evaluation with preconditioner D                      
             %
@@ -59,7 +59,7 @@ classdef op_sim < op_sim_interface
             z = obj.bw_func(k, v, D, param);
         end
 
-        function f_out = f(k, z, param)
+        function f_out = f(obj, k, z, param)
             %function value evaluation, if the operator has a potential
             %could also be a vector of function evaluations in a game.
             %

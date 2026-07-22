@@ -229,7 +229,20 @@
 <li class="toctree-l2"><a class="reference internal" href="pages/examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="pages/documentation/index_documentation.html">API Reference</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="pages/documentation/index_documentation.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_manager.html">Manager</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="pages/documentation/system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="pages/documentation/system/doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pages/documentation/system/doc_switched.html">Switched</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pages/documentation/system/doc_periodic.html">Periodic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pages/documentation/system/doc_periodic_orbit.html">Periodic-Orbit</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_config.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_plotting.html">Plotting</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="pages/changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="pages/changelog/0.1.0.html">What’s new in 0.1.0</a></li>
 </ul>
@@ -366,21 +379,45 @@
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
+ | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ | <a href="#X"><strong>X</strong></a>
+ | <a href="#Y"><strong>Y</strong></a>
  | <a href="#Z"><strong>Z</strong></a>
  
 </div>
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.add_opt_sig">add_opt_sig() (simulator.alg_plotter method)</a>
+</li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter">alg_plotter (class in simulator)</a>
+</li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.alg_plotter">alg_plotter() (simulator.alg_plotter method)</a>
+</li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim">alg_sim (class in simulator)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.alg_sim">alg_sim() (simulator.alg_sim method)</a>
+</li>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out">alg_sim_out (class in simulator)</a>
+</li>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.alg_sim_out">alg_sim_out() (simulator.alg_sim_out method)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config.ana">ana (config.opt_config attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -390,6 +427,18 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_equality.b">b (simulator.op_sim.op_sim_equality attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.backoff">backoff (config.bisect_opts attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.bisect">bisect (config.bisect_opts attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.bisect_opts">bisect_opts (class in config)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.bisect_opts">bisect_opts() (config.bisect_opts method)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.bisect_rho">bisect_rho (config.bisect_opts attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_box.BOX">BOX (simulator.op_sim.op_sim_box attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.bw">bw() (simulator.op_sim.op_sim method)</a>
@@ -404,8 +453,6 @@
         <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.bw">(simulator.op_sim.op_sim_quad method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.bw_func">bw_func (simulator.op_sim.op_sim attribute)</a>
 </li>
   </ul></td>
@@ -417,18 +464,18 @@
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.c">c (simulator.alg_sim attribute)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/doc_config.html#module-config.bisect_opts">config.bisect_opts (module)</a>
-</li>
-      <li><a href="pages/documentation/doc_config.html#module-config.opt_config">config.opt_config (module)</a>
-</li>
-  </ul></td>
 </tr></table>
 
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.d">d (simulator.alg_sim attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_syn.D_mask">D_mask (config.opt_config_syn attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.dia">dia (config.opt_config_tol attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -438,16 +485,28 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_equality.E">E (simulator.op_sim.op_sim_equality attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_syn.elimination">elimination (config.opt_config_syn attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_syn.elimination_type">elimination_type (config.opt_config_syn attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.EQUALITY">EQUALITY (simulator.alg_sim attribute)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.eq">eq (simulator.alg_sim_out attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.EQUALITY">EQUALITY (simulator.alg_plotter attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.EQUALITY">(simulator.alg_sim attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.f">f (simulator.alg_sim_out attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.f">f() (simulator.op_sim.op_sim method)</a>
 
       <ul>
@@ -464,6 +523,10 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.FS">FS (simulator.alg_plotter attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.FST">FST (simulator.alg_plotter attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.fw">fw() (simulator.op_sim.op_sim method)</a>
 
       <ul>
@@ -481,10 +544,80 @@
   </ul></td>
 </tr></table>
 
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.G_max">G_max (config.opt_config_tol attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.G_min">G_min (config.opt_config_tol attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config.gen">gen (config.opt_config attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.get_name">get_name() (simulator.alg_plotter method)</a>
+</li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.get_title">get_title() (simulator.alg_plotter method)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.GX_max">GX_max (config.opt_config_tol attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.GY_max">GY_max (config.opt_config_tol attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.impose_X">impose_X (config.opt_config_gen attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.input_diss">input_diss (config.opt_config_tol attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.K_max">K_max (config.opt_config_tol attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config.LMILAB">LMILAB() (config.opt_config method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.M">M (simulator.op_sim.op_sim_quad attribute)</a>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.M">M (config.opt_config_tol attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.M">(simulator.op_sim.op_sim_quad attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.mode">mode (simulator.alg_sim_out attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.Niter">Niter (config.bisect_opts attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_ana.normalize_margin">normalize_margin (config.opt_config_ana attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -504,8 +637,6 @@
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_equality.op_sim_equality">op_sim_equality() (simulator.op_sim.op_sim_equality method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_interface">op_sim_interface (class in simulator.op_sim)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_interface.op_sim_interface">op_sim_interface() (simulator.op_sim.op_sim_interface method)</a>
@@ -516,7 +647,73 @@
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad">op_sim_quad (class in simulator.op_sim)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.op_sim_quad">op_sim_quad() (simulator.op_sim.op_sim_quad method)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config">opt_config (class in config)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config.opt_config">opt_config() (config.opt_config method)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_ana">opt_config_ana (class in config)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_ana.opt_config_ana">opt_config_ana() (config.opt_config_ana method)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_gen">opt_config_gen (class in config)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.opt_config_gen">opt_config_gen() (config.opt_config_gen method)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_syn">opt_config_syn (class in config)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_syn.opt_config_syn">opt_config_syn() (config.opt_config_syn method)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol">opt_config_tol (class in config)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.opt_config_tol">opt_config_tol() (config.opt_config_tol method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.param">param (simulator.alg_sim_out attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot">plot() (simulator.alg_plotter method)</a>
+</li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_3_err">plot_3_err() (simulator.alg_plotter method)</a>
+</li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_3_sq_err">plot_3_sq_err() (simulator.alg_plotter method)</a>
+</li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_4">plot_4() (simulator.alg_plotter method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_4_err">plot_4_err() (simulator.alg_plotter method)</a>
+</li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_4_sq_err">plot_4_sq_err() (simulator.alg_plotter method)</a>
+</li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_6">plot_6() (simulator.alg_plotter method)</a>
+</li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_6f">plot_6f() (simulator.alg_plotter method)</a>
+</li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_tile">plot_tile() (simulator.alg_plotter method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config.recovery">recovery (config.opt_config attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_syn.reduced_order">reduced_order (config.opt_config_syn attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.res_w">res_w (simulator.alg_sim_out attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.res_z">res_z (simulator.alg_sim_out attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -528,9 +725,21 @@
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.sim">sim() (simulator.alg_sim method)</a>
 </li>
+      <li><a href="pages/documentation/doc_simulation.html#module-simulator.op_sim">simulator.op_sim (module)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.solver">solver (config.opt_config_gen attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.spec_ind">spec_ind (config.bisect_opts attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/doc_simulation.html#module-simulator.op_sim">simulator.op_sim (module)</a>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.spread">spread (config.opt_config_tol attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.ssim">ssim (simulator.alg_plotter attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config.switched">switched (config.opt_config attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config.syn">syn (config.opt_config attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.sys">sys (simulator.alg_sim attribute)</a>
 </li>
@@ -543,11 +752,83 @@
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_l1_hard.tau">tau (simulator.op_sim.op_sim_l1_hard attribute)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.tol">tol (config.bisect_opts attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_config.html#config.opt_config.tol">(config.opt_config attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.u">u (simulator.alg_sim_out attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.val_init">val_init (config.bisect_opts attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.val_range">val_range (config.bisect_opts attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.verbose">verbose (config.opt_config_gen attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.w">w (simulator.alg_sim_out attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.warm_factor">warm_factor (config.bisect_opts attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.wp">wp (simulator.alg_sim_out attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="X">X</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.X">X (config.opt_config_tol attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.xi">xi (simulator.alg_sim_out attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.xn">xn (simulator.alg_sim_out attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Y">Y</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.y">y (simulator.alg_sim_out attribute)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="Z">Z</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.z">z (simulator.alg_sim_out attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.zp">zp (simulator.alg_sim_out attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.zstar">zstar (simulator.op_sim.op_sim_quad attribute)</a>
 </li>
   </ul></td>
