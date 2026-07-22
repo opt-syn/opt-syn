@@ -1,7 +1,7 @@
 classdef lmi_analysis_switched < lmi_analysis_interface
     %LMI_ANALYSIS_SWITCHED analysis LMIs for algorithmic interconnections
     %involving switched linear networks and controllers
-    %
+    
     % w(mode(k)) \in F(z(mode(k)))
     %
     % [x(k+1)] = [A(mode(k))    Bw(mode(k))     Bwp(mode(k)) ][x(k)]   state transition
@@ -37,23 +37,14 @@ classdef lmi_analysis_switched < lmi_analysis_interface
         function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
-            %Input:
+            %Args:
             %   vars:   variables of the problem        
             %   cons:   accumulated constraints
-            %   diss:   structure describing the problem
-            %       plant:  system to control
-            %       spec:   performance specification           
-            %       target: whether the performance measure should be optimized
-            %               true:  soft constraint (e.g. Schur complement
-            %                                       formulation)
-            %               false: hard constraint            
-            %       ind_curr:  the index of the current subsystem
-            %       ind_next:  the index of the next subsystem
-            %
-            %Output:
+            %   diss (diss_data):   structure describing the dissipation constraint            %
+            %Returns:
             %   cons:   accumulated constraints
-            %   objective:  term to be minimized            
-            
+            %   objective:  term to be minimized      
+            %
             
             %need to look up the right constraint            
 
@@ -120,6 +111,15 @@ classdef lmi_analysis_switched < lmi_analysis_interface
         %% LMI definitions
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
             %QUAD: certificate of infinite-horizon quadratic performance
+            %
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
 
 
             
@@ -155,6 +155,16 @@ classdef lmi_analysis_switched < lmi_analysis_interface
         function [cons, objective, con_M] = e2e_target(obj, vars, cons, diss)
             %E2E_TARGET: use a Schur complement to minimize the energy to
             %energy gain of the transfer function
+            %
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
+
 
             Gcurr = vars.diss.G{diss.ind_curr};
             Gnext = vars.diss.G{diss.ind_next};
@@ -200,10 +210,17 @@ classdef lmi_analysis_switched < lmi_analysis_interface
 
         function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
             %create_vars_storage create variables for the dissipation
-            %constraints. One for each subsystem
+            %constraints. A cell of G(s) functions, one for each subsystem.
             %
             %
-            %a cell of G(s) functions
+            %Args:
+            %   cons:       accumulated constraints
+            %   alg_psi:    the filtered algorithmic interconnection
+            %   name:       a name for the variable
+            %Returns:
+            %   vars_diss:   variables of the problem in the dissipation constraints
+            %   cons: accumulated constraints
+
 
             if nargin < 4
                 name = [];
@@ -237,9 +254,17 @@ classdef lmi_analysis_switched < lmi_analysis_interface
 
         function [vars_spec, cons] = create_vars_spec(obj, cons, specs)
             %CREATE_VARS_SPEC declare variables for the specifications
-
-            %maybe put this somewhere else?
             %
+            %
+            %Args:
+            %   cons:       accumulated constraints
+            %   alg_psi:    the filtered algorithmic interconnection
+            %   name:       a name for the variable
+            %Returns:
+            %   vars_spec:   variables of the problem in the specifications
+            %   cons: accumulated constraints
+
+
             %right now the variables are in the (spec) object.
             nspec = length(specs);
 

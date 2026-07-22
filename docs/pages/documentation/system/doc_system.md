@@ -57,6 +57,7 @@ These routines are shared by both Analysis and Synthesis.
 ```{eval-rst}
 .. mat:autoclass :: system.generic.lmi_analysis_interface
     :members:
+    :show-inheritance:
 ```
 
 
@@ -65,12 +66,12 @@ These routines are shared by both Analysis and Synthesis.
 ```{eval-rst}
 .. mat:autoclass :: system.generic.lmi_synthesis_interface
     :members:
+    :show-inheritance:
 ```
 
-## Data Containers
 
 
-### Dissipation Container
+## Dissipation Container
 
 The dissipation constraints are stored in `diss_data`. This container is used to construct the LMIs in Analysis and Synthesis.
 ```{eval-rst}

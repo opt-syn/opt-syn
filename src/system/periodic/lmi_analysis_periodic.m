@@ -1,7 +1,7 @@
 classdef lmi_analysis_periodic < lmi_analysis_interface
     %LMI_ANALYSIS_PERIODIC analysis LMIs for algorithmic interconnections
     %involving periodic linear networks and controllers
-    %
+    
     % w(k) \in F(z(k))
     %
     % [x(k+1)] = [A(k)    Bw(k)     Bwp(k)  ][x(k)]   state transition
@@ -32,8 +32,7 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
 
     methods
         function obj = lmi_analysis_periodic(sys, config)
-            %LMI_DISPATCH_LTI Construct an instance of this class
-            %   Detailed explanation goes here
+            %LMI_DISPATCH_LTI Constructor
             obj@lmi_analysis_interface(sys, config);
         end
 
@@ -42,23 +41,16 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
         function [vars, cons, objective] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
-            %Input:
+            %Args:
             %   vars:   variables of the problem        
             %   cons:   accumulated constraints
-            %   diss:   structure describing the problem
-            %       plant:  system to control
-            %       spec:   performance specification           
-            %       target: whether the performance measure should be optimized
-            %               true:  soft constraint (e.g. Schur complement
-            %                                       formulation)
-            %               false: hard constraint            
-            %       ind_curr:  the index of the current subsystem
-            %       ind_next:  the index of the next subsystem
+            %   diss (diss_data):   structure describing the dissipation
+            %       constraint
             %
-            %Output:
+            %Returns:
             %   cons:   accumulated constraints
             %   objective:  term to be minimized            
-            
+                      
             
             %need to look up the right constraint            
 
@@ -89,7 +81,17 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
         %% LMI definitions
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
             %QUAD: certificate of infinite-horizon quadratic performance
-
+            %
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation
+            %       constraint
+            %
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+                      
 
             
             
@@ -127,7 +129,14 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
         function [cons, objective, con_M] = e2e_target(obj, vars, cons, diss)
             %E2E_TARGET: use a Schur complement to minimize the energy to
             %energy gain of the transfer function
-
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   specs: performance specifications
+            %
+            %Returns:            
+            %  vars_spec:   variables for performance specification
+            %   cons:   accumulated constraints
+            
             Gcurr = vars.diss.G{diss.ind_curr};
             Gnext = vars.diss.G{diss.ind_next};
 
@@ -177,7 +186,13 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
             %constraints. One for each subsystem
             %
             %
-            %a cell of G(s) functions
+            %Args:
+            %   cons:       accumulated constraints
+            %   alg_psi:    the filtered algorithmic interconnection
+            %   name:       a name for the variable
+            %Returns:
+            %   vars_diss:   variables of the problem in the dissipation constraints
+            %   cons: accumulated constraints
 
             if nargin < 4
                 name = [];
@@ -211,8 +226,14 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
 
         function [vars_spec, cons] = create_vars_spec(obj, cons, specs)
             %CREATE_VARS_SPEC declare variables for the specifications
-
-            %maybe put this somewhere else?
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   specs: performance specifications
+            %
+            %Returns:            
+            %  vars_spec:   variables for performance specification
+            %   cons:   accumulated constraints
+            
             
             %right now the variables are in the (spec) object.
             nspec = length(specs);

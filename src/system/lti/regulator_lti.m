@@ -1,23 +1,21 @@
 classdef regulator_lti < regulator_interface
-    %REGULATOR_LTI Regulator for LTI systems
-    
-
+    %REGULATOR_LTI Regulator for LTI systems    
     
     methods
         function obj = regulator_lti(sys)
-            %REGULATOR_LTI Construct an instance of this class
-            %   Detailed explanation goes here
+            %REGULATOR_LTI Constructor 
             obj@regulator_interface(sys)
         end
         
-        function sys = get_model(obj, vars_reg)
-            %get_model
-            %fetch the internal model (nominal)
+        function model = get_model(obj, vars_reg)
+            %GET_MODEL fetch the internal model (nominal)
             %
-            %
-            %with edits: allow for selection of model within feasible set
-
-            %TODO: allow for eterizations based on the variables
+            %Args:
+            %   vars_reg:   variables of the problem        (regulator)            
+            %Return:
+            %   model: the full-order internal model
+            
+            
             
             if nargin < 2
                 Phi = obj.Phi;
@@ -27,13 +25,20 @@ classdef regulator_lti < regulator_interface
                 Gam = vars_reg.Gam;
             end
 
-            sys =obj.fetch_model(obj.S, Phi, Gam);
+            model =obj.fetch_model(obj.S, Phi, Gam);
             
 
         end
 
         function plant_model = connect_model(obj, plant, rho)
-            %connect the model (nominal regulator equation)
+            %connect the plant to the model (nominal regulator equation)
+            %and discount by rho
+            %
+            %Args:
+            %   plant: original system
+            %   rho:    exponential weighting
+            %Return:
+            %   plant_model: plant and model together
 
             if nargin < 3
                 rho = 1;
@@ -48,13 +53,13 @@ classdef regulator_lti < regulator_interface
 
         function alg_aug = sys_regulated_aug(obj)
             %SYS_REGULATED_AUG augment the system by the regulated
-            %disturbance.
+            %disturbance. ONLY used for reduced-order control
+            %
+            %Return:
+            %   alg_aug: augmented plant with output channels [z, zp, e, y] and input channels [w, wp, d, u]
+            %
 
-            %ONLY used for reduced-order control
-
-            % if nargin < 3
-            %      =[];
-            % end
+            
 
             [A, B1, B2, C1, D11, D12, C2, D21, D22] = obj.ss_zy_wu();
             [Bd, Ded, Dyd] = obj.d_influence();

@@ -239,6 +239,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_iqc.html">Integral Quadratic Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_specs.html">Performance Specifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_config.html">Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_simulation.html">Simulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_plotting.html">Plotting</a></li>
@@ -408,6 +409,8 @@
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.add_specifications">add_specifications() (manager.opt_manager_interface method)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.adj">adj (system.switched.opt_system_switched attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter">alg_plotter (class in simulator)</a>
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.alg_plotter">alg_plotter() (simulator.alg_plotter method)</a>
@@ -427,7 +430,11 @@
       <li><a href="pages/documentation/doc_config.html#config.opt_config.ana">ana (config.opt_config attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.augment_vars">augment_vars() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti.augment_vars">(system.lti.lmi_synthesis_lti method)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.augmented">augmented (iqc.iqc_data_container attribute)</a>
 </li>
   </ul></td>
@@ -460,10 +467,18 @@
         <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.blkdiag">(iqc.iqc_loop_split method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_box.BOX">BOX (simulator.op_sim.op_sim_box attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.opt_system.build_plant">build_plant() (system.lti.opt_system method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.opt_system_periodic_orbit.build_plant">(system.periodic_orbit.opt_system_periodic_orbit method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.build_plant">(system.switched.opt_system_switched method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.build_plant_single">build_plant_single() (system.generic.opt_system_interface method)</a>
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_analysis.build_program">build_program() (manager.opt_analysis method)</a>
@@ -497,9 +512,19 @@
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.C3">C3 (iqc.iqc_loop_factored attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.check_regulator">check_regulator() (system.generic.regulator_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.regulator_switched.check_regulator">(system.switched.regulator_switched method)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_analysis.coeff_normalize">coeff_normalize() (manager.opt_analysis method)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.common">common() (system.periodic.lmi_synthesis_periodic method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.common">(system.switched.lmi_synthesis_switched method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.compute_Phi">compute_Phi() (system.generic.regulator_interface method)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.compute_Vhat">compute_Vhat() (iqc.iqc_loop_split method)</a>
@@ -511,9 +536,17 @@
       <ul>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.con_spread">(system.generic.lmi_synthesis_interface method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.con_spread">(system.periodic.lmi_synthesis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.con_spread">(system.switched.lmi_synthesis_switched method)</a>
+</li>
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.con_spread_single">con_spread_single() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.con_spread_single">(system.lti.lmi_synthesis_lti_reduced_order method)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_analysis_interface.con_terminal">con_terminal() (system.generic.lmi_analysis_interface method)</a>
 
       <ul>
@@ -526,10 +559,16 @@
         <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.config">(system.generic.lmi_dispatch_interface attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.connect_model">connect_model() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.connect_model">(system.lti.lmi_synthesis_lti_reduced_order method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.regulator_lti.connect_model">(system.lti.regulator_lti method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.regulator_switched.connect_model">(system.switched.regulator_switched method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.cons">cons (manager.opt_manager_interface attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.cons_dynamic">cons_dynamic() (manager.opt_manager_interface method)</a>
@@ -539,7 +578,19 @@
 </li>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.cons_dynamic">(system.generic.lmi_synthesis_interface method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_analysis_periodic.cons_dynamic">(system.periodic.lmi_analysis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.cons_dynamic">(system.periodic.lmi_synthesis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_synthesis_periodic_orbit_reduced_order.cons_dynamic">(system.periodic_orbit.lmi_synthesis_periodic_orbit_reduced_order method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_analysis_switched.cons_dynamic">(system.switched.lmi_analysis_switched method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.cons_dynamic">(system.switched.lmi_synthesis_switched method)</a>
+</li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_analysis_interface.create_vars">create_vars() (system.generic.lmi_analysis_interface method)</a>
 
       <ul>
@@ -547,19 +598,53 @@
 </li>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.create_vars">(system.generic.regulator_interface method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.create_vars">(system.lti.lmi_synthesis_lti_reduced_order method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.regulator_switched.create_vars">(system.switched.regulator_switched method)</a>
+</li>
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.create_vars_controller">create_vars_controller() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.create_vars_controller">(system.lti.lmi_synthesis_lti_reduced_order method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.create_vars_controller">(system.periodic.lmi_synthesis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.create_vars_controller">(system.switched.lmi_synthesis_switched method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.create_vars_regulator">create_vars_regulator() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.create_vars_regulator">(system.lti.lmi_synthesis_lti_reduced_order method)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_analysis_interface.create_vars_spec">create_vars_spec() (system.generic.lmi_analysis_interface method)</a>
 
       <ul>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.create_vars_spec">(system.generic.lmi_synthesis_interface method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_analysis_periodic.create_vars_spec">(system.periodic.lmi_analysis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_analysis_switched.create_vars_spec">(system.switched.lmi_analysis_switched method)</a>
+</li>
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.create_vars_storage">create_vars_storage() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_analysis_lti.create_vars_storage">(system.lti.lmi_analysis_lti method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti.create_vars_storage">(system.lti.lmi_synthesis_lti method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_analysis_periodic.create_vars_storage">(system.periodic.lmi_analysis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.create_vars_storage">(system.periodic.lmi_synthesis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_analysis_switched.create_vars_storage">(system.switched.lmi_analysis_switched method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.create_vars_storage">(system.switched.lmi_synthesis_switched method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -587,7 +672,11 @@
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.discount">discount (system.generic.opt_system_interface attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.discount_schedule">discount_schedule() (system.generic.opt_system_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.discount_schedule">(system.switched.opt_system_switched method)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#manager.diss_data">diss_data (class in manager)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#manager.diss_data.diss_data">diss_data() (manager.diss_data method)</a>
@@ -605,15 +694,27 @@
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.e2e">e2e() (system.generic.lmi_dispatch_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.e2e_target">e2e_target() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_analysis_lti.e2e_target">(system.lti.lmi_analysis_lti method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_analysis_periodic.e2e_target">(system.periodic.lmi_analysis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_analysis_switched.e2e_target">(system.switched.lmi_analysis_switched method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_syn.elimination">elimination (config.opt_config_syn attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.elimination">elimination() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti.elimination">(system.lti.lmi_synthesis_lti method)</a>
 </li>
-      <li><a href="pages/documentation/doc_config.html#config.opt_config_syn.elimination_type">elimination_type (config.opt_config_syn attribute)</a>
-</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_syn.elimination_type">elimination_type (config.opt_config_syn attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.eq">eq (simulator.alg_sim_out attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.EQUALITY">EQUALITY (simulator.alg_plotter attribute)</a>
@@ -627,6 +728,12 @@
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.ergodic">ergodic() (system.generic.lmi_dispatch_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.exosystem">exosystem() (system.generic.regulator_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.regulator_periodic_orbit.exosystem">(system.periodic_orbit.regulator_periodic_orbit method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.opt_system_periodic_orbit.export_periodic">export_periodic() (system.periodic_orbit.opt_system_periodic_orbit method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -663,7 +770,11 @@
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.form_Dk">form_Dk() (system.generic.lmi_synthesis_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.form_internal_model">form_internal_model() (system.generic.regulator_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.regulator_switched.form_internal_model">(system.switched.regulator_switched method)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.FS">FS (simulator.alg_plotter attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.FST">FST (simulator.alg_plotter attribute)</a>
@@ -704,6 +815,8 @@
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.get_alg">get_alg() (system.generic.opt_system_interface method)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.get_arcs">get_arcs() (system.switched.opt_system_switched method)</a>
+</li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.get_consensus">get_consensus() (system.generic.opt_system_interface method)</a>
 
       <ul>
@@ -713,25 +826,67 @@
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.get_consensus_weighted">get_consensus_weighted() (system.generic.opt_system_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.get_D_mask">get_D_mask() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.get_D_mask">(system.periodic.lmi_synthesis_periodic method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.get_D_mask">(system.switched.lmi_synthesis_switched method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.get_discount">get_discount() (system.generic.opt_system_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.get_discount">(system.switched.opt_system_switched method)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.get_GY_dim">get_GY_dim() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti.get_GY_dim">(system.lti.lmi_synthesis_lti method)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.get_internal_signals">get_internal_signals() (system.generic.opt_system_interface method)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.get_K">get_K() (system.generic.regulator_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.opt_system.get_K">(system.lti.opt_system method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.opt_system_periodic_orbit.get_K">(system.periodic_orbit.opt_system_periodic_orbit method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.regulator_periodic_orbit.get_K">(system.periodic_orbit.regulator_periodic_orbit method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.get_K">(system.switched.opt_system_switched method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.get_K_mask">get_K_mask() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.get_K_mask">(system.lti.lmi_synthesis_lti_reduced_order method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.get_K">get_K() (system.generic.regulator_interface method)</a>
-</li>
-      <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.get_K_mask">get_K_mask() (system.generic.lmi_synthesis_interface method)</a>
-</li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.get_K_tri_basis">get_K_tri_basis() (system.generic.lmi_synthesis_interface method)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.regulator_lti.get_model">get_model() (system.lti.regulator_lti method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.regulator_switched.get_model">(system.switched.regulator_switched method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.get_name">get_name() (simulator.alg_plotter method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.get_op">get_op() (system.generic.opt_system_interface method)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.opt_system.get_P">get_P() (system.lti.opt_system method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.opt_system_periodic_orbit.get_P">(system.periodic_orbit.opt_system_periodic_orbit method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.get_P">(system.switched.opt_system_switched method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.get_psi">get_psi() (iqc.iqc_loop_factored method)</a>
 
       <ul>
@@ -741,7 +896,11 @@
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.get_psi_13">get_psi_13() (iqc.iqc_loop_factored method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.get_storage">get_storage() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti.get_storage">(system.lti.lmi_synthesis_lti method)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.get_title">get_title() (simulator.alg_plotter method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.get_tracked_opt">get_tracked_opt() (system.generic.opt_system_interface method)</a>
@@ -749,9 +908,25 @@
       <ul>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.get_tracked_opt">(system.generic.regulator_interface method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.opt_system_periodic.get_tracked_opt">(system.periodic.opt_system_periodic method)</a>
+</li>
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.get_type">get_type() (system.generic.opt_system_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.opt_system_periodic.get_type">(system.periodic.opt_system_periodic method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.opt_system_periodic_orbit.get_type">(system.periodic_orbit.opt_system_periodic_orbit method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.get_type">(system.switched.opt_system_switched method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.get_vars_involved">get_vars_involved() (system.periodic.lmi_synthesis_periodic method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.get_vars_involved">(system.switched.lmi_synthesis_switched method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.GX_max">GX_max (config.opt_config_tol attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.GY_max">GY_max (config.opt_config_tol attribute)</a>
@@ -846,15 +1021,55 @@
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_analysis_interface.lmi_analysis_interface">lmi_analysis_interface() (system.generic.lmi_analysis_interface method)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_analysis_lti">lmi_analysis_lti (class in system.lti)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_analysis_lti.lmi_analysis_lti">lmi_analysis_lti() (system.lti.lmi_analysis_lti method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_analysis_periodic">lmi_analysis_periodic (class in system.periodic)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_analysis_periodic.lmi_analysis_periodic">lmi_analysis_periodic() (system.periodic.lmi_analysis_periodic method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_analysis_periodic_orbit">lmi_analysis_periodic_orbit (class in system.periodic_orbit)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_analysis_periodic_orbit.lmi_analysis_periodic_orbit">lmi_analysis_periodic_orbit() (system.periodic_orbit.lmi_analysis_periodic_orbit method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_analysis_switched">lmi_analysis_switched (class in system.switched)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_analysis_switched.lmi_analysis_switched">lmi_analysis_switched() (system.switched.lmi_analysis_switched method)</a>
+</li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface">lmi_dispatch_interface (class in system.generic)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.lmi_dispatch_interface">lmi_dispatch_interface() (system.generic.lmi_dispatch_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface">lmi_synthesis_interface (class in system.generic)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.lmi_synthesis_interface">lmi_synthesis_interface() (system.generic.lmi_synthesis_interface method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti">lmi_synthesis_lti (class in system.lti)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti.lmi_synthesis_lti">lmi_synthesis_lti() (system.lti.lmi_synthesis_lti method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order">lmi_synthesis_lti_reduced_order (class in system.lti)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.lmi_synthesis_lti_reduced_order">lmi_synthesis_lti_reduced_order() (system.lti.lmi_synthesis_lti_reduced_order method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic">lmi_synthesis_periodic (class in system.periodic)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.lmi_synthesis_periodic">lmi_synthesis_periodic() (system.periodic.lmi_synthesis_periodic method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_synthesis_periodic_orbit">lmi_synthesis_periodic_orbit (class in system.periodic_orbit)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_synthesis_periodic_orbit.lmi_synthesis_periodic_orbit">lmi_synthesis_periodic_orbit() (system.periodic_orbit.lmi_synthesis_periodic_orbit method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_synthesis_periodic_orbit_reduced_order">lmi_synthesis_periodic_orbit_reduced_order (class in system.periodic_orbit)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_synthesis_periodic_orbit_reduced_order.lmi_synthesis_periodic_orbit_reduced_order">lmi_synthesis_periodic_orbit_reduced_order() (system.periodic_orbit.lmi_synthesis_periodic_orbit_reduced_order method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched">lmi_synthesis_switched (class in system.switched)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.lmi_synthesis_switched">lmi_synthesis_switched() (system.switched.lmi_synthesis_switched method)</a>
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config.LMILAB">LMILAB() (config.opt_config method)</a>
 
@@ -885,11 +1100,13 @@
 </li>
         <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.M">(simulator.op_sim.op_sim_quad attribute)</a>
 </li>
-      </ul></li>
-      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.m_same">m_same (iqc.iqc_data_container attribute)</a>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.opt_system_periodic_orbit.M">(system.periodic_orbit.opt_system_periodic_orbit attribute)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.m_same">m_same (iqc.iqc_data_container attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_synthesis.make_blank_iqc">make_blank_iqc() (manager.opt_synthesis method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.merge_quad">merge_quad() (system.generic.lmi_dispatch_interface method)</a>
@@ -913,7 +1130,13 @@
       <li><a href="pages/documentation/system/doc_system.html#manager.diss_data.ndiss">ndiss (manager.diss_data attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.next_mode">next_mode() (system.generic.opt_system_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.opt_system_periodic.next_mode">(system.periodic.opt_system_periodic method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.opt_system_periodic_orbit.next_mode">(system.periodic_orbit.opt_system_periodic_orbit method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.nf">nf() (iqc.iqc_loop_factored method)</a>
 
       <ul>
@@ -936,12 +1159,24 @@
         <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.nq">(iqc.iqc_loop_split method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.ns">ns() (system.generic.regulator_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.Nss">Nss() (system.generic.opt_system_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_analysis_periodic.Nss">(system.periodic.lmi_analysis_periodic method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.Nss">(system.periodic.lmi_synthesis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_analysis_switched.Nss">(system.switched.lmi_analysis_switched method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.Nss">(system.switched.lmi_synthesis_switched method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.regulator_switched.Nss">(system.switched.regulator_switched method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.nu">nu() (system.generic.opt_system_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.null_reg_all">null_reg_all() (system.generic.regulator_interface method)</a>
@@ -956,6 +1191,18 @@
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.nx2">nx2() (iqc.iqc_loop_split method)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.opt_system.nxi">nxi() (system.lti.opt_system method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.nxi">(system.switched.opt_system_switched method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.opt_system.nxn">nxn() (system.lti.opt_system method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.nxn">(system.switched.opt_system_switched method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.ny">ny() (system.generic.opt_system_interface method)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.nz">nz() (iqc.iqc_loop_factored method)</a>
@@ -1002,8 +1249,6 @@
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config">opt_config (class in config)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_config.html#config.opt_config.opt_config">opt_config() (config.opt_config method)</a>
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_ana">opt_config_ana (class in config)</a>
@@ -1014,6 +1259,8 @@
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.opt_config_gen">opt_config_gen() (config.opt_config_gen method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_syn">opt_config_syn (class in config)</a>
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_syn.opt_config_syn">opt_config_syn() (config.opt_config_syn method)</a>
@@ -1030,14 +1277,34 @@
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_synthesis.opt_synthesis">opt_synthesis() (manager.opt_synthesis method)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.opt_system">opt_system (class in system.lti)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.opt_system.opt_system">opt_system() (system.lti.opt_system method)</a>
+</li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface">opt_system_interface (class in system.generic)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.opt_system_interface">opt_system_interface() (system.generic.opt_system_interface method)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.opt_system_periodic">opt_system_periodic (class in system.periodic)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.opt_system_periodic.opt_system_periodic">opt_system_periodic() (system.periodic.opt_system_periodic method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.opt_system_periodic_orbit">opt_system_periodic_orbit (class in system.periodic_orbit)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.opt_system_periodic_orbit.opt_system_periodic_orbit">opt_system_periodic_orbit() (system.periodic_orbit.opt_system_periodic_orbit method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched">opt_system_switched (class in system.switched)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.opt_system_switched">opt_system_switched() (system.switched.opt_system_switched method)</a>
+</li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_analysis.oracle_order">oracle_order() (manager.opt_analysis method)</a>
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_analysis.order">order (manager.opt_analysis attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.opt_system_periodic_orbit.order">(system.periodic_orbit.opt_system_periodic_orbit attribute)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1046,6 +1313,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.P">P (system.generic.opt_system_interface attribute)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_analysis_lti.p2p">p2p() (system.lti.lmi_analysis_lti method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti.p2p">(system.lti.lmi_synthesis_lti method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.param">param (simulator.alg_sim_out attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.passive_factorize">passive_factorize() (iqc.iqc_loop_split method)</a>
@@ -1054,6 +1327,12 @@
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.perf_specs">perf_specs() (manager.opt_manager_interface method)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.opt_system_periodic.periodic_lift">periodic_lift() (system.periodic.opt_system_periodic method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.opt_system_periodic_orbit.periodic_lift">(system.periodic_orbit.opt_system_periodic_orbit method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.reg_cl_out.Phi">Phi (system.generic.reg_cl_out attribute)</a>
 
       <ul>
@@ -1070,16 +1349,20 @@
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.Pi_basis">Pi_basis (system.generic.regulator_interface attribute)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.Pibar">Pibar() (system.lti.lmi_synthesis_lti_reduced_order method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.Pihat">Pihat() (system.lti.lmi_synthesis_lti_reduced_order method)</a>
+</li>
       <li><a href="pages/documentation/system/doc_system.html#manager.diss_data.plant">plant (manager.diss_data attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#manager.diss_data.plant_reg">plant_reg (manager.diss_data attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot">plot() (simulator.alg_plotter method)</a>
 </li>
-      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_3_err">plot_3_err() (simulator.alg_plotter method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_3_err">plot_3_err() (simulator.alg_plotter method)</a>
+</li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_3_sq_err">plot_3_sq_err() (simulator.alg_plotter method)</a>
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_4">plot_4() (simulator.alg_plotter method)</a>
@@ -1105,6 +1388,12 @@
       <ul>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.process_recovery">(system.generic.lmi_synthesis_interface method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.process_recovery">(system.lti.lmi_synthesis_lti_reduced_order method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_synthesis_periodic_orbit.process_recovery">(system.periodic_orbit.lmi_synthesis_periodic_orbit method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_synthesis_periodic_orbit_reduced_order.process_recovery">(system.periodic_orbit.lmi_synthesis_periodic_orbit_reduced_order method)</a>
+</li>
       </ul></li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.Psi1">Psi1 (iqc.iqc_loop_factored attribute)</a>
 
@@ -1126,6 +1415,22 @@
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_analysis_lti.quad">quad() (system.lti.lmi_analysis_lti method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti.quad">(system.lti.lmi_synthesis_lti method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_analysis_periodic.quad">(system.periodic.lmi_analysis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.quad">(system.periodic.lmi_synthesis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_analysis_switched.quad">(system.switched.lmi_analysis_switched method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.quad">(system.switched.lmi_synthesis_switched method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.quad_objective">quad_objective() (system.generic.lmi_dispatch_interface method)</a>
 </li>
   </ul></td>
@@ -1139,15 +1444,43 @@
       <ul>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.R">(system.generic.regulator_interface attribute)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_analysis_periodic_orbit.R">(system.periodic_orbit.lmi_analysis_periodic_orbit attribute)</a>
+</li>
       </ul></li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.recover">recover() (iqc.iqc_loop_split method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.recover_K_from_elim">recover_K_from_elim() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti.recover_K_from_elim">(system.lti.lmi_synthesis_lti method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.recover_K_from_elim">(system.lti.lmi_synthesis_lti_reduced_order method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.recover_subcontroller">recover_subcontroller() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.recover_subcontroller">(system.lti.lmi_synthesis_lti_reduced_order method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.recover_subcontroller">(system.periodic.lmi_synthesis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_synthesis_periodic_orbit.recover_subcontroller">(system.periodic_orbit.lmi_synthesis_periodic_orbit method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_synthesis_periodic_orbit_reduced_order.recover_subcontroller">(system.periodic_orbit.lmi_synthesis_periodic_orbit_reduced_order method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.recover_subcontroller">(system.switched.lmi_synthesis_switched method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.recover_subcontroller_warp">recover_subcontroller_warp() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.recover_subcontroller_warp">(system.lti.lmi_synthesis_lti_reduced_order method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.recover_subcontroller_warp">(system.periodic.lmi_synthesis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.recover_subcontroller_warp">(system.switched.lmi_synthesis_switched method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config.recovery">recovery (config.opt_config attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.reduced">reduced (system.generic.lmi_dispatch_interface attribute)</a>
@@ -1182,6 +1515,22 @@
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.regulator_interface">regulator_interface() (system.generic.regulator_interface method)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.regulator_lti">regulator_lti (class in system.lti)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_lti.html#system.lti.regulator_lti.regulator_lti">regulator_lti() (system.lti.regulator_lti method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.regulator_periodic">regulator_periodic (class in system.periodic)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.regulator_periodic.regulator_periodic">regulator_periodic() (system.periodic.regulator_periodic method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.regulator_periodic_orbit">regulator_periodic_orbit (class in system.periodic_orbit)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.regulator_periodic_orbit.regulator_periodic_orbit">regulator_periodic_orbit() (system.periodic_orbit.regulator_periodic_orbit method)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_switched.html#system.switched.regulator_switched">regulator_switched (class in system.switched)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_switched.html#system.switched.regulator_switched.regulator_switched">regulator_switched() (system.switched.regulator_switched method)</a>
+</li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.res_w">res_w (simulator.alg_sim_out attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.res_z">res_z (simulator.alg_sim_out attribute)</a>
@@ -1190,6 +1539,12 @@
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.rotate">rotate (iqc.iqc_data_container attribute)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_synthesis_periodic_orbit_reduced_order.rotate_plant">rotate_plant() (system.periodic_orbit.lmi_synthesis_periodic_orbit_reduced_order method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.opt_system_periodic_orbit.rotate_plant">(system.periodic_orbit.opt_system_periodic_orbit method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.run">run() (manager.opt_manager_interface method)</a>
 </li>
   </ul></td>
@@ -1215,7 +1570,11 @@
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.set_tol">set_tol() (manager.opt_manager_interface method)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.sim">sim() (simulator.alg_sim method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.opt_system.sim">(system.lti.opt_system method)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.sim_out">sim_out (simulator.alg_plotter attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#module-simulator.op_sim">simulator.op_sim (module)</a>
@@ -1247,6 +1606,8 @@
       <ul>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.ss_zy_wu">(system.generic.regulator_interface method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.regulator_periodic_orbit.ss_zy_wu">(system.periodic_orbit.regulator_periodic_orbit method)</a>
+</li>
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.stability">stability() (system.generic.lmi_dispatch_interface method)</a>
 </li>
@@ -1275,7 +1636,11 @@
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.sys_block">sys_block() (system.generic.lmi_dispatch_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.sys_regulated_aug">sys_regulated_aug() (system.generic.regulator_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.regulator_lti.sys_regulated_aug">(system.lti.regulator_lti method)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1322,10 +1687,16 @@
 </li>
       <li><a href="pages/documentation/doc_config.html#config.bisect_opts.val_range">val_range (config.bisect_opts attribute)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.validate_recovery_gain">validate_recovery_gain() (system.generic.lmi_synthesis_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.validate_recovery_gain">(system.periodic.lmi_synthesis_periodic method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.validate_recovery_gain">(system.switched.lmi_synthesis_switched method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.validate_recovery_gain">validate_recovery_gain() (system.generic.lmi_synthesis_interface method)</a>
-</li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.vars">vars (manager.opt_manager_interface attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.verbose">verbose (config.opt_config_gen attribute)</a>

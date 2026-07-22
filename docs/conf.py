@@ -58,6 +58,11 @@ primary_domain = 'mat'
 
 napoleon_custom_sections = [('Returns', 'params_style'), ('Return', 'params_style')]
 
+autodoc_default_options = {
+    # other options
+    'show-inheritance': True
+}
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
@@ -153,7 +158,7 @@ mathjax3_config = {
             "Cc" : r"C_c",
             "Dc" : r"D_c", 
             "Kc" : r"K_c", 
-            "blam" : r"{ \lambda}", 
+            "blam" : r"{\lambda}", 
         }
     }
 }

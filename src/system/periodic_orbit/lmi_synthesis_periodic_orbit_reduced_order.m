@@ -1,7 +1,7 @@
 classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_order
-    %LMI_SYNTHESIS_PERIODIC_ORBIT synthesis LMIs for algorithmic interconnections
+    %LMI_SYNTHESIS_PERIODIC_ORBIT_REDUCED_ORDER reduced-order synthesis LMIs for algorithmic interconnections
     %involving periodic linear networks and controllers
-    %
+    
     % Orbit structure on the periodicity
     %
     % w(k) \in F(z(k))
@@ -21,13 +21,22 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
 
     methods
         function obj = lmi_synthesis_periodic_orbit_reduced_order(sys,config)
-            %LMI_SYNTHESIS_PERIODIC undefined
-            %   undefined
+            %LMI_SYNTHESIS_PERIODIC_ORBIT_REDUCED_ORDER constructor
             obj@lmi_synthesis_lti_reduced_order(sys, config);
         end
 
         function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS_DYNAMIC form the dissipation and sign constraints
+            %
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+                      
 
 
             %go to the rotating coordinate frame
@@ -39,7 +48,15 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
 
         function sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
             %recover the controller
-
+            %Args:
+            %   sol: solution structure
+            %   lmi_out: output from solver
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   diss (diss_data):   structure describing the dissipation constraint            
+            %
+            %Returns:  
+            %   sol: solution structure
+            
             if nargin < 5
                 diss = [];
             end
@@ -60,17 +77,22 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
         end
 
 
-        function plant_rot = rotate_plant(obj, plant, direction)
-            
-            %rotate_plant: apply the periodic-orbit rotation to the
+        function plant_rot = rotate_plant(obj, plant, direction)            
+            %rotate_plant,  apply the periodic-orbit rotation to the
             %time-varying system, producing an LTI system
+            %
+            %Args:
+            %   plant: original system
+            %   direction (bool): forwards (true) or backwards (false)
+            %Returns:
+            %   plant_rot: rotated LTI plant
             if nargin < 3
                 direction = 1;
             end
 
-            c = size(obj.sys.R, 1);
+            c = size(obj.sys.M, 1);
             n = size(plant.A, 1);
-            Rkron = kron(eye(n/c), obj.sys.R)^(direction);
+            Rkron = kron(eye(n/c), obj.sys.M)^(direction);
             
             plant_rot = plant;
             if isa(plant, 'genplant')
@@ -88,14 +110,14 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
             %RECOVER_SUBCONTROLLER recover the subcontroller of the current
             %mode/control
             %
+            %Args:
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   P_trans:    the transformed generalized plant before IQC
+            %   sol: solution structure
             %
-            %Input:
-            %
-            %Output:
-            %   K_feed: the subcontroller with direct feedthrough, before
-            %           exponential discounting    
-            %(not yet exponentially undiscounted, this happens later)
-
+            %Returns:
+            %   sol: solution structure
+            
             vars_rec = sol.vars;
             rho = sol.rho;
 

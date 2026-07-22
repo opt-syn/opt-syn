@@ -458,8 +458,9 @@ classdef regulator_interface
         function [reg_cl] = check_regulator(obj)
             %check the regulator equation for a specific system
             %
-            %Output:
-            %   
+            %Return:
+            %   reg_cl (reg_cl_out): closed-loop regulator structure if
+            %                        succesful, empty if infeasible.
             N = obj.get_consensus();
 
             

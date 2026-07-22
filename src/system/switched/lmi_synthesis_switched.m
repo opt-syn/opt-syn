@@ -1,7 +1,7 @@
 classdef lmi_synthesis_switched < lmi_synthesis_interface
     %LMI_SYNTHESIS_SWITCHED synthesis LMIs for algorithmic interconnections
     %involving switched linear networks and controllers
-    %
+    
     %
     %examples include time-varying delays or coordinate updates
     %
@@ -28,8 +28,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
     methods
         function obj = lmi_synthesis_switched(sys,config)
-            %LMI_SYNTHESIS_SWITCHED undefined
-            %   undefined
+            %LMI_SYNTHESIS_SWITCHED Constructor            
             obj@lmi_synthesis_interface(sys, config);
         end
 
@@ -41,15 +40,23 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
         end
 
         function cm = common(obj)
+            %is a common storage function used?
             cm = obj.config.switched.common;
         end
 
         function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
             %create_vars_storage create variables for the dissipation
-            %constraints. One for each subsystem
+            %constraints. A cell of G(s) functions, one for each subsystem.
             %
             %
-            %a cell of G(s) functions
+            %Args:
+            %   cons:       accumulated constraints
+            %   alg_psi:    the filtered algorithmic interconnection
+            %   name:       a name for the variable
+            %Returns:
+            %   vars_diss:   variables of the problem in the dissipation constraints
+            %   cons: accumulated constraints
+
             if nargin < 4
                 name = [];
             end
@@ -124,8 +131,16 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
         function [vars_K, cons] = create_vars_controller(obj, cons, alg_psi, name)
             %CREATE_VARS_CONTROLLER create the nonlinearly-transformed
             %controller matrices
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   alg_psi:   the filtered algorithmic interconnection  
+            %   name:       a name for the variable
+            %   D_mask:     sparsity pattern for D of the controller
+            %
+            %Returns:   
+            %   vars_K: controller variables [Ak, Bk, Ck, Dk], or some subset if elimination is used.           
+            %   cons:   accumulated constraints
 
-            %get the dimensions
 
             vars_K = cell(obj.Nss, 1);
 
@@ -145,6 +160,9 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
         function D_mask = get_D_mask(obj)
             %GET_D_MASK get the direct feedthrough terms
+            %
+            %Returns:
+            %   D_mask:     sparsity pattern for D of the controller
 
             %the sparsity-constrained term for internal model control            
             D_mask_0 = obj.config.syn.D_mask;
@@ -179,6 +197,12 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
         function vars_inv= get_vars_involved(obj, vars, ind)
             %GET_VARS_INVOLVED get variables involved in the current mode
+            %Args:
+            %   vars:   variables of the problem        
+            %   ind:    index of subsystem/mode
+            %Returns:
+            %   vars_inv:     variables (diss, reg) at subsystem ind
+
 
             vars_inv= struct;
             if ind==0
@@ -207,22 +231,16 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
         function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
-            %Input:
+            %Args:
             %   vars:   variables of the problem        
             %   cons:   accumulated constraints
-            %   diss:   structure describing the problem
-            %       plant:  system to control
-            %       spec:   performance specification           
-            %       target: whether the performance measure should be optimized
-            %               true:  soft constraint (e.g. Schur complement
-            %                                       formulation)
-            %               false: hard constraint            
-            %       ind_curr:  the index of the current subsystem
-            %       ind_next:  the index of the next subsystem
+            %   diss (diss_data):   structure describing the dissipation
+            %       constraint
             %
-            %Output:
+            %Returns:
             %   cons:   accumulated constraints
             %   objective:  term to be minimized            
+                      
 
 
             %need to look up the right constraint            
@@ -302,8 +320,16 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
             %QUAD: certificate of infinite-horizon quadratic performance
-
-
+            %
+            %
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   specs: performance specifications
+            %
+            %Returns:            
+            %  vars_spec:   variables for performance specification
+            %   cons:   accumulated constraints
+                   
 
             %get the variables of the problem
             vslack = obj.get_vars_involved(vars, 0);            
@@ -360,8 +386,16 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
         function cons = con_spread(obj, cons, vars)
             %CON_SPREAD increase numerical conditioning by separating the 
-            %primal and dual blocks
-            %invoke this over multiple subsystems
+            %primal and dual blocks. Invoke this over multiple subsystems
+            %
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   GX:   primal storage matrix
+            %   GY:   dualstorage matrix
+            %
+            %Returns:            
+            %   cons:   accumulated constraints
+        
             if ~obj.config.syn.reduced_order
                 for i = 1:obj.Nss
                     cons = obj.con_spread_single(cons, vars.diss.GX{i}, vars.diss.GY{i});
@@ -380,13 +414,14 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             %mode/control
             %
             %
-            %Input:
+            %Args:
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   P_trans:    the transformed generalized plant before IQC
+            %   sol: solution structure
             %
-            %Output:
-            %   K_feed: the subcontroller with direct feedthrough, before
-            %           exponential discounting    
-            %(not yet exponentially undiscounted, this happens later)
-
+            %Returns:
+            %   sol: solution structure
+            
 
             vars_rec = sol.vars;
             rho = sol.rho;
@@ -429,9 +464,18 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
         end
 
         function [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec)
-
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
             %controller 
+            %Args:
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   P_trans:    the transformed generalized plant before IQC
+            %   sol: solution structure
+            %
+            %Output:
+            %   K_nofeed: subcontroller without direct feedthrough
+            %   Gcl:    closed-loop storage matrix (original)
+            %   Ycl:    similarity transformation/nonlinear warping
+
             %dynamics and indexers
 
 
@@ -535,9 +579,15 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
         function gain = validate_recovery_gain(obj, alg_trans, iqc_op_all)
             %VALIDATE_RECOVERY validate that the system obeys the stability
-            %constraint (TODO: performance specs)
+            %constraint   (not yet supported)         
+            %
+            %Args:
+            %   alg_trans: the plant with confirmed performance by LMIs
+            %   iqc_op_all: all IQCs
+            %Return:
+            %   gain:   [Passivity index, H-infinity index].
 
-            %not yet supported
+            %
             gain = 0;
         end
     end

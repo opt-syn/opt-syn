@@ -1,7 +1,7 @@
 classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
-    %LMI_SYNTHESIS_LTI synthesis LMIs for algorithmic interconnections
+    %LMI_SYNTHESIS_LTI_REDUCED_ORDER reduced-order control synthesis LMIs for algorithmic interconnections
     %involving linear-time-invariant (LTI) networks and controllers
-    %
+    
     % w(k) \in F(z(k))
     %
     % [x(k+1)] = [A    B     Bp     Bu  ][x(k)]   state transition
@@ -25,8 +25,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
     methods
         function obj = lmi_synthesis_lti_reduced_order(sys, config)
-            %LMI_SYNTHESIS_LTI Construct an instance of this class
-            %   Detailed explanation goes here
+            %LMI_SYNTHESIS_LTI_REDUCED_ORDER Constructor            
             obj@lmi_synthesis_lti(sys, config);
             obj.reduced=true;
         end       
@@ -34,7 +33,17 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
         %% reduced-order control indexers
         function [vars, cons] = create_vars(obj, vars, cons, alg_psi, specs)
             %CREATE_VARS create the variables for the problem
-
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   specs: performance specifications
+            %
+            %Returns:            
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            
             [vars, cons]  = create_vars@lmi_synthesis_interface(obj, vars, cons, alg_psi, specs);
 
            
@@ -46,18 +55,25 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %CREATE_VARS_REGULATOR
             %parameterize the solutions to the regulator equations
             %use this as a variable in reduced-order control
-            %
-            %systems with more outputs than oracles can have freedom in the            
-            %regulator equations (such as optimization problems with known 
-            % Laplacian matrices)
- 
+            %Returns:
+            %   vars_reg:   variables of the problem        (regulator)            
+
+
             %param the nullspace
             vars_reg = obj.reg.create_vars(true);            
 
         end
 
         function sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
-            %recover the controller
+            %recover the controller                        
+            %Args:
+            %   sol: solution structure
+            %   lmi_out: output from solver
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   diss (diss_data):   structure describing the dissipation constraint            
+            %
+            %Returns:  
+            %   sol: solution structure
 
             if nargin < 5
                 diss = [];
@@ -84,15 +100,14 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
         function [sol] = recover_subcontroller(obj, alg_psi, P_aug, sol)
             %RECOVER_SUBCONTROLLER recover the subcontroller of the current
             %mode/control
+            %Args:
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   P_trans:    the transformed generalized plant before IQC
+            %   sol: solution structure
             %
-            %
-            %Input:
-            %
-            %Output:
-            %   K_feed: the subcontroller with direct feedthrough, before
-            %           exponential discounting    
-            %(not yet exponentially undiscounted, this happens later)
-
+            %Returns:
+            %   sol: solution structure
+            
             vars_rec = sol.vars;
             rho = sol.rho;
 
@@ -120,6 +135,12 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
         function P_model = connect_model(obj, diss)
             %CONNECT_MODEL connect the plant to the internal model
+            %Args:                   
+            %   diss (diss_data): information about dissipation relation
+            %
+            %Returns:            
+            %   P_model:   *augmented* generalized plant with internal model attached            
+        
 
             %but this is reduced-order, so we play a different game here.
 
@@ -145,34 +166,21 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
         
 
-        function Pb = Pibar(obj, vars_diss, vars_reg, invPi)
-            %similarity transformation for optimization over Pi
-            %used in regulator (reduced-order)  
-
-            if nargin < 4
-                invPi = false;
-            end
-            
-            nxn = ssize(vars_reg.Pi, 1);
-            ns = ssize(vars_reg.Pi, 2);
-            
-            nf = ssize(vars_diss.GX, 1) - nxn - ns;
-
-            if invPi
-                Pisign = 1;
-            else
-                Pisign = -1;
-            end
-
-
-            Pb = [[eye(nf), zeros(nf, nxn+ns)];
-                   [zeros(nxn, nf), eye(nxn), Pisign*vars_reg.Pi]];
-
-        end
+        
 
         function [vars_K, cons] = create_vars_controller(obj, cons, alg_psi, name, D_mask)
             %CREATE_VARS_CONTROLLER create the nonlinearly-transformed
             %controller matrices
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   alg_psi:   the filtered algorithmic interconnection  
+            %   name:       a name for the variable
+            %   D_mask:     sparsity pattern for D of the controller
+            %
+            %Returns:   
+            %   vars_K: controller variables [Ak, Bk, Ck, Dk], or some subset if elimination is used.           
+            %   cons:   accumulated constraints
+
 
             %get the dimensions
 
@@ -263,10 +271,51 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
         end
 
+        function Pb = Pibar(obj, vars_diss, vars_reg, invPi)
+            %similarity transformation for optimization over Pi
+            %used in regulator (reduced-order)  
+            %
+            % 
+            %Args:                   
+            %   vars_diss:   variables of the problem in the dissipation constraints
+            %   vars_reg:   variables for regulator equation
+            %   inv_Pi (bool): take inverse (true) or not (false)
+            %Returns:            
+            %   Pb:   the portion of Pi
+            
+
+            if nargin < 4
+                invPi = false;
+            end
+            
+            nxn = ssize(vars_reg.Pi, 1);
+            ns = ssize(vars_reg.Pi, 2);
+            
+            nf = ssize(vars_diss.GX, 1) - nxn - ns;
+
+            if invPi
+                Pisign = 1;
+            else
+                Pisign = -1;
+            end
+
+
+            Pb = [[eye(nf), zeros(nf, nxn+ns)];
+                   [zeros(nxn, nf), eye(nxn), Pisign*vars_reg.Pi]];
+
+        end
+
         function Ph = Pihat(obj, vars_diss, vars_reg, invPi)
             %similarity transformation for reduced-order control
             %used in regulator (reduced-order)
-
+            %
+            %Args:                   
+            %   vars_diss:   variables of the problem in the dissipation constraints
+            %   vars_reg:   variables for regulator equation
+            %   inv_Pi (bool): take inverse (true) or not (false)
+            %Returns:            
+            %   Pb:   the portion of Pi
+            
             if nargin < 4
                 invPi = false;
             end
@@ -285,6 +334,15 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
         function cons = con_spread_single(obj, cons, GX, GY)
             %CON_SPREAD_SINGLE increase numerical conditioning by separating the 
             %primal and dual blocks
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   GX:   primal storage matrix
+            %   GY:   dualstorage matrix
+            %
+            %Returns:            
+            %   cons:   accumulated constraints
+
+
             % np = ssize(GX, 1);
             % spr = obj.config.tol.spread+1;           
             % cons_PH = [GX, (spr)*eye(np); (spr)*eye(np), GY];
@@ -294,8 +352,17 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
         end
 
         function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, Pr, vars_diss, vars_reg, vars_K);
-            
-            %acquire the transformed regulated expression
+            %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
+            %transformation
+            %Args:    
+            %   P: IQC-filtered generalized plant 
+            %   vars_diss:   variables of the problem (dissipation)
+            %   vars_reg:   variables of the problem (regulator)            
+            %   vars_K:   variables of the problem (controller)    
+            %Returns:                        
+            %   sys_cl:  closed-loop system dynamics
+            %   U_cl:    left outer product in elimination
+            %   V_cl:    right outer product in elimination
             
             GX = vars_diss.GX;
             GY = vars_diss.GY;
@@ -441,6 +508,12 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
         function [Ak, Bk, Ck, Dk] = recover_K_from_elim(obj, vars_rec)
             %recover the eliminated matrices in the controller            
+            %Args:
+            %   vars_rec: recovered variables from solver
+            %
+            %Returns:
+            %   Ak, Bk, Ck, Dk: controller matrices
+            
             if obj.elimination
                 
                 % https://www.sciencedirect.com/science/article/pii/0167691194000919
@@ -500,15 +573,16 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
         function K_mask = get_K_mask(obj, nxi)
             %K_mask: controller sparsity pattern
-            %
+            %Args: 
+            %   nxi: number of controller states
+            %Return:
+            %   K_mask: pattern of the controller
+
+
             %[Ck2, Dk2
             % Ak,  Bk
             % Ck1, Dk1]
             %
-            %Input: 
-            %   nxi: number of controller states
-            %Output:
-            %   pattern K_mask
 
             %used for matrix elimination lemma for LTI systems
 
@@ -529,10 +603,18 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
         %% recovery
 
         function [K_nofeed, Xcal, Ycal] = recover_subcontroller_warp(obj, P_trans, vars_rec)
-
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
-            %controller 
-            %dynamics and indexers
+            %controller dynamics and indexers
+            %Args:
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   P_trans:    the transformed generalized plant before IQC
+            %   sol: solution structure
+            %
+            %Output:
+            %   K_nofeed: subcontroller without direct feedthrough
+            %   Gcl:    closed-loop storage matrix (original)
+            %   Ycl:    similarity transformation/nonlinear warping
+
 
 
             %for debugging

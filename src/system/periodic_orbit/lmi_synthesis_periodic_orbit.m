@@ -1,7 +1,7 @@
 classdef lmi_synthesis_periodic_orbit < lmi_synthesis_lti
     %LMI_SYNTHESIS_PERIODIC_ORBIT synthesis LMIs for algorithmic interconnections
     %involving periodic linear networks and controllers
-    %
+    
     % Orbit structure on the periodicity
     %
     % w(k) \in F(z(k))
@@ -21,24 +21,21 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_lti
 
     methods
         function obj = lmi_synthesis_periodic_orbit(sys,config)
-            %LMI_SYNTHESIS_PERIODIC undefined
+            %LMI_SYNTHESIS_PERIODIC constructor
             %   undefined
             obj@lmi_synthesis_lti(sys, config);
         end
-
-        % function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
-        %     %CONS_DYNAMIC form the dissipation and sign constraints
-        % 
-        % 
-        %     %go to the rotating coordinate frame
-        %     diss.plant = obj.sys.rotate_plant(diss.plant);
-        % 
-        %     %now call the cons_dynamic routine for LTI systems
-        %     [vars, cons, objective, con_M] = cons_dynamic@lmi_synthesis_lti(obj, vars, cons, diss);
-        % end
-
         function sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
             %recover the controller
+            %
+            %Args:
+            %   sol: solution structure
+            %   lmi_out: output from solver
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   diss (diss_data):   structure describing the dissipation constraint            
+            %
+            %Returns:  
+            %   sol: solution structure
 
             if nargin < 5
                 diss = [];
@@ -60,14 +57,14 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_lti
             %RECOVER_SUBCONTROLLER recover the subcontroller of the current
             %mode/control
             %
+            %Args:
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   P_trans:    the transformed generalized plant before IQC
+            %   sol: solution structure
             %
-            %Input:
-            %
-            %Output:
-            %   K_feed: the subcontroller with direct feedthrough, before
-            %           exponential discounting    
-            %(not yet exponentially undiscounted, this happens later)
-
+            %Returns:
+            %   sol: solution structure
+            
 
             [sol] = recover_subcontroller@lmi_synthesis_lti(obj, alg_psi, P_trans, sol);
 

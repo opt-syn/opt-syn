@@ -124,10 +124,17 @@ classdef  opt_system_switched < opt_system_interface
         function pow = discount_schedule(obj, ordermax)
             %DISCOUNT_SCHEDULE exponential weights encountered when
             %applying the FIR filters
+            %Args:
+            %   ordermax: maximum order of the IQCs
             %
-            %[0; 1 ; 2] -> rho.^[0; 1; 2] for uniform exponential stability
-
-            %[0; 0; 1] -> rho.^[0; 0; 1] for shuffled switched stability
+            %Return:
+            %   pow: Exponent sequence of discounts
+            %
+            % Example: 
+            %   [0; 1; 2] -> rho.^[0; 1; 2] for uniform exponential stability
+            %   [0; 0; 1] -> rho.^[0; 0; 1] for shuffled switched stability
+            %
+            
             %This becomes relevant when performing shuffled systems
             %(override on switched systems) 
             
@@ -162,18 +169,18 @@ classdef  opt_system_switched < opt_system_interface
 
         %% build the plant
         function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, rho)
-            %BUILD_PLANT: form the plant to be used for analysis
-            %or synthesis
-            %Input:
+            %BUILD_PLANT: form the plant to be used for analysis or synthesis
+            %
+            %Args:
             %   iqc_data: from manager.iqc_op_all, information about the
             %             operator iqc descriptions
-            %   task: 'analysis' or 'synthesis'
+            %   rho: exponential weighting
             %
-            %Output:
+            %Returns:
             %   alg_psi:    plant with filters (psi)
+            %   iqc_op:     iqcs for the robust uncertainties
             %   alg_loop:   plant without filters, but after loop
             %               transformation (should be stable)
-            %   iqc_op:     iqcs for the robust uncertainties
 
 
             alg_psi = cell(obj.Nss, 1);

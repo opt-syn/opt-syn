@@ -1,6 +1,8 @@
 classdef regulator_switched < regulator_interface
     %REGULATOR_SWITCHED Regulator for switched systems 
     %
+    
+
     % [x(k+1)] = [A(mode(k))    Bd(mode(k))    Bu(mode(k))  ][x(k)]   state transition
     % [e(k)  ] = [Ce(mode(k))   Ded(mode(k))   Deu(mode(k)) ][d(k)]   output to  regulated error    
     % [u(k) ] =  [Cy(mode(k))   Dyd(mode(k))   Dyu(mode(k)) ][u(k)]   output to controller    
@@ -27,10 +29,14 @@ classdef regulator_switched < regulator_interface
 
         function obj = form_internal_model(obj)
             %FORM_INTERNAL_MODEL create the internal model by solving the regulator
-            %equation. Inputs are the system (P, bind, tracking, op)
-            %
-            %op is important for which oracles are equaltiy constarints and
+            %equation. Inputs are the system (P, bind, tracking, op)            
+            %op is important for which oracles are equaltiy constraints and
             %which are inequality constraints
+            %
+            %Warning:
+            %   If regulator equation is unsolvable, then no optimization
+            %   algorithm can be found.
+
 
             Npre = obj.sys.get_consensus(obj.sys.op, obj.sys.bind);
             c = obj.sys.op{1}.c; %coordinate lifts: change this later?
@@ -161,6 +167,11 @@ classdef regulator_switched < regulator_interface
 
         function [regulator_closed] = check_regulator(obj)
             %CHECK_REGULATOR is the regulator equation satisfied?
+            %
+            %Return:
+            %   reg_cl (reg_cl_out): closed-loop regulator structure if succesful, empty if infeasible.
+            %
+            %
             sys_cl = lft(obj.sys.P, obj.sys.K);
 
             %if the system is convergent, then the regulator equation
@@ -269,9 +280,12 @@ classdef regulator_switched < regulator_interface
         function sys = get_model(obj, ind, vars_reg)
             %get_model
             %fetch the internal model (nominal) at mode 'ind'
-            %
-            %
-            %with edits: allow for selection of model within feasible set
+            %with edits, allow for selection of model within feasible set
+            %Args:
+            %   vars_reg:   variables of the problem        (regulator)            
+            %Return:
+            %   model: the full-order internal model
+            
 
             %TODO: allow for parameterizations based on the variables
 
@@ -309,6 +323,13 @@ classdef regulator_switched < regulator_interface
 
         function plant_model = connect_model(obj, plant, ind, rho)
             %connect the model (nominal regulator equation)
+            %
+            %Args:
+            %   plant: original system
+            %   ind:    index to examine
+            %   rho:    exponential weighting
+            %Return:
+            %   plant_model: plant and model together
 
             if nargin < 4
                 rho = 1;
@@ -332,6 +353,13 @@ classdef regulator_switched < regulator_interface
 
         function vars_reg = create_vars(obj)
             %CREATE_VARS: create variables that parameterize the nullspace
+            %Args:
+            %   param_null(bool): should the nullspace be searched (as
+            %   variables)
+            %
+            %Returns:
+            %   vars_reg: structure with fields (Pi, Gam, Phi)
+            
             vars_reg.Pi = obj.Pi;
             vars_reg.Gam = obj.Gam;
             vars_reg.Phi = obj.Phi;

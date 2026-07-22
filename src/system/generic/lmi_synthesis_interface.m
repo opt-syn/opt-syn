@@ -908,7 +908,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %   P_trans:    the transformed generalized plant before IQC
             %   sol: solution structure
             %
-            %Output:
+            %Returns:
             %   sol: solution structure
             
             
@@ -951,7 +951,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
         function [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec)
-
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
             %controller 
             %Args:

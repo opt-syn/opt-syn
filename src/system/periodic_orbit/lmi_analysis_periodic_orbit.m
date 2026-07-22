@@ -1,7 +1,7 @@
 classdef lmi_analysis_periodic_orbit < lmi_analysis_lti
     %LMI_ANALYSIS_PERIODIC_ORBIT analysis LMIs for algorithmic interconnections
     %involving periodic linear networks and controllers
-    %
+    
     % w(k) \in F(z(k))
     %
     % [x(k+1)] = [A(k)    B(k)     Bp(k)   ][x(k)]   state transition
@@ -30,11 +30,11 @@ classdef lmi_analysis_periodic_orbit < lmi_analysis_lti
 
     methods
         function obj = lmi_analysis_periodic_orbit(sys, config)
-            %LMI_ANALYSIS_PERIODIC_ORBIT Construct an instance of this class
+            %LMI_ANALYSIS_PERIODIC_ORBIT Construct or.
             %   use the LTI analysis code w.r.t. the periodic-rotated
             %   system and IQCs for the time-varying nonlinearities
             obj@lmi_analysis_lti(sys, config);
-            obj.R = sys.R;
+            obj.M = sys.M;
         end
  
 

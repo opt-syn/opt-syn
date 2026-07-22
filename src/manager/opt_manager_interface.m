@@ -319,7 +319,7 @@ classdef (Abstract) opt_manager_interface < handle
 
         %% Bisection routines
         function [sol_best, vr] = bisect(obj, arg, specs, b_opts)
-            %BISECT: perform bisection on a parameter. Minimization target
+            %BISECT: perform bisection on a parameter to minimize an objective.
             %
             % Args:
             %   arg:     arguments for the routine (order for analysis, iqcs for synthesis)
