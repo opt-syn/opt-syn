@@ -1,17 +1,15 @@
 classdef op_sim_box < op_sim_interface
-    %OP_SIM_BOX a projection onto a box
-    %
-    %this includes a hard L infinity norm as a special case
+    %OP_SIM_BOX a projection onto a box    
+    %this includes a hard :math:`L_\infty` norm as a special case
 
     
     properties        
-        BOX = 1;
-        
+        BOX = 1; %size of the box       
     end
     
     methods
         function obj = op_sim_box(BOX)
-            %OP_SIM_BOX Construct an instance of this class
+            %OP_SIM_BOX Constructor for box constraint
             
             
             obj@op_sim_interface();
@@ -30,7 +28,7 @@ classdef op_sim_box < op_sim_interface
             %   param:   parameter structure for the operator
             %
             %Returns:
-            %   w:       the w such that w = F(z)
+            %   w:       the :math:`w` such that :math:`w = F(z)`
 
 
             %nondifferentiable, don't include it.

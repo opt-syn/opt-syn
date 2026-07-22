@@ -26,42 +26,49 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=720ed60b" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="_static/documentation_options.js?v=e1a75a79"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -87,7 +94,47 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -182,7 +229,7 @@
 <li class="toctree-l2"><a class="reference internal" href="pages/examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="pages/documentation/documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pages/documentation/index_documentation.html">API Reference</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="pages/changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="pages/changelog/0.1.0.html">What’s new in 0.1.0</a></li>
 </ul>
@@ -267,11 +314,18 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
 
 
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -306,7 +360,10 @@
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
- <a href="#B"><strong>B</strong></a>
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -316,26 +373,62 @@
  | <a href="#Z"><strong>Z</strong></a>
  
 </div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim">alg_sim (class in simulator)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.alg_sim">alg_sim() (simulator.alg_sim method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_equality.b">b (simulator.op_sim.op_sim_equality attribute)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_equality.b">b (simulator.op_sim.op_sim_equality attribute)</a>
 </li>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim.bw">bw() (simulator.op_sim.op_sim method)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_box.BOX">BOX (simulator.op_sim.op_sim_box attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.bw">bw() (simulator.op_sim.op_sim method)</a>
 
       <ul>
-        <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_box.bw">(simulator.op_sim.op_sim_box method)</a>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_box.bw">(simulator.op_sim.op_sim_box method)</a>
 </li>
-        <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_equality.bw">(simulator.op_sim.op_sim_equality method)</a>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_equality.bw">(simulator.op_sim.op_sim_equality method)</a>
 </li>
-        <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_l1_hard.bw">(simulator.op_sim.op_sim_l1_hard method)</a>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_l1_hard.bw">(simulator.op_sim.op_sim_l1_hard method)</a>
 </li>
-        <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_quad.bw">(simulator.op_sim.op_sim_quad method)</a>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.bw">(simulator.op_sim.op_sim_quad method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim.bw_func">bw_func (simulator.op_sim.op_sim attribute)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.bw_func">bw_func (simulator.op_sim.op_sim attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.c">c (simulator.alg_sim attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#module-config.bisect_opts">config.bisect_opts (module)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#module-config.opt_config">config.opt_config (module)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.d">d (simulator.alg_sim attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -343,7 +436,11 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_equality.E">E (simulator.op_sim.op_sim_equality attribute)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_equality.E">E (simulator.op_sim.op_sim_equality attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.EQUALITY">EQUALITY (simulator.alg_sim attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -351,35 +448,35 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim.f">f() (simulator.op_sim.op_sim method)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.f">f() (simulator.op_sim.op_sim method)</a>
 
       <ul>
-        <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_box.f">(simulator.op_sim.op_sim_box method)</a>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_box.f">(simulator.op_sim.op_sim_box method)</a>
 </li>
-        <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_equality.f">(simulator.op_sim.op_sim_equality method)</a>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_equality.f">(simulator.op_sim.op_sim_equality method)</a>
 </li>
-        <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_l1_hard.f">(simulator.op_sim.op_sim_l1_hard method)</a>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_l1_hard.f">(simulator.op_sim.op_sim_l1_hard method)</a>
 </li>
-        <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_quad.f">(simulator.op_sim.op_sim_quad method)</a>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.f">(simulator.op_sim.op_sim_quad method)</a>
 </li>
       </ul></li>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim.f_func">f_func (simulator.op_sim.op_sim attribute)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.f_func">f_func (simulator.op_sim.op_sim attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim.fw">fw() (simulator.op_sim.op_sim method)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.fw">fw() (simulator.op_sim.op_sim method)</a>
 
       <ul>
-        <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_box.fw">(simulator.op_sim.op_sim_box method)</a>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_box.fw">(simulator.op_sim.op_sim_box method)</a>
 </li>
-        <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_equality.fw">(simulator.op_sim.op_sim_equality method)</a>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_equality.fw">(simulator.op_sim.op_sim_equality method)</a>
 </li>
-        <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_l1_hard.fw">(simulator.op_sim.op_sim_l1_hard method)</a>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_l1_hard.fw">(simulator.op_sim.op_sim_l1_hard method)</a>
 </li>
-        <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_quad.fw">(simulator.op_sim.op_sim_quad method)</a>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.fw">(simulator.op_sim.op_sim_quad method)</a>
 </li>
       </ul></li>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim.fw_func">fw_func (simulator.op_sim.op_sim attribute)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.fw_func">fw_func (simulator.op_sim.op_sim attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -387,7 +484,7 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_quad.M">M (simulator.op_sim.op_sim_quad attribute)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.M">M (simulator.op_sim.op_sim_quad attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -395,31 +492,31 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim">op_sim (class in simulator.op_sim)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim">op_sim (class in simulator.op_sim)</a>
 </li>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim.op_sim">op_sim() (simulator.op_sim.op_sim method)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.op_sim">op_sim() (simulator.op_sim.op_sim method)</a>
 </li>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_box">op_sim_box (class in simulator.op_sim)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_box">op_sim_box (class in simulator.op_sim)</a>
 </li>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_box.op_sim_box">op_sim_box() (simulator.op_sim.op_sim_box method)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_box.op_sim_box">op_sim_box() (simulator.op_sim.op_sim_box method)</a>
 </li>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_equality">op_sim_equality (class in simulator.op_sim)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_equality">op_sim_equality (class in simulator.op_sim)</a>
 </li>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_equality.op_sim_equality">op_sim_equality() (simulator.op_sim.op_sim_equality method)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_equality.op_sim_equality">op_sim_equality() (simulator.op_sim.op_sim_equality method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_interface">op_sim_interface (class in simulator.op_sim)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_interface">op_sim_interface (class in simulator.op_sim)</a>
 </li>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_interface.op_sim_interface">op_sim_interface() (simulator.op_sim.op_sim_interface method)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_interface.op_sim_interface">op_sim_interface() (simulator.op_sim.op_sim_interface method)</a>
 </li>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_l1_hard">op_sim_l1_hard (class in simulator.op_sim)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_l1_hard">op_sim_l1_hard (class in simulator.op_sim)</a>
 </li>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_l1_hard.op_sim_l1_hard">op_sim_l1_hard() (simulator.op_sim.op_sim_l1_hard method)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_l1_hard.op_sim_l1_hard">op_sim_l1_hard() (simulator.op_sim.op_sim_l1_hard method)</a>
 </li>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_quad">op_sim_quad (class in simulator.op_sim)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad">op_sim_quad (class in simulator.op_sim)</a>
 </li>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_quad.op_sim_quad">op_sim_quad() (simulator.op_sim.op_sim_quad method)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.op_sim_quad">op_sim_quad() (simulator.op_sim.op_sim_quad method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -427,7 +524,15 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/documentation.html#module-simulator.op_sim">simulator.op_sim (module)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.sampler">sampler (simulator.alg_sim attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.sim">sim() (simulator.alg_sim method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_simulation.html#module-simulator.op_sim">simulator.op_sim (module)</a>
+</li>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.sys">sys (simulator.alg_sim attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -435,7 +540,7 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_l1_hard.tau">tau (simulator.op_sim.op_sim_l1_hard attribute)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_l1_hard.tau">tau (simulator.op_sim.op_sim_l1_hard attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -443,7 +548,7 @@
 <h2 id="Z">Z</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/documentation.html#simulator.op_sim.op_sim_quad.zstar">zstar (simulator.op_sim.op_sim_quad attribute)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.zstar">zstar (simulator.op_sim.op_sim_quad attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -510,8 +615,8 @@ By opt-syn team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
   </footer>

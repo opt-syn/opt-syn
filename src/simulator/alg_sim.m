@@ -1,19 +1,31 @@
 classdef alg_sim
-    %ALG_SIM_INTERFACE execution of the algorithmic interconnection
+    %ALG_SIM algorithm simulator, execution of the algorithmic interconnection
+    %
+    %Plots the procedure to solve :math:`0 \in \sum_{i=0}^s (F_i(\beta^*))`
     
     properties
         sys; %system to simulate
         d;   %number of dimensions (kronecker lift)        
-        c=1;   %number of partitions of dimension
-        sampler = struct('wp', @(param) [], 'param', @(param) [], ...
-            'x0', @() [], 'param0', @() []);
-        EQUALITY = 0;
+        c=1;  %number of partitions of dimension
+        sampler = []; %random sample routines
+        EQUALITY = 0; %Is an op_sim_equality object present? True if so.
     end
     
-    methods 
+    methods t
         function obj = alg_sim(sys, d, c, sampler)
-            %ALG_SIM_INTERFACE Construct an instance of this class
-            %   Detailed explanation goes here
+            %ALG_SIM Construct an alg_sim object            
+            % Args:
+            %   sys: system to simulate
+            %   d: number of dimensions (multiplicity of kronecker lift)
+            %   c: number of partitions of the dimension/coordinate blocks
+            %   sampler: random sampler code used in the algorithm execution. 
+
+            %               wp: performance input
+            %               x0: initial state
+            %               param: parameters at each time
+            %               param0: initial parameters
+            
+            
             obj.sys = sys;
             obj.d = d;
             
@@ -21,8 +33,11 @@ classdef alg_sim
                 obj.c = c;
             end
 
-            if nargin >= 4
+            if nargin >= 4                
                 obj.sampler = sampler;
+            else
+                struct('wp', @(param) [], 'param', @(param) [], ...
+            'x0', @() [], 'param0', @() [])
             end
 
             obj.EQUALITY = any(logical(cellfun(@(q) q.EQUALITY, obj.sys.op)));
@@ -30,8 +45,30 @@ classdef alg_sim
         
         function ssim = sim(obj, T)
             %SIM: simulate a trajectory execution
+            %
+            % Args:
+            %   T: Number of steps in execution
+            %
+            % Returns:
+            %   ssim: struct that stores the algorithm execution. Each
+            %         output is indexed by time
 
-            %process the input
+
+            %       w:      output of the operators
+            %       w:      input to the operators
+            %       wp:     performance input
+            %       zp:     performance output 
+            %       u:      controller output/system input
+            %       y:      controller input/system output
+            %       xn:     states of the network
+            %       xi:     states of the controller
+            %       mode:   mode of the switched system   
+            %       param:  parameters used
+            %       f:      function values (if applicable)
+            %       res_w:  optimality error norm(sum(w))
+            %       res_z:  consensus error norm(z - average(z))
+            %       eq:     Equality constraint error norm(Ez - b)    
+            
 
             
             %dimensions            

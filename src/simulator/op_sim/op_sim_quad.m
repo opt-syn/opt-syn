@@ -2,20 +2,23 @@ classdef op_sim_quad < op_sim_interface
     %OP_SIM_QUAD a quadratic function for algorithm simulation
     %
     %
-    %f = (1/2) (z-zstar)' M (z-zstar)
-    %
-    %
+    %:math:`f = (1/2) (z-z^*)' M (z-z^*)`
+
 
     
     properties
         M;     %quadratic matrix
-        zstar; %(locally optimal) solution to the unconstrained quadratic minimization problem
+        zstar; %critical point to the unconstrained quadratic minimization problem
     end
 
     methods
         function obj = op_sim_quad(M, zstar)
-            %OP_SIM_QUAD form a quadratic
-
+            %OP_SIM_QUAD Constructor form a quadratic function
+            %
+            % Args: 
+            %   M: a symmetric matrix defining the quadratic form
+            %   zstar: critical point to the unconstrained quadratic minimization problem
+            
             obj = obj@op_sim_interface();
             obj.M = M;
 

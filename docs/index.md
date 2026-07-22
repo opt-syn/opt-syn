@@ -39,7 +39,7 @@ Get Started <pages/get_started>
 How it Works <pages/how_it_works/index_how_it_works>
 Usage <pages/usage/index_usage>
 Examples <pages/examples>
-Documentation <pages/documentation/documentation>
+API Reference <pages/documentation/index_documentation>
 Changelog <pages/changelog/changelog>
 Resources <pages/resources>
 ```

@@ -105,5 +105,5 @@ The subdifferential class that we use are characterized by constants $-\infty < 
 We support 
 - Subdifferentials of $\mathcal{S}_{m, L}$
 - Subdifferentials of quadratics in  $\mathcal{S}_{m, L}$
-- Subdifferentials of known quadratics ($z \mapsto m z - b$)
+<!-- - Subdifferentials of known quadratics ($z \mapsto m z - b$) -->
 

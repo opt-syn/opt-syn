@@ -8,9 +8,12 @@ classdef op_sim_l1_hard < op_sim_interface
     
     methods
         function obj = op_sim_l1_hard(tau)
-            %OP_SIM_L1_hard Construct an instance of this class
+            %OP_SIM_L1_hard constructor for l1 norm ball
             %   operations used in the evaluation of the operator
-            
+            %
+            %Args:
+            %   tau: radius
+
           
             
             obj@op_sim_interface();
