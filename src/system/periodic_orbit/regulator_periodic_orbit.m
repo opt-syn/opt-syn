@@ -1,5 +1,7 @@
 classdef regulator_periodic_orbit < regulator_lti
-    %REGULATOR_PERIODIC_ORBIT Regulator for periodic systems    
+    %REGULATOR_PERIODIC_ORBIT Regulator for periodic-orbit systems.
+    %Use routines directly from regulator_lti.
+    
     %
     % [x(k+1)] = [A(k)    Bd(k)    Bu(k)  ][x(k)]   state transition
     % [e(k)  ] = [Ce(k)   Ded(k)   Deu(k) ][d(k)]   output to  regulated error    
@@ -14,8 +16,7 @@ classdef regulator_periodic_orbit < regulator_lti
 
     methods
         function obj = regulator_periodic_orbit(sys)
-            %REGULATOR_PERIODIC undefined
-            %   undefined
+            %REGULATOR_PERIODIC_ORBIT constructor
 
             % sys_per = sys.export_periodic();
             obj@regulator_lti(sys)
@@ -29,9 +30,9 @@ classdef regulator_periodic_orbit < regulator_lti
             [A, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu@regulator_lti(obj, param);
 
             %go to the rotating coordinate frame
-            c = size(obj.sys.R, 1);
+            c = size(obj.sys.M, 1);
             n = size(A, 1);
-            Rkron = kron(eye(n/c), obj.sys.R);
+            Rkron = kron(eye(n/c), obj.sys.M);
 
             A = Rkron * A;
             B1 = Rkron * B1;
@@ -45,9 +46,9 @@ classdef regulator_periodic_orbit < regulator_lti
             end
             [S, R] = exosystem@regulator_lti(obj, param);
 
-            c = size(obj.sys.R, 1);
+            c = size(obj.sys.M, 1);
             d = size(S, 1);
-            Rkron = kron(eye(d/c), obj.sys.R);
+            Rkron = kron(eye(d/c), obj.sys.M);
 
             %go to the rotating coordinate frame
             S = Rkron * S;
@@ -62,9 +63,9 @@ classdef regulator_periodic_orbit < regulator_lti
             Kcurr = obj.sys.get_K(param);
 
             %go to the rotating coordinate frame
-            c = size(obj.sys.R, 1);
+            c = size(obj.sys.M, 1);
             n = size(Kcurr.A, 1);
-            Rkron = kron(eye(n/c), obj.sys.R);
+            Rkron = kron(eye(n/c), obj.sys.M);
 
             Kcurr.A = Rkron * Kcurr.A;
             Kcurr.B = Rkron * Kcurr.B;

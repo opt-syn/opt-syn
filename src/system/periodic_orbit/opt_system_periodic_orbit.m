@@ -1,6 +1,6 @@
 classdef  opt_system_periodic_orbit < opt_system
     %OPT_SYSTEM_PERIODIC_ORBIT interconnection of network and operators
-    %
+    
     %a periodic system: repeated and predictable cycle evaluation  
     %
     % orbit: the periodicity is highly structured in a symmetric manner
@@ -16,23 +16,23 @@ classdef  opt_system_periodic_orbit < opt_system
     % [y(k)  ] = [Cy(k)   Dyw(k)   Dywp(k)  Dyu(k) ][u(k)]   output to controller
     %
     %
-    % related together by orbit matrices R describing the symmetry
+    % related together by orbit matrices M describing the symmetry
     %
     % Example:
-    %  A(k)  = [Rx 0]^-k [A(0)  Bw(0)]  [Rx 0]^k
-    %  Cz(k) = [0 Rz]    [Cz(k) Dzw(0)] [0 Rw]
+    %  A(k)  = [Mx 0]^-k [A(0)  Bw(0)]  [Mx 0]^k
+    %  Cz(k) = [0 Mz]    [Cz(k) Dzw(0)] [0 Mw]
     
     %make this extremely simple:
-    %everything shuffles by R
-    %and R is an orthogonal matrix
+    %everything shuffles by M
+    %and M is an orthogonal matrix
 
     properties
-        R = [];
-        order = 0;
+        M = [];  %symmetry matrix, should be orthogonal
+        order = 0;  %M^order = M
     end
     
     methods
-        function obj = opt_system_periodic_orbit(op, P, K, R, bind, tracking)
+        function obj = opt_system_periodic_orbit(op, P, K, M, bind, tracking)
             %OPT_SYSTEM_PERIODIC constructor            
             if nargin < 6
                 s = length(op);
@@ -44,23 +44,23 @@ classdef  opt_system_periodic_orbit < opt_system
             end
 
             obj@opt_system(op, P, K, bind, tracking)
-            obj.R = R;
+            obj.M = M;
             obj.type = 'periodic_orbit';
 
 
             %order of the system
-            orth_gap = norm(R' * R - eye(size(R)));
+            orth_gap = norm(M' * M - eye(size(M)));
             if orth_gap > 1e-9 
-                throw('Periodic Orbit: symmetry matrix R is not orthogonal')
+                throw('Periodic Orbit: symmetry matrix M is not orthogonal')
             end
 
 
-            Rc = R;
+            Rc = M;
             order = 0;
             order_max = 1000;
-            while (norm(Rc - eye(size(R))) > 1e-9) && (order < order_max)
+            while (norm(Rc - eye(size(M))) > 1e-9) && (order < order_max)
                 order = order + 1;
-                Rc = Rc * R;
+                Rc = Rc * M;
             end
 
             obj.order = order;
@@ -99,11 +99,11 @@ classdef  opt_system_periodic_orbit < opt_system
 
             [n, m] = size(Pcurr.B);
             p = size(Pcurr.C, 1);
-            c = size(obj.R, 1);
+            c = size(obj.M, 1);
 
-            Rxk = kron(eye(n/c), obj.R)^k;
-            Ryk = kron(eye(p/c), obj.R)^k;
-            Ruk = kron(eye(m/c), obj.R)^k;
+            Rxk = kron(eye(n/c), obj.M)^k;
+            Ryk = kron(eye(p/c), obj.M)^k;
+            Ruk = kron(eye(m/c), obj.M)^k;
 
             Pcurr.A = (Rxk) \ Pcurr.A * Rxk;
             Pcurr.B = (Rxk) \ Pcurr.B * Ruk;
@@ -131,11 +131,11 @@ classdef  opt_system_periodic_orbit < opt_system
 
                 [n, m] = size(Kcurr.B);
                 p = size(Kcurr.C, 1);
-                c = size(obj.R, 1);
+                c = size(obj.M, 1);
 
-                Rxk = kron(eye(n/c), obj.R)^k;
-                Ryk = kron(eye(m/c), obj.R)^k;
-                Ruk = kron(eye(p/c), obj.R)^k;
+                Rxk = kron(eye(n/c), obj.M)^k;
+                Ryk = kron(eye(m/c), obj.M)^k;
+                Ruk = kron(eye(p/c), obj.M)^k;
 
                 Kcurr.A = (Rxk) \ Kcurr.A * Rxk;
                 Kcurr.B = (Rxk) \ Kcurr.B * Ruk;
@@ -153,9 +153,9 @@ classdef  opt_system_periodic_orbit < opt_system
                 direction = 1;
             end
 
-            c = size(obj.R, 1);
+            c = size(obj.M, 1);
             n = size(plant.A, 1);
-            Rkron = kron(eye(n/c), obj.R)^(direction);
+            Rkron = kron(eye(n/c), obj.M)^(direction);
 
             plant_rot = plant;
             if isa(plant, 'genplant')
@@ -172,16 +172,17 @@ classdef  opt_system_periodic_orbit < opt_system
         function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, rho)
             %BUILD_PLANT: form the plant to be used for analysis
             %or synthesis
-            %Input:
+            %
+            %Args:
             %   iqc_data: from manager.iqc_op_all, information about the
             %             operator iqc descriptions
-            %   rho: exponential convergence rate (default 1)
+            %   rho: exponential weighting
             %
-            %Output:
+            %Returns:
             %   alg_psi:    plant with filters (psi)
+            %   iqc_op:     iqcs for the robust uncertainties
             %   alg_loop:   plant without filters, but after loop
             %               transformation (should be stable)
-            %   iqc_op:     iqcs for the robust uncertainties
 
             if nargin < 3
                 rho = 1;
@@ -219,6 +220,9 @@ classdef  opt_system_periodic_orbit < opt_system
         function sys_per = export_periodic(obj)
             %EXPORT_PERIODIC export the periodic-orbit as a periodic system
             %explicitly list all subsystems
+            %
+            %Returns:
+            %   sys_per (opt_system_periodic): a periodic system
             n = obj.P.dump_dim();
 
             nss = obj.Nss;
@@ -243,6 +247,9 @@ classdef  opt_system_periodic_orbit < opt_system
         function sys_lift = periodic_lift(obj)
             %PERIODIC_LIFT form a periodic LTI lift of the system
             %create an equivalent LTI system
+            %
+            %Returns:
+            %   sys_lift (opt_system): an LTI system
 
             sys_per = obj.export_periodic();
 

@@ -18,7 +18,7 @@ Both the analysis and synthesis routines inherit from `opt_manager_interface`, c
 ## Synthesis
 ```{eval-rst}
 .. mat:autoclass :: manager.opt_synthesis   
-    :members:
+    :members:    
 ```
 ## Common Routines
 

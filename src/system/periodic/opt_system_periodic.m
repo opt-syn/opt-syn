@@ -56,9 +56,11 @@ classdef  opt_system_periodic < opt_system_switched
         end
 
         function sys_lift = periodic_lift(obj)
-
             %PERIODIC_LIFT form a periodic LTI lift of the system
             %create an equivalent LTI system
+            %Returns:
+            %   sys_lift (opt_system): an LTI system
+
 
             sys_per = periodic_lift(obj.P.P);
             
@@ -132,7 +134,7 @@ classdef  opt_system_periodic < opt_system_switched
 
         function tp = get_type(obj)
             %get the type of the switched system
-            %is periodic!
+            %is periodic.
             tp = obj.type;
         end
 

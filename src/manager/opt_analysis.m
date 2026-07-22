@@ -2,7 +2,7 @@ classdef opt_analysis < opt_manager_interface
     %OPT_ANALYSIS  analysis of optimization algorithms
     %
     % iterative procedure to find a point beta satisfying
-    % the fixed-point equation :math:`0 \in sum_i F_i(\beta^*)`.
+    % the fixed-point equation :math:`0 \in \sum_{i=1}^s F_i(\beta^*)`.
 
     properties
         order = []; %order of the IQCs
@@ -12,6 +12,7 @@ classdef opt_analysis < opt_manager_interface
     methods
         function obj = opt_analysis(sys, config)
             %OPT_ANALYSIS Constructor for analysis
+            %
             % Args:
             %   sys: algorithmic system
             %   config: configuration options
@@ -113,7 +114,7 @@ classdef opt_analysis < opt_manager_interface
             %   vars:   variables of the problem        
             %   cons:   accumulated constraints
             %
-            % Returns:            
+            %Returns:            
             %   cons:    accumulated constraints
             nop = length(obj.sys.op);
             cs = 0;

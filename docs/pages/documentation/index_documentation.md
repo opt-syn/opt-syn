@@ -8,6 +8,7 @@ This page collects the documentation for each object and function in {{osyn}}.
 Manager <doc_manager>
 Systems <system/doc_system>
 Integral Quadratic Constraints <doc_iqc>
+Performance Specifications <doc_specs>
 Configuration <doc_config>
 Simulation  <doc_simulation>
 Plotting  <doc_plotting>

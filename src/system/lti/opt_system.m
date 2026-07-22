@@ -5,10 +5,8 @@ classdef  opt_system < opt_system_interface
     
     methods
         function obj = opt_system(op, P, K, bind, tracking)
-            %OPT_SYSTEM constructor for the system
-            
-            
-            
+            %OPT_SYSTEM Constructor 
+
             if nargin < 2
                 P = [];
                 
@@ -43,9 +41,6 @@ classdef  opt_system < opt_system_interface
             dimn = length(obj.K.A);
         end
 
-
-        
-
         %% getters
         function Pcurr = get_P(obj, param)
             %GET_P get the network P
@@ -62,12 +57,14 @@ classdef  opt_system < opt_system_interface
         end
 
         function sys_sim = sim(obj, op_sim)
-            %
             % export the system for use in simulation
             % with the operators (for iqcs) replaced by operators (in
             % op_sim)
             %
-            % Args          
+            % Args:
+            %   op_sim: operators for simulation
+            % Return:
+            %   sys_sim: system for use in alg_sim
             sys_sim = obj;
             sys_sim.oop = op_sim;
 
@@ -80,12 +77,13 @@ classdef  opt_system < opt_system_interface
         function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, rho)
             %BUILD_PLANT: form the plant to be used for analysis
             %or synthesis
-            %Input:
+            %
+            %Args:
             %   iqc_data: from manager.iqc_op_all, information about the
             %             operator iqc descriptions
             %   rho: exponential convergence rate (default 1)
             %
-            %Output:
+            %Returns:
             %   alg_psi:    plant with filters (psi)
             %   alg_loop:   plant without filters, but after loop
             %               transformation (should be stable)

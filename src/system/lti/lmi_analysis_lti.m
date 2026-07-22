@@ -1,7 +1,7 @@
 classdef lmi_analysis_lti < lmi_analysis_interface
     %LMI_ANALYSIS_LTI analysis LMIs for algorithmic interconnections
     %involving linear-time-invariant (LTI) networks and controllers
-    %
+    
     % w(k) \in F(z(k))
     %
     % [x(k+1)] = [A    B     Bp   ][x(k)]   state transition
@@ -14,7 +14,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
     %       stability
     %       e2e
     %       quad
-    %       p2p
+    %       p2p ?
     %
     %   TODO:
     %       h2      
@@ -24,8 +24,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
     
     methods
         function obj = lmi_analysis_lti(sys, config)
-            %LMI_DISPATCH_LTI Construct an instance of this class
-            %   Detailed explanation goes here
+            %LMI_ANALYSIS_LTI Constructor
             obj@lmi_analysis_interface(sys, config);
         end       
         
@@ -35,10 +34,14 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             %create_vars_storage create variables for the dissipation
             %constraints
             %
-            %Input:
+            %Args:
             %   cons:       accumulated constraints
             %   alg_psi:    the filtered algorithmic interconnection
             %   name:       a name for the variable
+            %Returns:
+            %   vars_diss:   variables of the problem in the dissipation constraints
+            %   cons: accumulated constraints
+
 
             if nargin < 4
                 name = [];
@@ -53,7 +56,17 @@ classdef lmi_analysis_lti < lmi_analysis_interface
         %% Quadratic performance (infinite horizon)
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
             %QUAD: certificate of infinite-horizon quadratic performance
+            %
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
 
+     
 
             G = vars.diss.G;
 
@@ -86,7 +99,19 @@ classdef lmi_analysis_lti < lmi_analysis_interface
         function [cons, objective, con_M] = e2e_target(obj, vars, cons, diss)
             %E2E_TARGET: use a Schur complement to minimize the energy to
             %energy gain of the transfer function
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
+            %
+            %Note:
+            %   This will be made obsolete, and incorporated into quad().
 
+     
             G = vars.diss.G;
 
             
@@ -121,10 +146,23 @@ classdef lmi_analysis_lti < lmi_analysis_interface
         end
 
         %% Peak-to-Peak norm (at each finite horizon)
-
         function [cons, objective, con_M] = p2p(obj, vars, cons, diss)
             %p2p: certificate of peak to peak induced norm
-            %
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
+
+            
+
+     
+
+
+
             % sup norm(zp, 2) / norm(wp, 2) <= objective
 
             % verification by Theorem 4 of https://www.sciencedirect.com/science/article/pii/S2405896323008194

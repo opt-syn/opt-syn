@@ -27,8 +27,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
     
     methods
         function obj = lmi_synthesis_lti(sys, config)
-            %LMI_SYNTHESIS_LTI Construct an instance of this class
-            %   Detailed explanation goes here
+            %LMI_SYNTHESIS_LTI Constructor
             obj@lmi_synthesis_interface(sys, config);
         end       
         
@@ -38,11 +37,14 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %create_vars_storage create variables for the dissipation
             %constraints
             %
-            %Input:
+            %Args:
             %   cons:       accumulated constraints
             %   alg_psi:    the filtered algorithmic interconnection
             %   name:       a name for the variable
-
+            %Returns:
+            %   vars_diss:   variables of the problem in the dissipation constraints
+            %   cons:   accumulated constraints
+            
             if nargin < 4
                 name = [];
             end
@@ -59,7 +61,16 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
         %% Quadratic performance (infinite horizon)        
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
             %QUAD: certificate of infinite-horizon quadratic performance
-            
+            %
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
+
             %get the variables of the problem
             G = obj.get_storage(vars.diss, vars.reg);
             
@@ -165,6 +176,11 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
         function ys = get_GY_dim(obj, n, ns)
             %dimension of the GY term
+            %Args:
+            %   n:  number of states
+            %   ns: number of exogenous disturbances
+            %Returns:
+            %   ys: size of GY matrix
             if obj.reduced_order
                 ys = n;
             else
@@ -176,9 +192,13 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
        function G = get_storage(obj, vars_diss, vars_reg)
             %GET_STORAGE get the storage function matrix G
-
-            % 
             %
+            %Args:                   
+            %   vars_diss:   variables of the problem in the dissipation constraints
+            %   vars_reg:   variables for regulator equation
+            %Returns:            
+            %   G:   the closed-loop storage matrix (warped)
+            
             GX = vars_diss.GX;
             GY = vars_diss.GY;
             
@@ -190,11 +210,21 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
        %% Peak-to-Peak norm (at each finite horizon)
 
-
        function [cons, objective, con_M] = p2p(obj, vars, cons, diss)
             %p2p: certificate of finite-horizon peak-to-peak norm bounds
             % when starting at a zero (steady state) initial condition, not
             % transient performance.
+            %
+            %Args:
+            %   cons:       accumulated constraints
+            %   alg_psi:    the filtered algorithmic interconnection
+            %   name:       a name for the variable
+            %Returns:
+            %   vars_diss:   variables of the problem in the dissipation constraints
+            %   cons:   accumulated constraints
+            %
+            %Warning:
+            %   not yet stable.
             
             %get the variables of the problem
             G = obj.get_storage(vars.diss, vars.reg);
@@ -331,7 +361,14 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
         end
 
         function [Ak, Bk, Ck, Dk] = recover_K_from_elim(obj, vars_rec)
-            %recover the eliminated matrices in the controller            
+            %recover the eliminated matrices in the controller   
+            %    
+            %Args:
+            %   vars_rec: recovered variables from solver
+            %
+            %Returns:
+            %   Ak, Bk, Ck, Dk: controller matrices
+            
             if obj.elimination
                 
                 % https://www.sciencedirect.com/science/article/pii/0167691194000919
@@ -430,10 +467,16 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
         function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
             %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
             %transformation
-
-            %allow for matrix elimination
-            %elimination: get rid of the [Ak; Ck] variables. 
-            %solve only over [Bk; Dk].
+            %Args:    
+            %   P: IQC-filtered generalized plant 
+            %   vars_diss:   variables of the problem (dissipation)
+            %   vars_reg:   variables of the problem (regulator)            
+            %   vars_K:   variables of the problem (controller)    
+            %Returns:                        
+            %   sys_cl:  closed-loop system dynamics
+            %   U_cl:    left outer product in elimination
+            %   V_cl:    right outer product in elimination
+            
 
             if obj.elimination
                 %knock out the terms
