@@ -1,23 +1,22 @@
 classdef op_sim_equality < op_sim_interface
-    %OP_SIM_EQUALITY an operator used for the purposes of simulation (algorithm
-    %execution). 
-
-    %an affine operation enforcing an equality constraint Ez = b
+    %OP_SIM_EQUALITY an affine mapping used to enforce
+    %an equality constraint :math:`Ez = b`
     %
-    %implemented as E'(Ez - b) = 0
+    %implemented as :math:`z \mapsto E^\top (Ez - b)`
     %with E full row rank
+    %
+    
 
     
     properties        
-        E= [];  %forward evaluation (e.g. gradient)        
+        E= [];  % Matrix in the equality constraint
         b = 0;  %function value (or function values in a game)        
         
     end
     
     methods
         function obj = op_sim_equality(E, b)
-            %OP_SIM Construct an instance of this class
-            %   operations used in the evaluation of the operator
+            %OP_SIM_EQUALITY Constructor for equatlity constraint
             
             
             %create the operators
