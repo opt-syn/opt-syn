@@ -2,19 +2,20 @@ classdef opt_analysis < opt_manager_interface
     %OPT_ANALYSIS  analysis of optimization algorithms
     %
     % iterative procedure to find a point beta satisfying
-    % the fixed-point equation 
-    %               0 \in sum_i F_i(\beta).
-    %
+    % the fixed-point equation :math:`0 \in sum_i F_i(\beta^*)`.
 
     properties
-        order = [];
-        schedule = [];
+        order = []; %order of the IQCs
+        schedule = []; %when to discount (optionally used for switching)
     end
 
     methods
         function obj = opt_analysis(sys, config)
-            %OPT_ANALYSIS Construct an instance of this class            
-                     
+            %OPT_ANALYSIS Constructor for analysis
+            % Args:
+            %   sys: algorithmic system
+            %   config: configuration options
+                 
             if nargin < 2
                 config = opt_config;
             end
@@ -29,7 +30,10 @@ classdef opt_analysis < opt_manager_interface
         %% define IQCs for the operators
         function obj = process_argument(obj, order)
             %PROCESS_ARGUMENT assign orders to the operators/IQCs
-
+            %
+            % Args:
+            %   order (cell): orders of the iqcs to search over            
+            
             if ~iscell(order)
                 order0 =order;
                 nop = length(obj.sys.op);
@@ -43,10 +47,20 @@ classdef opt_analysis < opt_manager_interface
 
 
         function [obj, vars, cons] = oracle_order(obj,order, ind)
-            %ORACLE_ORDER: set the orders of the IQCs
-            %Example: order 3 for monotone operators (op_gen) or for SmL
-            %causal (op_sml_causal)
+            %ORACLE_ORDER create IQCs at the specified orders
             %
+            % Args:
+            %   order (cell): orders of the iqcs to search over     
+            %   ind (int): which operator to create 
+            %
+            % Returns
+            %   obj: object
+            %   vars:   variables of the problem        
+            %   cons:       accumulated constraints
+            
+            
+            %Example: order 3 for monotone operators (op_gen) or for SmL
+            %causal (op_sml_causal)            
             %         order [2, 1] for SmL noncausal (op_sml)
 
             nop = length(obj.sys.op);
@@ -94,7 +108,13 @@ classdef opt_analysis < opt_manager_interface
 
         function cons = coeff_normalize(obj, vars, cons)
             %COEFF_NORMALIZE add constraint to normalize the psi multipliers
-            
+            %
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %
+            % Returns:            
+            %   cons:    accumulated constraints
             nop = length(obj.sys.op);
             cs = 0;
             for i = 1:nop
@@ -112,6 +132,17 @@ classdef opt_analysis < opt_manager_interface
         end
 
         function [vars, cons, objective, alg_psi, rho, diss] = build_program(obj, specs)
+            %form the analysis program
+            %Args:
+            %   specs (cell): performance specifications
+            %Returns:
+            %   vars:   variables of the problem        
+            %   cons:       accumulated constraints
+            %   objective:  single value to be minimized in inner loop (not
+            %               the outer loop of bisection)            
+            %   alg_psi:  generalized plant
+            %   rho (float):  linear convergence rate            
+            %   diss (diss_data):   dissipation constraints
 
 
             if nargin < 2
@@ -139,17 +170,16 @@ classdef opt_analysis < opt_manager_interface
         end
            
         function [diss] = index_specs(obj, alg_psi, iqc_data, specs)
+            %INDEX_SPECS  index into the performance specifications and
+            %form a dissipation relation
+            %                       
+            %Args:
+            %   alg_psi:  generalized plant
+            %   iqc_data:  container for the iqcs
+            %   specs (cell): performance specifications
+            %Returns:                 
+            %   diss (diss_data):   dissipation constraints
 
-            %INDEX_SPECS:  index into the performance specifications
-            %
-            %
-            %   diss:   structure describing the problem
-            %       plant:  system to control
-            %       spec:   performance specification           
-            %       target: whether the performance measure should be optimized
-            %               true:  soft constraint (e.g. Schur complement
-            %                                       formulation)
-            %               false: hard constraint
             
             %TODO: maybe this should go inside the (system), not (manager)?
             
@@ -195,12 +225,6 @@ classdef opt_analysis < opt_manager_interface
                 sp_ind_w = iwp_iqc;
                 sp_ind_r = ir_iqc;
 
-
-                       
-
-
-
-
                 if iscell(alg_psi)
                     [nwr, nww] = ssize(alg_psi{1}.D);                    
                 else
@@ -209,11 +233,6 @@ classdef opt_analysis < opt_manager_interface
 
                 E_r = full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr));
                 E_w = full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww));
-
-
-                %enforce squareness in the performance specs?
-
-                
 
                 %nonminimal representation of the multiplier-extended plant
                 if iscell(alg_psi)
@@ -227,20 +246,11 @@ classdef opt_analysis < opt_manager_interface
                 end
 
 
-                diss{i} = struct('iqc_rob', iqc_op, ...
-                    'spec', sp);
+                diss{i} = diss_data;                
+                diss{i}.iqc_rob = iqc_op;
+                diss{i}.spec = sp;                    
                 diss{i}.plant = alg_screen;
                 % %need to permute the entries of Mdiag for the partition
-
-
-
-
-
-                %TODO: this may run into trouble if one entry has an X.
-                %performance with dynamic multipliers?
-            
-                % diss{i} = struct('plant', alg_screen, 'M', M, 'X', iqc_op.X, ...
-                    % 'spec', sp);
             end
 
         end
@@ -251,8 +261,18 @@ classdef opt_analysis < opt_manager_interface
 
         %% extract the solution                   
         function  sol = process_recovery(obj, sol, lmi_out, alg_psi, diss);
-            %PROCESS_RECOVERY recover the IQCs from the solution
+            %PROCESS_RECOVERY recover the IQCs from the solution of the
+            %analysis program
             %
+            %Args:
+            %   sol:  solution structure
+            %   lmi_out:  output of solver routines
+            %   alg_psi: generalized plant
+            %   diss (diss_data):   dissipation constraints
+            %Returns:                 
+            %   sol:  solution structure
+            
+
             
             iqc_rec = cell(size(obj.iqc_op));
             for i = 1:length(obj.iqc_op)

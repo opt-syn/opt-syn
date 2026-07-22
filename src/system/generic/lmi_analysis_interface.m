@@ -11,8 +11,7 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
     %   switched jump
     
     properties
-       regcl;  %closed-loop regulator equation
-        
+       regcl;  %closed-loop regulator equation       
     end
     
     methods

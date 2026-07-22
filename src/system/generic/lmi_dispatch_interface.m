@@ -13,8 +13,7 @@ classdef lmi_dispatch_interface < handle
     
     methods
         function obj = lmi_dispatch_interface(sys, config)
-            %LMI_DISPATCH_INTERFACE Construct the analysis or synthesis
-            %program
+            %LMI_DISPATCH_INTERFACE Construct the analysis or synthesis program
             % Args:
             %   sys: algorithmic system
             %   config: configuration options
@@ -39,17 +38,11 @@ classdef lmi_dispatch_interface < handle
             %Args:
             %   vars:   variables of the problem        
             %   cons:   accumulated constraints
-            %   diss:   structure describing the problem
-            %       plant:  system to control
-            %       spec:   performance specification           
-            %       target: whether the performance measure should be optimized
-            %               true:  soft constraint (e.g. Schur complement
-            %                                       formulation)
-            %               false: hard constraint            
-            %
-            %Output:
+            %   diss (diss_data):   structure describing the dissipation constraint            %
+            %Returns:
             %   cons:   accumulated constraints
-            %   objective:  term to be minimized            
+            %   objective:  term to be minimized      
+            %
                       
 
             %this is overridden by inheritance
@@ -65,19 +58,14 @@ classdef lmi_dispatch_interface < handle
         function [cons, objective, con_M] = con_dynamic_single(obj,  vars, cons, diss)
             %CON form a single dissipation and sign constraint
             %
-            %Input:
+            %Args:
             %   vars:   variables of the problem            
-            %   diss:   structure describing the problem
-            %       plant:  system to control
-            %       spec:   performance specification           
-            %       target: whether the performance measure should be optimized
-            %               true:  soft constraint (e.g. Schur complement
-            %                                       formulation)
-            %               false: hard constraint
-            %   param:  other parameters
+            %   diss (diss_data): information about dissipation relation            %   param:  other parameters
             %
-            %Output:        
+            %Returns:    
+            %   cons:   accumulated constraints
             %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
     
     
             %need to look up the right constraint            
@@ -100,10 +88,13 @@ classdef lmi_dispatch_interface < handle
             %MERGE_SPEC_M merge the running cost of the robustness and the 
             %performance specification
             %
-            %Input:
+            %Args:
             %   iqc_rob: robust IQC 
             %   sp:      performance specification
             %   vars_spec: variables in the specification
+            %
+            %Output:
+            %   M: merged quadratic performance specification
 
             if nargin > 2
                 supp =sp.supply(vars_spec);
@@ -122,6 +113,13 @@ classdef lmi_dispatch_interface < handle
         function [quad] = quad_objective(obj, M_quad, ind_p, ind_q)
             %QUAD_OBJECTIVE untangle the quadratic objective into a
             %linearizable formulation
+            %Args:
+            %   M_quad: quadratic performance matrix
+            %   ind_p:      indices for output of filtered system
+            %   ind_q:      indices for input of filtered system            
+            %
+            %Output:
+            %   quad: quadratic performance structure
 
             %maybe get rid of this, replace by quad_objective_decomp
 
@@ -149,7 +147,7 @@ classdef lmi_dispatch_interface < handle
             %    M_rob:     quadratic constraint for operator uncertainty
             %    M_spec: quadratic constraint for performance
             %Return:
-            %   quad_m:
+            %   quad_m: quadratic performance structure
 
             Qq= blkdiag(M_rob.Q, M_spec.Q);
             Sq= blkdiag(M_rob.S, M_spec.S);
@@ -161,8 +159,17 @@ classdef lmi_dispatch_interface < handle
 
 
 
-        function sb = sys_block(obj, plant, Pnew, Pold)
+        function sb = sys_block(obj, plant, Gnew, Gold)
             % SYS_BLOCK system block used in analysis programs
+            %Args:    
+            %   plant: plant to analyze
+            %   Gnew: new storage function
+            %   Gold: old storage function
+            %Returns:                        
+            %   sb:   dynamics term to build dissipation relation
+            %
+            
+            
             %
             %sb =  [0, I]^T [-Pold, 0] [0, I]
             %      [A, B]   [0,      Pnew] [A, B]
@@ -176,7 +183,7 @@ classdef lmi_dispatch_interface < handle
             Ablock = [eye(n), zeros(n, m);
                 A, B];
 
-            Pblock = blkdiag(-Pold, Pnew);
+            Pblock = blkdiag(-Gold, Gnew);
 
             sb = Ablock' * Pblock * Ablock;            
 
@@ -184,7 +191,15 @@ classdef lmi_dispatch_interface < handle
 
         function sb = supply_block(obj, plant, M)
             % SUPPLY_BLOCK supply block used in analysis programs
+            %Args:    
+            %   plant: plant to analyze
+            %   M: running cost            
+            %Returns:                        
+            %   sb:   supply term to build dissipation relation
             %
+
+
+
             %sb =  [C, D]^T [-M] [C D]
             %               
 
@@ -197,7 +212,12 @@ classdef lmi_dispatch_interface < handle
 
         function [ind_q, ind_p] = get_idx_performance(obj, diss);
             %GET_IDX_PERFORMANCE 
-        
+            %Args:    
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:                                    
+            %   ind_q:      indices for input of filtered system            
+            %   ind_p:      indices for output of filtered system  
+
             nz = diss.iqc_rob.nz + diss.spec.nzp;
             nw = diss.iqc_rob.nw + diss.spec.nwp;
 
@@ -214,13 +234,14 @@ classdef lmi_dispatch_interface < handle
 
 
         function [plant_no_p, CDp] = separate_performance_output(obj, diss)
-
-            %SEPARATE_PERFORMANCE_OUTPUT
-            %extract the performance output from the plant
+            %SEPARATE_PERFORMANCE_OUTPUT extract the performance output
+            %from the plant, used in reduced-order control
             %
-            %plant_no_p:    the plant with the performance output removed
-            %CDp:           the entries of [Cp, Dp] matrix for the
-            %               performance output
+            %Args:
+            %   diss (diss_data): information about dissipation relation
+            % Returns:
+            %   plant_no_p:    the plant with the performance output removed
+            %   CDp:           the entries of [Cp, Dp] matrix for the performance output
             %
             %
             %This routine is used in the computation of l2 norms via Schur
@@ -249,18 +270,29 @@ classdef lmi_dispatch_interface < handle
 
         function cons = con_spread(obj, cons, vars)
             %CON_SPREAD increase numerical conditioning by separating the 
-            %primal and dual blocks
-            % in synthesis only
-
-            %do nothing in analysis           
+            %primal and dual blocks.
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   vars:   variables of the problem   
+            %
+            %Returns:            
+            %   cons:   accumulated constraints       
 
         end
 
         function [cons, objective, con_M] = stability(obj, vars, cons, diss)
-            %STABILITY certification of exponential stability
-            %
+            %STABILITY certification of exponential stability           
             %the supply function in the specification is empty,
             %so just call quadratic performance.
+            %
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
 
 
             [cons, objective, con_M] = obj.quad(vars, cons, diss);
@@ -268,9 +300,18 @@ classdef lmi_dispatch_interface < handle
         end
 
         function [cons, objective, con_M] = ergodic(obj, vars, cons, diss)
-            %ERGODIC certification of ergodic convergence
-            %            
-            %call quadratic performance.
+            %ERGODIC certification of ergodic convergence. call quadratic performance.
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
+
+            
+            
             %
             %ergodic means the system should have previously been adjusted
 
@@ -280,23 +321,47 @@ classdef lmi_dispatch_interface < handle
         end
 
         function [cons, objective, con_M] = passivity(obj, vars, cons, diss)
-            %passivity: strict passivity specification
- 
+            %PASSIVITY strict passivity specification
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
+
                 [cons, objective, con_M] = obj.quad(vars, cons, diss);
            
         end
 
 
         function [cons, objective, con_M] = l2_stability(obj, vars, cons, diss)
-            %l2_stability: bounded l2 gain (input to state stability)
- 
+            %l2_stability, bounded l2 gain (input to state stability)
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
+
                 [cons, objective, con_M] = obj.quad(vars, cons, diss);
            
         end
 
 
         function [cons, objective, con_M] = e2e(obj, vars, cons, diss)
-            %E2E: energy to energy gain
+            %E2E, energy to energy gain
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
 
             if diss.spec.target
                 [cons, objective, con_M] = obj.e2e_target(vars, cons, diss);

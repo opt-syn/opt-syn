@@ -3,18 +3,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
     %Linear Matrix Inequality constraints for analysis of algorithmic
     %interconnections.
     %
-    %
-    %this is overridden by specialized analysis routines for system types:
-    %   lti
-    %   periodic
-    %   switched robust
-    %   switched jump
+
    
     
     methods
         function obj = lmi_synthesis_interface(sys, config)
-            %LMI_SYNTHESIS_INTERFACE Construct an instance of this class
-            %   Detailed explanation goes here
+            %LMI_SYNTHESIS_INTERFACE Constructor for synthesis            
             obj@lmi_dispatch_interface(sys, config);
 
 
@@ -27,18 +21,13 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS_DYNAMIC form the dissipation and sign constraints
             %
-            %Input:
+            %Args:
             %   vars:   variables of the problem        
             %   cons:   accumulated constraints
-            %   diss:   structure describing the problem
-            %       plant:  system to control
-            %       spec:   performance specification           
-            %       target: whether the performance measure should be optimized
-            %               true:  soft constraint (e.g. Schur complement
-            %                                       formulation)
-            %               false: hard constraint            
+            %   diss (diss_data):   structure describing the dissipation
+            %       constraint
             %
-            %Output:
+            %Returns:
             %   cons:   accumulated constraints
             %   objective:  term to be minimized            
             
@@ -69,6 +58,17 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         function [vars, cons] = create_vars(obj, vars, cons, alg_psi, specs)
             %CREATE_VARS create the variables for the problem
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   specs: performance specifications
+            %
+            %Returns:            
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            
 
             [vars.reg]  = obj.create_vars_regulator();
             [vars.diss, cons] = obj.create_vars_storage(cons, alg_psi);
@@ -78,7 +78,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         function vars_new = augment_vars(obj, vars, diss, con_M)
             %AUGMENT_VARS add new variables/terms for recovery (useful for 
-            %matrix elimination)
+            %matrix elimination). Overriden by LTI.
             vars_new = vars;            
         end
 
@@ -86,10 +86,13 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %create_vars_storage create variables for the dissipation
             %constraints
             %
-            %Input:
+            %Args:
             %   cons:       accumulated constraints
             %   alg_psi:    the filtered algorithmic interconnection
             %   name:       a name for the variable
+            %Returns:
+            %   vars_diss:   variables of the problem in the dissipation constraints
+            %   cons:   accumulated constraints
 
             if nargin < 4
                 name = [];
@@ -104,7 +107,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %CREATE_VARS_REGULATOR
             %parameterize the solutions to the regulator equations
             %use this as a variable in reduced-order control
-            %
+            %Returns:
+            %   vars_reg:   variables of the problem        (regulator)            
+
+
             %systems with more outputs than oracles can have freedom in the            
             %regulator equations (such as optimization problems with known 
             % Laplacian matrices)
@@ -120,7 +126,17 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         function [GX, GY, cons] = define_storage_G(obj, cons, alg_psi, name)
             %DEFINE_STORAGE_G storage function for a specific subsystem
-
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   specs: performance specifications
+            %   name:       a name for the variable
+            %
+            %Returns:            
+            %   GX:   primal storage matrix
+            %   GY:   dual storage matrix
+            %   cons:   accumulated constraints
+            
             %without terminal cost:
             n = ssize(alg_psi.A, 1);
             ns = obj.reg.ns;
@@ -134,7 +150,16 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
         function [GX, cons] = define_storage_GX(obj, cons, alg_psi, name);
-             %DEFINE_STORAGE_GX primal storage function for a specific subsystem
+            %DEFINE_STORAGE_GX primal storage function for a specific subsystem
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   specs: performance specifications
+            %   name:       a name for the variable
+            %
+            %Returns:            
+            %   GX:   primal storage matrix            
+            %   cons:   accumulated constraints
              n = ssize(alg_psi.A, 1);
              ns = obj.reg.ns;
 
@@ -150,6 +175,15 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         function [GY, cons] = define_storage_GY(obj, cons, alg_psi, name);
             %DEFINE_STORAGE_GY dual storage function for a specific subsystem            
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   specs: performance specifications
+            %   name:       a name for the variable
+            %
+            %Returns:            
+            %   GY:   dual storage matrix            
+            %   cons:   accumulated constraints
             n = ssize(alg_psi.A, 1);
             ns = obj.reg.ns;
             
@@ -176,19 +210,28 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
         function verdict = reduced_order(obj)
+            %is this a reduced-order controller? Default to no
             verdict = obj.config.syn.reduced_order;
         end
 
         function P_model = connect_model(obj, diss)
-
+            %connect the plant to the internal model 
+            %Args:                   
+            %   diss (diss_data): information about dissipation relation
+            %
+            %Returns:            
+            %   P_model:   generalized plant with internal model attached            
             P_model = obj.reg.connect_model(diss.plant, diss.rho);
         end
 
         function G = get_storage(obj, vars_diss, vars_reg)
             %GET_STORAGE get the storage function matrix G
-
-            % 
-            %
+            %Args:                   
+            %   vars_diss:   variables of the problem in the dissipation constraints
+            %   vars_reg:   variables for regulator equation
+            %Returns:            
+            %   G:   the closed-loop storage matrix (warped)
+            
             GX = vars_diss.GX;
             GY = vars_diss.GY;
             GS = vars_diss.GS;
@@ -200,10 +243,14 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         function [vars_spec, cons] = create_vars_spec(obj, cons, specs)
             %CREATE_VARS_SPEC declare variables for the specifications
-
-            %maybe put this somewhere else?
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   specs: performance specifications
             %
-            %right now the variables are in the (spec) object.
+            %Returns:            
+            %  vars_spec:   variables for performance specification
+            %   cons:   accumulated constraints
+            
             nspec = length(specs);
             vars_spec = cell(nspec, 1);
             for i = 1:nspec
@@ -214,7 +261,14 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         function cons = con_spread_single(obj, cons, GX, GY)
             %CON_SPREAD_SINGLE increase numerical conditioning by separating the 
-            %primal and dual blocks
+            %primal and dual blocks                        
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   GX:   primal storage matrix
+            %   GY:   dualstorage matrix
+            %
+            %Returns:            
+            %   cons:   accumulated constraints
             np = ssize(GX, 1);
             spr = obj.config.tol.spread+1;
             cons_PH = [GX, (spr)*eye(np); (spr)*eye(np), GY];
@@ -225,20 +279,38 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         function cons = con_spread(obj, cons, vars)
             %CON_SPREAD increase numerical conditioning by separating the 
-            %primal and dual blocks
-            %invoke this over multiple subsystems
-            % if ~obj.config.syn.reduced_order
+            %primal and dual blocks. invoke this over multiple subsystems
+            %
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   vars:   variables of the problem   
+            %
+            %Returns:            
+            %   cons:   accumulated constraints
                 cons = obj.con_spread_single(cons, vars.diss.GX, vars.diss.GY);
-            % end
+            
         end
 
         function el = elimination(obj)
+            % is matrix elimnation allowed?
             el = false;
         end
         
         function [vars_K, cons] = create_vars_controller(obj, cons, alg_psi, name, D_mask)
             %CREATE_VARS_CONTROLLER create the nonlinearly-transformed
-            %controller matrices
+            %controller matrices, used for convexification
+            %Args:                   
+            %   cons:   accumulated constraints
+            %   alg_psi:   the filtered algorithmic interconnection  
+            %   name:       a name for the variable
+            %   D_mask:     sparsity pattern for D of the controller
+            %
+            %Returns:   
+            %   vars_K: controller variables [Ak, Bk, Ck, Dk], or some subset if elimination is used.           
+            %   cons:   accumulated constraints
+
+
+            %
 
             %get the dimensions
 
@@ -328,8 +400,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
         %% formation of the Dk matrix in controller synthesis
-        function D_mask = get_D_mask(obj)
-            %GET_D_MASK get the direct feedthrough terms
+        function D_mask = get_D_mask(obj)           
+            %GET_D_MASK get the sparsity pattern for the direct feedthrough
+            %controller term
+            %
+            %Returns:
+            %   D_mask:     sparsity pattern for D of the controller
 
             %the sparsity-constrained term for internal model control            
             D_mask_0 = obj.config.syn.D_mask;
@@ -346,17 +422,19 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
         function K_mask = get_K_mask(obj, nxi)
-            %K_mask: controller sparsity pattern
+            %K_mask: get the controller sparsity pattern
             %
-            %[Ck2, Dk2
+            %
+            %
+            %Args: 
+            %   nxi: number of controller states
+            %Return:
+            %   K_mask: pattern of the controller
+
+
+                        %[Ck2, Dk2
             % Ak,  Bk
             % Ck1, Dk1]
-            %
-            %Input: 
-            %   nxi: number of controller states
-            %Output:
-            %   pattern K_mask
-
             %used for matrix elimination lemma for LTI systems
 
             D_mask = obj.get_D_mask();
@@ -370,8 +448,16 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
         function [U, V] = get_K_tri_basis(obj, nxi)
-            %GET_K_TRI_BASIS get a basis for the Dk
-            %elimination method. Break up the lower-triangular Dk factor
+            %GET_K_TRI_BASIS get a basis for the 
+            %triangular elimination method. 
+            % 
+            %Args:
+            %   nxi:    number of controller parameters
+            %Returns:
+            %   U (cell):  left factor in outer products
+            %   V (cell):  right factor in outer products
+            
+            % Break up the lower-triangular Dk factor
             %to apply Lemma 4 of https://arxiv.org/pdf/1305.1746
 
             
@@ -419,6 +505,16 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         function [Dk] = form_Dk(obj, alg_psi, D_mask, name, include_Dk1)
             %FORM_Dk: lower triangular structure needed for the controller
             %need a better interface for the mask
+            %Args:
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   D_mask:     sparsity pattern for D of the controller
+            %   name:       a name for the variable
+            %   include_Dk1 (bool): should the feed into the internal model
+            %   be included? true by default, false for reduced-order
+            %   control.
+            %Return:
+            %   Dk:   controller matrix 
+            
 
 
             %also, maybe an object structure for the internal model?
@@ -496,9 +592,21 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         %% terminal constraints        
         function [cons, con_X] = con_terminal(obj, G, cons,  alg_psi, iqc_op)
-            %CON_TERMINAL
-            %terminal cost constraint (nonnegativity for the storage function G)
+            %CON_TERMINAL terminal cost constraint (nonnegativity for the storage function G)
             %coupled positivity if the IQC has a terminal cost
+            %
+            %Args:      
+            %   G:  closed-loop storage matrix
+            %   cons:   accumulated constraints
+            %   alg_psi:   the filtered algorithmic interconnection  
+            %   specs: performance specifications
+            %   iqc_op: information about operator iqcs
+            %
+            %Returns:                        
+            %   cons:   accumulated constraints
+            %   con_X:   the terminal PSD contraint
+            
+            
 
             %too many arguments taken here
             X = iqc_op.X;
@@ -530,6 +638,16 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         function stor_b = storage_block(obj, sys_cl, quad, G_curr, G_next)
             %STORAGE_BLOCK form the storage block in a synthesis problem
+            %Args:    
+            %   sys_cl: closed-loop system dynamics
+            %   quad:   quadratic performance criteria (used for
+            %   dimensions)
+            %   G_curr:  current time step closed-loop storage matrix
+            %   G_next:  next time step closed-loop storage matrix            
+            %
+            %Returns:                        
+            %   stor_b:  storage term to build dissipation relation
+            
             if nargin < 5
                 G_next = G_curr;
             end
@@ -549,8 +667,19 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
         function [dyn_b_he, U_outer, V_outer] = dynamics_block(obj, sys_cl, quad, herm)
-            %DYNAMICS_BLOCK form the supply block in a quadratic objective
-            % problem
+            %DYNAMICS_BLOCK form the supply block in a quadratic objective problem
+            %
+            %Args:    
+            %   sys_cl: closed-loop system dynamics
+            %   quad:   quadratic performance criteria (used for dimensions)
+            %   herm (bool): symmetrize the term? true by default
+            %
+            %Returns:                        
+            %   dyn_b_he:   dynamics term to build dissipation relation
+            %   U_outer:    left outer product in elimination
+            %   V_outer:    right outer product in elimination
+            %
+            
 
             if nargin < 4
                 herm = true;
@@ -585,48 +714,65 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         end
 
-        function [dyn_b_he, U_outer, V_outer] = dynamics_block_null(obj, sys_cl, quad, herm)
-            %DYNAMICS_BLOCK_NULL form the supply block in a p2p quadratic objective
-            % problem
-
-            if nargin < 4
-                herm = true;
-            end
-
-            [n, nw] = ssize(sys_cl.B);
-            nz = ssize(sys_cl.D, 1);
-            nt = ssize(quad.U, 1);
-
-            center_cl = [sys_cl.A, sys_cl.B;
-                sys_cl.C, sys_cl.D];
-
-            outer_cl_right= [[eye(n), zeros(n, nw);
-                zeros(nw, n), eye(nw)], zeros(n+nw, n+nt)];
-
-            outer_cl_left = [zeros(n), zeros(n, nz);
-                zeros(nw, n), quad.S;
-                zeros(n), zeros(n, nz); %not eye
-                zeros(nt, n), quad.T];
-
-
-            dyn_b = outer_cl_left * center_cl * outer_cl_right; 
-
-            if herm
-                dyn_b_he = dyn_b + dyn_b';
-            else
-                dyn_b_he = dyn_b;
-            end
-
-            U_outer = -outer_cl_left';
-            V_outer = outer_cl_right;
-
-        end
+        % function [dyn_b_he, U_outer, V_outer] = dynamics_block_null(obj, sys_cl, quad, herm)
+        %     %DYNAMICS_BLOCK_NULL form the supply block in a p2p quadratic objective
+        %     % problem
+        %                 %Args:    
+        %     %   sys_cl: closed-loop system dynamics
+        %     %   quad:   quadratic performance criteria (used for
+        %     %   dimensions)
+        %     %   herm (bool): symmetrize the term? true by default
+        %     %
+        %     %Returns:                        
+        %     %   dyn_b_he:   dynamics term to build dissipation relation
+        %     %   U_outer:    left outer product in elimination
+        %     %   V_outer:    right outer product in elimination
+        % 
+        % 
+        %     if nargin < 4
+        %         herm = true;
+        %     end
+        % 
+        %     [n, nw] = ssize(sys_cl.B);
+        %     nz = ssize(sys_cl.D, 1);
+        %     nt = ssize(quad.U, 1);
+        % 
+        %     center_cl = [sys_cl.A, sys_cl.B;
+        %         sys_cl.C, sys_cl.D];
+        % 
+        %     outer_cl_right= [[eye(n), zeros(n, nw);
+        %         zeros(nw, n), eye(nw)], zeros(n+nw, n+nt)];
+        % 
+        %     outer_cl_left = [zeros(n), zeros(n, nz);
+        %         zeros(nw, n), quad.S;
+        %         zeros(n), zeros(n, nz); %not eye
+        %         zeros(nt, n), quad.T];
+        % 
+        % 
+        %     dyn_b = outer_cl_left * center_cl * outer_cl_right; 
+        % 
+        %     if herm
+        %         dyn_b_he = dyn_b + dyn_b';
+        %     else
+        %         dyn_b_he = dyn_b;
+        %     end
+        % 
+        %     U_outer = -outer_cl_left';
+        %     V_outer = outer_cl_right;
+        % 
+        % end
 
 
 
         function supp_b = supply_block(obj, sys_cl, quad)
-            % SUPPLY_BLOCK form the supply block in a quadratic objective
-            % problem
+            % SUPPLY_BLOCK form the supply block in a quadratic objective problem
+            %Args:    
+            %   sys_cl: closed-loop system dynamics
+            %   quad:   quadratic performance criteria (used for dimensions)
+            %Returns:                        
+            %   supp_b:   supply term to build dissipation relation
+            %
+            
 
             
             [n, nw] = ssize(sys_cl.B);
@@ -649,6 +795,16 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
             %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
             %transformation
+            %Args:    
+            %   P: IQC-filtered generalized plant 
+            %   vars_diss:   variables of the problem (dissipation)
+            %   vars_reg:   variables of the problem (regulator)            
+            %   vars_K:   variables of the problem (controller)    
+            %Returns:                        
+            %   sys_cl:  closed-loop system dynamics
+            %   U_cl:    left outer product in elimination
+            %   V_cl:    right outer product in elimination
+            
 
             GX = vars_diss.GX;
             GY = vars_diss.GY;
@@ -692,8 +848,17 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         function [cons, objective, con_M] = e2e_target(obj, vars, cons, diss)
             %E2E_target: energy to energy gain
-
             %is a special case of quadratic performance
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
+
+     
             [cons, objective, con_M] = obj.quad(vars, cons, diss);
 
             %maybe keep this separate for analysis?           
@@ -708,7 +873,14 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         %% Controller Recovery
         function sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
             %recover the controller
-
+            %Args:
+            %   sol: solution structure
+            %   lmi_out: output from solver
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   diss (diss_data):   structure describing the dissipation constraint            
+            %
+            %Returns:  
+            %   sol: solution structure
             if nargin < 5
                 diss = [];
             end
@@ -727,15 +899,19 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
 
         function [sol] = recover_subcontroller(obj, alg_psi, P_trans, sol)
-            %RECOVER_SUBCONTROLLER recover the subcontroller of the current
-            %mode/control
+            %RECOVER_SUBCONTROLLER recover the subcontroller of the entire
+            %program.
             %
             %
-            %Input:
+            %Args:
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   P_trans:    the transformed generalized plant before IQC
+            %   sol: solution structure
             %
             %Output:
-            %   K_feed: the subcontroller with direct feedthrough, before
-            %           exponential discounting    
+            %   sol: solution structure
+            
+            
             %(not yet exponentially undiscounted, this happens later)
 
             vars_rec = sol.vars;
@@ -763,6 +939,11 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         function [Ak, Bk, Ck, Dk] = recover_K_from_elim(obj, vars_rec)
             %recover the Ak and Ck matrices
             %overridden by matrix elimination
+            %Args:
+            %   vars_rec: recovered variables from solver
+            %
+            %Returns:
+            %   Ak, Bk, Ck, Dk: controller matrices
             Ak = vars_rec.K.A;
             Bk = vars_rec.K.B;            
             Ck = vars_rec.K.C;
@@ -773,7 +954,21 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
             %controller 
-            %dynamics and indexers
+            %Args:
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   P_trans:    the transformed generalized plant before IQC
+            %   sol: solution structure
+            %
+            %Output:
+            %   K_nofeed: subcontroller without direct feedthrough
+            %   Gcl:    closed-loop storage matrix (original)
+            %   Ycl:    similarity transformation/nonlinear warping
+
+
+
+
+            %(not yet exponentially undiscounted, this happens later)
+
 
 
             %for debugging
@@ -882,9 +1077,12 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
         function K_feed = name_K_feed(obj, K_in)
-            %NAME_K_FEED
-            %assign names to the channels of the subcontroller
-            
+            %NAME_K_FEED assign names to the channels of the subcontroller
+            %
+            %Args:
+            %   K_in: controller original
+            %Return:
+            %   K_feed: named controller
             [n, m] = size(K_in.B);
             p = size(K_in.C, 1);
             inputnames = {};
@@ -921,6 +1119,13 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         function K_report = K_alg_report(obj, P_trans, K_nofeed, model, rho)
             %K_ALG_REPORT recover the algorithmic interconnection and the
             %controller
+            %Args:
+            %   P_trans:    the transformed generalized plant before IQC
+            %   K_nofeed:   subcontroller without direct feedthrough
+            %   model:      internal model
+            %   rho:        convergence rate
+            %Return:
+            %   K_report:   controller output structure
             
             D = P_trans.D;
 
@@ -970,7 +1175,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             % alg_full = lft(obj.sys.P, K_full);
 
 
-            K_report = struct;            
+            K_report = K_report_info;            
             K_report.K = K;
             K_report.model = model;
             K_report.K_sub = K_sub;
@@ -980,7 +1185,16 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         function gain = validate_recovery_gain(obj, alg_trans, iqc_op_all)
             %VALIDATE_RECOVERY validate that the system obeys the stability
-            %constraint (TODO: performance specs)
+            %constraint
+            %
+            %Args:
+            %   alg_trans: the plant with confirmed performance by LMIs
+            %   iqc_op_all: all IQCs
+            %Return:
+            %   gain:   [Passivity index, H-infinity index].
+
+
+            %  (TODO: performance specs)
 
 
             %closed-loop and weighted system

@@ -3,24 +3,29 @@ classdef  opt_system_interface
     %by default is LTI (linear time invariant)
     
     properties
-        op; %a cell of operators (op_sim for simulation, op_? for analysis/synthesis)
+        op; %a cell of operators (op_sim for simulation, op_[] for analysis/synthesis)
         P;  %network
         K;  %controller
-        bind; %which operators go to which output ports            
+        bind; %which operators go to which output ports, for repeated evaluations
+        type=[];   %type of system: (e.g. lti, periodic, switched, mjls, lpv)    
+        discount = true; %is the subsystem exponentially discounted?        
         tracking; %tracking of optimal solution (struct (S, R) by default)
                   %tracking of varying gradients requires LPV/periodic/switched
                   % methods, is a TODO
-        type=[];   %type of system: (e.g. lti, periodic, switched, mjls, lpv)    
+
         
-        
-        discount = true; %is the subsystem exponentially discounted?
         %for a 3-mode system: could be [true, false, false]
     end
     
     methods
         function obj = opt_system_interface(op, P, K, bind, tracking)
             %OPT_SYSTEM constructor for the system
-            
+            % Args:
+            %   P (genplant): network
+            %   K (genplant): controller
+            %   bind (int array):   indices for repeated oracle evaluations
+            %   tracking (struct): exosystem to track the optimal solution
+
             if ~iscell(op)
                 op =  {op};
             end
@@ -63,12 +68,12 @@ classdef  opt_system_interface
             %system) based on filtering the exponentially-discounted plant 
             %by an IQC
             %
-            %Input:
+            %Args:
             %   alg:        original algorithm or network
             %   iqc_data:   IQCs for the oracle uncertainties
             %   rho:        exponential discount factor
             %
-            %Output:
+            %Return:
             %   alg_psi:    filtered algorithm 
             %   iqc_op:     IQCS for the oracle uncertainties (altogether)
             %   alg_loop:   the discounted algorithm before applying the 
@@ -215,10 +220,12 @@ classdef  opt_system_interface
         end
 
         function tp = get_type(obj)
+            %type of dynamical system (e.g. LTI, switched)
             tp = obj.type;
         end
 
         function ds = get_discount(obj)
+            %should only certain modes be discounted
             ds = obj.discount;
         end
         
@@ -235,6 +242,11 @@ classdef  opt_system_interface
 
         function sys_alg = get_alg(obj, param)
             %close the loop of the algorithm
+            %
+            %Args: 
+            %   param: structure of parameters
+            %Return:
+            %   sys_alg: the dynamical system interfacing the operators
             if nargin < 2
                 param = [];
             end
@@ -253,17 +265,27 @@ classdef  opt_system_interface
             end
         end
 
-        function op_out = get_op(obj, i)
-            %get the operator at index i
-            op_out = obj.op{obj.bind(i)};
+        function op_out = get_op(obj, index)
+            %get the operator at index
+            %Args:
+            %   index: the index
+
+            op_out = obj.op{obj.bind(index)};
         end
         
         function pow = discount_schedule(obj, ordermax)
             %DISCOUNT_SCHEDULE exponential weights encountered when
             %applying the FIR filters
             %
-            %[0; 1 ; 2] -> rho.^[0; 1; 2] for uniform exponential stability
-
+            %Args:
+            %   ordermax: maximum order of the IQCs
+            %
+            %Return:
+            %   pow: Exponent sequence of discounts
+            %
+            % Example: 
+            %   [0; 1 ; 2] -> rho.^[0; 1; 2] for uniform exponential stability
+            
             %This becomes relevant when performing shuffled systems
             %(override on switched systems) 
             %
@@ -283,11 +305,15 @@ classdef  opt_system_interface
         function [y, u] = get_internal_signals(obj, param, x_all, w_all)
             %extract the internal signals from the interconnection (y, u) 
             %using the well-posedness expression
-
-            %Input:
+            %
+            %Args: 
+            %   param: structure of parameters
             %   x_all:      all states of network and controller
-            %   w_all:      all inputs to the network (except u)
-            %   y_all:      all outputs to the network
+            %   w_all:      all inputs to the network (except u)            
+            %Return:
+            %   y:  input to controller/output of plant
+            %   u:  output of controller/intput to plant
+            
 
             Kcurr = obj.get_K(param);
             Pcurr = obj.get_P(param);
@@ -327,6 +353,17 @@ classdef  opt_system_interface
         function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
             %GET_TRACKED_OPT get the tracked position of the optimal
             %solution
+            %
+            % :math:`\eta^*_{k+1} = S_\beta \eta^*, \beta^*_{k} = R_\beta
+            % \eta_k`.
+            %
+            %
+            % Args:
+            %   param: structure of parameters
+            %   
+            %Returns:
+            %   Sbeta: exosystem for optimal solution
+            %   Rbeta: output of optimal solution
             
             if isempty(obj.tracking)
                 Sbeta = 1;
@@ -344,8 +381,7 @@ classdef  opt_system_interface
         
         function mode_next = next_mode(obj, mode)
             %next mode in switching
-
-            %TODO: is this actually used?
+            
             mode_next = 1;
 
 
@@ -354,7 +390,12 @@ classdef  opt_system_interface
         function N = get_consensus_weighted(obj, op, bind)
             %GET_CONSENSUS_WEIGHTED create the consensus matrix
             %weight by the number of times the operator appears in bind
- 
+            %
+            %Args:
+            %   op: cell of operator
+            %   bind: repeated patterns
+            %Returns:
+            %   N: consensus matrix
             if nargin < 2
                 op = obj.op;
                 bind = obj.bind;
@@ -374,7 +415,12 @@ classdef  opt_system_interface
         function N = get_consensus(obj, op, bind)
             %GET_CONSENSUS create the consensus matrix
             %for the regulation condition
-
+            %
+            %Args:
+            %   op: cell of operator
+            %   bind: repeated patterns
+            %Returns:
+            %   N: consensus matrix
             if nargin < 2
                 op = obj.op;
                 bind = obj.bind;
@@ -412,26 +458,40 @@ classdef  opt_system_interface
         end    
 
 
-        function [obj, iwp, izp, supply] = add_ergodic_cert(obj, c)
-            %ADD_ERGODIC_CERT certificate of ergodic convergence (function
-            %value suboptimality). Used in conjunction with the op_sml.ERGODIC 
-            % Section 4.1.2 (eq (32)) of https://arxiv.org/pdf/2302.06713
-            
-            [u, indbind] = unique(bind);
-            nop = length(bind);
-            nopu = length(obj.op);
-
-            Nu = obj.get_consensus(obj.op, 1:nopu);
-
-            ind_w = indbind;
-            [obj.P, iwp] = obj.P.add_oracle_input(obj, indbind, []);
- 
-        end
+        % function [obj, iwp, izp, supply] = add_ergodic_cert(obj, c)
+        %     %ADD_ERGODIC_CERT certificate of ergodic convergence (function
+        %     %value suboptimality). Used in conjunction with the op_sml.ERGODIC 
+        %     % Section 4.1.2 (eq (32)) of https://arxiv.org/pdf/2302.06713
+        %     %Args:
+        %     %   c: kronecker lift of coordinate s            
+        %     %Returns:
+        %     %   iwp: new performance input indices
+        %     %   izp: new performance output indices
+        %     %   supply: IQZ
+        % 
+        %     [u, indbind] = unique(bind);
+        %     nop = length(bind);
+        %     nopu = length(obj.op);
+        % 
+        %     Nu = obj.get_consensus(obj.op, 1:nopu);
+        % 
+        %     ind_w = indbind;
+        %     [obj.P, iwp] = obj.P.add_oracle_input(obj, indbind, []);
+        % 
+        % end
 
         function [iqc_curr, vars_curr,cons_curr] = create_iqc(index, cons, order, rep_curr);
-            %CREATE_IQC: form the iqc for the current operator in the
+            %CREATE_IQC form the iqc for the current operator in the
             %system description
-            
+            %
+            %Args:
+            %   index (int): index of the operator
+            %   cons: accumulated constraints
+            %   order:  order of the operator: [causal order, noncausal order],
+            %   or scalar for causal order
+            %   reps: number of repeated evaluations (in bind)
+            %Returns:
+            %   N: consensus matrix
             [iqc_curr, vars_curr,cons_curr] = obj.op{index}.create_iqc(cons, order, rep_curr);
         end
 
