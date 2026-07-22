@@ -86,7 +86,7 @@ classdef (Abstract) opt_manager_interface < handle
             %   objective: objective to minimize
             %   alg_psi (genplant/genplantpoly):    generalized plant
             %   rho (float):    convergence rate
-            %   diss (diss_data):   current dissipation inequality
+            %   diss:   current dissipation inequality
                       
 
             if nargin < 2
@@ -95,8 +95,7 @@ classdef (Abstract) opt_manager_interface < handle
 
             cons = obj.cons;
             vars = obj.vars;
-
-            % [diss, cons] = obj.build_plant(cons);
+            
             %alg_loop: used for debugging. The algorithm after signal 
             % transformationsbefore, but before cascade by the filters    
 
@@ -130,6 +129,14 @@ classdef (Abstract) opt_manager_interface < handle
         %% acquire solutions
         function [sol] = run(obj,  vars, cons, objective)
             %RUN: run the program
+            % Args:
+            %   vars:   variables of the problem        
+            %   cons:       accumulated constraints
+            %   objective:  target to minimize
+            % Returns
+            %   sol: solution structure
+
+            
             sol = struct;
             
             
@@ -196,6 +203,8 @@ classdef (Abstract) opt_manager_interface < handle
 
         function obj = purge(obj);
             %PURGE: get rid of problem description
+            %Returns:
+            %   obj: cleaned up manager
             obj.cons = [];
             obj.vars = {};
             obj.iqc = {};
@@ -204,6 +213,8 @@ classdef (Abstract) opt_manager_interface < handle
         
         function obj = add_specifications(obj, varargin)
             %concatenate the new performance specifications
+            %Args:
+            %   varargin: new specifications to add
             if iscell(varargin{1}) && length(varargin)==1
                 obj.specs = [obj.specs, varargin{1}];
             elseif length(varargin)>1
@@ -222,9 +233,16 @@ classdef (Abstract) opt_manager_interface < handle
             %PERF_SPECS get the performance specifications and extract the
             %rho convergence rate 
             %
-            % TODO: improve this part.
+            %Args:
+            %   specs:  performance specifications
             %
+            %Returns:
+            %   rho: the linear convergence rate
+            %   sperf: the specification cell without the linear
+            %   convergence rate (if there is more than one specification)
 
+
+            % TODO: improve this part.
             rho = 1;
             if nargin < 2
                 sperf = obj.specs;
@@ -258,7 +276,10 @@ classdef (Abstract) opt_manager_interface < handle
 
         function [sol] = solve_single(obj, arg, specs)
             %SOLVE_SINGLE Solve the program once
-            %ADD_SPECIFICATIONS
+            %
+            %Args:
+            %   arg:    order (analysis) or iqc (synthesis)
+            %   specs:  specification cell
 
 
             % warning('all', 'off')
@@ -300,20 +321,11 @@ classdef (Abstract) opt_manager_interface < handle
         function [sol_best, vr] = bisect(obj, arg, specs, b_opts)
             %BISECT: perform bisection on a parameter. Minimization target
             %
-            %sweep in options structure? 
-            %
-            %Input
-            %
-            % arg:      arguments for the routine (order for analysis, iqcs
-            %           for synthesis)
-            % specs:    performance specifications
-            % (b_opts): bisection options (bisect_opts)
-            %   param_range:    upper and lower bound for the parameter
-            %   sweep_rho:      True:  sweep rho for the specification
-            %                   False: sweep the bound for the specification
-            %   spec_ind:       which specification in the list to sweep                   
-            %
-            %Output:
+            % Args:
+            %   arg:     arguments for the routine (order for analysis, iqcs for synthesis)
+            %   specs:    (cell) performance specifications
+            %   b_opts:   (bisect_opts) bisection options (bisect_opts)
+            % Returns:
             %   sol_best: the best solution
             %   vr:       the range of the value at the optimal bisection
 
@@ -419,7 +431,14 @@ classdef (Abstract) opt_manager_interface < handle
 
         function [spec_new] = modify_spec(obj, pcurr, spec_old, b_opts)
             %MODIFY_SPEC modify a specification in the bisection loop
-
+            %
+            %Args:
+            %   pcurr: current value of the parameter to set
+            %   spec_old:   specification to update
+            %   b_opts:     bisection options
+            %   
+            %Returns:
+            %   spec_new: updated specification
             spec_new = spec_old;
             i = b_opts.spec_ind;
             if b_opts.bisect_rho && isa(spec_old{i}, 'spec_stability')
@@ -434,7 +453,7 @@ classdef (Abstract) opt_manager_interface < handle
         function obj = set_tol(obj, key, val)
             % SET_TOL set the tolerance of the LMI routines
             %
-            % example: obj = obj.set_tol('G_max', 10)
+            % Example: obj = obj.set_tol('G_max', 10)
 
             obj.lmi.tol = setfield(obj.lmi.tol, key, val);
         end
@@ -442,7 +461,16 @@ classdef (Abstract) opt_manager_interface < handle
         function [sol] = bisect_inner(obj, pcurr, vars, cons, spec, b_opts)
             %BISECT_INNER: inner loop for bisection
             %run the program and process the solution
-            
+            %Args:
+            %   pcurr: current value of the parameter to set
+            %   vars:   variables of problem
+            %   cons:  accumulated constraints
+            %   spec:   specifications
+            %   b_opts: bisection options
+            %   
+            %Returns:
+            %   sol: solution structure
+
             % TODO: will need to redo constraint invocation due to the
             % exponential convergence implementation
 
@@ -466,7 +494,10 @@ classdef (Abstract) opt_manager_interface < handle
         function [iqc_data] = iqc_op_all(obj)
             %IQC_OP_ALL: all iqcs for the operators
             %
-            %
+            % Returns:
+            %   iqc_data (iqc_data_container): information for the iqcs
+            
+            
             %useful for the build_plant routines
             iqc = {};
             m_same = [];
@@ -493,7 +524,7 @@ classdef (Abstract) opt_manager_interface < handle
                 end            
             end
 
-            iqc_data =struct;
+            iqc_data =iqc_data_container;
             iqc_data.iqc = iqc;
             iqc_data.m_same = m_same;
             iqc_data.ind_same = ind_same;
@@ -509,8 +540,8 @@ classdef (Abstract) opt_manager_interface < handle
             %CONS_DYNAMIC: form the dynamical dissipation relations for the
             %system (at the current set of specifications)
             %
-            %Output:
-            %   vars:       variables
+            %Returns:
+            %   vars:   variables of the problem        
             %   cons:       accumulated constraints
             %   objective:  single value to be minimized in inner loop (not
             %               the outer loop of bisection)            
@@ -540,11 +571,6 @@ classdef (Abstract) opt_manager_interface < handle
             % 
             % end
         end
-
-        %% getters and setters
-        % function obj = set.config(obj, )
-        % end
-
 
         
     end

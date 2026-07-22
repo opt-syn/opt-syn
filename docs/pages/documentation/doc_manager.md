@@ -6,21 +6,23 @@ The `manager` class is the highest level class in the {{osyn}} project. The Anal
 
 Both the analysis and synthesis routines inherit from `opt_manager_interface`, containing the common methods. 
 
-<!-- ```{eval-rst}
-.. mat:automodule :: manager.opt_manager_interface        
+
+
+
+## Analysis
+```{eval-rst}
+.. mat:autoclass :: manager.opt_analysis   
+    :members:
 ```
 
-
-The Analysis routines are 
-
+## Synthesis
 ```{eval-rst}
-.. mat:automodule :: manager.opt_analysis      
-:show-inheritance:  
+.. mat:autoclass :: manager.opt_synthesis   
+    :members:
 ```
-
-The Synthesis routines are 
+## Common Routines
 
 ```{eval-rst}
-.. mat:automodule :: manager.opt_synthesis  
-:show-inheritance:      
-``` -->
+.. mat:autoclass :: manager.opt_manager_interface   
+    :members:
+```

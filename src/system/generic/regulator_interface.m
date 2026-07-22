@@ -14,47 +14,50 @@ classdef regulator_interface
     %
     %
     % The regulator is specialized for a specific kind of system
-    %
-    % 
-    %
-    %Open issues:
-    % multiple solutions to the regulator equations
-    
+
     properties
-        sys;
+        sys; %the system 
 
-        %the exosystem for the optimal solution and operators
-        S;
-        R;
+        
+        S; %tracking of optimal solution and subgradients (propagation)
+        R; %tracking of optimal solution and subgradients (output)
 
-        %nominal solution to the regulator equations
-        Pi;
-        Gam;
-        Phi;
+        
+        Pi; %regulator equation solution, tracking state of network 
+        Gam; %regulator equation solution, tracking input of controller 
+        Phi; %regulator equation solution, tracking output of controller 
 
-        %freedom in solving the regulator equations
-        Pi_basis;
-        Gam_basis;
-        Phi_basis;
+        
+        Pi_basis; %nullspace, freedom to choose Pi 
+        Gam_basis; %nullspace, freedom to choose Gamma
+        Phi_basis; %nullspace, freedom to choose Phi
     end
     
     methods
         function obj = regulator_interface(sys)
-            %REGULATOR_INTERFACE Construct an instance of this class
-            %   Detailed explanation goes here
+            %REGULATOR_INTERFACE Constructor for a regulator            
             obj.sys = sys;
 
             obj = obj.form_internal_model();
         end
 
         function NS = ns(obj)
-            %NS: number of states of exosystem
+            %NS number of states of exosystem
 
             NS = length(obj.S);
         end
 
-        function sys = fetch_model(obj, S, Phi, Gam)
-            %FETCH_MODEL: fetch an internal model from data
+        function model = fetch_model(obj, S, Phi, Gam)
+            %FETCH_MODEL fetch an internal model from the current
+            %regulator equation solution
+            %
+            %Args:
+            %   S:  exosystem generator
+            %   Phi: tracked controller input
+            %   Gam: tracked controller output
+            %
+            %Return:
+            %   model: the full-order internal model
             [nu, ns] = ssize(Gam);
             ny = ssize(Phi, 1);
 
@@ -109,7 +112,7 @@ classdef regulator_interface
                 P = sdpss(Am, Bm, Cm, Dm);
             end
 
-            sys = genplant(P, n);
+            model = genplant(P, n);
 
 
         end
@@ -118,10 +121,13 @@ classdef regulator_interface
         %% solve the regulator equations (open loop)
         function obj = form_internal_model(obj)
             %FORM_INTERNAL_MODEL create the internal model by solving the regulator
-            %equation. Inputs are the system (P, bind, tracking, op)
-            %
-            %op is important for which oracles are equaltiy constarints and
+            %equation. Inputs are the system (P, bind, tracking, op)            
+            %op is important for which oracles are equaltiy constraints and
             %which are inequality constraints
+            %
+            %Warning:
+            %   If regulator equation is unsolvable, then no optimization
+            %   algorithm can be found.
 
             %TODO: break this up into common routines
  
@@ -157,7 +163,14 @@ classdef regulator_interface
         
         function [Pi, Gam, Phi] = sol_reg_all(obj, reg_sol)
             %recover the solution to the regulator equation system
-
+            %
+            %Args:
+            %   reg_sol:  solution of regulator equations
+            %
+            %Return:
+            %   Pi: tracked state of network
+            %   Phi: tracked controller input
+            %   Gam: tracked controller output
             ns = obj.ns;
             reg_sol = reshape(reg_sol, [], ns);
             [Pi, Gam, Phi] = obj.sol_reg_index(reg_sol);
@@ -165,7 +178,7 @@ classdef regulator_interface
 
         % individual regulator terms
         function N = get_consensus(obj)
-            %get the consensus matrix
+            %get the consensus matrix            
             Npre = obj.sys.get_consensus(obj.sys.op, obj.sys.bind);
             c = obj.sys.op{1}.c; %coordinate lifts: change this later?
             N = kron(Npre, eye(c));
@@ -173,6 +186,15 @@ classdef regulator_interface
 
         function[Pi, Gam, Phi] = sol_reg_index(obj, reg_sol, param)
             %index the solution to the regulator equation
+            %Args:
+            %   reg_sol:  solution of regulator equations
+            %   param: other parameters
+            %   
+            %Return:
+            %   Pi: tracked state of network
+            %   Phi: tracked controller input
+            %   Gam: tracked controller output
+
             if nargin < 3
                 param =[];
             end
@@ -186,6 +208,17 @@ classdef regulator_interface
         end
 
         function [Phi] = compute_Phi(obj, Pi, Gam, param)
+            %get the tracked controller input from the regulator equation
+            %solution 
+            %
+            %Args:            
+            %   Pi: tracked state of network
+            %   Gam: tracked controller output
+            %   param: other parameters (if needed)
+            %
+            %Return:           
+            %   Phi: tracked controller input
+            
             if nargin < 4
                 param = [];
             end
@@ -197,7 +230,16 @@ classdef regulator_interface
 
         function [Pi_basis, Gam_basis, Phi_basis] = null_reg_all(obj, reg_mat)
             %NULL_REG nullspace of the regulator equations: freedom to move            
-            
+            %
+            %Args:
+            %   reg_mat: solution to linear system for the regulator
+            %   equation
+            %
+            %Returns:
+            %   Pi_basis: nullspace, freedom to choose Pi 
+            %   Gam_basis: nullspace, freedom to choose Gamma
+            %   Phi_basis: nullspace, freedom to choose Phi
+
             null_basis = null(reg_mat, 'rational');
             nnull = size(null_basis, 2);
 
@@ -217,7 +259,15 @@ classdef regulator_interface
         
         function [Pi_basis, Gam_basis, Phi_basis] = null_reg(obj, null_basis);
             %NULL_REG a nullspace indexer (altogether)
-
+            %
+            %Args:
+            %   null_basis: a matrix that parameterizes the nullspace of the 
+            %       regulator equation solution.
+            %
+            %Returns:
+            %   Pi_basis: nullspace, freedom to choose Pi 
+            %   Gam_basis: nullspace, freedom to choose Gamma
+            %   Phi_basis: nullspace, freedom to choose Phi
 
             if nargin < 3
                 param =[];
@@ -228,7 +278,17 @@ classdef regulator_interface
 
         function [Pi_basis, Gam_basis, Phi_basis] = null_reg_index(obj, null_basis, param);
             %NULL_REG_INDEX a  nullspace indexer for each subsystem
-                       
+            %
+            %Args:
+            %   null_basis: a matrix that parameterizes the nullspace of the 
+            %       regulator equation solution.
+            %   param:      other parameters
+            %
+            %Returns:
+            %   Pi_basis: nullspace, freedom to choose Pi 
+            %   Gam_basis: nullspace, freedom to choose Gamma
+            %   Phi_basis: nullspace, freedom to choose Phi
+
             ns = obj.ns;
             n = obj.sys.nxn;
 
@@ -241,7 +301,8 @@ classdef regulator_interface
         end
 
         function [reg_mat, reg_ans] = reg_sys_all(obj)
-            %assemble the regulator equation system
+            %constraints for the current system, assembling regulator
+            %equations
 
 
             [reg_mat_dyn, reg_ans] = obj.reg_sys_indiv();            
@@ -252,9 +313,8 @@ classdef regulator_interface
         end
 
         function reg_mat_S = reg_sys_next(obj, param)
-            %REG_SYS the system to be regulated, forming the regulator
+            %constraints for the next system, assembling regulator
             %equations
-            %the system to be regulated (the next state/sylvester expression)
 
             if nargin < 2
 
@@ -277,9 +337,12 @@ classdef regulator_interface
         end
 
         function [reg_mat_dyn, reg_ans] = reg_sys_indiv(obj, param)
-            %REG_SYS the system to be regulated, forming the regulator
+            %constraints for the current mode system, assembling regulator
             %equations
-            %the system to be regulated (dynamics expression)
+            %
+            %Returns:
+            %   reg_mat_dyn:    matrix for regulator equation
+            %   reg_ans:        vector for regulator equation solution
             if nargin < 2
 
                 param = [];
@@ -312,10 +375,12 @@ classdef regulator_interface
         % 
         function [Bd, Ded, Dyd] = d_influence(obj, param)
            %D_INFLUENCE how does the system get affected by the
-           %disturbance?
+           %disturbance? used for the internal model computation
            %
-           %
-           %used for the internal model computation
+           %Returns:
+           %    Bd:     disturbance to state
+           %    Ded:    disturbance to regulated error
+           %    Dyd:    disturbance to controller input
            if nargin < 2
                param =[];
            end
@@ -341,7 +406,6 @@ classdef regulator_interface
 
         %% fetch the exosystem
         function [S, R] = exosystem(obj, param)
-
             %get the exosystem at each mode/internal model
             N = obj.get_consensus();
             [sN, dN] = size(N);
@@ -369,7 +433,6 @@ classdef regulator_interface
         end
 
         function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
-
             %get the part of the exosystem corresponding to tracking the
             %optimal solution at each mode/internal model            
 
@@ -394,7 +457,9 @@ classdef regulator_interface
 
         function [reg_cl] = check_regulator(obj)
             %check the regulator equation for a specific system
-            
+            %
+            %Output:
+            %   
             N = obj.get_consensus();
 
             
@@ -412,7 +477,7 @@ classdef regulator_interface
 
             [Pi, Gam, Phi, Th] = obj.sol_K_reg_all(reg_sol);
 
-            reg_cl = struct;
+            reg_cl = reg_cl_out;
             reg_cl.S = obj.S;
             reg_cl.R = obj.R;
             reg_cl.Pi = Pi;
@@ -435,8 +500,12 @@ classdef regulator_interface
         end
 
         function [reg_mat, reg_ans] = reg_K_sys_all(obj)
-            %assemble the regulator equation system
-
+            %assemble the closed-loop regulator equation system 
+            %
+            %Returns: 
+            %   reg_mat:    matrix for regulator equation
+            %   reg_ans:    vector for regulator equation solution
+           
             [reg_mat_dyn, reg_ans] = obj.reg_K_sys_indiv();            
 
             reg_mat_S = obj.reg_K_sys_next();
@@ -444,7 +513,7 @@ classdef regulator_interface
         end
 
         function [reg_mat_S] = reg_K_sys_next(obj, param)
-            %control regulator equation checks
+            %control closed-loop regulator equation checks
             %next expression
             if nargin < 2
                 param = [];
@@ -473,10 +542,8 @@ classdef regulator_interface
         end
 
         function [reg_mat_dyn, reg_ans] = reg_K_sys_indiv(obj, param)
-            %control regulator equation checks
-            %dynamics expression
-            %this excludes nullspace (for now)
-
+            %control regulator equation checks (closed-loop)
+            
             if nargin < 2
                 param = [];
             end
@@ -546,6 +613,13 @@ classdef regulator_interface
         %% incorporate into optimization
         function vars_reg = create_vars(obj, param_null)
             %CREATE_VARS: create variables that parameterize the nullspace
+            %
+            %Args:
+            %   param_null(bool): should the nullspace be searched (as
+            %   variables)
+            %
+            %Returns:
+            %   vars_reg: structure with fields (Pi, Gam, Phi)
             vars_reg.Pi = obj.Pi;
             vars_reg.Gam = obj.Gam;
             vars_reg.Phi = obj.Phi;

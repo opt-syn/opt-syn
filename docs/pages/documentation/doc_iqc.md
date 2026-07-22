@@ -55,3 +55,10 @@ The iqcs routines are `iqc_loop_split` (analysis) and `iqc_loop_factored` (synth
 .. mat:autoclass :: iqc.iqc_loop_factored 
     :members:
 ```
+
+### Data Container
+
+```{eval-rst}
+.. mat:autoclass :: iqc.iqc_data_container 
+    :members:
+```

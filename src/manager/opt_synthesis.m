@@ -2,19 +2,17 @@ classdef opt_synthesis < opt_manager_interface
     %OPT_SYNTHESIS synthesis of optimization algorithms
     %
     % iterative procedure to find a point beta satisfying
-    % the fixed-point equation 
-    %               0 \in sum_i F_i(\beta).
-    %
-    % in which the oracles F_i are interfaced over a dynamical network
-    properties
-        % opts = 
-        % iqc_op = {};
-    end
+    % the fixed-point equation :math:`0 \in \sum_{i=1}^s F_i(\beta^*)`,    
+    % in which the oracles :math:`F_i` are interfaced over a dynamical network
     
     methods
         function obj = opt_synthesis(sys, config, iqc_op)
-            %OPT_SYNTHESIS Construct an instance of this class
-            %   Detailed explanation goes here
+            %OPT_SYNTHESIS Constructor for synthesis
+            % Args:
+            %   sys: algorithmic system
+            %   config: configuration options
+            %   iqc_op (cell): of IQCs for the operators
+                 
 
             if nargin < 2
                 config = opt_config;
@@ -36,6 +34,9 @@ classdef opt_synthesis < opt_manager_interface
 
         function iqc_op = make_blank_iqc(obj)
             %if no IQCs are provided, make identity IQCs
+            %
+            % Returns:
+            %   iqc_op (cell): IQCs for the operators
                 nop = length(obj.sys.op);
                 iqc_op = cell(nop, 1);
                 bind =obj.sys.bind;
@@ -53,8 +54,8 @@ classdef opt_synthesis < opt_manager_interface
         
         function obj = process_argument(obj,iqc_op)
             %PROCESS_ARGUMENT assign orders to the operators/IQCs
-            
-            %iqc_rob: IQCs representing the robust uncertainties
+            % Args:
+            %   iqc_rob: IQCs representing the robust uncertainties
 
             if nargin > 1 && ~isempty(iqc_op)
                 obj.iqc_op = iqc_op;
@@ -64,18 +65,16 @@ classdef opt_synthesis < opt_manager_interface
         end
 
         function [diss] = index_specs(obj, alg_psi, iqc_data, specs)
+            %INDEX_SPECS  index into the performance specifications and
+            %form a dissipation relation
+            %                       
+            %Args:
+            %   alg_psi:  generalized plant
+            %   iqc_data:  container for the iqcs
+            %   specs (cell): performance specifications
+            %Returns:                 
+            %   diss (diss_data):   dissipation constraints
 
-            %INDEX_SPECS:  index into the performance specifications
-            %
-            %
-            %   diss:   structure describing the problem
-            %       plant:  system to control
-            %       spec:   performance specification           
-            %       target: whether the performance measure should be optimized
-            %               true:  soft constraint (e.g. Schur complement
-            %                                       formulation)
-            %               false: hard constraint
-            
             %TODO: maybe this should go inside the (system), not (manager)?
             
             if nargin < 4
@@ -189,15 +188,16 @@ classdef opt_synthesis < opt_manager_interface
                     
                 end
 
-                iqc_data_rump = rmfield(iqc_data, 'iqc_op');
-
-
-                diss{i} = struct('iqc_rob', iqc_op, ...
-                    'spec', sp, 'rho', rho, 'iqc_data', iqc_data_rump);
+                % iqc_data_rump = rmfield(iqc_data, 'iqc_op');
+                
+                diss{i} = diss_data;
+                diss{i}.iqc_rob = iqc_op;
+                diss{i}.rho = rho;
+                diss{i}.spec = sp;
+                diss{i}.iqc_data = iqc_data;
                 diss{i}.plant = alg_screen;
                 diss{i}.plant_reg = obj.lmi.reg.sys_regulated_aug();
                 diss{i}.ndiss = length(specs);
-                % %need to permute the entries of Mdiag for the partition
 
 
 
@@ -205,17 +205,22 @@ classdef opt_synthesis < opt_manager_interface
 
                 %TODO: this may run into trouble if one entry has an X.
                 %performance with dynamic multipliers?
-            
-                % diss{i} = struct('plant', alg_screen, 'M', M, 'X', iqc_op.X, ...
-                    % 'spec', sp);
             end
 
         end
 
         %% extract the solution                   
         function  sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
-            %PROCESS_RECOVERY recover the controller from the solution
-            
+            %PROCESS_RECOVERY recover the IQCs from the solution of the
+            %synthesis program
+            %
+            %Args:
+            %   sol:  solution structure
+            %   lmi_out:  output of solver routines
+            %   alg_psi: generalized plant
+            %   diss (diss_data):   dissipation constraints
+            %Returns:                 
+            %   sol:  solution structure
             sol.cert.iqc_op = obj.iqc_op;
             sol.cert.iqc_op_all = obj.iqc_op_all;
             sol.vars.rho = sol.rho;
@@ -224,9 +229,21 @@ classdef opt_synthesis < opt_manager_interface
 
         %% alternating design
         function [sol_history, vr_history, success] = alternate(obj, iqc_init, order, specs, b_opts)
-            %ALTERNATE alternating synthesis and analysis
+            %ALTERNATE alternating synthesis and analysis. 
+            % use bisection in analysis and synthesis if rho is minimized.
             %
-            %use bisection in analysis and synthesis
+            %
+            %Args:
+            %   iqc_init (cell):  initial IQCs for the operators
+            %   order (cell):  orders of the operators
+            %   specs (cell):   performance specifications
+            %   diss (diss_data):   dissipation constraints
+            %   b_opts:   (bisect_opts) bisection options (bisect_opts)
+            %Returns:                 
+            %   sol_history (cell):  cell of solutions, first row is Synthesis, second row is analysis.
+            %   vr_history (cell):   lower and upper bound of parameter
+            %   success (bool):      success of alternation method
+
 
 
             Niter = b_opts.Niter;
