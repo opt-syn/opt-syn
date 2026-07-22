@@ -1,6 +1,5 @@
 classdef iqc_loop_factored
-    %IQC_LOOP_FACTORED Summary of this class goes here
-    %   Detailed explanation goes here
+    %IQC_LOOP_FACTORED factored IQCs that are amenable to synthesis
     
     properties
         Psi1 = 1;   %primal filter (output of nonlinearity)
@@ -9,13 +8,12 @@ classdef iqc_loop_factored
         D3 = 0;     %crossover D matrix
         M = 0;      %running cost
         X = 0;      %terminal cost
-        loop = 0;
+        loop = [];  %signal transformation matrix
     end
     
     methods
         function obj = iqc_loop_factored(Psi1, Psi2, C3, D3, M, X, loop)
-            %IQC_LOOP_FACTORED Construct an instance of this class
-            %   Detailed explanation goes here
+            %IQC_LOOP_FACTORED Constructor
             obj.Psi1 = Psi1;
             obj.Psi2 = Psi2;
             obj.C3 = C3;
@@ -85,8 +83,12 @@ classdef iqc_loop_factored
        
         function iqc = blkdiag(obj, b)
             %BLKDIAG: block diagonal of the multipliers
-
+            %Args:
+            %   b (iqc_loop_split):  the other IQC
+            %Returns:
+            %   iqc: the output IQC
             % if length(varargin) == 1
+
                 % b = varargin{1};
                 if isempty(b)
                     iqc = obj;
@@ -140,7 +142,9 @@ classdef iqc_loop_factored
 
 
         function  psi_out = get_psi(obj)
-            %GET_PSI form the triangular multiplier
+            %GET_PSI form the triangular filter system
+            %Returns:
+            %   psi_out: the output filter
 
             psi_out = blkdiag(obj.Psi1, obj.Psi2);
 
@@ -157,8 +161,10 @@ classdef iqc_loop_factored
         end
 
         function  psi_out = get_psi_13(obj)
-            %GET_PSI form the triangular multiplier
-            %only [psi1, psi3; 0, I]          
+            %GET_PSI_13 form the triangular multiplier
+            %only [psi1, psi3; 0, I], used for synthesis
+            %Returns:
+            %   psi_out: the output filter portion
 
             [ny1, nx1] = size(obj.Psi1.C);   
             [~, nx2] = size(obj.Psi2.C);
@@ -185,7 +191,8 @@ classdef iqc_loop_factored
 
         function psi_inv = psi2_inv(obj)
             %PSI2_INV inverse of the parameter psi2
-            % psi_inv = inv(obj.Psi2);
+            %Returns:
+            %   psi_inv: inverse of obj.Psi2
 
 
             [A2, B2, C2, D2] = ssdata(obj.Psi2);
@@ -206,7 +213,11 @@ classdef iqc_loop_factored
 
 
         function iqc_lift = lift(obj, c)
-            %LIFT: kronecker by c (coordinates)
+            %LIFT: kronecker by c (coordinates)            
+            %Args:
+            %   c (int):  dimension of the lift
+            %Returns:
+            %   iqc_lift (iqc_loop_split): the output IQC
 
 
             Psi1_lift = ss_kron_eye(obj.Psi1, c);
@@ -220,8 +231,15 @@ classdef iqc_loop_factored
             iqc_lift = iqc_loop_split(Psi1_lift, M_lift, C3_lift, D3_lift, Psi2_lift, X_lift, loop_lift);
         end
 
-        function G_wrap = wrap_synth(obj, G, n)
-            %wrap a genearlized plant for controller synthesis
+        function P_wrap = wrap_synth(obj, P, n)
+            %wrap a genearlized plant with the filters for IQC controller synthesis
+            %
+            %Args:
+            %   P:  nominal plant to be controlled, before IQC incorporation
+            %   n:  dimension counter
+            %Return:
+            %   P_wrap: the generalized plant for IQC synthesis
+
 
             %
             % [z] = G [w]
@@ -241,7 +259,7 @@ classdef iqc_loop_factored
 
             n1 = length(obj.Psi1.A);
             n2 = length(obj.Psi2.A);
-            nx = length(G.A);    
+            nx = length(P.A);    
             
             
             nw = n.nw;            
@@ -270,27 +288,27 @@ classdef iqc_loop_factored
             
             
             %TODO: check the number of outputs here.
-            A = [ obj.Psi1.A        obj.Psi1.B*G.D(q,p)*C2i   obj.Psi1.B*G.C(q,:)
+            A = [ obj.Psi1.A        obj.Psi1.B*P.D(q,p)*C2i   obj.Psi1.B*P.C(q,:)
                   zeros(n2,n1)   A2i                    zeros(n2,nx)
-                  zeros(nx,n1)   G.B(:,p)*C2i           G.A          ];
-            B = [ obj.Psi1.B*(G.D(q,p)/obj.Psi2.D)  obj.Psi1.B*G.D(q,w)  obj.Psi1.B*G.D(q,u)
+                  zeros(nx,n1)   P.B(:,p)*C2i           P.A          ];
+            B = [ obj.Psi1.B*(P.D(q,p)/obj.Psi2.D)  obj.Psi1.B*P.D(q,w)  obj.Psi1.B*P.D(q,u)
                   B2i                         zeros(n2,nwp)      zeros(n2,nu)
-                  G.B(:,p)/obj.Psi2.D            G.B(:,w)          G.B(:,u)   ];
+                  P.B(:,p)/obj.Psi2.D            P.B(:,w)          P.B(:,u)   ];
 
-            Dsp = (obj.Psi1.D*G.D(q,p)+obj.D3);
+            Dsp = (obj.Psi1.D*P.D(q,p)+obj.D3);
 
-            C = [ obj.Psi1.C       obj.C3+Dsp*C2i  obj.Psi1.D*G.C(q,:)
-                  zeros(nzp,n1)  G.D(z,p)*C2i     G.C(z,:);
-                  zeros(ny,n1)  G.D(y,p)*C2i     G.C(y,:) ];
-            D = [ Dsp/obj.Psi2.D       obj.Psi1.D*G.D(q,w)  obj.Psi1.D*G.D(q,u)
-                  G.D(z,p)/obj.Psi2.D  G.D(z,w)          G.D(z,u)  
-                  G.D(y,p)/obj.Psi2.D  G.D(y,w)          G.D(y,u) ];
+            C = [ obj.Psi1.C       obj.C3+Dsp*C2i  obj.Psi1.D*P.C(q,:)
+                  zeros(nzp,n1)  P.D(z,p)*C2i     P.C(z,:);
+                  zeros(ny,n1)  P.D(y,p)*C2i     P.C(y,:) ];
+            D = [ Dsp/obj.Psi2.D       obj.Psi1.D*P.D(q,w)  obj.Psi1.D*P.D(q,u)
+                  P.D(z,p)/obj.Psi2.D  P.D(z,w)          P.D(z,u)  
+                  P.D(y,p)/obj.Psi2.D  P.D(y,w)          P.D(y,u) ];
 
             P = ss(A, B, C, D, 1);
 
 
             %dimensions don't change: square multiplier
-            G_wrap = genplant(P, n);
+            P_wrap = genplant(P, n);
 
         end
     end

@@ -238,6 +238,7 @@
 <li class="toctree-l3"><a class="reference internal" href="pages/documentation/system/doc_periodic_orbit.html">Periodic-Orbit</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_iqc.html">Integral Quadratic Constraints</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_config.html">Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_simulation.html">Simulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_plotting.html">Plotting</a></li>
@@ -380,6 +381,7 @@
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
@@ -437,6 +439,12 @@
 </li>
       <li><a href="pages/documentation/doc_config.html#config.bisect_opts.bisect_rho">bisect_rho (config.bisect_opts attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.blkdiag">blkdiag() (iqc.iqc_loop_factored method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.blkdiag">(iqc.iqc_loop_split method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_box.BOX">BOX (simulator.op_sim.op_sim_box attribute)</a>
@@ -464,12 +472,20 @@
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.c">c (simulator.alg_sim attribute)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.C3">C3 (iqc.iqc_loop_factored attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.compute_Vhat">compute_Vhat() (iqc.iqc_loop_split method)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.d">d (simulator.alg_sim attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.D3">D3 (iqc.iqc_loop_factored attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -521,6 +537,12 @@
       </ul></li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.f_func">f_func (simulator.op_sim.op_sim attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.factor">factor() (iqc.iqc_loop_factored method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.factor">(iqc.iqc_loop_split method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.FS">FS (simulator.alg_plotter attribute)</a>
@@ -553,9 +575,17 @@
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config.gen">gen (config.opt_config attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.get_name">get_name() (simulator.alg_plotter method)</a>
+</li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.get_psi">get_psi() (iqc.iqc_loop_factored method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.get_psi">(iqc.iqc_loop_split method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.get_name">get_name() (simulator.alg_plotter method)</a>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.get_psi_13">get_psi_13() (iqc.iqc_loop_factored method)</a>
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.get_title">get_title() (simulator.alg_plotter method)</a>
 </li>
@@ -566,14 +596,30 @@
   </ul></td>
 </tr></table>
 
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.hinf_factorize">hinf_factorize() (iqc.iqc_loop_split method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.impose_X">impose_X (config.opt_config_gen attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.input_diss">input_diss (config.opt_config_tol attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored">iqc_loop_factored (class in iqc)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.input_diss">input_diss (config.opt_config_tol attribute)</a>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.iqc_loop_factored">iqc_loop_factored() (iqc.iqc_loop_factored method)</a>
+</li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split">iqc_loop_split (class in iqc)</a>
+</li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.iqc_loop_split">iqc_loop_split() (iqc.iqc_loop_split method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -589,8 +635,22 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.lift">lift() (iqc.iqc_loop_factored method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.lift">(iqc.iqc_loop_split method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_config.html#config.opt_config.LMILAB">LMILAB() (config.opt_config method)</a>
 </li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.loop">loop (iqc.iqc_loop_factored attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.loop">(iqc.iqc_loop_split attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -600,6 +660,10 @@
       <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.M">M (config.opt_config_tol attribute)</a>
 
       <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.M">(iqc.iqc_loop_factored attribute)</a>
+</li>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.M">(iqc.iqc_loop_split attribute)</a>
+</li>
         <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.M">(simulator.op_sim.op_sim_quad attribute)</a>
 </li>
       </ul></li>
@@ -613,12 +677,46 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.nf">nf() (iqc.iqc_loop_factored method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.nf">(iqc.iqc_loop_split method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_config.html#config.bisect_opts.Niter">Niter (config.bisect_opts attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_ana.normalize_margin">normalize_margin (config.opt_config_ana attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.np">np() (iqc.iqc_loop_factored method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.np">(iqc.iqc_loop_split method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.nq">nq() (iqc.iqc_loop_factored method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.nq">(iqc.iqc_loop_split method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.nw">nw() (iqc.iqc_loop_factored method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.nw">(iqc.iqc_loop_split method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.nx1">nx1() (iqc.iqc_loop_split method)</a>
+</li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.nx2">nx2() (iqc.iqc_loop_split method)</a>
+</li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.nz">nz() (iqc.iqc_loop_factored method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.nz">(iqc.iqc_loop_split method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -679,6 +777,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.param">param (simulator.alg_sim_out attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.passive_factorize">passive_factorize() (iqc.iqc_loop_split method)</a>
+</li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot">plot() (simulator.alg_plotter method)</a>
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_3_err">plot_3_err() (simulator.alg_plotter method)</a>
@@ -687,17 +787,31 @@
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_4">plot_4() (simulator.alg_plotter method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_4_err">plot_4_err() (simulator.alg_plotter method)</a>
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_4_sq_err">plot_4_sq_err() (simulator.alg_plotter method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_6">plot_6() (simulator.alg_plotter method)</a>
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_6f">plot_6f() (simulator.alg_plotter method)</a>
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_tile">plot_tile() (simulator.alg_plotter method)</a>
+</li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.Psi1">Psi1 (iqc.iqc_loop_factored attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.Psi1">(iqc.iqc_loop_split attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.Psi2">Psi2 (iqc.iqc_loop_factored attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.Psi2">(iqc.iqc_loop_split attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.psi2_inv">psi2_inv() (iqc.iqc_loop_factored method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -705,12 +819,14 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/doc_config.html#config.opt_config.recovery">recovery (config.opt_config attribute)</a>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.recover">recover() (iqc.iqc_loop_split method)</a>
 </li>
-      <li><a href="pages/documentation/doc_config.html#config.opt_config_syn.reduced_order">reduced_order (config.opt_config_syn attribute)</a>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config.recovery">recovery (config.opt_config attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_syn.reduced_order">reduced_order (config.opt_config_syn attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.res_w">res_w (simulator.alg_sim_out attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.res_z">res_z (simulator.alg_sim_out attribute)</a>
@@ -725,17 +841,17 @@
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.sim">sim() (simulator.alg_sim method)</a>
 </li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.sim_out">sim_out (simulator.alg_plotter attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_simulation.html#module-simulator.op_sim">simulator.op_sim (module)</a>
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.solver">solver (config.opt_config_gen attribute)</a>
 </li>
-      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.spec_ind">spec_ind (config.bisect_opts attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.spread">spread (config.opt_config_tol attribute)</a>
+      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.spec_ind">spec_ind (config.bisect_opts attribute)</a>
 </li>
-      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.ssim">ssim (simulator.alg_plotter attribute)</a>
+      <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.spread">spread (config.opt_config_tol attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config.switched">switched (config.opt_config attribute)</a>
 </li>
@@ -789,11 +905,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.w">w (simulator.alg_sim_out attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_config.html#config.bisect_opts.warm_factor">warm_factor (config.bisect_opts attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.wp">wp (simulator.alg_sim_out attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.wrap_synth">wrap_synth() (iqc.iqc_loop_factored method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -802,7 +920,13 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.X">X (config.opt_config_tol attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.X">(iqc.iqc_loop_factored attribute)</a>
 </li>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.X">(iqc.iqc_loop_split attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.xi">xi (simulator.alg_sim_out attribute)</a>

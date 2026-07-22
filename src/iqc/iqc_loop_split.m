@@ -1,6 +1,5 @@
 classdef iqc_loop_split
-    %IQC_LOOP_SPLIT Summary of this class goes here
-    %   Detailed explanation goes here
+    %IQC_LOOP_SPLIT Description of an IQC satisfied by an operator's input-output sequences.
     
     properties
         Psi1 = 1; %primal filter (output of nonlinearity)
@@ -8,13 +7,11 @@ classdef iqc_loop_split
         loop = []; %loop transformation (in lft/star product form)
         M=0;    %running cost
         X=0;    %terminal cost
-
     end
     
     methods
         function obj = iqc_loop_split(Psi1, M, loop, Psi2, X)
-            %IQC_LOOP_SPLIT Construct an instance of this class
-            %   Detailed explanation goes here
+            %IQC_LOOP_SPLIT Constructor
 
             
             obj.Psi1 = sdpss(Psi1);
@@ -49,6 +46,7 @@ classdef iqc_loop_split
 
         function nx2_out = nx2(obj)
             %NX2 number of states in filter 2
+
             if ~isscalar(obj.Psi2)
                 nx2_out = length(obj.Psi2.A);
             else
@@ -94,11 +92,17 @@ classdef iqc_loop_split
 
         function sys = get_psi(obj)
             %get the multiplier by block diagonalization
+            %Returns:
+            %   sys (ss/sdpss): the multiplier
             sys = blkdiag(obj.Psi1, obj.Psi2);
         end
 
         function iqc = blkdiag(obj, b)
             %BLKDIAG: block diagonal of the multipliers
+            %Args:
+            %   b (iqc_loop_split):  the other IQC
+            %Returns:
+            %   iqc: the output IQC
 
             % if length(varargin) == 1
                 % b = varargin{1};
@@ -137,7 +141,11 @@ classdef iqc_loop_split
 
 
         function iqc_lift = lift(obj, c)
-            %LIFT: kronecker by c (coordinates)
+            %LIFT: kronecker by c (coordinates)            
+            %Args:
+            %   c (int):  dimension of the lift
+            %Returns:
+            %   iqc_lift (iqc_loop_split): the output IQC
 
 
             Psi1_lift = ss_kron_eye(obj.Psi1, c);
@@ -153,6 +161,11 @@ classdef iqc_loop_split
         function iqc_rec = recover(obj, lmi_out)
             %RECOVER: recover the numerical values of an IQC from an LMI
             %solution
+            %
+            %Args:
+            %   lmi_out:  solution of the program
+
+
 
             M_rec = double(double(obj.M, lmi_out));
             X_rec = double(double(obj.X, lmi_out));
@@ -174,9 +187,12 @@ classdef iqc_loop_split
 
         %% factorization routines
         function iqc_factored = factor(obj, perturb)
-            %FACTOR spectral factorization of the IQC for synthesis
+            %FACTOR factorization of the IQC for synthesis. The tall
+            %filters must be factored into a square system to allow for
+            %inversion and IQC synthesis.
             %
-            %
+            % Returns:
+            %   iqc_factored (iqc_loop_factored): factored IQC with same frequency response
 
             if nargin < 2
                 perturb = 1e-4;
@@ -235,21 +251,11 @@ classdef iqc_loop_split
         function iqc_factored = perform_factorization(obj, perturb);
             %PERFORM_FACTORIZATION
             %the inner parts of the spectral factorization routines
-            %
-            % All factorization routines are based on the code of 
-            % Lukas Schwenkel https://github.com/Schwenkel/mpc-iqc
-            %
-            % in the paper
-            %
-            %@article{Schwenkel2025,
-            %   title={Output-feedback model predictive control under dynamic uncertainties using integral quadratic constraints},
-            %   author={L. Schwenkel and J. K{\"o}hler and M. A. M{\"u}ller and F. Allg{\"o}wer}},
-            %   year={2025},
-            %   journal={arxiv:2504.00196},
-            %   doi = {10.48550/arXiv.2504.00196},
-            % }
-            %
-            % full credit to the authors
+            % Returns:
+            %   iqc_factored (iqc_loop_factored): factored IQC with same frequency response
+
+
+
 
             %first determine the type of factorization
             
@@ -309,8 +315,14 @@ classdef iqc_loop_split
         end
 
         function [iqc_factored, Vh, Z] = passive_factorize(obj)
-            %passive_FACTORIZE perform a factorization for zames-falb-obeying
-            %operators (mostly in SmL)
+            %passive_FACTORIZE perform a canonical factorization for
+            %operators with passive-type running costs. This is used for
+            %the class :math:`S_{m, L}`.
+            %
+            % Returns:
+            %   iqc_factored (iqc_loop_factored): factored IQC with same frequency response
+            %   Vh: state coordinate change
+            %   Z:  terminal cost matrix 
 
             %extract data from the multipliers
             p1t = size(obj.Psi1, 1)/2;
@@ -450,147 +462,36 @@ classdef iqc_loop_split
 
         end
 
-        function [iqc_factored, Vh, Z] = passive_factorize_general(obj)
-            %PASSIVE_FACTORIZE perform an passivity type factorization
-            %general 
-
-            % 1. Constructing Psih_1
-            % nq = obj.nq;
-            % np = obj.np;
-
-            %TODO:
-
-            %WARNING: this code doesn't work, must be fixed (generic
-            %passive factorization). Use passive_factorize instead for operators
-            %in SmL.
-
-            %index into the relevant system            
-            Psi1 = [obj.Psi1; zeros(obj.nq, obj.nz)];
-            Psi2 = [ zeros(obj.np, obj.nw); obj.Psi2];
-
-            nq = size(Psi1.B,2);
-            np = size(Psi2.B,2);
-
-            %form an equivalent supply rate
-            % M11 = obj.M(1:np, 1:np);
-
-            %form a generic supply rate for the Psi1 term
-            M =  obj.M;
-            MI = [eye(obj.np), zeros(obj.np, obj.nq); zeros(obj.nq, obj.np), zeros(obj.nq)];
-
-            Q = Psi1.C'*MI*Psi1.C;
-            R = Psi1.D'*MI*Psi1.D;
-            S = Psi1.C'*MI*Psi1.D;
-
-            %get a certificate
-            [Zu, Ku, n0] = dare_anti(Psi1.A,Psi1.B,Q,R,S);
-
-
-            D11hatu = chol(Psi1.B'*Zu*Psi1.B+R);
-            C11hatu = D11hatu'\(Psi1.B'*Zu*Psi1.A+S');
-            
-            %add extra poles at zero to compensate for the lack of inverse
-            %in discrete time
-            Psi11u = ss(Psi1.A,Psi1.B,C11hatu,D11hatu,-1);                       
-            
-            Psi11 = tf('z')^(-n0)*Psi11u; 
-
-            %the product (Psi11' Psi1) in state space
-            Psi11Psi1 = minreal([Psi11; Psi1],[],false);
-            Psi11Psi1 = balreal(Psi11Psi1);
-
-            %matrices  for the product Psi1
-            A1hat = Psi11Psi1.A;              B1hat = Psi11Psi1.B; 
-            C11hat = Psi11Psi1.C(1:nq,:);     D11hat = Psi11Psi1.D(1:nq,:);   
-            C1hat = Psi11Psi1.C(nq+1:end,:);
-
-            %FLAG 1: the first transfer system
-            Psi1h = ss(A1hat, B1hat, C11hat, D11hat, 1);
-
-
-
-            % 2. Constructing Psih_12
-            B1inv = B1hat/D11hat;
-            D1inv = Psi1.D/D11hat;
-
-            Psi1Psi11inv = ss(A1hat-B1inv*C11hat,B1inv,C1hat-D1inv*C11hat,D1inv,-1);
-            [~, Psi11Psi11invMPsi2] = isproper(Psi1Psi11inv'*obj.M*Psi2);
-
-            Psi11Psi11invMPsi2 = dss2ss(Psi11Psi11invMPsi2);
-            
-            Psi12Psi2 = minreal([Psi11Psi11invMPsi2; Psi2],[],false);
-            Psi12Psi2 = balreal(Psi12Psi2);
-
-            %data associated with Psih12
-            A2hat = Psi12Psi2.A;              B2hat = Psi12Psi2.B; 
-            C12hat = Psi12Psi2.C(1:nq,:);     D12hat = Psi12Psi2.D(1:nq,:);   
-            C2hat = Psi12Psi2.C(nq+1:end,:);
-
-
-            C3 = C12hat;
-            D3 = D12hat;
-
-
-
-            % 3. Constructing Psih_22
-            %equivalent supply
-            Q2 = Psi12Psi2.C'*blkdiag(eye(nq),-obj.M)*Psi12Psi2.C;
-            R2 = Psi12Psi2.D'*blkdiag(eye(nq),-obj.M)*Psi12Psi2.D;
-            S2 = Psi12Psi2.C'*blkdiag(eye(nq),-obj.M)*Psi12Psi2.D;
-            Q2 = (Q2+Q2')/2;
-            R2 = (R2+R2')/2;
-
-            %stabilizing solution to riccati
-            [Zs, Ks, Ls] = idare(A2hat,B2hat,Q2,R2,S2);
-            D22hat = chol(B2hat'*Zs*B2hat+R2);
-            C22hat = D22hat'\(B2hat'*Zs*A2hat+S2');
-
-            %Flag Psi2
-            Psi2h = ss(A2hat, B2hat, C22hat, D22hat, 1);
-            
-            % 4. package up the IQC
-            Ahat = blkdiag(A1hat,A2hat);
-            Bhat = blkdiag(B1hat,B2hat);
-            Chat = [C11hat                   C12hat;
-                    zeros(np,length(A1hat))  C22hat];
-
-            Psih = struct;
-            Psih.A = Ahat;
-            Psih.B = Bhat;
-            Psih.Chat = [C1hat C2hat];
-
-
-    
-
-            % 5. Computing Z, Xh, and Vh
-
-            %get the state transformation/compression
-            Vh = obj.compute_Vhat(Psih);
-            Xh_V = Vh'*obj.X*Vh;
-
-            Mhat = blkdiag(eye(nq),-eye(np));
-            Q = [Chat; C1hat C2hat]'*blkdiag(Mhat,-M)*[Chat; C1hat C2hat];
-            Q = (Q+Q')/2; % ensure symmetry
-            Z = dlyap(Ahat',Q);
-            
-
-
-            Xhat = Xh_V+Z;
-            Xhat = (Xhat+Xhat')/2;
-
-
-            %package it all up
-            iqc_factored = iqc_loop_factored(Psi1h, Psi2h,...
-                    C3, D3, Mhat, Xhat, obj.loop);
-        end
         
 
         function [iqc_factored, Vh, Z] = hinf_factorize(obj)
             %HINF_FACTORIZE perform an h-infinity type factorization
+            %
+            % Returns:
+            %   iqc_factored (iqc_loop_factored): factored IQC with same frequency response
+            %   Vh: state coordinate change
+            %   Z:  terminal cost matrix 
 
             % 1. Constructing Psih_1
             % nq = obj.nq;
             % np = obj.np;
+
+
+            % The hinf factorization routines are based on the code of 
+            % Lukas Schwenkel https://github.com/Schwenkel/mpc-iqc
+            %
+            % in the paper
+            %
+            %@article{Schwenkel2025,
+            %   title={Output-feedback model predictive control under dynamic uncertainties using integral quadratic constraints},
+            %   author={L. Schwenkel and J. K{\"o}hler and M. A. M{\"u}ller and F. Allg{\"o}wer}},
+            %   year={2025},
+            %   journal={arxiv:2504.00196},
+            %   doi = {10.48550/arXiv.2504.00196},
+            % }
+            %
+            % full credit to the authors
+
 
             %index into the relevant system            
             Psi1 = [obj.Psi1; zeros(obj.nq, obj.nz)];
@@ -713,12 +614,16 @@ classdef iqc_loop_split
     
     
     
-        function [ Vh] = compute_Vhat(obj, Psih)
-
-                %
-            % find Vhat such that Vhat*Ahat=Apsi*Vhat, Vhat*Bhat=Bpsi, and
+        function [ Vh] = compute_Vhat(obj, Psih)          
+            % find a state-coordinate change matrix, 
+            % such that Vhat*Ahat=Apsi*Vhat, Vhat*Bhat=Bpsi, and
             % Chat=Cpsi*Vhat by solving system of linear equations.
             %
+            %Args: 
+            %   Psih: squared iqc filter
+            %Returns:
+            %   Vh: state-coordinate change
+
             %Author: Lukas Schwenkel, 2025
         
         

@@ -11,14 +11,22 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
     %   switched jump
     
     properties
-       regcl;  
+       regcl;  %closed-loop regulator equation
         
     end
     
     methods
         function obj = lmi_analysis_interface(sys, config)
-            %LMI_ANALYSIS_INTERFACE Construct an instance of this class
-            %   Detailed explanation goes here
+            %LMI_ANALYSIS_INTERFACE Constructor
+            %
+            %Args:
+            %   sys: algorithmic system
+            %   config: configuration options
+            %
+            %Warning:
+            %   Error: Regulator equation of system must be solvable,
+            %          otherwise the algorithm is nonconvergent.
+
             obj@lmi_dispatch_interface(sys, config);
 
             %if the regulator equation fails, then the algorithm may
@@ -36,6 +44,15 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
 
         function [vars, cons] = create_vars(obj, vars, cons, alg_psi, specs)
             %CREATE_VARS create the variables for the problem
+            %Args:            
+            %   vars:  problem variables
+            %   cons:  accumulated constraints
+            %   alg_psi: generalized plant in analysis
+            %   specs:  specifications
+            %
+            %Returns:
+            %   vars:  problem variables
+            %   cons:  accumulated constraints
 
             [vars.diss, cons] = obj.create_vars_storage(cons, alg_psi);
             [vars.spec, cons] = obj.create_vars_spec(cons, specs);
@@ -44,7 +61,15 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
 
         function [G, cons] = define_storage_G(obj, cons, alg_psi,  name)
             %DEFINE_STORAGE_G storage function for a specific subsystem
-            
+            %Args:            
+            %   cons:  accumulated constraints
+            %   alg_psi: generalized plant in analysis
+            %   name:   name of the subsystem/object
+            %
+            %Returns:
+            %   G:   storage function
+            %   cons:  accumulated constraints
+
             if iscell(alg_psi)
                 n = ssize(alg_psi{1}.A, 1); 
             else
@@ -63,10 +88,14 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
 
         function [vars_spec, cons] = create_vars_spec(obj, cons, specs)
             %CREATE_VARS_SPEC declare variables for the specifications
-
-            %maybe put this somewhere else?
             %
-            %right now the variables are in the (spec) object.
+            %Args:            
+            %   cons:  accumulated constraints
+            %   specs: cell of specification
+            %
+            %Returns:
+            %   vars:  variables
+            %   cons:  accumulated constraints
             nspec = length(specs);
             vars_spec = cell(nspec, 1);
             for i = 1:nspec
@@ -80,8 +109,15 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
             %terminal cost constraint (nonnegativity for the storage function G)
             %coupled positivity if the IQC has a terminal cost
             %
+            %Args:
+            %   G:  storage matrix
+            %   cons:  accumulated constraints
+            %   iqc_op: IQCs for the operators
             %
-            %
+            %Returns:
+            %   cons: accumulated constraints
+            %   con_X: terminal constraint expression
+
             X = iqc_op.X;
             
 
@@ -103,13 +139,6 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
         end
         
         %% common specification calls
-
-        
-        %function [cons, objective, con_M] = quad(obj, vars, cons, diss)
-        %Quadratic performance (defined on a per-system basis)
-
- 
-
 
     end
 
