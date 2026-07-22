@@ -1,21 +1,24 @@
 classdef lmi_dispatch_interface < handle
     %LMI_DISPATCH_INTERFACE analysis and synthesis LMIs for the
-    %algorithmic interconnections
-    %
+    %algorithmic interconnections    
     %This contains generic routines common among both analysis and
     %synthesis for every system type
-    %  
+    
     properties
-        sys;
-        config;
-        reduced = false;
-        reg; %regulator
+        sys; %the algorithmic system
+        config; %configuration options
+        reduced = false; %reduced-order control
+        reg; %the regulator for the system
     end
     
     methods
         function obj = lmi_dispatch_interface(sys, config)
-            %LMI_DISPATCH_INTERFACE Construct an instance of this class
-            %   Detailed explanation goes here
+            %LMI_DISPATCH_INTERFACE Construct the analysis or synthesis
+            %program
+            % Args:
+            %   sys: algorithmic system
+            %   config: configuration options
+            
             obj.sys = sys;
             obj.config = config;
 
@@ -29,12 +32,11 @@ classdef lmi_dispatch_interface < handle
         
 
         
-        %KYP lemma terms, commonly found matrices
-        
+        %KYP lemma terms, commonly found matrices        
         function [vars, cons, objective, con_M] = cons_dynamic(obj, vars, cons, diss)
             %CONS form the dissipation and sign constraints
             %
-            %Input:
+            %Args:
             %   vars:   variables of the problem        
             %   cons:   accumulated constraints
             %   diss:   structure describing the problem
@@ -143,7 +145,11 @@ classdef lmi_dispatch_interface < handle
 
         function quad_m = merge_quad(obj, M_rob, M_spec)
             %merge together quadratic performance specifications;
-
+            %Args:
+            %    M_rob:     quadratic constraint for operator uncertainty
+            %    M_spec: quadratic constraint for performance
+            %Return:
+            %   quad_m:
 
             Qq= blkdiag(M_rob.Q, M_spec.Q);
             Sq= blkdiag(M_rob.S, M_spec.S);

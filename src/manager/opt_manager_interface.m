@@ -2,32 +2,34 @@ classdef (Abstract) opt_manager_interface < handle
     %OPT_MANAGER_INTERFACE interface for the analysis and synthesis of
     %optimization/fixed point algorithms
 
-    %
+    
     %inheritance:
     % opt_analysis  < opt_manager_interface 
     % opt_synthesis < opt_manager_interface 
     
     properties
         sys;  %system (opt_system type)
-        cons = [];
-        vars = {}; %specifications
-        iqc_op = {};
-        specs = {};        
+        cons = []; %accumualted constraints
+        vars = {}; %variables of the problem.
+        iqc_op = {}; %iqcs for the operators
+        specs = {};  %performance specifications
 
-        %task: 'analysis' or 'synthesis': determined by subclass
         
-        
-        config = [];
+        config = []; %configuration options (opt_config)
 
-        lmi = [];
+        lmi = []; %the lmi handler (object)
         %other options
-        task = 'generic';
+        task = 'generic'; %analysis or synthesis?
     end
+
     
     methods
         function obj = opt_manager_interface(sys, config)
-            %OPT_MANAGER_INTERFACE
-
+            %OPT_MANAGER_INTERFACE Constructor
+            % Args:
+            %   sys: algorithmic system
+            %   config: configuration options
+            
             if nargin < 2
                 config = opt_config();
             end
@@ -46,10 +48,12 @@ classdef (Abstract) opt_manager_interface < handle
         function lmi_handler = select_lmi(obj, sys)
             %SELECT_LMI select the lmi routines based on the system type
             %
-            %Input:
+            %Args:
             %   sys:    type of system (e.g. opt_system_switched)
             %   routine:    'analysis' or 'synthesis'
-            
+            %Returns:
+            %   lmi_handler: the lmi object for the specific dynamics            
+
             tp = sys.get_type();
             clname = ['lmi_', obj.task, '_', tp];
 
@@ -74,6 +78,16 @@ classdef (Abstract) opt_manager_interface < handle
 
         function [vars, cons, objective, alg_psi, rho, diss] = build_program(obj, specs)
             %BUILD_PROGRAM set up the algorithm analysis or synthesis problem
+            %Args:
+            %   specs: specifications            
+            %Returns:
+            %   vars:   variables of the problem        
+            %   cons (lmibl):   accumulated constraints
+            %   objective: objective to minimize
+            %   alg_psi (genplant/genplantpoly):    generalized plant
+            %   rho (float):    convergence rate
+            %   diss (diss_data):   current dissipation inequality
+                      
 
             if nargin < 2
                 specs = obj.specs;
@@ -108,6 +122,8 @@ classdef (Abstract) opt_manager_interface < handle
 
         function verdict = LMILAB(obj)
             %is LMILAB used?
+            %Returns:
+            %   verdict (bool): 
             verdict = obj.config.LMILAB();
         end
 
