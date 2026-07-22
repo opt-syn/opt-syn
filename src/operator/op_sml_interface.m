@@ -76,13 +76,6 @@ classdef op_sml_interface < operator_interface
                 mp = m*[1, sig; sig, sig^2];
                 mq = sig*[0, 0; 0, 1];
                 M_erg = kron(mp + mq, eye(reps));
-
-                % mx = [obj.m, 0; 0, 0];
-                % mg = sig * [obj.m^2, -obj.m; -obj.m, 1];
-
-                % mx = [0, 0; 0, obj.m];
-                % mg = sig * [1, -obj.m; -obj.m, obj.m^2];
-                % M_erg = kron(mx + mg, eye(reps));
             end
         end
 

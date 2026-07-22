@@ -10,7 +10,7 @@ Several problems in optimization, engineering, and economics can be phrased as f
 ```{math}
 \begin{align*}
  0 \in \sum_{i=1}^s F_i(\beta^*).
-\end{align*},
+\end{align*}
 ```
 
 Zero-inclusion problems include solution concepts such as optimal points and variational inequalities. If each $F_i$ is the subdifferential of a proper function $f_i$, then 

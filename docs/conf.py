@@ -50,10 +50,13 @@ html_context = {
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+
 # matlab source code
 matlab_src_dir = '../src'
 
 primary_domain = 'mat'
+
+napoleon_custom_sections = [('Returns', 'params_style'), ('Return', 'params_style')]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
@@ -150,7 +153,7 @@ mathjax3_config = {
             "Cc" : r"C_c",
             "Dc" : r"D_c", 
             "Kc" : r"K_c", 
-            "blam" : r"{\color{red} \lambda}", 
+            "blam" : r"{ \lambda}", 
         }
     }
 }

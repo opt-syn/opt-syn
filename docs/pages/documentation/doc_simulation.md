@@ -6,22 +6,19 @@ Simulation routines are explored in the  {doc}`Solve <../usage/simulation>` page
 
 
 
-## Simulate and Plots
+## Simulation
 
-`alg_sim` executes a given optimization algorithm. 
+`alg_sim` executes a given optimization algorithm, and stores the output in an `alg_sim_out` object.
 ```{eval-rst}
 .. mat:autoclass :: simulator.alg_sim   
     :members:
 ```
-
-
-<!-- `alg_plotter` creates plots from an `alg_sim`-generated trajectory.
-
 ```{eval-rst}
-.. mat:automodule :: simulator.alg_plotter        
-``` -->
+.. mat:autoclass :: simulator.alg_sim_out  
+    :members:
+```
 
-
+<!--      -->
 ## Operators
 
 The operators are defined by `op_sim` classes. Each operator $F$ has three core routines:

@@ -2,71 +2,50 @@ classdef opt_config
     %OPT_CONFIG configuration options for optimization algorithm analysis
     %and synthesis
     
-    properties
-        %numerical tolerances 
-
-        %generic options (for both analysis and synthesis)
-        
-        gen = struct('solver', 'lmilab', ...
-            'verbose', false, ...
-            'impose_X', true)       %terminal cost sign constraint
+    %these are separated into classes to allow for autodoc.
+    properties       
+        gen = opt_config_gen(); %general options for analysis and synthesis
 
         %analysis only options        
-        ana = struct('normalize_margin', 0.05);
+        ana = opt_config_ana(); %analysis options
 
         %synthesis only options
-        syn = struct('reduced_order', true, ... %use internal model structure
-            ...                         %to synthesize reduced-order controllers                
-            'D_mask', [], ...           %which elements of D can be nonzero?
-            'elimination', false,...);  %if there is only one specification 
-            ...                         % (and the system is LTI), use the 
-            ...                         % matrix elimination lemma    
-            'elimination_type', 2);     %the elimination type                                        
-                                        % 2: remove [Ak, Bk; Ck, Dk]
-                                        % 1: remove [Ak, Bk; Ck1, Dk1]
-                                        % 0: remove [Ak; Ck]
-                                        %
-                                        % true: smaller size variables
-                                        % false: more interpretable
+        syn = opt_config_syn(); %synthesis options
+
+        
+        % syn = struct('reduced_order', true, ... 
+        %     'D_mask', [], ...           %which elements of D can be nonzero?
+        %     'elimination', false,...);  %if there is only one specification 
+        %     ...                         % (and the system is LTI), use the 
+        %     ...                         % matrix elimination lemma    
+        %     'elimination_type', 2);     %the elimination type                                        
+        %                                 % 2: remove [Ak, Bk; Ck, Dk]
+        %                                 % 1: remove [Ak, Bk; Ck1, Dk1]
+        %                                 % 0: remove [Ak; Ck]
+        %                                 %
+        %                                 % true: smaller size variables
+        %                                 % false: more interpretable
 
         %numerical tolerances for solving LMIs
-        tol = struct('dia', 1e-11,  ... %tolerance for acceptable solution 
-            'M', 1e-7, ...              %tolerance for dissipation constraints
-            'X', 1e-7, ...              %tolerance for sign/terminal cost constraints 
-            'G_max', 100, ...           %upper bound on norm of storage matrix (analysis)
-            'GX_max', 100, ...          %upper bound on norm of primal storage matrix (synthesis)
-            'GY_max', 100,...           %upper bound on norm of dual storage matrix (synthesis)
-            'G_min', 1e-4, ...
-            'spread', 0.01, ...         %tolerance in the matrix dilation constraint
-            'input_diss', 1e-4,...           %tolerance for strict input dissipation
-            'K_max', 100);              %upper bound on norm of controller state space matrices
+        tol = opt_config_tol();             %upper bound on norm of controller state space matrices
 
 
         %recovery of the solution
-        recovery = struct('blocks', false)
+        recovery = struct('blocks', false) %recover LMI blocks of the solution?
 
         %system-type specific options
-        switched = struct('common', false)
-
-        %bisection routines
-        %bisection goes in bisect_opts
+        switched = struct('common', false); %use a common lyapunov function?
     end
     
     methods
         function obj = opt_config()
-            %OPT_CONFIG Construct an instance of this class
-            %   Detailed explanation goes here            
+            %OPT_CONFIG construct the configuration            
         end
         
         function verdict = LMILAB(obj)
             %is LMILAB used?
             verdict = strcmp(obj.gen.solver, 'lmilab');
         end
-%         function outputArg = method1(obj,inputArg)
-%             %METHOD1 Summary of this method goes here
-%             %   Detailed explanation goes here
-%             outputArg = obj.Property1 + inputArg;
-%         end
     end
 end
 

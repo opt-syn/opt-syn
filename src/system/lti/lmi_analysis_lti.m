@@ -138,9 +138,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             n = ssize(G, 1);
             Ef = [eye(nf); zeros(n-nf, nf)];
 
-            X_f = Ef * X * Ef';
-
-            
+            X_f = Ef * X * Ef';            
 
             %variables in the problem
             vars_spec = vars.spec{diss.spec.id};
