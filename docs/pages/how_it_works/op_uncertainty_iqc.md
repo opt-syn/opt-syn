@@ -8,7 +8,7 @@ tocdepth: 1
 # Uncertainty Descriptions
 
 
-Sequences $(w, z)$ obeying $w_k \in F(z_k)$ are constrained by $F$'s membership in the operator class $\F$. Valid relations among $(w, z)$ may expressed in the framework of Integral Quadratic Constraints (IQC) if $0 \in F(0)$. The restriction 
+Sequences $(w, z)$ obeying $w_k \in F(z_k)$ are constrained by $F$'s membership in the operator class $\F$. Valid relations among $(w, z)$ may expressed in the framework of Integral Quadratic Constraints (IQC) if $0 \in F(0)$. This IQC methodology is used to certify the Robust Stability portion of the convergence test, the Regulator Equation requirement must be evaluated separately. 
 
 
 ## IQCs and Valid Relations
@@ -61,15 +61,16 @@ Valid IQCs for operators can be adjusted to allow for exponential weightings of 
 
 ## Exponential Weighting
 
+Linear convergence can be established by proving boundedness of an exponentially weighted system.
 
-The $\rho$-exponential weighting of a sequence $x$ is $\ov x$, defined as $\ov x_k := \rho^{-k} x_k$ for all $k \in \N$. The exponential weighting of an optimization algorithm $(F_0, G)$ with $0 \in F_0(0)$ is 
+Given a rate $\rho > 0$, the  $\rho$-exponential weighting of a sequence $x$ is $\ov x$, defined as $\ov x_k := \rho^{-k} x_k$ for all $k \in \N$. The exponential weighting of an optimization algorithm $(F_0, G)$ with $0 \in F_0(0)$ is 
 ```{math}
 \begin{align*}
  (F_0, G): & & \mat{c}{\ov{x}_{k+1} \hl \ov{z}_k} &= \mat{c|c}{\rhoi \Acl & \rhoi \Bcl \hl \Ccl & \Dcl}   \mat{c}{\ov{x}_{k} \hl \ov{w}_k}, & \ov{w}_k \in  \rho^{-k} F_0(\rho^k \ov{z}_k).
 \end{align*}
 ``` 
 
-The existence of a $\gamma_0 > 0$ ensuring boundedness of the exponentially weighted system then proves linear convergence of the original system:
+If $\rho \in (0, 1)$, then the  existence of a $\gamma_0 > 0$ ensuring boundedness of the exponentially weighted system then proves linear convergence of the original system:
 
 ```{math}
 \begin{align*}
@@ -77,3 +78,45 @@ The existence of a $\gamma_0 > 0$ ensuring boundedness of the exponentially weig
 \end{align*}
 ``` 
 
+## Outlook for Optimization
+
+
+<!-- The exponentially weighted iterates $(\ov p, \ov q)$ related by $\ov p_k \in \rho^{-k} F(\rho^{-k} w_k)$ for the operator $\mathcal{O}$. This pair $(\ov w, \ov z)$ satisfies the IQC -->
+  <!-- $(\Psi(\blam), M(\blam), X(\blam))$ for any  $\blam \in \Lambda(\rho)$. -->
+
+<!-- Let $\lambda$ be a set of coefficients for the IQC filter $\Psi$, $\rho > 0$ be a rate, and $\Lambda(\rho)$ be a constraint region.  -->
+
+IQC descriptions of uncertainties can be used to validate optimization algorithms.
+
+Given a  rate $\rho > 0$, and  an IQC $(\Psi(\lambda), M(\lambda), X(\lambda))$ parameterized by coefficients $\lambda$, and a signal transformation matrix $\ell$, we summarize the interconnection 
+<!-- Assume that each  $F \in \F$ satisfies a known family of IQCs $(\Psi(\blam), M(\blam), X(\blam))$ with respect to signal transformation matrix $\ell$: -->
+```{math}
+\begin{align}
+\mat{c}{\ov{x}_{k+1} \hl \ov z_k} &= \mat{c|c}{\rhoi \Acl & \rhoi \Bcl \hl \Ccl & \Dcl}\mat{c}{\ov{x}_k \\ \ov w_k},\\
+\mat{c}{\ov p_k \\ \ov z_k} &= \mat{cc}{\ell_{pq} & \ell_{pw} \\ \ell_{zq} & \ell_{qw}} \mat{c}{\ov q_k \\ \ov w_k}, \\
+\mat{c}{\psi_{k+1} \hl r_k} &= \mat{c|cc}{A_\psi& B_\psi^p & B_\psi^q \hl
+C_\psi(\lambda) & D_\psi^p(\lambda) & D_\psi^q(\lambda)} \mat{c}{\psi_k \hl \ov p_k \\ \ov q_k}.
+\end{align}
+```
+as the system
+```{math}
+\mat{c}{\psi_{k+1} \\ \ov{x}_{k+1} \hl \ov r_k} &= \mat{c|c}{A(\blam) & B(\blam) \hl C(\blam)& D(\blam)} \mat{c}{\psi_k \\ \ov{x}_k \hl \ov q_k}.
+```
+
+If the sequences $(\ov q, \ov p)$ satisfy the IQC $(\Psi(\lambda), M(\lambda), X(\lambda))$ for all $\lambda$ in a known constraint region $\Lambda(\rho)$, then a sufficient condition for  $\ov x$ to be bounded for all $F \in \F$ is if there exists a matrix  $P$ and coefficients $\blam \in \Lambda(\rho)$ such that
+```{math}
+\begin{align}
+\mat{cc}{I & 0 \\
+A(\blam) & B(\blam) \\
+C(\blam) & D(\blam)}^\top \mat{ccc}{-P & 0 & 0\\
+0 & P & 0 \\
+0 & 0 & M(\blam)} \mat{cc}{I & 0 \\
+A(\blam) & B(\blam) \\
+C(\blam) & D(\blam)} \prec 0,
+P - \mat{cc}{X & 0 \\ 0 & 0 } \succ 0.
+\end{align}
+```
+Boundedness of $\ov x$ implies linear convergence at rate $\rho$ of $x$ if $\rho \in (0, 1)$. 
+Bisection can be used to minimize the rate $\rho$ in this IQC Analysis problem, thus upper-bounding a worst case linear convergence rate. 
+Conservatism can be reduced by consider higher-order valid IQCs.
+ 

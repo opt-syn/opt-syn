@@ -2,8 +2,26 @@
 
 Desirable properties of optimization algorithms are convergence, performance,  well-posedness, and information structures. In Analysis, we aim to verify that an algorithm achieves these properties. In Synthesis, we try to generate an algorithm meeting these properties. 
 
- ## Convergence
+## Well-Posedness
 
+{#well-posedness}
+
+The interconnection $(F, G)$ may be condensed using the set-valued map $H := (F^{-1} - \Dcl)^{-1}$ as
+```{math}
+\begin{align*}
+ (F, G): & & x_{k+1} &\in \Acl x_k + \Bcl H(\Ccl x_k).
+\end{align*}
+``` 
+\
+The interconnection is well-posed if  $H$ is globally defined and continuous. Well-posedness implies that the sequence $(x_k, w_k, z_k)_{k \in \N}$ exists and is unique for every  initial state $x_0$. A well-posed algorithm therefore satisfies the explicit relation $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)$ for all $k$. 
+
+
+{{osyn}} only studies well-posed algorithms. Non-well-posed algorithms such as subgradient descent and Frank-Wolfe are currently out of scope.
+
+
+
+ ## Convergence
+{#convergence}
 A fixed-point of the algorithm $(F, G)$ is a tuple $(x^*, w^*, z^*)$ satisfying 
 ```{math}
 \begin{align*}
@@ -16,14 +34,17 @@ The algorithm is convergent if for every initial condition $x_0$, there exists a
 2. $\lim_{k\rightarrow \infty} \mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2 = 0$.
 
 
-This convergence is linear with rate $\rho \in (0, 1)$ if there exists a constant $\gamma_0> 0$ with
+The algorithm is linearly (exponentially) convergent in state with rate $\rho \in (0, 1)$ if there exists a constant $\gamma_0> 0$ with
 ```{math}
 \begin{align*}
  \mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2  \leq \gamma_0 \rho^{k} \norm{x_0 - x^*(x_0)}_2 & & \forall k \in \N, \ x_0.
 \end{align*}
 ``` 
 
+
+
 ## Performance
+{#performance}
 
 The algorithm may be required to operate in noisy and non-ideal environments. Robustness can of the algorithm can be quantified by performance metrics. 
 
@@ -52,24 +73,11 @@ Input to state stability is a measure of robustness. It implies linear convergen
 
 More performance criteria are discussed in {doc}`Performance <../usage/problem_formulation/specs>`.
 
-## Well-Posedness
-
-The interconnection $(F, G)$ may be condensed using the set-valued map $H := (F^{-1} - \Dcl)^{-1}$ as
-```{math}
-\begin{align*}
- (F, G): & & x_{k+1} &\in \Acl x_k + \Bcl H(\Ccl x_k).
-\end{align*}
-``` 
-\
-The interconnection is well-posed if  $H$ is globally defined and continuous. Well-posedness implies that the sequence $(x_k, w_k, z_k)_{k \in \N}$ exists and is unique for every  initial state $x_0$. A well-posed algorithm therefore satisfies the explicit relation $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)$ for all $k$. 
-
-
-{{osyn}} only studies well-posed algorithms. Non-well-posed algorithms such as subgradient descent and Frank-Wolfe are currently out of scope.
-
 
 ## Information Structure and Evaluation
 
-The well-posed algorithmic interconnection $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)$ is a nonlinear iterative procedure. It  may be computationally impractical to compute $x_{k+1}$ from $x_k$ for general $(F, \Dcl)$. The procedure is tractable if $\Dcl$ is block-lower-triangular. The system $(\Acl, \Bcl, \Ccl, \Dcl)$ can be then partitioned as 
+{#information-structure}
+The well-posed algorithmic interconnection $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)$ is a nonlinear iterative procedure. Computation of  $x_{k+1}$ from $x_k$ for general $(F, \Dcl)$ requires the solution of a nonlinear fixed-point equation, and may be computationally intractable. If $\Dcl$ is block-lower-triangular, the system $(\Acl, \Bcl, \Ccl, \Dcl)$ can be then partitioned as 
 ```{math}
 \begin{align}
 \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2 \\ \vdots \\ z_k^s} &= \mat{c|cccc}{
@@ -90,7 +98,21 @@ x_{k+1} &= \Acl x_k + \textstyle \sum_{i=1}^s \Bcl_i w^i_k.
 \end{align}
 ```
 
+The operator $H_i: = (F_i^{-1} - \Dcl_{ii})^{-1}$ can be evaluated using
+```{list-table}
+:header-rows: 1
+* - Evaluation
+  - Condition
+  - Operation $H_i$
+* - Explicit
+  - $\Dcl_{ii} = 0$
+  - $z \mapsto F_i(z)$,
+* - Implicit
+  - $\Dcl_{ii} \succ 0$
+  - $z \mapsto \Dcl_{ii}^{-1} (z - (I - \Dcl_{ii} F_i)^{-1}(z))$
+```
 
+If the backward-evaluation  $(I - \Dcl_{ii} F_i)^{-1}$ is available (such as from a  resolvent/proximal operator), then this algorithm execution is tractable.
 
 The information structure of the algorithm is the block-sparsity pattern of $\Dcl$. If $\Dcl_{ii} = 0$, then $w^i_k$ is explicitly computed from $(x_k, w^1_k, \ldots, w^{i-1}_k)$. If $\Dcl_{ii} \neq 0$, then $w^i_k$ implicitly depends on $(x_k, w^1_k, \ldots, w^{i-1}_k, w^i_k)$. This implicit loop can be broken by proximal/resolvent evaluations for the operator $F_i$, if available. If $\Dcl_{ij} = 0$ with $i > j$, then $w^i_k$ does not use information from the previously computed output $w^j_k$.
 

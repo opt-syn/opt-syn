@@ -8,8 +8,7 @@
 Optimization Algorithms <opt_algs>
 Properties of Algorithms <alg_properties>
 Convergence Conditions <convergence_conditions>
-Uncertainty Description <op_uncertainty_iqc>
-Computational Verification <computational_verification>
+IQC Analysis <op_uncertainty_iqc>
 Synthesis and Networks <network_synthesis>
 ```
 
