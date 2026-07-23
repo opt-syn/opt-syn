@@ -1,13 +1,12 @@
 # Usage
 
-These pages collect together the functionality of  {{osyn}}.  They are organized according to the standard workflow:
+These pages collect together the functionality of  {{osyn}}.  They are organized according to a standard workflow:
 
 ```{toctree}
 :maxdepth: 1
 Problem Setup <problem_formulation/index_problem_formulation>
-Solving <solve>
-Validation <validation/validation>
-Simulation <simulation>
+Solve and Validate <solve>
+Simulate <simulation>
 ```
 
 

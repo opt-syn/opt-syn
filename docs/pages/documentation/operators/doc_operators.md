@@ -4,7 +4,7 @@
 This page documents the operator classes used to describe an individual term $F_i$ in the inclusion problem. 
 
 The set of operators are 
-listed in {doc}`Operators <../usage/problem_formulation/opt_algs>`. 
+listed in {doc}`Operators <../../usage/problem_formulation/system/operators>`. 
 
 
 ```{toctree}
