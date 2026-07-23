@@ -7,7 +7,7 @@ The `manager` class is the highest level class in the {{osyn}} project. The Anal
 Both the analysis and synthesis routines inherit from `opt_manager_interface`, containing the common methods. 
 
 
-
+The core user-facing methods are `solve_single`, `bisect`, and (for Synthesis) `alternate`. 
 
 ## Analysis
 ```{eval-rst}

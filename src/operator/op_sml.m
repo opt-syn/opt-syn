@@ -1,6 +1,7 @@
 classdef op_sml < op_sml_interface
     %OP_SML An operator which is the subdifferential of a function in SmL:
-    %
+    
+
     %F = partial f, where f(x) - m norm(x, 2)^2 and L norm(x, 2)^2 - f(x)
     %are both proper, convex, and closed with -Inf < m <= L < inf
     %
@@ -11,8 +12,7 @@ classdef op_sml < op_sml_interface
 
     methods
         function obj = op_sml(m, L, c)
-            %OP_SML Construct an instance of this class
-            %   Detailed explanation goes here
+            %OP_SML Constructor
             if nargin < 3
                 c = 1;
             end
@@ -23,10 +23,15 @@ classdef op_sml < op_sml_interface
         function [vars] = create_vars(obj, order, reps)
             %CREATE_VARS form the variables in an IQC
             %
-            %Input: 
-            %   order:  order of the IQC [causal, noncausal]
-            %   rep:    number of repetitions of the operator
- 
+            %
+            %Args: 
+            %   order:  order of the IQC [number of lags]
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   vars:   variables of the problem            
+
+
             if nargin < 2
                 order = [0, 0];
             end
@@ -75,8 +80,15 @@ classdef op_sml < op_sml_interface
         
 
         function cs = csum_psi(obj, vars)
-            %a normalization term for the multipliers
-            % cs = trace(vars.Df1) + trace(vars.Df2);
+            %a normalization term for the coefficients, reducing degrees         
+            %of freedom in the Analysis problem
+            %
+            %Args:
+            %   vars:   variables of the problem 
+            %Returns:
+            %   cs: the sum of nonnegative variables
+            %
+
             if obj.same || obj.ERGODIC
                 cs = 1;
             else
@@ -85,9 +97,18 @@ classdef op_sml < op_sml_interface
         end
 
         function [Psi1, Psi2] = build_psi(obj, vars, order, reps)
-            %BUILD_PSI construct the filter for the SML function
+            %BUILD_PSI construct the zames-falb filter for the SML function
             %
-            %use Positive-Real multipliers to do this
+            %
+            %Args:
+            %   vars:   variables of the problem    
+            %   order:  order of the IQC [number of lags]
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   psi1: filter on output (causal)
+            %   psi2: filter on input (noncausal components)
+
 
             %primal filter
             [Af10, Bf10] = block_fir(order(1));
@@ -109,21 +130,19 @@ classdef op_sml < op_sml_interface
 
         end
 
-        function sm = same(obj)
-            %SAME: is there any uncertainty in this oracle?
-            sm = (obj.m == obj.L);
-        end
-
-        function sm = get_same(obj, reps)
-            %GET_SAME: is there any uncertainty in this oracle?
-            sm = kron(obj.m, eye(reps));
-        end
-
 
         function [Psi1, Psi2] = build_psi_reduced(obj, vars, order, reps)
-            %BUILD_PSI construct the filter for the SML function
+            %BUILD_PSI_REDUCED construct the filter for the SML function
+            %but without the identity term (second channel)
             %
-            %use Positive-Real multipliers to do this
+            %Args:
+            %   vars:   variables of the problem    
+            %   order:  order of the IQC [number of lags]
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   psi1: filter on output (causal)
+            %   psi2: filter on input (noncausal components)
 
             %primal filter
             [Af10, Bf10] = block_fir(order(1));
@@ -146,8 +165,17 @@ classdef op_sml < op_sml_interface
         end
 
         function P = dhd_lift(obj, order, vars, iqc)
-            %get the lifted system for the DHD expression in Zames-Falb
-            %guarantees
+            %DHD_LIFT get the lifted system for the doubly hyperdominant 
+            % expression in Zames-Falb guarantees
+            %
+            %Args:            
+            %   order:  order of the IQC [number of lags]
+            %   vars:   variables of the problem    
+            %   iqc:  the iqc under consideration            
+            %
+            %Returns:
+            %   P:  matrix that should be DHD 
+
             if ~isnumeric(iqc.Psi1.D)
                 reps = dim(iqc.Psi1.D, 2);
             else
@@ -176,8 +204,16 @@ classdef op_sml < op_sml_interface
 
         function cons = filter_constraints(obj, cons, order, vars, rho_sched, iqc)
             %FILTER_CONSTRAINTS constraints on the filter coefficients            
-
             %Zames-Falb DHD constraints with terminal cost
+            %
+            %Args:
+            %   cons:   accumulated constraints
+            %   vars:   variables of the problem             
+            %   rho_sched:  which times should be discounted
+            %   iqc_out:    the IQC under consideration            
+            %Returns:
+            %   cons:   accumulated constraints
+
 
             if ~isscalar(iqc)
                 if isscalar(order)
@@ -216,7 +252,13 @@ classdef op_sml < op_sml_interface
 
         function M = build_M(obj, vars, order, reps);
             %BUILD_M create the running cost M
-
+            %Args:
+            %   vars:   variables of the problem 
+            %   order:  order of the IQC [number of lags]
+            %   reps:    number of repetitions of the operator (from the bind)
+            %Returns:
+            %   M_out: the running cost
+        
             M0 = [0, 0, 0, 1; ...
                   0, 0, 1, 0; ...
                   0, 1, 0, 0; ...
@@ -239,6 +281,14 @@ classdef op_sml < op_sml_interface
 
         function X_out = build_X(obj, vars, order, reps)
             %BUILD_X create the terminal cost X
+            %
+            %Args:
+            %   vars:   variables of the problem 
+            %   order:  order of the IQC [number of lags]
+            %   reps:    number of repetitions of the operator (from the bind)
+            %Returns:
+            %   X_out: the terminal cost
+
 
             %X = [0, E; E', 0];
 
@@ -256,8 +306,14 @@ classdef op_sml < op_sml_interface
         end
 
         function [iqc] = create_iqc_identity(obj, reps)
-            %CREATE_VARS form the IQC for the general operator
-            %identity IQC in psi
+            %CREATE_IQC_IDENTITY form a valid IQC satisfied by the sml
+            %operator. This is used as a warm start in synthesis.
+            %
+            %Args:             
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   iqc (iqc_loop_split): a valid IQC with no dynamics    
 
             iqc = create_iqc_identity@op_sml_interface(obj, reps);
 

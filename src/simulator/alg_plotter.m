@@ -3,8 +3,8 @@ classdef alg_plotter
     
     
     properties
-        sim_out;     %data in the simulation
-        FS = 16;  %fontsize for axes
+        sim_out;  %data in the simulation
+        FS = 16;  %fontsize for axis labels
         FST = 20; %fontsize for title  
         EQUALITY; %is an equality constraint used?        
     end

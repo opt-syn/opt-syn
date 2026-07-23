@@ -5,8 +5,13 @@ classdef bridge_random < bridge_pass_through
     
     methods
         function obj = bridge_random(nconn, s, eigset)
-            %BRIDGE_RANDOM Construct an instance of this class
-            %   Detailed explanation goes here
+            %BRIDGE_RANDOM Constructor
+            %
+            %
+            %Args:
+            %   s (int): number of operators (including repetitions in bind)                      
+            %   eigset (float): maximum eigenvalue of the A matrix (optional)
+
          
 
             obj@bridge_pass_through(s);
@@ -23,21 +28,6 @@ classdef bridge_random < bridge_pass_through
             end
 
             [obj.P.InputName, obj.P.OutputName] = obj.P_names(s);
-        end
-
-
-        function [InputName, OutputName] = P_names(obj, s)
-            InputName = cell(s, 1);
-            OutputName = cell(s, 1);
-            for i = 1:(2*s)
-                if i <= s
-                    InputName{i} = sprintf('w%d', i);
-                    OutputName{i} = sprintf('z%d', i);
-                else
-                    InputName{i} = sprintf('u%d', i-s);
-                    OutputName{i} = sprintf('y%d', i-(s));
-                end
-            end
         end
         
      

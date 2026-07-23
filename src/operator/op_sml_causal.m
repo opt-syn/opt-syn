@@ -1,6 +1,6 @@
 classdef op_sml_causal < op_sml_interface
     %OP_SML_CAUSAL An operator which is the subdifferential of a function in SmL:
-    %
+    
     %F = partial f, where f(x) - m norm(x, 2)^2 and L norm(x, 2)^2 - f(x)
     %are both proper, convex, and closed with -Inf < m <= L < inf
     %
@@ -16,8 +16,7 @@ classdef op_sml_causal < op_sml_interface
  
     methods
         function obj = op_sml_causal(m, L, c)
-            %OP_SML Construct an instance of this class
-            %   Detailed explanation goes here
+            %OP_SML_Causal constructor
             if nargin < 3
                 c = 1;
             end
@@ -28,7 +27,13 @@ classdef op_sml_causal < op_sml_interface
 
         function M = build_M(obj, vars, order, reps);
             %BUILD_M create the running cost M
-
+            %Args:
+            %   vars:   variables of the problem 
+            %   order:  order of the IQC [number of lags]
+            %   reps:    number of repetitions of the operator (from the bind)
+            %Returns:
+            %   M_out: the running cost
+        
             M0 = [0, 1; 1, 0];
 
             if obj.ERGODIC && ~obj.same
@@ -46,11 +51,26 @@ classdef op_sml_causal < op_sml_interface
 
         function X_out = build_X(obj, vars, order, reps)
             %BUILD_X create the terminal cost X
+            %
+            %Args:
+            %   vars:   variables of the problem 
+            %   order:  order of the IQC [number of lags]
+            %   reps:    number of repetitions of the operator (from the bind)
+            %Returns:
+            %   X_out: the terminal cost (is 0 for causal)
             X_out = 0;
         end
 
         function [iqc, vars, cons] = create_iqc(obj, cons, order, reps)
-            %create the IQC
+            %CREATE_IQC_IDENTITY form a valid IQC satisfied by the sml
+            %operator. This is used as a warm start in synthesis.
+            %
+            %Args:             
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   iqc (iqc_loop_split): a valid IQC with no dynamics    
+
             if length(order)>1
                 order = sum(order);
             end
@@ -58,17 +78,6 @@ classdef op_sml_causal < op_sml_interface
             [iqc, vars, cons] = create_iqc@op_sml_interface(obj, cons, order, reps);
         end
 
-
-        function sm = same(obj)
-            %SAME: is there any uncertainty in this oracle?
-            sm = (obj.m == obj.L);
-        end
-
-
-        function sm = get_same(obj, reps)
-            %GET_SAME: is there any uncertainty in this oracle?
-            sm = kron(obj.m, eye(reps));
-        end
 
         function cs = csum_psi(obj, vars)
             cs = trace(vars.Df);
@@ -78,10 +87,14 @@ classdef op_sml_causal < op_sml_interface
         function [vars] = create_vars(obj, order, reps)
             %CREATE_VARS form the variables in an IQC
             %
-            %Input: 
-            %   order:  order of the IQC [causal, noncausal]
-            %   rep:    number of repetitions of the operator
- 
+            %
+            %Args: 
+            %   order:  order of the IQC [number of lags]
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   vars:   variables of the problem            
+
             if nargin < 2
                 order = 0;
             end
@@ -106,7 +119,16 @@ classdef op_sml_causal < op_sml_interface
         end    
 
         function cons = filter_constraints(obj, cons, order, vars, rho_sched, iqc)
-            %constraints on the filter coefficients
+            %FILTER_CONSTRAINTS constraints on the filter coefficients            
+            %Zames-Falb DHD constraints with terminal cost
+            %
+            %Args:
+            %   cons:   accumulated constraints
+            %   vars:   variables of the problem             
+            %   rho_sched:  which times should be discounted
+            %   iqc_out:    the IQC under consideration            
+            %Returns:
+            %   cons:   accumulated constraints
 
 
             %nonpositivity of non-main elements
@@ -125,9 +147,16 @@ classdef op_sml_causal < op_sml_interface
         end
 
         function [Psi1, Psi2] = build_psi(obj, vars, order, reps)
-            %BUILD_PSI construct the filter for the SML function
+            %BUILD_PSI construct the zames-falb filter for the SML function
             %
-            %use Zames-Falb multipliers to do this
+            %Args:
+            %   vars:   variables of the problem    
+            %   order:  order of the IQC [number of lags]
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   psi1: filter on output (causal)
+            %   psi2: filter on input (noncausal components)
 
             [Af0, Bf0] = block_fir(order);
             Af = kron(eye(reps), Af0 );

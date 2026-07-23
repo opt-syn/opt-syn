@@ -3,9 +3,7 @@ function [quad] = quad_objective_decomp(M_quad, ind_p, ind_q)
     %linearizable formulation
 
     %R = T' U^-1 T, R >0
-
-
-    
+   
     %use eigenvalue arguments here
 
     Qq = M_quad(ind_q, ind_q);
@@ -20,5 +18,5 @@ function [quad] = quad_objective_decomp(M_quad, ind_p, ind_q)
     Tq = RqV(:, ind_pos)';
     Uq = diag(1./eRq(ind_pos));
 
-    quad = struct('Q', Qq, 'S', Sq, 'U', Uq, 'T', Tq);
+    quad = quad_param(Qq, Sq, Uq, Tq);
 end

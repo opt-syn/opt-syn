@@ -1,13 +1,13 @@
 classdef genplant
-    %genplant a generalized plant
+    %GENPLANT a generalized plant. Divided into channels indexed by 
+    %indexing [iz, izp, iy], [iw, iwp, iu]
     
     
-    properties
-        %plant matrices
-        P;
+    properties        
+        P; %plant matrices
         
-        %indexing [iz, izp, iy], [iw, iwp, iu]
-        s = 0;
+        
+        s = 0; %number of operators
         nz = 0; %input to operators (from network)        
         nzp =0; %input to performance channel (from network)
         ny =0;  %input to controller (from network)
@@ -21,8 +21,11 @@ classdef genplant
     
     methods
         function obj = genplant(P, n)
-            %N Construct an instance of this class
-            %   Detailed explanation goes here
+            %Constructor
+            %
+            %Args:
+            %   P (ss, sdpss): state space system
+            %   n (struct): partition of the channels into [z, zp, y], [w, wp, u]
 
             obj.P = P;
             if isnumeric(P) && ~isempty(P)
@@ -50,32 +53,37 @@ classdef genplant
         end
 
         %indexers
+        function w_ind = index_w(obj)
+            %indices [w]
+            w_ind = 1:obj.nw;
+        end
+
+        function wp_ind = index_wp(obj)
+            %indices [wp]
+            wp_ind = obj.nw + (1:obj.nwp);
+        end
+
         function u_ind = index_u(obj)
             u_ind = obj.nw + obj.nwp + (1:obj.nu);
         end
 
-        function wp_ind = index_wp(obj)
-            wp_ind = obj.nw + (1:obj.nwp);
-        end
-
-        function w_ind = index_w(obj)
-            w_ind = 1:obj.nw;
-        end
-
         function y_ind = index_y(obj)
+            %indices [y]
             y_ind = obj.nz + obj.nzp + (1:obj.ny);
         end
 
         function zp_ind = index_zp(obj)
+            %indices [zp]
             zp_ind = obj.nz + (1:obj.nzp);
         end
 
         function z_ind = index_z(obj)
+            %indices [z]
             z_ind = 1:obj.nz;
         end
 
         function wr_ind = index_notu(obj)
-            %TODO: expand with more inputs
+            %indices [w, wp]
             wr_ind = 1:(obj.nw + obj.nwp);
         end
 
@@ -86,38 +94,42 @@ classdef genplant
 
         %% extract matrices       
         function B = Bw(obj)
+            % operator output to state transition
             B0 = obj.B;
             B = B0(:, obj.index_w());
         end
 
         function B = Bwp(obj)
+            % performance input to state transition
             B0 = obj.B;
             B = B0(:, obj.index_wp());
         end
         
         function B = Bu(obj)
+            % controller output to state transition
             B0 = obj.B;
             B = B0(:, obj.index_u());
         end
 
         function C = Cz(obj)
+            % state to operator input
             C0 = obj.C;
             C = C0(obj.index_z(), :);
         end
         function C = Czp(obj)
+            % state to performance output
             C0 = obj.C;
             C = C0(obj.index_zp(), :);
         end
         
         function C = Cy(obj)
+            % state to controller input
             C0 = obj.C;
             C = C0(obj.index_y(), :);
         end
 
-
-
         function D = Dzw(obj)
-            %oracle output to oracle input
+            %operator output to operator input
             iw = obj.index_w();
             iz = obj.index_z();
 
@@ -126,7 +138,7 @@ classdef genplant
         end
 
         function D = Dzu(obj)
-            %controller output to oracle input
+            %controller output to operator input
             iu = obj.index_u();
             iz = obj.index_z();
             
@@ -135,7 +147,7 @@ classdef genplant
         end
 
         function D = Dyw(obj)
-            %oracle output to controller input
+            %operator output to controller input
             iw = obj.index_w();
             iy = obj.index_y();
 
@@ -144,7 +156,7 @@ classdef genplant
         end
 
         function D = Dywp(obj)
-            %oracle output to controller input
+            %operator output to controller input
             iw = obj.index_wp();
             iy = obj.index_y();
 
@@ -153,7 +165,7 @@ classdef genplant
         end
 
        function D = Dzpwp(obj)
-            %oracle output to controller input
+            %operator output to controller input
             iw = obj.index_wp();
             izp = obj.index_zp();
 
@@ -163,7 +175,7 @@ classdef genplant
 
 
         function D = Dyu(obj)
-            %controller output to controller input
+            %controller output to controller input, direct feedthrough
             iu = obj.index_u();
             iy = obj.index_y();
 
@@ -173,7 +185,7 @@ classdef genplant
 
  
         function D = Dzwp(obj)
-            %performance input to oracle input
+            %performance input to operator input
             iwp = obj.index_wp();
             iz = obj.index_z();
 
@@ -191,7 +203,7 @@ classdef genplant
         end
 
         function D = Dzpw(obj)
-            %oracle output to performance input
+            %operator output to performance input
             iw = obj.index_w();
             izp = obj.index_zp();
 
@@ -200,25 +212,33 @@ classdef genplant
         end
 
         function [A, B, C, D] = ssdata(obj)
+            %extract state-space the system 
             [A, B, C, D]  = ssdata(obj.P);
         end
 
         function Ao = A(obj)
+            %A matrix in state space system
             Ao = obj.P.A;
         end
         function Bo = B(obj)
+            %B matrix in state space system
             Bo = obj.P.B;
         end
         function Co = C(obj)
+            %C matrix in state space system
             Co = obj.P.C;
         end
         function Do = D(obj)
+            %D matrix in state space system
             Do = obj.P.D;
         end
 
 
         function sys_drop = drop_performance(obj)
-            %DROP_PERFORMANCE remove the performance channel
+            %DROP_PERFORMANCE remove the performance channel in the system
+            %
+            %Returns:
+            %   sys_drop (genplant): system without performance
             [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj);
             
             A = Aa;
@@ -250,6 +270,7 @@ classdef genplant
         end
 
         function nxo = nx(obj)
+            %number of states
             nxo = length(obj.P.A);
         end
 
@@ -259,19 +280,26 @@ classdef genplant
         end
 
         function P_out = tf(obj)
+            %transfer function of the plant
             P_out= ss2tf(obj.ss());
         end
 
         function obj = rhotrafo(obj, rho)
-            %rho transformation (exponential discount)
+            %rho transformation (exponential discount) of plant
             obj.P.A = obj.P.A * (rho^(-1));
             obj.P.B = obj.P.B * (rho^(-1));
         end
 
         %% overloads
-
         function b_out = blkdiag(obj, b2)
-            %block-diagonal of two bridges
+            %block-diagonal of two plants, comporting with the indexing scheme
+            %
+            %Args:
+            %   b2 (genplant): the other plant
+            %Returns
+            %   b_out (genplant): the block diagonal plant
+
+
             %interleave the indices properly
 
          
@@ -304,9 +332,16 @@ classdef genplant
 
 
         function b_out = lft(obj, b2)
-            %LFT feedback interconnection of obj and plant b2
+            %LFT linear fractional transformation:
+            %feedback interconnection of obj and plant b2
             %along common channels (u, y)
             %obj star b2
+            %
+            %Args:
+            %   b2 (genplant): the other plant
+            %Returns
+            %   b_out (genplant): the lft plant
+
 
             b_out = obj;
             if isa(b2, 'genplant')
@@ -333,15 +368,29 @@ classdef genplant
         end
 
         function b_out = lft_lower(obj, b2)
-            %LFT_LOWER
+            %LFT_LOWER lower linear fractional transformation:
+            %feedback interconnection of obj and plant b2
+            %along common channels (u, y)
+            %obj star b2
+            %
+            %Args:
+            %   b2 (genplant): the other plant (on bottom)
+            %Returns
+            %   b_out (genplant): the lft plant
+
             b_out = obj.lft(obj, b2);
         end
 
         function b_out = lft_upper(obj, b2, nz2, nw2)
-            %LFT_UPPER linear fractional transformation
-            % LFT feedback interconnection of obj and plant b
+            %LFT_UPPER upper linear fractional transformation:
+            %feedback interconnection of obj and plant b2
             %along common channels (u, y)
             %b2 star obj
+            %
+            %Args:
+            %   b2 (genplant): the other plant (on top)
+            %Returns
+            %   b_out (genplant): the lft plant
 
             b_out = obj;
             if isa(b2, 'genplant')
@@ -367,26 +416,35 @@ classdef genplant
 
         end
 
-        function obj = lift(obj, d)
+        function obj = lift(obj, c)
             %lift by a kronecker operation with the identity            
-            
-            Ad = kron(obj.P.A, eye(d));
-            Bd = kron(obj.P.B, eye(d));
-            Cd = kron(obj.P.C, eye(d));
-            Dd = kron(obj.P.D, eye(d));
+            %
+            %Args:
+            %   c (int): dimension Ic 
+            %Returns
+            %   obj (genplant): the lifted plant
+            Ad = kron(obj.P.A, eye(c));
+            Bd = kron(obj.P.B, eye(c));
+            Cd = kron(obj.P.C, eye(c));
+            Dd = kron(obj.P.D, eye(c));
 
             obj.P = ss(Ad, Bd, Cd, Dd, 1);
 
-            obj.nz = obj.nz * d;
-            obj.nzp = obj.nzp * d;
-            obj.nw = obj.nw * d;
-            obj.nwp = obj.nwp * d;
-            obj.nu = obj.nu * d;
-            obj.ny = obj.ny * d;
+            obj.nz = obj.nz * c;
+            obj.nzp = obj.nzp * c;
+            obj.nw = obj.nw * c;
+            obj.nwp = obj.nwp * c;
+            obj.nu = obj.nu * c;
+            obj.ny = obj.ny * c;
         end
 
 
         function n = dump_dim(obj)
+            %DUMP_DIM return the dimensions of channels in the plant
+            %
+            %Returns:
+            %   n (struct): Fields (nw, nwp, nu, ny, nz, nzp, s).
+            % n = plant_dims(obj.s, obj.nw, obj.nwp, obj.nu, obj.nz, obj.nzp, obj.nzp)
             n = struct('nw', obj.nw, 'nwp', obj.nwp, ...
                 'nu', obj.nu, 'ny', obj.ny, ...
                 'nz', obj.nz, 'nzp', obj.nzp, ...
@@ -395,12 +453,14 @@ classdef genplant
         %% performance inputs and outputs
 
         function [obj, iwp] = add_oracle_input(obj, ind_w, ind_z)
-
-            %ADD_ORACLE_INPUT: add external inputs at the oracle F
+            %add external inputs at the operator F
             %
-            %w + dw \in F(z + dz)
-            %ind_w: at the input of the oracle
-            %ind_z: at the output of the oracle
+            %:math:`w + \delta w \in F(z + dz)`
+            %Args:
+            %   ind_w: at the input of the operator
+            %   ind_z: at the output of the operator
+            %Return:
+            %   iwp: new performance input indices 
 
             %
             %Does not add extra outputs
@@ -444,12 +504,15 @@ classdef genplant
         end
 
         function [obj, iwp] = add_oracle_shift(obj, c)
-
-            %ADD_ORACLE_INPUT: add external inputs at the oracle F
+            %ADD_oracle_INPUT: add external inputs at the operator F
             %
-            %w \in F(w + dz*1_s)
-            %ind_w: at the input of the oracle
-            %ind_z: at the output of the oracle
+            %:math:`w \in F(w + \delta z \otimes \mathbf{1}_s)`
+            %
+            %Args:
+            %   ind_w: at the input of the operator
+            %   ind_z: at the output of the operator
+            %Return:
+            %   iwp: new performance input indices
 
             %
             %Does not add extra outputs
@@ -498,14 +561,20 @@ classdef genplant
             obj.nwp = obj.nwp +  c;           
         end
     
-        function [obj, izp] = perf_output_w(obj, ind_w)
+        function [obj, izp] = perf_output_w(obj, iw)
             %PERF_OUTPUT_W: add performance to track the w output
+            %
+            %Args:
+            %   ind_w: indices of the input of the operator
+            %Return:
+            %   izp: new performance output indices
+
             A = obj.P.A;
             B = obj.P.B;
             C = obj.P.C;
             D = obj.P.D;
             
-            nnew = length(ind_w);
+            nnew = length(iw);
 
             Ctop = C([obj.index_z(), obj.index_zp()], :);
             Dtop = D([obj.index_z(), obj.index_zp()], :);
@@ -514,7 +583,7 @@ classdef genplant
 
             n = length(A);
             Czp = zeros(nnew, n);
-            Ez = full(sparse(ind_w, 1:nnew, ones(nnew, 1), n, nnew));
+            Ez = full(sparse(iw, 1:nnew, ones(nnew, 1), n, nnew));
 
             Dzp = Ez;
 
@@ -530,9 +599,13 @@ classdef genplant
         end
 
         function [obj, iwp, izp] = perf_ergodic(obj, Nw)
-
             %PERF_ERGODIC inputs and outputs for ergodic convergence
-            %Nw: given consensus matrix
+            %
+            %Args:
+            %   Nw: given consensus matrix
+            %Return:
+            %   iwp: new performance input indices
+            %   izp: new performance output indices
 
 
             if ~isempty(Nw)
@@ -600,9 +673,19 @@ classdef genplant
        
 
         function [obj, izp] = perf_output_opt(obj, c, bind)
-            %PERF_OUTPUT_WSUM: add performance to track the optimality
-            %condition: sum(1'w) = 0
+            %PERF_OUTPUT_OPT add performance to track the optimality
+            %condition            
             %
+            %
+            %Args:
+            %   c: dimension of the coordinate/kronecker lift
+            %   bind: indices for repeated nonlinearity evaluations
+            %Return:
+            %   izp: new performance output indices
+            %
+
+
+            %%:math:`z_p = \sum_{i=1}^s w^i` 
             if nargin < 2
                 c = 1;
             end
@@ -647,6 +730,12 @@ classdef genplant
 
         function [obj, izp] = perf_output_z(obj, ind_z)
             %PERF_OUTPUT_Z: add performance to track the z output
+            %
+            %Args:
+            %   ind_z: indices of the output of the operator
+            %Return:
+            %   izp: new performance output indices
+
             A = obj.P.A;
             B = obj.P.B;
             C = obj.P.C;
@@ -681,23 +770,29 @@ classdef genplant
         end
         
 
-        function [obj, izp] = perf_output_con(obj, c, ind_z)
-            
+        function [obj, izp] = perf_output_con(obj, c, iz)           
             %PERF_OUTPUT_CON: add performance to track the consensus output
-            % norm(z)^2 (with z* = 0 by regulation)
+            % `z_p^i = z^i - \text{average}(z)`
+            %
+            %Args:
+            %   c: dimension of the coordinate/kronecker lift
+            %   iz: indices of input of operators
+            %Return:
+            %   izp: new performance output indices
+
             if nargin == 1
                 c = 1;
             end
             if nargin == 2
-                ind_z = 1:obj.nz;
+                iz = 1:obj.nz;
             end
 
-                        A = obj.P.A;
+            A = obj.P.A;
             B = obj.P.B;
             C = obj.P.C;
             D = obj.P.D;
             
-            nnew = length(ind_z);
+            nnew = length(iz);
 
             Ctop = C([obj.index_z(), obj.index_zp()], :);
             Dtop = D([obj.index_z(), obj.index_zp()], :);
@@ -705,10 +800,9 @@ classdef genplant
             Dbot = D([obj.index_y()], :);
 
             n = length(A);
-            
-            %TODO: bug here.
-            Ez = full(sparse(1:nnew, ind_z, ones(nnew, 1), ...
-                length(ind_z), nnew + obj.nzp + obj.ny));
+
+            Ez = full(sparse(1:nnew, iz, ones(nnew, 1), ...
+                length(iz), nnew + obj.nzp + obj.ny));
             
             Iz = eye(obj.nz);
             Jz = ones(obj.nz, obj.nz)/ (obj.nz/c);

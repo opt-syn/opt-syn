@@ -11,10 +11,10 @@ A Linear Time Invariant system has a representation
 The algorithmic interconnection is 
 ```{math}
 \begin{align*}
-w_k & \in F_k(z_k), & 
+w_k & \in F_k(z_k), \\
 \mat{c}{x^N_{k+1} \hl z_k \\ y_k} &= \mat{c|cc}{A & B_z & B_u \hl 
 C_z & D_{zd} & D_{zu} \\
-C_y & D_{yd} & D_{yu}} \mat{c}{x_k^N \hl z_k \\ u_k}, &
+C_y & D_{yd} & D_{yu}} \mat{c}{x_k^N \hl w_k \\ u_k}, \\
 \mat{c}{\xi_{k+1} \\ u_k} &= \mat{c|c}{\Ac & \Bc \hl \Cc & \Dc } \mat{c}{\xi_k \\ y_k}.
 \end{align*}
 ```

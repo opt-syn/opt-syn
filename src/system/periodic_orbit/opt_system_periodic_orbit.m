@@ -1,6 +1,8 @@
 classdef  opt_system_periodic_orbit < opt_system
     %OPT_SYSTEM_PERIODIC_ORBIT interconnection of network and operators
     
+
+    
     %a periodic system: repeated and predictable cycle evaluation  
     %
     % orbit: the periodicity is highly structured in a symmetric manner

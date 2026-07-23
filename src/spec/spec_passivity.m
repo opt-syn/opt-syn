@@ -1,6 +1,7 @@
 classdef spec_passivity < spec_interface
     %SPEC_PASSIVITY specification for a passivity specification
-    %
+
+    
     %at all T when x=0:
     %
     %sum_{k=0}^T (zp_k)' (wp_k) >  sum_{k=0}^T ind_w |wp_k|^2 + ind_z |zp_k|^2
@@ -9,21 +10,18 @@ classdef spec_passivity < spec_interface
 
     
     
-    properties
-        type='passivity';
-%         gain = 1;
-        ind_w = 0;
-        ind_z = 0;
-        search_type = 'in';
+    properties        
+        ind_w = 0; %input passivity index
+        ind_z = 0; %output passivity index        
     end
+
+    % type='passivity';
+    % search_type = 'in';
     
     methods
         function obj = spec_passivity(ind_w, ind_z, iwp, izp)
-            %SPEC_pass Construct an instance of this class
-            %   Detailed explanation goes here
-            % if nargin < 4
-            %     rho = 1;
-            % end            
+            %SPEC_PASSIVITY Constructor
+          
             obj@spec_interface(iwp, izp);
             obj.ind_w = ind_w;
             obj.ind_z = ind_z;
@@ -35,7 +33,14 @@ classdef spec_passivity < spec_interface
         
         function M = supply(obj, vars_spec)
             %SUPPLY quadratic performance specification
-            %for passivity indices
+            %for passivity indices                       
+            %
+            %Args:
+            %   vars_spec: problem variables in specification
+            %
+            %Returns:
+            %   M: quadratic running cost matrix in the specification
+
 
             M0 = -[-obj.ind_z, 1; 1, -obj.ind_w];
 
@@ -43,7 +48,13 @@ classdef spec_passivity < spec_interface
         end
 
        function [quad, objective] = supply_quad(obj, vars_spec)
-           %SUPPLY_QUAD decomposed quadratic performance specification
+            %SUPPLY_QUAD decomposed quadratic performance specification
+            %
+            %Args:
+            %   vars_spec: problem variables in specification
+            %
+            %Returns:
+            %   quad (quad_param): decomposed quadratic specification
 
            if obj.target
                nwp = length(obj.iwp);
@@ -82,7 +93,17 @@ classdef spec_passivity < spec_interface
        end
 
        function [vars, cons] = create_vars(obj, cons, name, config)
-            %CREATE_VARS form the variables for the problem                        
+            %CREATE_VARS form the variables for the problem    
+            %
+            %Args:                        
+            %   cons:  accumulated constraints            
+            %   name: name of the specification
+            %   config (opt_config): configuration options
+            %
+            %Returns:
+            %   vars:  problem variables in specification
+            %   cons:  accumulated constraints
+
             if nargin < 3
                 name = [];
             end

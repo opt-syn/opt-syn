@@ -1,6 +1,6 @@
 classdef  opt_system_periodic < opt_system_switched
-    %OPT_SYSTEM_PERIODIC interconnection of network and operators
-    %
+    %OPT_SYSTEM_PERIODIC interconnection of periodic network and operators
+    
     %a periodic system: repeated and predictable cycle evaluation   
     %
     % w(k) \in F(z(k))
@@ -56,8 +56,8 @@ classdef  opt_system_periodic < opt_system_switched
         end
 
         function sys_lift = periodic_lift(obj)
-            %PERIODIC_LIFT form a periodic LTI lift of the system
-            %create an equivalent LTI system
+            %PERIODIC_LIFT form a periodic LTI lift of the system            
+            %
             %Returns:
             %   sys_lift (opt_system): an LTI system
 

@@ -1,12 +1,16 @@
 classdef bridge_channel_delay < bridge_pass_through
-    %BRIDGE_DELAYS channel delays before and after the oracle
+    %BRIDGE_DELAYS network with discrete delays before and after the oracle
     
 
     
     methods
         function obj = bridge_channel_delay(d1, d2, c)
-            %BRIDGE_CHANNEL_DELAY Construct an instance of this class
-            %   Detailed explanation goes here
+            %BRIDGE_CHANNEL_DELAY Constructor
+            %
+            %Args:
+            %   d1 (int array): number of delays before each operators
+            %   d2 (int array): number of delays after each operators                  
+            %   c (int): kronecker coordinate lift
 
             if nargin < 3
                 c = 1;
@@ -41,6 +45,15 @@ classdef bridge_channel_delay < bridge_pass_through
 
 
         function [InputName, OutputName] = P_names(obj, s, c)
+            %P_NAMES label the input and output signals
+            %
+            %Args:
+            %   s (int): number of operators (including repetitions in bind)
+            %   c (int): kronecker coordinate lift
+            %
+            %Returns:
+            %   InputName (cell of char):  names of inputs 
+            %   OutputName (cell of char): names of outputs 
 
             % if nargin 
             InputName = cell(s*c, 1);

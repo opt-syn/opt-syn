@@ -8,25 +8,25 @@ classdef op_sml_causal_orbit < op_sml_causal
 %
 %
 %Time-variation is included in the relation: 
-%   w'_k \in R^(-k) \partial f(R^k z'_k)
+%   w'_k \in M^(-k) \partial f(M^k z'_k)
 %
-%R is an orthogonal matrix
+%M is an orthogonal matrix
 
     properties 
-        R = 1; %coordinate shift matrix
+        M = 1; %coordinate shift matrix
     end
 
     methods
-        function obj = op_sml_causal_orbit(m, L, R)
+        function obj = op_sml_causal_orbit(m, L, M)
             %OP_SML Construct an instance of this class
             %   Detailed explanation goes here
             if nargin < 3
-                R = 1;
+                M = 1;
             end
-            c = size(R, 1);
+            c = size(M, 1);
             obj@op_sml_causal(m ,L, c)            
     
-            obj.R = R;
+            obj.M = M;
         end
         
 
@@ -46,7 +46,7 @@ classdef op_sml_causal_orbit < op_sml_causal
             [iqc, vars, cons] = create_iqc@op_sml_causal(obj, cons, order, reps);
 
             n = size(iqc.Psi1.A, 1);
-            Rkroninv = kron(eye(n/obj.c), obj.R');
+            Rkroninv = kron(eye(n/obj.c), obj.M');
             iqc.Psi1.A = Rkroninv * iqc.Psi1.A;
             iqc.Psi1.B = Rkroninv * iqc.Psi1.B;
 

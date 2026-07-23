@@ -2,7 +2,7 @@
 
  
 
-Simulation routines are explored in the  {doc}`Solve <../usage/simulation>` page.
+Simulation routines are explored in the  {doc}`Simulation <../usage/simulation>` page.
 
 
 

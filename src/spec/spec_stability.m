@@ -1,21 +1,15 @@
 classdef spec_stability < spec_interface
-    %SPEC_STABLE enforce exponential stability of the algorithmic
-    %interconnection (linear convergence)
-    
-    properties
-        type = 'stability';       
-    end
+    %SPEC_STABLE enforce linear convergence/exponential stability 
+    % of the algorithmic interconnection     
     
     methods
         function obj = spec_stability(rho)
-            %SPEC_STABLE Construct an instance of this class
-            %   Detailed explanation goes here
-
+            %SPEC_STABLE Constructor
             if nargin == 0
                 rho = 1;
             end
             obj@spec_interface([], []);
-
+            obj.type = 'stability';     
             obj.rho = rho;
         end       
 

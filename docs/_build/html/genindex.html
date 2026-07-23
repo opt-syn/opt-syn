@@ -231,6 +231,17 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="pages/documentation/index_documentation.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_manager.html">Manager</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="pages/documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="pages/documentation/operators/doc_set_valued.html">Set-Valued Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pages/documentation/operators/doc_sml.html">Subdifferentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pages/documentation/operators/doc_quadratic.html">Gradients of Quadratics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="pages/documentation/plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="pages/documentation/plants/doc_genplant.html">Generalized Plants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pages/documentation/plants/doc_primitives.html">Plant Primitives</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="pages/documentation/system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="pages/documentation/system/doc_lti.html">Linear Time Invariant</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pages/documentation/system/doc_switched.html">Switched</a></li>
@@ -405,7 +416,21 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.A">A() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.A">(plant.genplant.genplant_poly method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.add_opt_sig">add_opt_sig() (simulator.alg_plotter method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.add_oracle_input">add_oracle_input() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.add_oracle_input">(plant.genplant.genplant_poly method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.add_oracle_shift">add_oracle_shift() (plant.genplant.genplant method)</a>
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.add_specifications">add_specifications() (manager.opt_manager_interface method)</a>
 </li>
@@ -413,14 +438,14 @@
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter">alg_plotter (class in simulator)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.alg_plotter">alg_plotter() (simulator.alg_plotter method)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim">alg_sim (class in simulator)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.alg_sim">alg_sim() (simulator.alg_sim method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out">alg_sim_out (class in simulator)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.alg_sim_out">alg_sim_out() (simulator.alg_sim_out method)</a>
@@ -445,6 +470,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_equality.b">b (simulator.op_sim.op_sim_equality attribute)</a>
 </li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.B">B() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.B">(plant.genplant.genplant_poly method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_config.html#config.bisect_opts.backoff">backoff (config.bisect_opts attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.bind">bind (system.generic.opt_system_interface attribute)</a>
@@ -466,11 +497,39 @@
       <ul>
         <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.blkdiag">(iqc.iqc_loop_split method)</a>
 </li>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.blkdiag">(plant.genplant.genplant method)</a>
+</li>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.blkdiag">(plant.genplant.genplant_poly method)</a>
+</li>
       </ul></li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_box.BOX">BOX (simulator.op_sim.op_sim_box attribute)</a>
 </li>
+      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_channel_delay">bridge_channel_delay (class in plant.bridge_prototypes)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_channel_delay.bridge_channel_delay">bridge_channel_delay() (plant.bridge_prototypes.bridge_channel_delay method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_pass_through">bridge_pass_through (class in plant.bridge_prototypes)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_pass_through.bridge_pass_through">bridge_pass_through() (plant.bridge_prototypes.bridge_pass_through method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_random">bridge_random (class in plant.bridge_prototypes)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_random.bridge_random">bridge_random() (plant.bridge_prototypes.bridge_random method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Bu">Bu() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.build_cost">build_cost() (operator.op_gen method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.build_loop">build_loop() (operator.op_gen method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_interface.build_loop">(operator.op_sml_interface method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.build_M">build_M() (operator.op_gen method)</a>
+</li>
       <li><a href="pages/documentation/system/doc_lti.html#system.lti.opt_system.build_plant">build_plant() (system.lti.opt_system method)</a>
 
       <ul>
@@ -487,6 +546,30 @@
         <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.build_program">(manager.opt_manager_interface method)</a>
 </li>
       </ul></li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.build_psi">build_psi() (operator.op_gen method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/operators/doc_quadratic.html#operator.op_quad_causal.build_psi">(operator.op_quad_causal method)</a>
+</li>
+        <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml.build_psi">(operator.op_sml method)</a>
+</li>
+        <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_causal.build_psi">(operator.op_sml_causal method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.build_psi_fir">build_psi_fir() (operator.op_gen method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml.build_psi_reduced">build_psi_reduced() (operator.op_sml method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.build_X">build_X() (operator.op_gen method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml.build_X">(operator.op_sml method)</a>
+</li>
+        <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_causal.build_X">(operator.op_sml_causal method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Bw">Bw() (plant.genplant.genplant method)</a>
+</li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.bw">bw() (simulator.op_sim.op_sim method)</a>
 
       <ul>
@@ -501,14 +584,26 @@
       </ul></li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim.bw_func">bw_func (simulator.op_sim.op_sim attribute)</a>
 </li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Bwp">Bwp() (plant.genplant.genplant method)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.c">c (simulator.alg_sim attribute)</a>
+      <li><a href="pages/documentation/operators/doc_operators.html#operator.operator_interface.c">c (operator.operator_interface attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.c">(simulator.alg_sim attribute)</a>
 </li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.C">C() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.C">(plant.genplant.genplant_poly method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.C3">C3 (iqc.iqc_loop_factored attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.check_regulator">check_regulator() (system.generic.regulator_interface method)</a>
@@ -589,11 +684,41 @@
         <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.cons_dynamic">(system.switched.lmi_synthesis_switched method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_analysis_interface.create_vars">create_vars() (system.generic.lmi_analysis_interface method)</a>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_causal.create_iqc">create_iqc() (operator.op_sml_causal method)</a>
 
       <ul>
+        <li><a href="pages/documentation/operators/doc_operators.html#operator.operator_interface.create_iqc">(operator.operator_interface method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.create_iqc_identity">create_iqc_identity() (operator.op_gen method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml.create_iqc_identity">(operator.op_sml method)</a>
+</li>
+        <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_interface.create_iqc_identity">(operator.op_sml_interface method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.create_vars">create_vars() (operator.op_gen method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/operators/doc_quadratic.html#operator.op_quad_causal.create_vars">(operator.op_quad_causal method)</a>
+</li>
+        <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml.create_vars">(operator.op_sml method)</a>
+</li>
+        <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_causal.create_vars">(operator.op_sml_causal method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_e2e.create_vars">(spec.spec_e2e method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.create_vars">(spec.spec_interface method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_l2.create_vars">(spec.spec_l2 method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_passivity.create_vars">(spec.spec_passivity method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_analysis_interface.create_vars">(system.generic.lmi_analysis_interface method)</a>
+</li>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.create_vars">(system.generic.lmi_synthesis_interface method)</a>
 </li>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.create_vars">(system.generic.regulator_interface method)</a>
@@ -645,6 +770,20 @@
         <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.create_vars_storage">(system.switched.lmi_synthesis_switched method)</a>
 </li>
       </ul></li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.csum_psi">csum_psi() (operator.op_gen method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/operators/doc_quadratic.html#operator.op_quad_causal.csum_psi">(operator.op_quad_causal method)</a>
+</li>
+        <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml.csum_psi">(operator.op_sml method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Cy">Cy() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Cz">Cz() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Czp">Czp() (plant.genplant.genplant method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -653,6 +792,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.d">d (simulator.alg_sim attribute)</a>
 </li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.D">D() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.D">(plant.genplant.genplant_poly method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.D3">D3 (iqc.iqc_loop_factored attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.d_influence">d_influence() (system.generic.regulator_interface method)</a>
@@ -665,8 +810,8 @@
         <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.define_storage_G">(system.generic.lmi_synthesis_interface method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml.dhd_lift">dhd_lift() (operator.op_sml method)</a>
+</li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.dia">dia (config.opt_config_tol attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.discount">discount (system.generic.opt_system_interface attribute)</a>
@@ -679,9 +824,37 @@
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#manager.diss_data">diss_data (class in manager)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#manager.diss_data.diss_data">diss_data() (manager.diss_data method)</a>
 </li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.drop_performance">drop_performance() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.dump_dim">dump_dim() (plant.genplant.genplant method)</a>
+</li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.dynamics_block">dynamics_block() (system.generic.lmi_synthesis_interface method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Dyu">Dyu() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.Dyu">(plant.genplant.genplant_poly method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Dyw">Dyw() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Dywp">Dywp() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Dzpu">Dzpu() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Dzpw">Dzpw() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Dzpwp">Dzpwp() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Dzu">Dzu() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Dzw">Dzw() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Dzwp">Dzwp() (plant.genplant.genplant method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -711,21 +884,29 @@
         <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti.elimination">(system.lti.lmi_synthesis_lti method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_syn.elimination_type">elimination_type (config.opt_config_syn attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.eq">eq (simulator.alg_sim_out attribute)</a>
 </li>
-      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.EQUALITY">EQUALITY (simulator.alg_plotter attribute)</a>
+      <li><a href="pages/documentation/operators/doc_operators.html#operator.operator_interface.EQUALITY">EQUALITY (operator.operator_interface attribute)</a>
 
       <ul>
+        <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.EQUALITY">(simulator.alg_plotter attribute)</a>
+</li>
         <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.EQUALITY">(simulator.alg_sim attribute)</a>
 </li>
       </ul></li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.ERGODIC">ERGODIC (iqc.iqc_data_container attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_interface.ERGODIC">(operator.op_sml_interface attribute)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.ergodic">ergodic() (system.generic.lmi_dispatch_interface method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_interface.ergodic_supply">ergodic_supply() (operator.op_sml_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.exosystem">exosystem() (system.generic.regulator_interface method)</a>
 
@@ -765,6 +946,18 @@
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.fetch_model">fetch_model() (system.generic.regulator_interface method)</a>
 </li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.filter_constraints">filter_constraints() (operator.op_gen method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/operators/doc_quadratic.html#operator.op_quad.filter_constraints">(operator.op_quad method)</a>
+</li>
+        <li><a href="pages/documentation/operators/doc_quadratic.html#operator.op_quad_causal.filter_constraints">(operator.op_quad_causal method)</a>
+</li>
+        <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml.filter_constraints">(operator.op_sml method)</a>
+</li>
+        <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_causal.filter_constraints">(operator.op_sml_causal method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.form_Dk">form_Dk() (system.generic.lmi_synthesis_interface method)</a>
@@ -803,6 +996,12 @@
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.G_min">G_min (config.opt_config_tol attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_e2e.gain">gain (spec.spec_e2e attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_l2.gain">(spec.spec_l2 attribute)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.reg_cl_out.Gam">Gam (system.generic.reg_cl_out attribute)</a>
 
       <ul>
@@ -812,6 +1011,14 @@
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.Gam_basis">Gam_basis (system.generic.regulator_interface attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config.gen">gen (config.opt_config attribute)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant">genplant (class in plant.genplant)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.genplant">genplant() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly">genplant_poly (class in plant.genplant)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.genplant_poly">genplant_poly() (plant.genplant.genplant_poly method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.get_alg">get_alg() (system.generic.opt_system_interface method)</a>
 </li>
@@ -859,14 +1066,14 @@
         <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.get_K">(system.switched.opt_system_switched method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.get_K_mask">get_K_mask() (system.generic.lmi_synthesis_interface method)</a>
 
       <ul>
         <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.get_K_mask">(system.lti.lmi_synthesis_lti_reduced_order method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.get_K_tri_basis">get_K_tri_basis() (system.generic.lmi_synthesis_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_lti.html#system.lti.regulator_lti.get_model">get_model() (system.lti.regulator_lti method)</a>
@@ -875,6 +1082,8 @@
         <li><a href="pages/documentation/system/doc_switched.html#system.switched.regulator_switched.get_model">(system.switched.regulator_switched method)</a>
 </li>
       </ul></li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.get_mu">get_mu() (operator.op_gen method)</a>
+</li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.get_name">get_name() (simulator.alg_plotter method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.get_op">get_op() (system.generic.opt_system_interface method)</a>
@@ -895,6 +1104,12 @@
       </ul></li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.get_psi_13">get_psi_13() (iqc.iqc_loop_factored method)</a>
 </li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_interface.get_same">get_same() (operator.op_sml_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/operators/doc_operators.html#operator.operator_interface.get_same">(operator.operator_interface method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.get_storage">get_storage() (system.generic.lmi_synthesis_interface method)</a>
 
       <ul>
@@ -945,9 +1160,21 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/operators/doc_operators.html#operator.operator_interface.id">id (operator.operator_interface attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.id">(spec.spec_interface attribute)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.impose_X">impose_X (config.opt_config_gen attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.ind_same">ind_same (iqc.iqc_data_container attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_passivity.ind_w">ind_w (spec.spec_passivity attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_passivity.ind_z">ind_z (spec.spec_passivity attribute)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_notu">index_notu() (plant.genplant.genplant method)</a>
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_analysis.index_specs">index_specs() (manager.opt_analysis method)</a>
 
@@ -955,6 +1182,18 @@
         <li><a href="pages/documentation/doc_manager.html#manager.opt_synthesis.index_specs">(manager.opt_synthesis method)</a>
 </li>
       </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_w">index_w() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_wp">index_wp() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_y">index_y() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_z">index_z() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_zp">index_zp() (plant.genplant.genplant method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.input_diss">input_diss (config.opt_config_tol attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.iqc">iqc (iqc.iqc_data_container attribute)</a>
@@ -963,8 +1202,6 @@
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container">iqc_data_container (class in iqc)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.iqc_data_container">iqc_data_container() (iqc.iqc_data_container method)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored">iqc_loop_factored (class in iqc)</a>
@@ -984,6 +1221,10 @@
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.iqc_op_all">iqc_op_all() (manager.opt_manager_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#manager.diss_data.iqc_rob">iqc_rob (manager.diss_data attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.iwp">iwp (spec.spec_interface attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.izp">izp (spec.spec_interface attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1007,14 +1248,32 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_interface.L">L (operator.op_sml_interface attribute)</a>
+</li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.l2_stability">l2_stability() (system.generic.lmi_dispatch_interface method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_interface.L_top">L_top (operator.op_sml_interface attribute)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.lft">lft() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.lft">(plant.genplant.genplant_poly method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.lft_lower">lft_lower() (plant.genplant.genplant method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.lft_upper">lft_upper() (plant.genplant.genplant method)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.lift">lift() (iqc.iqc_loop_factored method)</a>
 
       <ul>
         <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.lift">(iqc.iqc_loop_split method)</a>
 </li>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.lift">(plant.genplant.genplant method)</a>
+</li>
       </ul></li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.LINEAR">LINEAR (operator.op_gen attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.lmi">lmi (manager.opt_manager_interface attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_analysis_interface">lmi_analysis_interface (class in system.generic)</a>
@@ -1037,14 +1296,14 @@
 </li>
       <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_analysis_switched.lmi_analysis_switched">lmi_analysis_switched() (system.switched.lmi_analysis_switched method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface">lmi_dispatch_interface (class in system.generic)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.lmi_dispatch_interface">lmi_dispatch_interface() (system.generic.lmi_dispatch_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface">lmi_synthesis_interface (class in system.generic)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.lmi_synthesis_interface">lmi_synthesis_interface() (system.generic.lmi_synthesis_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti">lmi_synthesis_lti (class in system.lti)</a>
@@ -1070,6 +1329,8 @@
       <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched">lmi_synthesis_switched (class in system.switched)</a>
 </li>
       <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.lmi_synthesis_switched">lmi_synthesis_switched() (system.switched.lmi_synthesis_switched method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_operators.html#operator.operator_interface.LMILAB">LMILAB (operator.operator_interface attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config.LMILAB">LMILAB() (config.opt_config method)</a>
 
@@ -1098,7 +1359,13 @@
 </li>
         <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.M">(iqc.iqc_loop_split attribute)</a>
 </li>
-        <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.M">(simulator.op_sim.op_sim_quad attribute)</a>
+      </ul></li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_interface.m">m (operator.op_sml_interface attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.M">M (simulator.op_sim.op_sim_quad attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_quad.M">(spec.spec_quad attribute)</a>
 </li>
         <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.opt_system_periodic_orbit.M">(system.periodic_orbit.opt_system_periodic_orbit attribute)</a>
 </li>
@@ -1161,9 +1428,11 @@
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.ns">ns() (system.generic.regulator_interface method)</a>
 </li>
-      <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.Nss">Nss() (system.generic.opt_system_interface method)</a>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.Nss">Nss() (plant.genplant.genplant_poly method)</a>
 
       <ul>
+        <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.Nss">(system.generic.opt_system_interface method)</a>
+</li>
         <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_analysis_periodic.Nss">(system.periodic.lmi_analysis_periodic method)</a>
 </li>
         <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.Nss">(system.periodic.lmi_synthesis_periodic method)</a>
@@ -1177,14 +1446,28 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.nu">nu (plant.genplant.genplant attribute)</a>
+</li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.nu">nu() (system.generic.opt_system_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.null_reg_all">null_reg_all() (system.generic.regulator_interface method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.nw">nw (plant.genplant.genplant attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.nw">nw() (iqc.iqc_loop_factored method)</a>
 
       <ul>
         <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.nw">(iqc.iqc_loop_split method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.nwp">nwp (plant.genplant.genplant attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.nwp">nwp() (spec.spec_interface method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.nx">nx() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.nx">(plant.genplant.genplant_poly method)</a>
 </li>
       </ul></li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.nx1">nx1() (iqc.iqc_loop_split method)</a>
@@ -1203,7 +1486,11 @@
         <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.nxn">(system.switched.opt_system_switched method)</a>
 </li>
       </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.ny">ny (plant.genplant.genplant attribute)</a>
+</li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.ny">ny() (system.generic.opt_system_interface method)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.nz">nz (plant.genplant.genplant attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.nz">nz() (iqc.iqc_loop_factored method)</a>
 
@@ -1211,6 +1498,10 @@
         <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.nz">(iqc.iqc_loop_split method)</a>
 </li>
       </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.nzp">nzp (plant.genplant.genplant attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.nzp">nzp() (spec.spec_interface method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1218,6 +1509,22 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.op">op (system.generic.opt_system_interface attribute)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen">op_gen (class in operator)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.op_gen">op_gen() (operator.op_gen method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_pcc">op_pcc (class in operator)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_pcc.op_pcc">op_pcc() (operator.op_pcc method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_quadratic.html#operator.op_quad">op_quad (class in operator)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_quadratic.html#operator.op_quad.op_quad">op_quad() (operator.op_quad method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_quadratic.html#operator.op_quad_causal">op_quad_causal (class in operator)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_quadratic.html#operator.op_quad_causal.op_quad_causal">op_quad_causal() (operator.op_quad_causal method)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim">op_sim (class in simulator.op_sim)</a>
 </li>
@@ -1243,6 +1550,24 @@
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_quad.op_sim_quad">op_sim_quad() (simulator.op_sim.op_sim_quad method)</a>
 </li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml">op_sml (class in operator)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml.op_sml">op_sml() (operator.op_sml method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_causal">op_sml_causal (class in operator)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_causal.op_sml_causal">op_sml_causal() (operator.op_sml_causal method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_interface">op_sml_interface (class in operator)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_interface.op_sml_interface">op_sml_interface() (operator.op_sml_interface method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_operators.html#operator.operator_interface">operator_interface (class in operator)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_operators.html#operator.operator_interface.operator_interface">operator_interface() (operator.operator_interface method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_analysis">opt_analysis (class in manager)</a>
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_analysis.opt_analysis">opt_analysis() (manager.opt_analysis method)</a>
@@ -1259,8 +1584,6 @@
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.opt_config_gen">opt_config_gen() (config.opt_config_gen method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_syn">opt_config_syn (class in config)</a>
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_syn.opt_config_syn">opt_config_syn() (config.opt_config_syn method)</a>
@@ -1311,12 +1634,22 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.P">P (system.generic.opt_system_interface attribute)</a>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.P">P (plant.genplant.genplant attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.P">(system.generic.opt_system_interface attribute)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_analysis_lti.p2p">p2p() (system.lti.lmi_analysis_lti method)</a>
 
       <ul>
         <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti.p2p">(system.lti.lmi_synthesis_lti method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_channel_delay.P_names">P_names() (plant.bridge_prototypes.bridge_channel_delay method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_pass_through.P_names">(plant.bridge_prototypes.bridge_pass_through method)</a>
 </li>
       </ul></li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.param">param (simulator.alg_sim_out attribute)</a>
@@ -1325,6 +1658,36 @@
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.passivity">passivity() (system.generic.lmi_dispatch_interface method)</a>
 </li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.perf_ergodic">perf_ergodic() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.perf_ergodic">(plant.genplant.genplant_poly method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.perf_output_con">perf_output_con() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.perf_output_con">(plant.genplant.genplant_poly method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.perf_output_opt">perf_output_opt() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.perf_output_opt">(plant.genplant.genplant_poly method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.perf_output_w">perf_output_w() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.perf_output_w">(plant.genplant.genplant_poly method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.perf_output_z">perf_output_z() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.perf_output_z">(plant.genplant.genplant_poly method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.perf_specs">perf_specs() (manager.opt_manager_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.opt_system_periodic.periodic_lift">periodic_lift() (system.periodic.opt_system_periodic method)</a>
@@ -1347,6 +1710,8 @@
         <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.Pi">(system.generic.regulator_interface attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.Pi_basis">Pi_basis (system.generic.regulator_interface attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.Pibar">Pibar() (system.lti.lmi_synthesis_lti_reduced_order method)</a>
@@ -1359,8 +1724,6 @@
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot">plot() (simulator.alg_plotter method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_3_err">plot_3_err() (simulator.alg_plotter method)</a>
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.plot_3_sq_err">plot_3_sq_err() (simulator.alg_plotter method)</a>
@@ -1395,6 +1758,10 @@
         <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.lmi_synthesis_periodic_orbit_reduced_order.process_recovery">(system.periodic_orbit.lmi_synthesis_periodic_orbit_reduced_order method)</a>
 </li>
       </ul></li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.prop">prop (operator.op_gen attribute)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_set_valued.html#operator.op_gen.prop_count">prop_count() (operator.op_gen method)</a>
+</li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.Psi1">Psi1 (iqc.iqc_loop_factored attribute)</a>
 
       <ul>
@@ -1495,10 +1862,10 @@
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.reg_cl_out.reg_cl_out">reg_cl_out() (system.generic.reg_cl_out method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.reg_K_sys_all">reg_K_sys_all() (system.generic.regulator_interface method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.reg_K_sys_indiv">reg_K_sys_indiv() (system.generic.regulator_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.reg_K_sys_next">reg_K_sys_next() (system.generic.regulator_interface method)</a>
@@ -1536,6 +1903,12 @@
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.res_z">res_z (simulator.alg_sim_out attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#manager.diss_data.rho">rho (manager.diss_data attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.rho">(spec.spec_interface attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.rhotrafo">rhotrafo() (plant.genplant.genplant method)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.rotate">rotate (iqc.iqc_data_container attribute)</a>
 </li>
@@ -1553,10 +1926,18 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.s">s (plant.genplant.genplant attribute)</a>
+</li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.reg_cl_out.S">S (system.generic.reg_cl_out attribute)</a>
 
       <ul>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.S">(system.generic.regulator_interface attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_interface.same">same() (operator.op_sml_interface method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/operators/doc_operators.html#operator.operator_interface.same">(operator.operator_interface method)</a>
 </li>
       </ul></li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.sampler">sampler (simulator.alg_sim attribute)</a>
@@ -1567,7 +1948,21 @@
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.separate_performance_output">separate_performance_output() (system.generic.lmi_dispatch_interface method)</a>
 </li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_e2e.set_p">set_p() (spec.spec_e2e method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.set_p">(spec.spec_interface method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_l2.set_p">(spec.spec_l2 method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_passivity.set_p">(spec.spec_passivity method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.set_tol">set_tol() (manager.opt_manager_interface method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_operators.html#operator.operator_interface.sid">sid() (operator.operator_interface method)</a>
+</li>
+      <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_interface.sigma">sigma() (operator.op_sml_interface method)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.sim">sim() (simulator.alg_sim method)</a>
 
@@ -1593,30 +1988,88 @@
 </li>
       <li><a href="pages/documentation/system/doc_system.html#manager.diss_data.spec">spec (manager.diss_data attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_e2e">spec_e2e (class in spec)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_e2e.spec_e2e">spec_e2e() (spec.spec_e2e method)</a>
+</li>
+      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.spec_ind">spec_ind (config.bisect_opts attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface">spec_interface (class in spec)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.spec_interface">spec_interface() (spec.spec_interface method)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_l2">spec_l2 (class in spec)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_l2.spec_l2">spec_l2() (spec.spec_l2 method)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_passivity">spec_passivity (class in spec)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_passivity.spec_passivity">spec_passivity() (spec.spec_passivity method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/doc_config.html#config.bisect_opts.spec_ind">spec_ind (config.bisect_opts attribute)</a>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_quad">spec_quad (class in spec)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_quad.spec_quad">spec_quad() (spec.spec_quad method)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_stability">spec_stability (class in spec)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_stability.spec_stability">spec_stability() (spec.spec_stability method)</a>
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.specs">specs (manager.opt_manager_interface attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.spread">spread (config.opt_config_tol attribute)</a>
 </li>
-      <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.ss_zy_wu">ss_zy_wu() (system.generic.opt_system_interface method)</a>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.ss">ss() (plant.genplant.genplant method)</a>
 
       <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.ss">(plant.genplant.genplant_poly method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.ss_zy_wu">ss_zy_wu() (plant.genplant.genplant method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant_poly.ss_zy_wu">(plant.genplant.genplant_poly method)</a>
+</li>
+        <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.ss_zy_wu">(system.generic.opt_system_interface method)</a>
+</li>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.ss_zy_wu">(system.generic.regulator_interface method)</a>
 </li>
         <li><a href="pages/documentation/system/doc_periodic_orbit.html#system.periodic_orbit.regulator_periodic_orbit.ss_zy_wu">(system.periodic_orbit.regulator_periodic_orbit method)</a>
 </li>
       </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.ssdata">ssdata() (plant.genplant.genplant method)</a>
+</li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.stability">stability() (system.generic.lmi_dispatch_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.storage_block">storage_block() (system.generic.lmi_synthesis_interface method)</a>
 </li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_e2e.supply">supply() (spec.spec_e2e method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.supply">(spec.spec_interface method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_l2.supply">(spec.spec_l2 method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_passivity.supply">(spec.spec_passivity method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_quad.supply">(spec.spec_quad method)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.supply_block">supply_block() (system.generic.lmi_dispatch_interface method)</a>
 
       <ul>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.supply_block">(system.generic.lmi_synthesis_interface method)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_e2e.supply_quad">supply_quad() (spec.spec_e2e method)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.supply_quad">(spec.spec_interface method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_l2.supply_quad">(spec.spec_l2 method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_passivity.supply_quad">(spec.spec_passivity method)</a>
 </li>
       </ul></li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config.switched">switched (config.opt_config attribute)</a>
@@ -1647,6 +2100,8 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.target">target (spec.spec_interface attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.task">task (iqc.iqc_data_container attribute)</a>
 
       <ul>
@@ -1654,6 +2109,8 @@
 </li>
       </ul></li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_l1_hard.tau">tau (simulator.op_sim.op_sim_l1_hard attribute)</a>
+</li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.tf">tf() (plant.genplant.genplant method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.reg_cl_out.Th">Th (system.generic.reg_cl_out attribute)</a>
 </li>
@@ -1667,8 +2124,14 @@
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.tracking">tracking (system.generic.opt_system_interface attribute)</a>
 </li>
-      <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.type">type (system.generic.opt_system_interface attribute)</a>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Ts">Ts() (plant.genplant.genplant method)</a>
 </li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.type">type (spec.spec_interface attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.type">(system.generic.opt_system_interface attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1698,7 +2161,11 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.vars">vars (manager.opt_manager_interface attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.vars">(spec.spec_interface attribute)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.verbose">verbose (config.opt_config_gen attribute)</a>
 </li>
   </ul></td>

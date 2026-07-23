@@ -23,7 +23,7 @@ The algorithmic interconnection is
 \begin{align*}
 w_k & \in F_k(z_k), \,  \\
  \mat{c}{x^N_{k+1} \hl z_k \\ y_k} &= \mat{c|cc}{A_{\textrm{mode}(k)} & B_{\textrm{mode}(k), \,  z} & B_{\textrm{mode}(k), \,  u} \hl 
-C_{\textrm{mode}(k), \,  z} & D_{\textrm{mode}(k), \,  zd} & D_{\textrm{mode}(k), \,  zu} \\ C_{\textrm{mode}(k), \,  y} & D_{\textrm{mode}(k), \,  yd} & D_{\textrm{mode}(k), \,  yu}} \mat{c}{x_k^N \hl z_k \\ u_k}, \\
+C_{\textrm{mode}(k), \,  z} & D_{\textrm{mode}(k), \,  zd} & D_{\textrm{mode}(k), \,  zu} \\ C_{\textrm{mode}(k), \,  y} & D_{\textrm{mode}(k), \,  yd} & D_{\textrm{mode}(k), \,  yu}} \mat{c}{x_k^N \hl w_k \\ u_k}, \\
  \mat{c}{\xi_{k+1} \\ y_k} &=  \mat{c|c}{A_{K, \textrm{mode}(k)} & B_{K, \textrm{mode}(k)} \hl C_{K, \textrm{mode}(k)} & D_{K, \textrm{mode}(k)} } \mat{c}{\xi_k \\ y_k}
 \end{align*}
 ``` 
