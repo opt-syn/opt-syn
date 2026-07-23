@@ -20,6 +20,7 @@ Analysis and Synthesis follow similar workflows:
 
 ## Optimization  Example Setup
 
+(#optimization-example-setup)
 We provide an example for analysis and synthesis of a composite optimization algorithm with two operators,
 ```{math}
 \beta^* \in \argmin_{\beta \in \R^c} f_1(\beta) + f_2(\beta),
@@ -28,18 +29,26 @@ We provide an example for analysis and synthesis of a composite optimization alg
 An optimal point $\beta$ must satisfy the necessary inclusion condition $0 \in \partial f_1(\beta) + \partial f_2(\beta)$. 
 
 
-An instance of this type of composite optimization problem is the [LASSO](https://en.wikipedia.org/wiki/Lasso_(statistics)) task in regression
 
-```{math}
-\beta \in \argmin_{||\beta||_1 \leq \tau } f_1(\beta).
-```
 
-The class of functions $\F$ we consider in this demonstration are
-1. $f_1$ is proper, closed, $m$-strongly convex, and has $L$-Lipschitz gradients with parameters $0 < m < L< \infty$; 
+The class of operators $\F$ we consider in this demonstration are subdifferentials $F(z) = \partial (f_1(z_1) + f_2(z_2))$ such that 
+1. $f_1$ is  $m$-strongly convex, has $L$-Lipschitz gradients with parameters $0 < m < L< \infty$, and is globally defined; 
 2. $f_2$ is the $0/\infty$ indicator function of a closed, nonempty, convex set $\mathcal{Z}$.
 
 As a result, $\beta^*$ exists and is unique for each pair $(f_1, f_2) \in \F$.
 
+
+An instance of this type of composite optimization problem is the [LASSO](https://en.wikipedia.org/wiki/Lasso_(statistics)) task in regression
+
+```{math}
+\beta^* \in \argmin_{||\beta||_1 \leq \tau } f_1(\beta),
+```
+
+which can be expressed in terms of an indicator function as 
+
+```{math}
+\beta^* \in  f_1(\beta) + \mathbf{I}_{\norm{\cdot}_1 \leq \tau}(\beta),
+```
 ## Analysis 
 
 The Projected Gradient Descent (PGD) algorithm with stepsize $\gamma > 0$ is the iterative procedure
