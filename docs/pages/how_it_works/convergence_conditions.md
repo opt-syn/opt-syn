@@ -26,9 +26,9 @@ z^* &= \1 \otimes \beta^*, & w^* &= N\hat{w}^*, &  F(\1 \otimes \beta^*) &= N \h
 
 ## Conditions
 
-Let $\F$ be an operator class under the following conditions:
+Our convergence conditions are based on the  operator class $\F$ satisfying
 1. There is a known linear map $\Delta$ with $\Delta \in \F$,
-2. Each $F \in \F$ has a unique pair $(\beta^*, \hat{w}^*)$ satisfying $F(\1 \otimes \beta^*) = N \hat{w}^*$.
+2. Each $F \in \F$ has a unique pair $(\beta^*, \hat{w}^*)$ such that $F(\1 \otimes \beta^*) = N \hat{w}^*$.
 
 Uniqueness requires that the map $z \mapsto 0 $ is not in $\F$. 
 
@@ -48,6 +48,12 @@ Sufficient conditions for a well-posed algorithm $(F, G)$ to be linearly converg
 \end{align}
 ```
 
+The Regulation Equation requirement implies the existence of an $x^*$ for any valid $(w^*, z^*)$ satisfying the fixed point relation 
+```{math}
+\begin{align}
+\Acl x^* + \Bcl w^* - x^* &= 0, & z^* = \Ccl x^* + \Dcl w^*
+\end{align}
+```
 
 If these two conditions hold, then 
 ```{math}
@@ -59,12 +65,7 @@ If these two conditions hold, then
 
 These sufficient conditions are also  necessary if $\Acl + \Bcl (I - \Dcl \Delta)^{-1} \Dcl \Ccl$ is Schur (all eigenvalues have absolute value below 1). 
 
-The Regulation Equation requirement implies the existence of an $x^*$ for any valid $(w^*, z^*)$ satisfying the fixed point relation 
-```{math}
-\begin{align}
-\Acl x^* + \Bcl w^* - x^* &= 0, & z^* = \Ccl x^* + \Dcl w^*
-\end{align}
-```
+
 
 The Convergence criterion is a dynamical test, and will be verified using Integral Quadratic Constraints and Linear Matrix Inequality methods. The Regulator Equation can be easily checked by solving a system of equations.
 

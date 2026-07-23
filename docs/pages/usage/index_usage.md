@@ -11,6 +11,6 @@ Simulation <simulation>
 ```
 
 
-All code is written in object-oriented MATLAB. The {doc}`Documentation <../documentation/index_documentation>` page contains details about each class and function.
+All code is written in object-oriented MATLAB. The {doc}`Documentation <../documentation/index_documentation>` page contains details about each object and function.
 
 

@@ -23,7 +23,6 @@ Simulation routines are explored in the  {doc}`Simulation <../usage/simulation>`
 
 The operators are defined by `op_sim` classes. Each operator $F$ has three core routines:
 
-
 ```{list-table}
 :header-rows: 1
 
@@ -41,8 +40,6 @@ The operators are defined by `op_sim` classes. Each operator $F$ has three core 
   - $z \mapsto f(z)$
 ```
 Function evaluation is supported if the operator $F$ is the subdifferential of a function $f$. When $F$ is the psuedogradient of a game with multiple agents, $f$ can be defined as the vector of payoff functions for each agent. If $f$ is undefined, then `f` returns the empty set `[]`. 
-
-
 
 ```{eval-rst}
 .. mat:automodule :: simulator.op_sim
