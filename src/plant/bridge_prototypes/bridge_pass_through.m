@@ -1,12 +1,16 @@
 classdef bridge_pass_through < genplant
     %BRIDGE_PASS_THROUGH no network dynamics, no performance channels
-    
+    %the simplest possible direct connection from the controller to the
+    %operator. 
 
     
     methods
         function obj = bridge_pass_through(s, c)
-            %BRIDGE_PASS_THROUGH Construct an instance of this class
-            %   Detailed explanation goes here
+            %BRIDGE_PASS_THROUGH Constructor
+            %
+            %Args:
+            %   s (int): number of operators (including repetitions in bind)
+            %   c (int): kronecker coordinate lift
             if nargin == 1
                 c=1;
             end
@@ -29,6 +33,15 @@ classdef bridge_pass_through < genplant
 
 
         function [InputName, OutputName] = P_names(obj, s, c)
+            %P_NAMES label the input and output signals
+            %
+            %Args:
+            %   s (int): number of operators (including repetitions in bind)
+            %   c (int): kronecker coordinate lift
+            %
+            %Returns:
+            %   InputName (cell of char):  names of inputs 
+            %   OutputName (cell of char): names of outputs
             InputName = cell(2*s, 1);
             OutputName = cell(2*s, 1);
             for i = 1:(2*s)
@@ -44,12 +57,7 @@ classdef bridge_pass_through < genplant
                 end
             end
         end
-        
-        function Eo = E(obj)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            Eo = obj.A;
-        end
+       
     end
 end
 

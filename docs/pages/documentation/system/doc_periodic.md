@@ -20,7 +20,7 @@ The algorithmic interconnection for a periodic system is
 \begin{align*}
 w_k & \in F_k(z_k), \,  \\
  \mat{c}{x^N_{k+1} \hl z_k \\ y_k} &= \mat{c|cc}{A_{k} & B_{k, \,  z} & B_{k, \,  u} \hl 
-C_{k, \,  z} & D_{k, \,  zd} & D_{k, \,  zu} \\ C_{k, \,  y} & D_{k, \,  yd} & D_{k, \,  yu}} \mat{c}{x_k^N \hl z_k \\ u_k}, \\
+C_{k, \,  z} & D_{k, \,  zd} & D_{k, \,  zu} \\ C_{k, \,  y} & D_{k, \,  yd} & D_{k, \,  yu}} \mat{c}{x_k^N \hl w_k \\ u_k}, \\
  \mat{c}{\xi_{k+1} \\ y_k} &=  \mat{c|c}{A_{K, k} & B_{K, k} \hl C_{K, k} & D_{K, k} } \mat{c}{\xi_k \\ y_k}
 \end{align*}
 ``` 

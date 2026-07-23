@@ -26,10 +26,10 @@ IQC synthesis requires filters in which the dimensions of $(p^\psi, q^\psi)$ and
 
 ```{math}
 \begin{align}
-        \Psi = \mat{cc}{\Psi_1 & \Psi_3 \\ 0 & \Psi_2}: & & \mat{c}{\psi^1_{k+1} \\ \psi^2_{k+1} \hl p^\psi_{k} \\ q^\psi_{k}} =  \mat{cc|cc}{A_1 & 0 & B_1 & 0 \\
-        0 & A_2 & 0 & B_2 \hl
-        C_1 & C_3 & D_1 & D_3 \\
-        0 & C_2 & 0 & D_2 
+        \Psi = \mat{cc}{\hat \Psi_1 & \hat \Psi_3 \\ 0 & \hat \Psi_2}: & & \mat{c}{\psi^1_{k+1} \\ \psi^2_{k+1} \hl p^\psi_{k} \\ q^\psi_{k}} =  \mat{cc|cc}{\hat A_1 & 0 &\hat  B_1 & 0 \\
+        0 & \hat A_2 & 0 & \hat B_2 \hl
+        \hat C_1 & \hat C_3 & \hat D_1 & \hat D_3 \\
+        0 & \hat C_2 & 0 & \hat D_2 
 }  \mat{c}{\psi^1_{k+1} \\ \psi^2_{k+1} \hl p_k \\ q_k}.
 \end{align}
 ```

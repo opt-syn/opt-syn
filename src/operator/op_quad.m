@@ -1,13 +1,12 @@
 classdef op_quad < op_sml
-    %OP_QUAD quadratic function 1/2 x' Q x, with eigenvalues of Q between
+    %OP_QUAD a gradient of a quadratic function 1/2 x' Q x, with eigenvalues of Q between
     %  m and L.
     
  
     
     methods
         function obj = op_quad(m, L, c)
-            %OP_QUAD Construct an instance of this class
-            %   Detailed explanation goes here
+            %OP_QUAD Constructor
             if nargin < 3
                 c = 0;
             end
@@ -17,12 +16,17 @@ classdef op_quad < op_sml
         
 
        function cons = filter_constraints(obj, cons, order, vars, rho_sched, iqc)
-            %FILTER_CONSTRAINTS constraints on the filter coefficients            
+            %FILTER_CONSTRAINTS constraints on the filter coefficients                        
+            %positive-real constraints with terminal cost
+            %
+            %Args:
+            %   cons:   accumulated constraints
+            %   vars:   variables of the problem             
+            %   rho_sched:  which times should be discounted
+            %   iqc_out:    the IQC under consideration            
+            %Returns:
+            %   cons:   accumulated constraints
 
-            %Positive-Real constraints with terminal cost
-            %
-            %but positive realness isn't imposed here?
-            %
             if isscalar(order)
                 order = [order, 0];
             end

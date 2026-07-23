@@ -1,6 +1,8 @@
 classdef spec_p2p < spec_interface
-    %SPEC_P2P specification for a peak to peakgain
+    %SPEC_P2P specification for a peak to peak gain
     %
+    %In development
+
     %sup_{T >= 0} norm(zp_k, 2)/norm(wp_k, 2) < gain
     %
     %
@@ -8,10 +10,9 @@ classdef spec_p2p < spec_interface
 
 
 
-    properties
-        type='p2p';
-        gain = 1;
-        weight = 0.5; 
+    properties        
+        gain = 1; %peak to peak gain
+        weight = 0.5; %
     end
 
     methods
@@ -23,11 +24,17 @@ classdef spec_p2p < spec_interface
             % end            
             obj@spec_interface(iwp, izp);
             obj.gain = GAIN;
+            obj.type = 'p2p';
         end
 
         function M = supply(obj, vars_spec)
             %SUPPLY quadratic performance specification
-            %for passivity indices
+            %
+            %Args:
+            %   vars_spec: problem variables in specification
+            %
+            %Returns:
+            %   M: quadratic running cost matrix in the specification
 
             M0 = -obj.gain;
 
@@ -35,24 +42,24 @@ classdef spec_p2p < spec_interface
         end
 
         function quad = quad_terminal(obj, vars_spec)
-            %matrix for  the terminal p2p expression
+            %QUAD_TERMINAL matrix for  the terminal p2p expression
+            %
+            %Args:
+            %   vars_spec: problem variables in specification
+            %
+            %Returns:
+            %   quad (quad_param): decomposed terminal quadratic specification
+
             %
             nwp = length(obj.iwp);
             nzp = length(obj.izp);
 
-            % if obj.target
-            %     Q0 = -(vars_spec.gam_p2p - vars_spec.mu_p2p);
-            %     U0 = 1;
-            %     Q_term = drep(Q0, nwp);
-            %     U_term = drep(U0, nzp);
-            % else
                 
                 Q0 =  -(vars_spec.mu_p2p - vars_spec.gam_p2p);
                 U0 = vars_spec.gam_p2p;
                 Q_term = drep(Q0, nwp);
                 U_term = drep(U0, nzp);
-                % 
-            % end
+ 
 
             T_term = eye(nzp);
             S_term = zeros(nzp, nwp);
@@ -62,7 +69,13 @@ classdef spec_p2p < spec_interface
        end
 
        function [quad, objective] = supply_quad(obj, vars_spec)
-           %SUPPLY_QUAD decomposed quadratic performance specification
+            %SUPPLY_QUAD decomposed quadratic performance specification
+            %
+            %Args:
+            %   vars_spec: problem variables in specification
+            %
+            %Returns:
+            %   quad (quad_param): decomposed quadratic specification
 
            
                nwp = length(obj.iwp);
@@ -89,7 +102,15 @@ classdef spec_p2p < spec_interface
 
         function [vars, cons] = create_vars(obj, cons, name, config)
             %CREATE_VARS form the variables for the problem                        
-            
+            %Args:                        
+            %   cons:  accumulated constraints            
+            %   name: name of the specification
+            %   config (opt_config): configuration options
+            %
+            %Returns:
+            %   vars:  problem variables in specification
+            %   cons:  accumulated constraints
+
             if nargin < 3
                 name = [];
             end

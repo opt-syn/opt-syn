@@ -1,6 +1,6 @@
 classdef spec_interface
-    %SPEC performance specification for an optimization algorithm system    
-    %
+    %SPEC_INTERFACE performance specification for an optimization algorithm system    
+    
     %default: stability
     %others include:
     %   energy to energy gain (ell 2)
@@ -14,22 +14,19 @@ classdef spec_interface
     properties
         iwp = [];    %indices for performance input
         izp = [];    %indices for performance output        
-        vars;                        
-        id = 0;
+        vars;        %variables in the specifications               
+        id = 0;      %identifier/index of the specification
         target = false; %should this be the target of optimization (within 
-                        %bisection iterations)?
-        
+                        %bisection iterations)?        
         rho = 1; %exponential discounting of specification
+        type = 'generic'; %type of specification
     end
     
     methods
         function obj = spec_interface(iwp, izp)
-            %OPT_PERFORMANCE a performance specification for the IQC
-            %analysis.
+            %SPEC_INTERFACE Constructor
             %
-            %Input:
-            %   type:   the specification (e.g. 'stability', 'e2e')
-            %   bound:  the current value of the bound
+            %Args:            
             %   iwp:    performance inputs in the network    
             %   izp:    performance outputs in the network            
 
@@ -37,11 +34,7 @@ classdef spec_interface
                 obj.iwp = iwp;
                 obj.izp = izp;
             end
-            % if nargin > 2
-            %     obj.rho = rho;
-            % end
-            
-            
+                       
         end
 
 
@@ -55,13 +48,30 @@ classdef spec_interface
             nwwp = length(obj.iwp);
         end
 
-        function [vars, cons] = create_vars(obj, cons, name, config)
-            %CREATE_VARS form the variables for the problem            
-            vars = [];            
+        function [vars_spec, cons] = create_vars(obj, cons, name, config)
+            %CREATE_VARS form the variables for the problem
+            %
+            %Args:                        
+            %   cons:  accumulated constraints            
+            %   name: name of the specification
+            %   config (opt_config): configuration options
+            %
+            %Returns:
+            %   vars:  problem variables in specification
+            %   cons:  accumulated constraints
+
+            vars_spec = [];            
         end
 
         function [M] = supply(obj, vars_spec)
             %SUPPLY quadratic performance specification
+            %
+            %Args:
+            %   vars_spec: problem variables in specification
+            %
+            %Returns:
+            %   M: quadratic running cost matrix in the specification
+
             M = [];
         end
 
@@ -69,17 +79,22 @@ classdef spec_interface
 
         function [quad, objective] = supply_quad(obj, vars_spec)
             %SUPPLY_QUAD decomposed quadratic performance specification
+            %
+            %Args:
+            %   vars_spec: problem variables in specification
+            %
+            %Returns:
+            %   quad (quad_param): decomposed quadratic specification
 
             M = obj.supply(vars_spec);
             objective = 0;
             if isempty(M)
-                quad = struct('Q', [], 'S', [], 'U', [], 'T', []);
+                quad = quad_param();                
             else
                 nzp = length(obj.izp);
                 nwp = length(obj.iwp);
                 quad = quad_objective_decomp(M, 1:nzp, nzp + (1:nwp));
-
-                % quad = struct('Q', Qq, 'S', Sq, 'U', Uq, 'T', Tq);
+                
             end
             
         end
@@ -88,9 +103,11 @@ classdef spec_interface
         function [obj] = set_p(obj, p)
             %SET_P set a parameter when performing bisection
             %
+            %Args:
+            %   p: new value of the parameter
             %
-            %Example: Peak-to-Peak norm certifier
-            %or l2 Gain bound
+            %Example: 
+            %   convergence rate rho or l2 gain bound
             
         end
 

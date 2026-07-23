@@ -1,21 +1,27 @@
 classdef op_gen  < operator_interface
-    %OP_GEN a general operator, that may not be the subdifferential of a
-    % function in SmL    
+    %OP_GEN a general operator set-valued map
     
     
     properties
         LINEAR = false;             %is the operator a linear map?
         prop = {'monotone', 0};     %properties of the operator
-                                    %monotone
-                                    %cocoercive
-                                    %lipschitz
-                                    %inverse lipschitz              
+                                    %   monotone
+                                    %   cocoercive
+                                    %   lipschitz
+                                    %   inverse lipschitz              
     end
     
     methods
         function obj = op_gen(prop, c)
             %OP_GEN Construct a general operator (possibly a set-valued
-            %map that does not have a potential function)            
+            %map that does not have a potential function) 
+            %
+            %Args:
+            %   prop (cell): list of properties, keyword in odd indices, value in
+            %           even indices
+            %   c:  dimension of coordinate lift
+
+
             if nargin < 2
                 c = 1;
             end
@@ -30,12 +36,18 @@ classdef op_gen  < operator_interface
         end
 
         function pc = prop_count(obj)
-            %PROP_COUNT: count the number of properties
+            %PROP_COUNT count the number of properties     
+            %
+            %Returns:
+            %   pc:     number of properties
               pc = size(obj.prop, 1);
         end
              
         function mu = get_mu(obj)
             %GET_MU get the (strong) monotonicity parameter
+            %
+            %Returns:
+            %   mu:     strong monotonicity parameter
             mu = [];
             for i = 1:obj.prop_count
                 if strcmp(obj.prop{i, 1}, 'monotone')
@@ -45,7 +57,14 @@ classdef op_gen  < operator_interface
         end
 
         function loop_out = build_loop(obj, reps)
-            %BUILD_LOOP construct the loop transformation  
+            %BUILD_LOOP construct the signal transformation matrix
+            %
+            %Args:
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   loop_out: signal transformation matrix for the operator
+
 
             mu = obj.get_mu();
 
@@ -58,8 +77,17 @@ classdef op_gen  < operator_interface
         end
 
         function [psi1, psi2] = build_psi(obj, vars, order, reps)
-            %BUILD_PSI construct the filter for the general operator
-            
+            %BUILD_PSI construct the filter for the general operator                        
+            %
+            %Args:
+            %   vars:   variables of the problem    
+            %   order:  order of the IQC [number of lags]
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   psi1: filter on output (causal)
+            %   psi2: filter on input (noncausal components)
+
             psi_base = obj.build_psi_fir(order, reps);
 
             psi1 = psi_base;
@@ -67,7 +95,14 @@ classdef op_gen  < operator_interface
         end
 
         function cs = csum_psi(obj, vars)
-            %A proxy to normalize the multipliers
+            %A proxy to normalize the filter coefficients, reducing degrees
+            %of freedom in the Analysis problem
+            %
+            %Args:
+            %   vars:   variables of the problem 
+            %Returns:
+            %   cs: the sum of nonnegative variables
+            
             % cs = 1;
 
             % [n, m] = dim(vars.cM);
@@ -83,7 +118,14 @@ classdef op_gen  < operator_interface
 
         function psi = build_psi_fir(obj, order, reps)
             %BUILD_PSI_FIR form the fir filter [1; z^-1; z^-2; z^-3..] 
-            % repeated by reps 
+            % repeated by repetitions in reps 
+            %
+            %Args:
+            %   order:  order of the IQC [number of lags]
+            %   reps:    number of repetitions of the operator (from the bind)
+            %Returns:
+            %   psi: the filter in the IQC
+
             if order > 0
             [Af, Bf] = block_fir(order);
             
@@ -107,11 +149,27 @@ classdef op_gen  < operator_interface
 
         function M_out = build_M(obj, vars, order, reps)
             %BUILD_M create the running cost M
+            %
+            %Args:
+            %   vars:   variables of the problem 
+            %   order:  order of the IQC [number of lags]
+            %   reps:    number of repetitions of the operator (from the bind)
+            %Returns:
+            %   M_out: the running cost
+            
             M_out = obj.build_cost(vars.cM);
         end
 
         function X_out = build_X(obj, vars, order, reps)
             %BUILD_X create the terminal cost X
+            %
+            %Args:
+            %   vars:   variables of the problem 
+            %   order:  order of the IQC [number of lags]
+            %   reps:    number of repetitions of the operator (from the bind)
+            %Returns:
+            %   X_out: the terminal cost
+
             if order > 0
                 % X_out = obj.build_cost(order*reps, vars.cX);
                 X_out = obj.build_cost(vars.cX);
@@ -122,7 +180,10 @@ classdef op_gen  < operator_interface
 
         function cost = build_cost(obj, var_curr)
             %BUILD_COST create the matrices M and X
-
+            %Args:
+            %   vars_curr: current variables (for M or X)            
+            %Returns:
+            %   cost: the cost matrix (M or X)
 
             %IQC: [g; x] with g \in F(x)
             %
@@ -191,8 +252,15 @@ classdef op_gen  < operator_interface
 
 
         function cons = filter_constraints(obj, cons, order, vars, rho_sched, iqc_out)
-            %constraints on the filter coefficients
-
+            %constraints on the filter coefficients (variables)
+            %
+            %Args:
+            %   cons:   accumulated constraints
+            %   vars:   variables of the problem             
+            %   rho_sched:  which times should be discounted
+            %   iqc_out:    the IQC under consideration            
+            %Returns:
+            %   cons:   accumulated constraints
 
             %TODO: with rho schedule
 
@@ -241,16 +309,14 @@ classdef op_gen  < operator_interface
         end
 
         function [iqc] = create_iqc_identity(obj, reps)
-            %CREATE_VARS form the IQC for the general operator
-            %identity IQC in psi
-
-            %Input:             
-            %   rep:    number of repetitions of the operator (non-frugal)
+            %CREATE_IQC_IDENTITY form a valid IQC satisfied by the general
+            %operator. This is used as a warm start in synthesis.
             %
-            %Output:
-            %   vars:   variables of the problem
-            %   cons:   constraints in the problem (in terms of the
-            %           variables directly)
+            %Args:             
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   iqc (iqc_loop_split): a valid IQC with no dynamics    
 
             if nargin < 2
                 reps = 1;
@@ -287,14 +353,12 @@ classdef op_gen  < operator_interface
         function [vars] = create_vars(obj, order, reps)
             %CREATE_VARS form the variables in an IQC
             %
-            %Input: 
+            %Args: 
             %   order:  order of the IQC [number of lags]
-            %   rep:    number of repetitions of the operator (non-frugal)
+            %   reps:    number of repetitions of the operator (from the bind)
             %
-            %Output:
-            %   vars:   variables of the problem
-            %   cons:   constraints in the problem (in terms of the
-            %           variables directly)
+            %Returns:
+            %   vars:   variables of the problem            
 
 
             if nargin < 2

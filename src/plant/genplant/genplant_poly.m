@@ -1,5 +1,6 @@
 classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
-    %GENPLANT_POLY a generalized plant defined over corners of a polytope
+    %GENPLANT_POLY a generalized plant defined over corners of a polytope.
+    %Used for switched systems
 
     
     % properties
@@ -8,9 +9,12 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
 
     methods (Access=public)
         function obj = genplant_poly(P, n)
-            %N Construct an instance of this class
-            %   Detailed explanation goes here
-            
+            %Constructor
+            %
+            %Args:
+            %   P (cell of sdpss): state space systems for each subsystem
+            %   n (struct): partition of the channels into [z, zp, y], [w, wp, u]
+
            
             obj@genplant([], n);
 
@@ -24,6 +28,15 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
 
         
         function b_out = lft(obj, b2)
+            %LFT linear fractional transformation:
+            %feedback interconnection of obj and plant b2
+            %along common channels (u, y) in each subsystem 
+            %obj star b2
+            %
+            %Args:
+            %   b2 (genplant): the other plant
+            %Returns
+            %   b_out (genplant): the lft plant
 
             % Initialize the output for the linear fractional transformation
             b_out = obj; 
@@ -49,24 +62,29 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
         end
 
         function D = Dyu(obj)
-            %get the direct feedthrough matrix
+            %controller output to controller input, direct feedthrough
             D = cellfun(@Dyu, obj.P);            
         end
 
         function Ao = A(obj)
+            %cell of A matrices in state space systems
             Ao = cellfun(@A, obj.P, 'UniformOutput',false);            
         end
         function Bo = B(obj)
+            %cell of B matrices in state space systems
             Bo = cellfun(@B, obj.P, 'UniformOutput',false);            
         end
         function Co = C(obj)
+            %cell of C matrices in state space systems
             Co = cellfun(@C, obj.P, 'UniformOutput',false);            
         end
         function Do = D(obj)
+            %cell of D matrices in state space systems
             Do = cellfun(@D, obj.P, 'UniformOutput',false);            
         end       
 
         function nxo = nx(obj)
+            %number of states
             nxo = length(obj.P{1}.A);
         end
 
@@ -80,18 +98,24 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
             P_out = cellfun(@ss, obj.P);
         end
 
-        function P_out = tf(obj)
-            P_out= ss2tf(obj.ss());
-        end
-
         function [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj, ind)
-
+            %get plant matrices for the [wu] -> [zy] subsytsem
+            %
+            %Args:
+            %   ind: the index of the subsystem to get information from
+            
             [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = obj.P{ind}.ss_zy_wu();
         end
         %% overloads
 
         function b_out = blkdiag(obj, b2)
-            %block-diagonal of two bridges
+            %block-diagonal of two plants, comporting with the indexing scheme
+            %
+            %Args:
+            %   b2 (genplant): the other plant
+            %Returns
+            %   b_out (genplant): the block diagonal plant
+
             %interleave the indices properly
 
             b_out = obj;
@@ -110,14 +134,15 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
 
         
         %% performance inputs and outputs
-
         function obj = add_oracle_input(obj, ind_w, ind_z)
-
-            %ADD_ORACLE_INPUT: add external inputs at the oracle F
+            %add external inputs at the operator F
             %
-            %z + dz \in F(w + dz) + dz
-            %ind_w: at the input of the oracle
-            %ind_z: at the output of the oracle
+            %:math:`w + \delta w \in F(z + dz)`
+            %Args:
+            %   ind_w: at the input of the operator
+            %   ind_z: at the output of the operator
+            %Return:
+            %   iwp: new performance input indices 
 
             %
             %Does not add extra outputs
@@ -132,7 +157,12 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
     
         function obj = perf_output_w(obj, ind_w)
             %PERF_OUTPUT_W: add performance to track the w output
-            
+            %
+            %Args:
+            %   ind_w: indices of the input of the operator
+            %Return:
+            %   izp: new performance output indices
+
             nnew = length(ind_w);
             obj.P = cellfun(@(p) p.perf_output_w(ind_w), obj.P);
             obj.nzp = obj.nzp + nnew;
@@ -140,9 +170,15 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
         end
 
         function obj = perf_output_opt(obj, c)
-            %PERF_OUTPUT_WSUM: add performance to track the optimality
-            %condition: sum(1'w) = 0
+            %PERF_OUTPUT_OPT add performance to track the w output
+            %condition,   
+            %Args:
+            %   ind_w: indices of the input of the operator
+            %Return:
+            %   izp: new performance output indices
             %
+
+            % :math:`z_p = \sum_{i=1}^s w^i`
             if nargin == 1
                 c = 1;
             end            
@@ -154,7 +190,12 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
 
         function obj = perf_output_z(obj, ind_z)
             %PERF_OUTPUT_Z: add performance to track the z output
-            
+            %
+            %Args:
+            %   ind_z: indices of the output of the operator
+            %Return:
+            %   izp: new performance output indices
+
             nnew = length(ind_z);
 
             obj.P = cellfun(@(p) p.perf_output_z(ind_z), obj.P, 'UniformOutput', false);
@@ -165,9 +206,15 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
         
 
         function obj = perf_output_con(obj, c, ind_z)
-            
             %PERF_OUTPUT_CON: add performance to track the consensus output
-            % norm(z)^2 (with z* = 0 by regulation)
+            % `z_p^i = z^i - \text{average}(z)`
+            %
+            %Args:
+            %   c: dimension of the coordinate/kronecker lift
+            %   iz: indices of input of operators
+            %Return:
+            %   izp: new performance output indices
+
             if nargin == 1
                 c = 1;
             end
@@ -186,7 +233,12 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
 
         function [obj, iwp, izp] = perf_ergodic(obj, Nw)
             %PERF_ERGODIC inputs and outputs for ergodic convergence
-            %Nw: given consensus matrix
+            %
+            %Args:
+            %   Nw: given consensus matrix
+            %Return:
+            %   iwp: new performance input indices
+            %   izp: new performance output indices
 
             for i = 1:obj.Nss
                 [obj.P{i}, iwp, izp] = obj.P{i}.perf_ergodic(Nw);
@@ -198,6 +250,8 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
     end
 
     methods (Access=protected)
+        
+        
         %https://de.mathworks.com/help/matlab/ref/matlab.mixin.indexing.redefinesbrace-class.html
         function P_out = braceReference(obj,ind)
            P_out = obj.P.(ind);

@@ -1,6 +1,6 @@
 classdef spec_e2e < spec_interface
     %SPEC_E2E specification for an energy to energy gain
-    %
+    
     %limsup_{T -> inf} sum_{k=0}^T norm(zp_k, 2)/norm(wp_k, 2) < gain
     %
     %
@@ -8,24 +8,32 @@ classdef spec_e2e < spec_interface
 
     
     
-    properties
-        type='e2e';
-        gain = 1;
+    properties        
+        gain = 1; %l2 gain (hard constraint)
     end
     
     methods
         function obj = spec_e2e(GAIN, iwp, izp)
-            %SPEC_E2E Construct an instance of this class
-            %   Detailed explanation goes here
-            % if nargin < 4
-            %     rho = 1;
-            % end            
+            %SPEC_E2E Constructor
+            %
+            %Args:            
+            %   iwp:    performance inputs in the network    
+            %   izp:    performance outputs in the network            
+   
             obj@spec_interface(iwp, izp);
             obj.gain = GAIN;
+            obj.type='e2e';
         end
         
         function M = supply(obj, vars_spec)
             %SUPPLY quadratic performance specification
+            %
+            %Args:
+            %   vars_spec: problem variables in specification
+            %
+            %Returns:
+            %   M: quadratic running cost matrix in the specification
+
             gamma = obj.gain;
 
             Mzp = eye(obj.nwp)/gamma;            
@@ -36,7 +44,12 @@ classdef spec_e2e < spec_interface
         end
 
        function [quad, objective] = supply_quad(obj, vars_spec)
-           %SUPPLY_QUAD decomposed quadratic performance specification
+            %SUPPLY_QUAD decomposed quadratic performance specification            %
+            %Args:
+            %   vars_spec: problem variables in specification
+            %
+            %Returns:
+            %   quad (quad_param): decomposed quadratic specification
 
            if obj.target
                nwp = length(obj.iwp);
@@ -61,9 +74,8 @@ classdef spec_e2e < spec_interface
        function [obj] = set_p(obj, p)
             %SET_P set a parameter when performing bisection
             %
-            %
-            %Example: Peak-to-Peak norm certifier
-            %or l2 Gain bound
+            %Args:
+            %   p: new value of the parameter (l2 gain)
 
             obj.gain = p;
             
@@ -71,6 +83,15 @@ classdef spec_e2e < spec_interface
 
        function [vars, cons] = create_vars(obj, cons, name, config)
             %CREATE_VARS form the variables for the problem                        
+            %
+            %Args:                        
+            %   cons:  accumulated constraints            
+            %   name: name of the specification
+            %   config (opt_config): configuration options
+            %
+            %Returns:
+            %   vars:  problem variables in specification
+            %   cons:  accumulated constraints
             if nargin < 3
                 name = [];
             end

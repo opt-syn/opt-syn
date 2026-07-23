@@ -9,7 +9,7 @@ classdef K_report_info
     end
     
     methods
-        function obj = K_report_info(inputArg1,inputArg2)
+        function obj = K_report_info()
             %K_REPORT_INFO Constructor                       
         end
 

@@ -1,9 +1,5 @@
 # Optimization Algorithms
 
-:::{caution} 
-Under Construction
-:::
-
 ## Optimization/Inclusion Problems
 
 Several problems in optimization, engineering, and economics can be phrased as finding a zero in a sum of $s$ operators

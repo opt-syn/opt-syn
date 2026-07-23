@@ -1,6 +1,6 @@
 classdef op_sml_interface < operator_interface
     %OP_SML An operator which is the subdifferential of a function in SmL:
-    %
+    
     %F = partial f, where f(x) - m norm(x, 2)^2 and L norm(x, 2)^2 - f(x)
     %are both proper, convex, and closed with -Inf < m <= L <= Inf
     %
@@ -13,16 +13,21 @@ classdef op_sml_interface < operator_interface
     % TODO: generalize to matrices m and L?
     
     properties
-        m; %convexity parameter
-        L; %smoothness parameter
+        m; %lower bound parameter
+        L; %upper bound parameter
         L_top = true; %should the L term be filtered (Lz - w)?
-        ERGODIC = false;
+        ERGODIC = false; %function value penalties?
     end
     
     methods
         function obj = op_sml_interface(m, L, c)
-            %OP_SML Construct an instance of this class
-            %   Detailed explanation goes here
+            %OP_SML_INTERFACE Constructor
+            %
+            %Args:
+            %   m: lower bound parameter
+            %   L: upper bound parameter
+            %   c: dimension of coordinate lift
+
             if nargin < 3
                 c = 1;
             end
@@ -36,19 +41,31 @@ classdef op_sml_interface < operator_interface
         % common routines
 
         function se = same(obj)
-            %SAME no loop transformation or IQC required
-            %perfectly known oracle
+            %SAME is there any uncertainty in this oracle?            
+            %
+            %Returns:
+            %   sm (bool): m=L?.
             se = obj.L == obj.m;
         end
         
         function sig = sigma(obj)            
             %SIGMA used to define all IQCs
+            %
+            %Return:
+            %   sig: 1/(L-m)
             sig = 1/(obj.L - obj.m);
         end
                
 
         function loop = build_loop(obj, reps)
-            %BUILD_LOOP construct the loop transformation
+            %BUILD_LOOP construct the signal transformation matrix
+            %
+            %Args:
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   loop_out: signal transformation matrix for the operator
+
             if obj.L_top
                 loop_base = [-obj.sigma, 1; 1, obj.m];
             else
@@ -61,7 +78,14 @@ classdef op_sml_interface < operator_interface
 
         function M_erg = ergodic_supply(obj, reps)
             %ERGODIC_SUPPLY supply rate for function value decrease
-            %ergodic convergence
+            %ergodic convergence             
+            %
+            %Args:
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   M_erg: quadratic supply for function values
+
             
             if nargin < 2
                 reps = 1;
@@ -81,16 +105,14 @@ classdef op_sml_interface < operator_interface
 
 
         function [iqc] = create_iqc_identity(obj, reps)
-            %CREATE_VARS form the IQC for the general operator
-            %identity IQC in psi
-
-            %Input:             
-            %   rep:    number of repetitions of the operator (non-frugal)
+            %CREATE_IQC_IDENTITY form a valid IQC satisfied by the general
+            %operator. This is used as a warm start in synthesis.
             %
-            %Output:
-            %   vars:   variables of the problem
-            %   cons:   constraints in the problem (in terms of the
-            %           variables directly)
+            %Args:             
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   iqc (iqc_loop_split): a valid IQC with no dynamics    
 
             if nargin < 2
                 reps = 1;
@@ -116,7 +138,19 @@ classdef op_sml_interface < operator_interface
                 iqc = iqc_orig.lift(obj.c);                
             end
         end
+
+
+
+        function sm = get_same(obj, reps)
+            %GET_SAME explicit matrix in LFT           
+            %
+            %Returns:
+            %   sm: m==L? If so, return the explicit matrix mI.
+            sm = kron(obj.m, eye(reps));
+        end
         
     end
+
+    
 end
 
