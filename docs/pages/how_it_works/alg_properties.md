@@ -2,22 +2,6 @@
 
 Desirable properties of optimization algorithms are convergence, performance,  well-posedness, and information structures. In Analysis, we aim to verify that an algorithm achieves these properties. In Synthesis, we try to generate an algorithm meeting these properties. 
 
-## Well-Posedness
-
-{#well-posedness}
-
-The interconnection $(F, G)$ may be condensed using the set-valued map $H := (F^{-1} - \Dcl)^{-1}$ as
-```{math}
-\begin{align*}
- (F, G): & & x_{k+1} &\in \Acl x_k + \Bcl H(\Ccl x_k).
-\end{align*}
-``` 
-\
-The interconnection is well-posed if  $H$ is globally defined and continuous. Well-posedness implies that the sequence $(x_k, w_k, z_k)_{k \in \N}$ exists and is unique for every  initial state $x_0$. A well-posed algorithm therefore satisfies the explicit relation $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)$ for all $k$. 
-
-
-{{osyn}} only studies well-posed algorithms. Non-well-posed algorithms such as subgradient descent and Frank-Wolfe are currently out of scope.
-
 
 
  ## Convergence
@@ -74,6 +58,24 @@ Input to state stability is a measure of robustness. It implies linear convergen
 More performance criteria are discussed in {doc}`Performance <../usage/problem_formulation/specs>`.
 
 
+## Well-Posedness
+
+{#well-posedness}
+
+The interconnection $(F, G)$ may be condensed using the set-valued map $H := (F^{-1} - \Dcl)^{-1}$ as
+```{math}
+\begin{align*}
+ (F, G): & & x_{k+1} &\in \Acl x_k + \Bcl H(\Ccl x_k).
+\end{align*}
+``` 
+\
+The interconnection is well-posed if  $H$ is globally defined and continuous. Well-posedness implies that the sequence $(x_k, w_k, z_k)_{k \in \N}$ exists and is unique for every  initial state $x_0$. A well-posed algorithm therefore satisfies the explicit relation $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)$ for all $k$. 
+
+
+{{osyn}} only studies well-posed algorithms. Non-well-posed algorithms such as subgradient descent and Frank-Wolfe are currently out of scope.
+
+
+
 ## Information Structure and Evaluation
 
 {#information-structure}
@@ -126,4 +128,32 @@ Examples of information structures for $s=2$ operators (with $\bullet$ marking  
 
 The sequential schemes each have a $\bullet$ in the lower-left position: $w^2$ is computed based on information from $w^1$. Parallel schemes can evaluate $w^1$ and $w^2$ separately. 
 
-In analysis, the information structure can be verified by inspection. Synthesis may be constrained to return algorithms with a desired information structure.
+In Analysis, the information structure can be verified by inspection. Synthesis may be constrained to return algorithms with a desired information structure.
+
+
+## Kronecker Structure
+
+
+The Projected Gradient Descent algorithm with description
+```{math}
+\begin{align*}
+ \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &= \mat{c|cc}{I & -\gamma I & -\gamma I \hl I &0 & 0 \\
+ I & -\gamma I & -\gamma I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\nabla f_1(z_k^1) \\ \partial f_2(z_k^2)}
+\end{align*},
+```
+
+has an identity $I$ factor in each entry of $(\Acl, \Bcl, \Ccl, \Dcl)$. This is an instance of a Kronecker structure, in which the Projected Gradient Descent algorithm can be expressed using a Kronecker product as 
+
+```{math}
+\begin{align*}
+ \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &= \left[ \mat{c|cc}{1 & -\gamma  & -\gamma  \hl &0 & 0 \\
+  & -\gamma  & -\gamma  }  \otimes I \right]\mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\nabla f_1(z_k^1) \\ \partial f_2(z_k^2)}
+\end{align*},
+```
+
+Given an inclusion problem with variable $\beta \in \R^{n_\beta}$, an algorithm $(F, G)$ solving the inclusion has Kronecker structure if there exists an integer $c$ and matrices $(\Acl^a, \Bcl^a, \Ccl^a, \Dcl^a)$ with
+```{math}
+\mat{c|c}{\Acl & \Bcl \hl \Ccl & \Dcl} = \left[\mat{c|c}{\Acl^a & \Bcl^a \hl \Ccl^a & \Dcl^a} \otimes I_{n_\beta / c} \right]
+```
+
+The smallest integer $c$ is the coordinate dimension of the Kronecker structure. Projected Gradient Descent has $c=1$. An algorithm with $c > 1$ can assign different update rules to different coordinate blocks.
