@@ -12,7 +12,7 @@ IQC Analysis <op_uncertainty_iqc>
 Synthesis and Networks <network_synthesis>
 ```
 
-This overview is limited to static optimization problems with time-independent memory/stepsize rules. The {doc} `Problem Formulation <../usage/problem_formulation/index_problem_formulation>` section in {doc}` Usage<../usage/index_usage>` documents generalizations to this base construction, including 
+This overview is limited to static optimization problems with time-independent memory/stepsize rules. The {doc}`Problem Formulation <../usage/problem_formulation/index_problem_formulation>` section in {doc}`Usage<../usage/index_usage>` documents generalizations to this base construction, including 
 - Time-varying optimization problems
 - Time-varying dynamical systems
 - Repeated operator calls
