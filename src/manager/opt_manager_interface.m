@@ -531,6 +531,9 @@ classdef (Abstract) opt_manager_interface < handle
             iqc_data.task =  obj.task;    
 
             iqc_data.augmented = false;
+            if strcmp(obj.sys.type, 'periodic_orbit')
+                iqc_data.rotate = true;
+            end
 
         end
 

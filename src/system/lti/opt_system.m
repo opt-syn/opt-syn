@@ -56,7 +56,7 @@ classdef  opt_system < opt_system_interface
             end
         end
 
-        function sys_sim = sim(obj, op_sim)
+        function sys_sim = export_sim(obj, op_sim)
             % export the system for use in simulation
             % with the operators (for iqcs) replaced by operators (in
             % op_sim)
@@ -66,7 +66,7 @@ classdef  opt_system < opt_system_interface
             % Return:
             %   sys_sim: system for use in alg_sim
             sys_sim = obj;
-            sys_sim.oop = op_sim;
+            sys_sim.op = op_sim;
 
 
         end

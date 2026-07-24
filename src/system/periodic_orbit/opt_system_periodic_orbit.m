@@ -201,7 +201,7 @@ classdef  opt_system_periodic_orbit < opt_system
             end
 
             %rotate the plant
-            if isfield(iqc_data, 'rotate') && (iqc_data.rotate == 0)
+            if (iqc_data.rotate == 0)
                 alg = alg0;
             else
                 alg = obj.rotate_plant(alg0);

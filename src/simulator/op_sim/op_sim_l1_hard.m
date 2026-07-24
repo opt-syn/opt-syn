@@ -24,7 +24,7 @@ classdef op_sim_l1_hard < op_sim_interface
             
         end          
 
-         function w = fw(k, z, param)
+         function w = fw(obj, k, z, param)
             %forward evaluation of the procedure oracle w = E'(E z- b) 
             %
             %Args: 
@@ -40,7 +40,7 @@ classdef op_sim_l1_hard < op_sim_interface
             w =  zeros(size(z));
         end
 
-        function z = bw(k, v, D, param)
+        function z = bw(obj, k, v, D, param)
             %backwards evaluation of an oracle, generalization of a 
             %proximal evaluation with preconditioner D                      
             %
@@ -57,17 +57,14 @@ classdef op_sim_l1_hard < op_sim_interface
             %coordinate dimensions
             dl = size(v, 1)/size(D, 1);
 
-
+            Dskron = kron(eye(dl), sqrt(D));
             %skew the box in the projection
-            z = kron(eye(dl), sqrt(D)) * ...
-                    weighted_l1_proj(kron(eye(dl), sqrt(D)) \ v, ...
-                    obj.tau, diag(kron(eye(dl), sqrt(D))));
-
-                        
+            z_weighted = weighted_l1_proj(Dskron \ v, obj.tau, diag(Dskron));
+            z = kron(eye(dl), sqrt(D)) * z_weighted;                        
         end
 
 
-        function f_out = f(k, z, param)
+        function f_out = f(obj, k, z, param)
             %primal residual for the equality constraint
             %
             %Args: 

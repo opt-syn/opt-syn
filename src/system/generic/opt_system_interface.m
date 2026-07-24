@@ -35,24 +35,38 @@ classdef  opt_system_interface
 
             obj.P = P;
             obj.K = K;
-            if nargin < 4
-                s = length(obj.op);
+
+            %configure the bind/repetitions
+            s = length(obj.op);
+            if nargin < 4                
                 obj.bind = 1:s;
             else
                 obj.bind = bind;
             end
 
-
-            if isempty(P)                
-                nbind = length(obj.bind);
-                c = obj.op{1}.c;
-                 
-                obj.P = bridge_pass_through(nbind, c);            
+            %update the coordinate dimensions of the operators
+            nbind = length(obj.bind);
+            if isempty(P)
+                if isempty(K)
+                    c = 1;
+                else
+                    if iscell(K)
+                        c = size(K{1}.D, 1)/nbind;
+                    else
+                        c = size(K.D, 1)/nbind;
+                    end
+                    obj.P = bridge_pass_through(nbind, c);            
+                end
+            else
+                c = P.nz/nbind;
             end
 
+            %iterate through operators
+            for i = 1:s
+                %enforce the coordinate dimension
+                obj.op{i}.c = c;
 
-            %assign identifiers to the operators
-            for i = 1:length(op)
+                %assign identifiers to the operators
                 obj.op{i}.id = i;
             end
             
