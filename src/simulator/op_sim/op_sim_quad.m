@@ -50,14 +50,14 @@ classdef op_sim_quad < op_sim_interface
             w = obj.M* (z-obj.zstar(k));
         end
 
-        function z = bw(obj, k, v, D, param)
+        function z = bw(obj, k, D, v, param)
             %backwards evaluation of an oracle, generalization of a 
             %proximal evaluation with preconditioner D                      
             %
             %Args: 
             %   k (int): time index
-            %   v:       input to proximal oracle
             %   D:       prox parameter
+            %   v:       input to proximal oracle
             %   param:   parameter structure for the operator
             %
             %Returns:
