@@ -1,7 +1,7 @@
 classdef opt_synthesis < opt_manager_interface
     %OPT_SYNTHESIS synthesis of optimization algorithms
     %
-    % iterative procedure to find a point beta satisfying
+    % iterative procedure to find a point :math:`\beta^*` satisfying
     % the fixed-point equation :math:`0 \in \sum_{i=1}^s F_i(\beta^*)`,    
     % in which the oracles :math:`F_i` are interfaced over a dynamical network
     

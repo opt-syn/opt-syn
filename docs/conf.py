@@ -55,6 +55,8 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 matlab_src_dir = '../src'
 
 primary_domain = 'mat'
+matlab_auto_link ="basic"
+
 
 napoleon_custom_sections = [('Returns', 'params_style'), ('Return', 'params_style')]
 

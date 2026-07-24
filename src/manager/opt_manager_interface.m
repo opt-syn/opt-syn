@@ -1,6 +1,6 @@
 classdef (Abstract) opt_manager_interface < handle
     %OPT_MANAGER_INTERFACE interface for the analysis and synthesis of
-    %optimization/fixed point algorithms
+    %optimization/inclusion algorithms
 
     
     %inheritance:
