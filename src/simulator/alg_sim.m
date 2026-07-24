@@ -167,7 +167,7 @@ classdef alg_sim
                     if any(Dzw_curr,"all")
                         %use backward evaluation
                         vi_vec = reshape(vi, [], 1);
-                        zi_vec = op_curr.bw(k, vi_vec, -Dzw_curr, param);
+                        zi_vec = op_curr.bw(k,  -Dzw_curr, vi_vec, param);
                         zi = reshape(zi_vec, [], dl);
                         wi = -(Dzw_curr) \ (vi - zi);
                     else

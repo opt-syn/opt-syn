@@ -25,4 +25,6 @@ man_syn = opt_synthesis(sys, config);
 
 
 
-The Performance Specifications define what criteria are considered in algorithm Analysis and Synthesis. The managers and specifications are subsequently used to {doc}`Solve <../solve>` the Analysis and Synthesis problems with respect to the Performance Specifications.
+The Performance Specifications define what convergence rate and robustness criteria are considered in algorithm Analysis and Synthesis.
+
+ The managers and specifications are subsequently used to {doc}`Solve <../solve>` the Analysis and Synthesis problems with respect to the Performance Specifications.

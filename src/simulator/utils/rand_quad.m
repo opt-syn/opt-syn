@@ -12,9 +12,12 @@ function [M] = rand_quad(d, m, L)
 %   M:  the matrix
 
 
-    e = m+[0; rand(d-2, 1); 1]*(L-m);
-    [Q, ~] = qr(randn(d));    
-    M = Q'*diag(e)*Q;
-
+    if m == L
+        M = eye(d)* m;
+    else
+        e = m+[0; rand(d-2, 1); 1]*(L-m);
+        [Q, ~] = qr(randn(d));    
+        M = Q'*diag(e)*Q;
+    end
 end
 

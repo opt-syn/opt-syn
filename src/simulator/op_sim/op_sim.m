@@ -43,20 +43,20 @@ classdef op_sim < op_sim_interface
             w = obj.fw_func(k, z, param);
         end
 
-        function z = bw(obj, k, v, D, param)
+        function z = bw(obj, k, D, v, param)
             %backwards evaluation of an oracle, generalization of a 
             %proximal evaluation with preconditioner D                      
             %
             %Args: 
             %   k (int): time index
-            %   v:       input to proximal oracle
             %   D:       prox parameter
+            %   v:       input to proximal oracle
             %   param:   parameter structure for the operator
             %
             %Returns:
             %   z:       the z such that z = (I - D F)^(-1)(v)
 
-            z = obj.bw_func(k, v, D, param);
+            z = obj.bw_func(k, D, v, param);
         end
 
         function f_out = f(obj, k, z, param)

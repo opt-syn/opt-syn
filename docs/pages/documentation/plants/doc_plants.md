@@ -12,5 +12,3 @@ Plant Primitives <doc_primitives>
 
 
 
-
-## Templates
