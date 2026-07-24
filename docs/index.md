@@ -8,7 +8,7 @@ tocdepth: 1
 
 
 
-Analysis and synthesis of first-order algorithms (MATLAB).
+Analysis and Synthesis of first-order algorithms (MATLAB).
 
 ---
 
@@ -20,14 +20,14 @@ The analysis and synthesis problems are posed as convex problems with  Linear Ma
 
 ## Get Started
 
-For installation and  example analysis and synthesis workflows, see  {doc}`Get Started <pages/get_started>`.
+For installation and  examples of algorithm  analysis and synthesis workflows, see  {doc}`Get Started <pages/get_started>`.
 
 ## Contributors
 
-
 - [Jared Miller](https://jarmill.github.io/): Creator and maintainer.
+- [Fabian Jakob](https://www.ist.uni-stuttgart.de/institute/team/Jakob-00004/): Creator.
 - [Carsten Scherer](https://www.imng.uni-stuttgart.de/institute/team/Scherer-00006/): Creator.
-
+- [Andrea Iannelli](https://www.ist.uni-stuttgart.de/institute/team/Iannelli/): Creator.
 
 
 ```{toctree}

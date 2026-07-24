@@ -14,8 +14,9 @@ classdef plant_dims
     end
     
     methods
-        function obj = plant_dims(s, nw, nwp, nu, nz, nzp, ny)
+        function obj = plant_dims(nw, nwp, nu, nz, nzp, ny, s)
             %PLANT_DIMS Constructor
+
         end
 
     end

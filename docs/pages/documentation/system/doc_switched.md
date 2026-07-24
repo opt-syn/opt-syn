@@ -1,19 +1,17 @@
 # Switched
 
-A switched system with $N_s$ modes may be described by a collection of LTI systems and a directed, unweighted adjacency graph $\mathcal{G}$ with $N_s$ vertices. Each subsystem/mode $j$ of the switched system can be represented as 
+
+A switched linear system with $N_s$ modes is described by a collection of $N_s$ LTI systems (modes), and a directed, unweighted adjacency graph $\mathcal{G}$ with $N_s$ vertices. Each subsystem $j$ of the switched system can be represented as 
 ```{math}
 \mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_j & \Bcl_j \hl \Ccl_j & \Dcl_j } \mat{c}{x_k \\ w_k}.
 ```
 
-
-
-A trajectory of the obeys
+The function $\text{mode}: \N \rightarrow 1, \ldots, N_s$ chooses the active subsystem at time $k$. A trajectory $(x, w, z, \text{mode})_{k \in \N}$ of a switched system  satisfies the relations
 ```{math}
-\mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_{\textrm{mode}(k)} & \Bcl_{\textrm{mode}(k)} \hl \Ccl_{\textrm{mode}(k)} & \Dcl_{\textrm{mode}(k)} } \mat{c}{x_k \\ w_k}.
-```
-
-in which $(\textrm{mode}(k), \textrm{mode}(k+1))$ is an arc of the graph $\mathcal{G}$ at each time $k$.
-
+\begin{align*}
+& \mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_{\textrm{mode}(k)} & \Bcl_{\textrm{mode}(k)} \hl \Ccl_{\textrm{mode}(k)} & \Dcl_{\textrm{mode}(k)} } \mat{c}{x_k \\ w_k} & & \forall k \in \N.
+& (\textrm{mode}(k), \textrm{mode}(k+1)) \in \text{Edges}(\Gs)  & & \forall k \in \N.
+\begin{align*}
 
 
 ## System

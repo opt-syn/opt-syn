@@ -1,7 +1,5 @@
 # Generalized Plant
 
-
-{#genplant}
 The input-output signals of the plant are
 :::{list-table} Input-Output Signals
 :widths: 2 12 2 12

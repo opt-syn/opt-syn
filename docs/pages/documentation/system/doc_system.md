@@ -1,6 +1,6 @@
 # Systems
 
-Each type of {doc}`dynamical system <../../usage/problem_formulation/systems/index_systems>` has a dedicated  collection of routines to pose the Analysis and Synthesis problems. 
+Each type of {doc}`dynamical system <../../usage/problem_formulation/system/index_system>` has a dedicated  collection of routines to pose the Analysis and Synthesis problems. 
 
 
 The routines are 

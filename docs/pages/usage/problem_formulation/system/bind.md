@@ -1,4 +1,4 @@
-# Bind
+# Repeated Operator Evaluations
 
 Repeated nonlinearities
 

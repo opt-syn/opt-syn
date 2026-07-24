@@ -5,7 +5,7 @@ tocdepth: 1
 ---
 
 
-# Uncertainty Descriptions
+# IQC Analysis
 
 
 Sequences $(w, z)$ obeying $w_k \in F(z_k)$ are constrained by $F$'s membership in the operator class $\F$. Valid relations among $(w, z)$ may expressed in the framework of Integral Quadratic Constraints (IQC) if $0 \in F(0)$. This IQC methodology is used to certify the Robust Stability portion of the convergence test, the Regulator Equation requirement must be evaluated separately. 
@@ -28,22 +28,24 @@ A sequence $(p, q)$ obeys the IQC $(\Psi, M, X)$ if the relation
 ```{math}
 \sum_{t=0}^{T-1} r_k^\top M r_k + \psi_{T}^\top X \psi_T \geq 0
 ```
-holds for all time horizons $T \in \N$, whenever $\psi_0 = 0$ and $\Psi$ is driven by the inputs $(p, q)$.
+holds for all time horizons $T \in \N$, whenever  $\Psi$ is driven by the inputs $(p, q)$ starting from the initial condition $\psi_0 = 0$.
 
+## IQCs for Operators
 
-Every operator class obeys a family of valid relations. Each relation is parameterized by an IQC $(\Psi, M, X)$ and a signal transformation matrix $\ell$ as
+Every operator class obeys a family of valid relations. Each relation is parameterized by a tuple  $(\Psi, M, X, \ell)$, where  $\ell$ is a  signal transformation matrix 
 ```{math}
-\mat{c}{p_k \\ z_k} = \mat{cc}{\ell_{pq} & \ell_{pw} \\ \ell_{zq} & \ell_{qw}} \mat{c}{q_k \\ w_k}.
+\mat{c}{p_k \\ z_k} = \mat{cc}{\ell_{pq} & \ell_{pw} \\ \ell_{zq} & \ell_{qw}} \mat{c}{q_k \\ w_k},
 ```
+and the signals $(p, q)$ derived from $w_k \in F(z_k)$ satisfy the IQC $(\Psi, M, X)$.
 
 
-As an example, if an $m$-strongly convex function $f_0$ obeys  $0 \in \partial f_0(0)$ and $0 = f_0(0)$, then sequences $w_k \in \partial f_0(z_k)$ satisfy an IQC defined by
+As an example, if an $m$-strongly convex function $f_0$ obeys  $0 \in \partial f_0(0)$ and $0 = f_0(0)$, then sequences $(w, z)$ with $w_k \in \partial f_0(z_k)$ for all $k \in \N$ satisfy a relation $(\Psi, M, X, \ell)$ defined by
 ```{math}
 \begin{align*}
-\Psi: \quad & \mat{c}{\psi_{k+1} \hl r_k} = \mat{c|cc}{0& 0 & I \hl
+\Psi_1: \quad & \mat{c}{\psi_{k+1} \hl r_k} = \mat{c|cc}{0& 0 & I \hl
 \lambda_1 I  & \lambda_0 I & 0\\
 0 & 0 & I} \mat{c}{\psi_k \hl p_k \\ q_k},  \\
-M &:= \mat{c}{0 & I \\ I & 0}, \qquad X = 0, \ell & := \mat{cc}{0 & I \\ I & -m I}, 
+M_1 &:= \mat{c}{0 & I \\ I & 0}, \qquad X_1 = 0, \qquad \ell_1  := \mat{cc}{0 & I \\ I & -m I}, 
 \end{align*}
 ```
 for any scalar coefficients $\lambda_0, \lambda_1$ satisfying 
@@ -52,11 +54,6 @@ for any scalar coefficients $\lambda_0, \lambda_1$ satisfying
 \lambda_1 & \leq 0, & \lambda_0 + \lambda_1 > 0.
 \end{align*}
 ```
-
-This system $\Psi$ is an order-1 Zames-Falb filter for the operator $F_0$. 
-
-Valid IQCs for operators can be adjusted to allow for exponential weightings of the operators.  The exponentially weighted sequences $(\ov w, \ov z)$ with  $\ov w_k \in \rho^{-k} F(\rho^k \ov z_k)$ satisfies the  IQC $(\Psi, M, X)$ with inputs $(\ov p, \ov q)$, but with coefficients $\lambda_1 \leq 0, \lambda_0 + \rhoi \lambda_1 > 0$.
-
 
 
 ## Exponential Weighting
@@ -78,6 +75,13 @@ If $\rho \in (0, 1)$, then the  existence of a $\gamma_0 > 0$ ensuring boundedne
 \end{align*}
 ``` 
 
+Valid relations for operators can be adjusted to allow for exponential weightings.  The exponentially weighted sequences $(\ov w, \ov z)$ with  $\ov w_k \in \rho^{-k} F(\rho^k \ov z_k)$ for all $k$  satisfies the one-step relation $(\Psi_1, M_1, X_1, \ell_1 )$, but with coefficients 
+```{math}
+\begin{align*}
+\lambda_1 & \leq 0, & \lambda_0 + \rhoi \lambda_1 > 0.
+\end{align*}
+```
+
 ## Outlook for Optimization
 
 
@@ -88,7 +92,15 @@ If $\rho \in (0, 1)$, then the  existence of a $\gamma_0 > 0$ ensuring boundedne
 
 IQC descriptions of uncertainties can be used to validate optimization algorithms.
 
-Given a  rate $\rho > 0$, and  an IQC $(\Psi(\lambda), M(\lambda), X(\lambda))$ parameterized by coefficients $\lambda$, and a signal transformation matrix $\ell$, we summarize the interconnection 
+<!-- Given a  rate $\rho > 0$,  an IQC $(\Psi(\lambda), M(\lambda), X(\lambda))$ parameterized by coefficients $\lambda$,  -->
+
+Let $\rho > 0$ be a convergence rate, $\Lambda(\rho)$ be a constraint set, and  $(\Psi(\lambda), M(\lambda), X(\lambda), \ell)$ be a valid relation for any 
+1. $F \in \F$ 
+2. pairs $(\ov w, \ov z)$ satisfying $\ov w_k \in \rho^{-k} F(\rho^k \ov z_k)$ for all $k$. 
+3. $\lambda \in \Lambda(\rho)$. 
+
+
+The interconnection of linear systems $(\Psi(\lambda), \ell, G)$ with description
 <!-- Assume that each  $F \in \F$ satisfies a known family of IQCs $(\Psi(\blam), M(\blam), X(\blam))$ with respect to signal transformation matrix $\ell$: -->
 ```{math}
 \begin{align}
@@ -98,14 +110,15 @@ Given a  rate $\rho > 0$, and  an IQC $(\Psi(\lambda), M(\lambda), X(\lambda))$ 
 C_\psi(\lambda) & D_\psi^p(\lambda) & D_\psi^q(\lambda)} \mat{c}{\psi_k \hl \ov p_k \\ \ov q_k}.
 \end{align}
 ```
-as the system
+is summarized as the system 
 ```{math}
-\mat{c}{\psi_{k+1} \\ \ov{x}_{k+1} \hl \ov r_k} &= \mat{c|c}{A(\blam) & B(\blam) \hl C(\blam)& D(\blam)} \mat{c}{\psi_k \\ \ov{x}_k \hl \ov q_k}.
+G(\lambda) := \mat{c}{\psi_{k+1} \\ \ov{x}_{k+1} \hl \ov r_k} &= \mat{c|c}{A(\blam) & B(\blam) \hl C(\blam)& D(\blam)} \mat{c}{\psi_k \\ \ov{x}_k \hl \ov q_k}.
 ```
 
-If the sequences $(\ov q, \ov p)$ satisfy the IQC $(\Psi(\lambda), M(\lambda), X(\lambda))$ for all $\lambda$ in a known constraint region $\Lambda(\rho)$, then a sufficient condition for  $\ov x$ to be bounded for all $F \in \F$ is if there exists a matrix  $P$ and coefficients $\blam \in \Lambda(\rho)$ such that
+<!-- Given any trajectory $(\ov x, \ov w, \ov z)$ of $(F_0, G)$, the input-output sequences $(\ov q, \ov p)$ satisfy the IQC $(\Psi(\lambda), M(\lambda), X(\lambda))$ for all $\lambda$ in a known constraint region $\Lambda(\rho).  -->
+
+A sufficient condition for  $\ov x$ to be bounded for all $F \in \F$ is if there exists a symmetric matrix  $P$ and coefficients $\blam$ such that
 ```{math}
-\begin{align}
 \mat{cc}{I & 0 \\
 A(\blam) & B(\blam) \\
 C(\blam) & D(\blam)}^\top \mat{ccc}{-P & 0 & 0\\
@@ -113,10 +126,14 @@ C(\blam) & D(\blam)}^\top \mat{ccc}{-P & 0 & 0\\
 0 & 0 & M(\blam)} \mat{cc}{I & 0 \\
 A(\blam) & B(\blam) \\
 C(\blam) & D(\blam)} \prec 0,
-P - \mat{cc}{X & 0 \\ 0 & 0 } \succ 0.
-\end{align}
 ```
-Boundedness of $\ov x$ implies linear convergence at rate $\rho$ of $x$ if $\rho \in (0, 1)$. 
+```{math}
+\begin{align*}
+P - \mat{cc}{X & 0 \\ 0 & 0 } &\succ 0, & 
+\blam & \in \Lambda(\rho).
+\end{align*}
+```
+Boundedness of the $\rho$- weighted $\ov x$ implies linear convergence at rate $\rho$ of the original state $x$ if $\rho \in (0, 1)$. 
 Bisection can be used to minimize the rate $\rho$ in this IQC Analysis problem, thus upper-bounding a worst case linear convergence rate. 
 Conservatism can be reduced by consider higher-order valid IQCs.
  

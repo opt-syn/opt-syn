@@ -717,7 +717,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         function [dyn_b_he, U_outer, V_outer] = dynamics_block_null(obj, sys_cl, quad, herm)
             %DYNAMICS_BLOCK_NULL form the supply block in a p2p quadratic objective
             % problem
-                        %Args:    
+            %
+            %Args:    
             %   sys_cl: closed-loop system dynamics
             %   quad:   quadratic performance criteria (used for
             %   dimensions)
@@ -727,6 +728,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %   dyn_b_he:   dynamics term to build dissipation relation
             %   U_outer:    left outer product in elimination
             %   V_outer:    right outer product in elimination
+            %
 
 
             if nargin < 4
