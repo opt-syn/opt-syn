@@ -1,5 +1,5 @@
 classdef lmi_synthesis_interface < lmi_dispatch_interface
-    %LMI_ANALYSIS_INTERFACE 
+    %LMI_SYNTHESIS_INTERFACE 
     %Linear Matrix Inequality constraints for analysis of algorithmic
     %interconnections.
     %
