@@ -44,7 +44,7 @@ The interconnection of $(P, K)$ is well-posed if $I - D_{zw} \Dc$ is invertible.
 
 A subsidiary goal in algorithm synthesis is to ensure that the interconnection  $(F, (P, K))$ satisfies the {doc}`convergence conditions <convergence_conditions>` for optimization algorithms.
 
-The Regulator Equation condition can be expanded into 
+The Regulator Equation condition in the networked setting can be expanded into 
 
 
 2. *Regulator Equation*:  There is a unique solution $(\Pi, \Gamma, \Phi, \Theta)$ to the linear system of equations
@@ -97,10 +97,12 @@ The Regulator Equation requirement enforces structure on possible controllers. W
     \end{align*}
 ```
 
-With this internal model, any subcontroller $K_f$ will ensure that the Regulator Equation requirement is satisfied. The subcontroller $K_f$ must ensure that the interconnection  $(F, (P, \text{Model}, K_f))$ is well-posed obeys the convergence and performance requirements. Solving for $K_f$ can be accomplished through  IQC synthesis methods {footcite}`veenman2011iqc`.
+<!-- With this internal model,  -->
+
+Any subcontroller $K_f$ will ensure that the Regulator Equation requirement in $K$ is  satisfied. The subcontroller $K_f$ must then ensure that the interconnection  $(F, (P, \text{Model}, K_f))$ is well-posed and  obeys the convergence and performance requirements. Solving for $K_f$ can be accomplished through  IQC synthesis methods {footcite}`veenman2011iqc`.
 
 
-Synthesis may also involve selecting a solution $(\Pi, \Gamma, \Phi)$ to the regulator equations.
+Synthesis may also involve selecting a solution $(\Pi, \Gamma, \Phi)$ to the regulator equations {footcite}`scherer1997multiobjective`.
 
 ```{footbibliography}
 ```

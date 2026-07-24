@@ -8,7 +8,7 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
     % end
 
     methods (Access=public)
-        function obj = genplant_poly(P, n)
+        function obj = genplant_poly(P_orig)
             %Constructor
             %
             %Args:
@@ -16,13 +16,26 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
             %   n (struct): partition of the channels into [z, zp, y], [w, wp, u]
 
            
-            obj@genplant([], n);
-
-            Nss = length(P);
-            obj.P = cell(Nss, 1);
-            for i = 1:Nss
-                obj.P{i} = P{i};
+     
+            
+            if isempty(P_orig)
+                n = [];
+            else
+                if iscell(P_orig)
+                    P = P_orig;
+                else
+                    Nss = length(P_orig);
+                    P = cell(Nss, 1);
+                    for i = 1:Nss
+                        P{i} = P_orig{i};
+                    end            
+                end
+                n = P{1}.dump_dim();
             end
+
+            obj@genplant(P, n);
+
+
             
         end
 

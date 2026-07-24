@@ -5,7 +5,6 @@ Desirable properties of optimization algorithms are convergence, performance,  w
 
 
  ## Convergence
-{#convergence}
 A fixed-point of the algorithm $(F, G)$ is a tuple $(x^*, w^*, z^*)$ satisfying 
 ```{math}
 \begin{align*}
@@ -28,7 +27,6 @@ The algorithm is linearly (exponentially) convergent in state with rate $\rho \i
 
 
 ## Performance
-{#performance}
 
 The algorithm may be required to operate in noisy and non-ideal environments. Robustness can of the algorithm can be quantified by performance metrics. 
 
@@ -134,7 +132,7 @@ In Analysis, the information structure can be verified by inspection. Synthesis 
 ## Kronecker Structure
 
 
-The Projected Gradient Descent algorithm with description
+The Projected Gradient Descent algorithm with parameter $\gamma > 0$ and description
 ```{math}
 \begin{align*}
  \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &= \mat{c|cc}{I & -\gamma I & -\gamma I \hl I &0 & 0 \\
@@ -142,18 +140,18 @@ The Projected Gradient Descent algorithm with description
 \end{align*},
 ```
 
-has an identity $I$ factor in each entry of $(\Acl, \Bcl, \Ccl, \Dcl)$. This is an instance of a Kronecker structure, in which the Projected Gradient Descent algorithm can be expressed using a Kronecker product as 
+has an identity $I$ factor in each entry of $(\Acl, \Bcl, \Ccl, \Dcl)$. This is an instance of a Kronecker structure: the Projected Gradient Descent algorithm can be expressed using a Kronecker product as 
 
 ```{math}
 \begin{align*}
- \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &= \left[ \mat{c|cc}{1 & -\gamma  & -\gamma  \hl &0 & 0 \\
-  & -\gamma  & -\gamma  }  \otimes I \right]\mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\nabla f_1(z_k^1) \\ \partial f_2(z_k^2)}
+ \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &= \left[ \mat{c|cc}{1 & -\gamma  & -\gamma  \hl 1 &0 & 0 \\
+ 1 & -\gamma  & -\gamma  }  \otimes I \right]\mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\nabla f_1(z_k^1) \\ \partial f_2(z_k^2)}
 \end{align*},
 ```
 
-Given an inclusion problem with variable $\beta \in \R^{n_\beta}$, an algorithm $(F, G)$ solving the inclusion has Kronecker structure if there exists an integer $c$ and matrices $(\Acl^a, \Bcl^a, \Ccl^a, \Dcl^a)$ with
+Given an inclusion problem with variable $\beta \in \R^{n_\beta}$, an algorithm $(F, G)$  has Kronecker structure if there exists an integer $c$ and matrices $(\Acl^a, \Bcl^a, \Ccl^a, \Dcl^a)$ with
 ```{math}
 \mat{c|c}{\Acl & \Bcl \hl \Ccl & \Dcl} = \left[\mat{c|c}{\Acl^a & \Bcl^a \hl \Ccl^a & \Dcl^a} \otimes I_{n_\beta / c} \right]
 ```
 
-The smallest integer $c$ is the coordinate dimension of the Kronecker structure. Projected Gradient Descent has $c=1$. An algorithm with $c > 1$ can assign different update rules to different coordinate blocks.
+The smallest such integer $c$ is the coordinate dimension of the Kronecker structure. Projected Gradient Descent has $c=1$. An algorithm with $c > 1$ can assign different update rules to different coordinate blocks.

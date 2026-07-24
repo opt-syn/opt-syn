@@ -33,7 +33,7 @@ The `Operator_Class`  argument in the System is an $s$-length  cell array of {do
 ## Network and Controller
 
 
-Algorithms to solve inclusion problems $0 \in \sum_{i=1}^s F(\beta^*)$ are modeled using a {doc}`Generalized Plant <../../documentation/plants/doc_genplant>` framework. The signals in this interconnection are:
+Algorithms to solve inclusion problems $0 \in \sum_{i=1}^s F(\beta^*)$ are modeled using a {doc}`Generalized Plant <../../../documentation/plants/doc_genplant>` framework. The signals in this interconnection are:
 
 :::{list-table} 
 :header-rows: 1
@@ -65,7 +65,7 @@ Algorithms to solve inclusion problems $0 \in \sum_{i=1}^s F(\beta^*)$ are model
 :::
 
 
-The algorithmic interconnection to solve the inclusion problem $0 \in \sum_{i=1}^s F(\beta^*)$ is modeled as
+The algorithmic interconnection to solve the inclusion problem $0 \in \sum_{i=1}^s F(\beta^*)$ is described as
 ```{math}
 \begin{align*}
 \text{Operator}: & & w_k & \in F(z_k), \\
@@ -77,11 +77,21 @@ C_y & D_{yd} & D_{y w_p} & D_{yu}} \mat{c}{x_k^N \hl w_k \\ w_{pk} \\ u_k}, \\
 \end{align*}
 ```
 
+The `Controller` field is ignored in Synthesis, and can therefore  be set to `Controller = []`. In Analysis, the `Controller` is a discrete-time state space system of type `ss`.  
 
-The network and controller are 
+The declaration `Network = []` is used if there are no network dynamics.
 
+<!-- If network dynamics are present,  -->
 
-## LASSO Example
+If network dynamics are present, then the  `Network` is described by a {class}`genplant` object. A {class}`genplant` has two attribute:
+1. {attr}`P`: State space description $(A, B, C, D)$ of the network
+2. {attr}`n`: Dimensions of the partitions $[z, z_p, y]$  $[w, w_p, u]$
+
+The field `P` is a discrete-time state space system of type [ss](https://www.mathworks.com/help/control/ref/ss.html) with sample time $T=1$. The attribute `n` is a struct with integer fields (`nz`, `nzp`, `ny`)  for the dimensions of the output partition and integer fields (`nw`, `nwp`, `nu`) for dimensions of the input partition. 
+
+The {doc}`Templates <../../../documentation/plants/doc_templates>` page documents commands to generates common network structures, such as {class}`bridge_channel_delay` to add  time delays before and after each operator $\{F_i\}_{i =1}^s$. 
+
+## Two-Operator Example
 
 The operator class for a composite optimization problem 
 ```{math}
@@ -94,16 +104,47 @@ op2 = op_pcc();
 Operator_Class = {op1, op2};
 ```
 
+Systems for Synthesis with  and without network dynamics are 
+```matlab
+%add 2-step time delays before and after \partial f1
+delay2 = bridge_channel_delay([2, 0], [2, 0]);
+sys_delay = opt_system(Operator_Class, delay2, []);
+
+%no network dynamics
+sys_no_network = opt_system(Operator_Class, [], []);
+```
+
+Systems for Analysis of a Projected Gradient Descent algorithm over the same networks are
+```matlab
+%the controller describing Projected Gradient Descent
+gamma = 2/11;
+
+Ac = 1;
+Bc = [-gamma, -gamma];
+Cc = [1; 1];
+Dc = [0, 0; 
+     -gamma, -gamma];
+Ts = 1; %sample time     
+
+K = ss(Ac, Bc, Cc, Dc, 1);
+
+sys_pgd_delay = opt_system(Operator_Class, delay2, K);
+sys_pgd_no_network = opt_system(Operator_Class, [], K);
+```
+
+
+
 ## Extensions
 
 
+The System descripition can be extended in three main capacities:
 
 
 ```{toctree}
 :maxdepth: 1
-:hidden:
-Operators <operators>
-Dynamical Systems <dynamical_systems/index_systems>
-Bind <bind>
-Tracking <tracking>
+Repeated Operator Evaluations <bind>
+Time-Varying Optimal Solutions <tracking>
+Time-Varying Dynamical Systems <dynamics>
 ```
+
+These extensions are explored in subsequent sections.

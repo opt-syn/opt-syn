@@ -1,4 +1,4 @@
-# Plant Primitives
+# Plant Templates
 
 Three basic types of networks are:
 1. No network dynamics

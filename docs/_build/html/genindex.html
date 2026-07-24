@@ -203,10 +203,9 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="pages/usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="pages/usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pages/usage/problem_formulation/system/index_system.html">System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="pages/usage/problem_formulation/system/operators.html">Operators</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pages/usage/problem_formulation/system/dynamical_systems/index_systems.html">Dynamical Systems</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pages/usage/problem_formulation/system/bind.html">Bind</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pages/usage/problem_formulation/system/tracking.html">Tracking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pages/usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pages/usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pages/usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="pages/usage/problem_formulation/config.html">Configuration</a></li>
@@ -235,7 +234,7 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="pages/documentation/plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="pages/documentation/plants/doc_genplant.html">Generalized Plants</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pages/documentation/plants/doc_primitives.html">Plant Primitives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pages/documentation/plants/doc_templates.html">Plant Templates</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="pages/documentation/system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -500,17 +499,17 @@
       </ul></li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.op_sim.op_sim_box.BOX">BOX (simulator.op_sim.op_sim_box attribute)</a>
 </li>
-      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_channel_delay">bridge_channel_delay (class in plant.bridge_prototypes)</a>
+      <li><a href="pages/documentation/plants/doc_templates.html#plant.bridge_prototypes.bridge_channel_delay">bridge_channel_delay (class in plant.bridge_prototypes)</a>
 </li>
-      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_channel_delay.bridge_channel_delay">bridge_channel_delay() (plant.bridge_prototypes.bridge_channel_delay method)</a>
+      <li><a href="pages/documentation/plants/doc_templates.html#plant.bridge_prototypes.bridge_channel_delay.bridge_channel_delay">bridge_channel_delay() (plant.bridge_prototypes.bridge_channel_delay method)</a>
 </li>
-      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_pass_through">bridge_pass_through (class in plant.bridge_prototypes)</a>
+      <li><a href="pages/documentation/plants/doc_templates.html#plant.bridge_prototypes.bridge_pass_through">bridge_pass_through (class in plant.bridge_prototypes)</a>
 </li>
-      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_pass_through.bridge_pass_through">bridge_pass_through() (plant.bridge_prototypes.bridge_pass_through method)</a>
+      <li><a href="pages/documentation/plants/doc_templates.html#plant.bridge_prototypes.bridge_pass_through.bridge_pass_through">bridge_pass_through() (plant.bridge_prototypes.bridge_pass_through method)</a>
 </li>
-      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_random">bridge_random (class in plant.bridge_prototypes)</a>
+      <li><a href="pages/documentation/plants/doc_templates.html#plant.bridge_prototypes.bridge_random">bridge_random (class in plant.bridge_prototypes)</a>
 </li>
-      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_random.bridge_random">bridge_random() (plant.bridge_prototypes.bridge_random method)</a>
+      <li><a href="pages/documentation/plants/doc_templates.html#plant.bridge_prototypes.bridge_random.bridge_random">bridge_random() (plant.bridge_prototypes.bridge_random method)</a>
 </li>
       <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Bu">Bu() (plant.genplant.genplant method)</a>
 </li>
@@ -1168,6 +1167,10 @@
       </ul></li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.impose_X">impose_X (config.opt_config_gen attribute)</a>
 </li>
+      <li><a href="pages/documentation/system/doc_system.html#manager.diss_data.ind_curr">ind_curr (manager.diss_data attribute)</a>
+</li>
+      <li><a href="pages/documentation/system/doc_system.html#manager.diss_data.ind_next">ind_next (manager.diss_data attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.ind_same">ind_same (iqc.iqc_data_container attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_specs.html#spec.spec_passivity.ind_w">ind_w (spec.spec_passivity attribute)</a>
@@ -1190,10 +1193,10 @@
 </li>
       <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_z">index_z() (plant.genplant.genplant method)</a>
 </li>
-      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_zp">index_zp() (plant.genplant.genplant method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_zp">index_zp() (plant.genplant.genplant method)</a>
+</li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.input_diss">input_diss (config.opt_config_tol attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.iqc">iqc (iqc.iqc_data_container attribute)</a>
@@ -1646,10 +1649,10 @@
         <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti.p2p">(system.lti.lmi_synthesis_lti method)</a>
 </li>
       </ul></li>
-      <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_channel_delay.P_names">P_names() (plant.bridge_prototypes.bridge_channel_delay method)</a>
+      <li><a href="pages/documentation/plants/doc_templates.html#plant.bridge_prototypes.bridge_channel_delay.P_names">P_names() (plant.bridge_prototypes.bridge_channel_delay method)</a>
 
       <ul>
-        <li><a href="pages/documentation/plants/doc_primitives.html#plant.bridge_prototypes.bridge_pass_through.P_names">(plant.bridge_prototypes.bridge_pass_through method)</a>
+        <li><a href="pages/documentation/plants/doc_templates.html#plant.bridge_prototypes.bridge_pass_through.P_names">(plant.bridge_prototypes.bridge_pass_through method)</a>
 </li>
       </ul></li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.param">param (simulator.alg_sim_out attribute)</a>

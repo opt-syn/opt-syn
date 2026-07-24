@@ -1,7 +1,7 @@
 classdef diss_data
-    %DISS_DATA Container for a dissipation inequality
-    %   processed in lmi_analysis and lmi_synthesis routines
-    %   formed in the index_specs routine;
+    %DISS_DATA Stores information about a dissipation inequality
+    %   processed in lmi_analysis and lmi_synthesis routines.
+    %   diss_data objects are formed in the index_specs routine.
     
     properties
         iqc_rob; %(iqc) iqcs from the operator uncertainty
@@ -11,6 +11,8 @@ classdef diss_data
         spec;     %(spec) performance specification
         rho=1;    %linear convergence rate
         ndiss = 1;%number of specifications
+        ind_curr; %current subsystem index (switched)
+        ind_next; %nextsubsystem index (switched)
     end
     
     methods
