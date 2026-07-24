@@ -19,7 +19,7 @@ classdef op_sim_box < op_sim_interface
             end
         end          
 
-         function w = fw(k, z, param)
+         function w = fw(obj, k, z, param)
             %forward evaluation of the procedure oracle w = E'(E z- b) 
             %
             %Args: 
@@ -35,7 +35,7 @@ classdef op_sim_box < op_sim_interface
             w =  zeros(size(z));
         end
 
-        function z = bw(k, v, D, param)
+        function z = bw(obj, k, v, D, param)
             %backwards evaluation of an oracle, generalization of a 
             %proximal evaluation with preconditioner D                      
             %
@@ -62,7 +62,7 @@ classdef op_sim_box < op_sim_interface
         end
 
 
-        function f_out = f(k, z, param)
+        function f_out = f(obj, k, z, param)
             %primal residual for the equality constraint
             %
             %Args: 

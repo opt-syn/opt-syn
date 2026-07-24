@@ -714,53 +714,53 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         end
 
-        % function [dyn_b_he, U_outer, V_outer] = dynamics_block_null(obj, sys_cl, quad, herm)
-        %     %DYNAMICS_BLOCK_NULL form the supply block in a p2p quadratic objective
-        %     % problem
-        %                 %Args:    
-        %     %   sys_cl: closed-loop system dynamics
-        %     %   quad:   quadratic performance criteria (used for
-        %     %   dimensions)
-        %     %   herm (bool): symmetrize the term? true by default
-        %     %
-        %     %Returns:                        
-        %     %   dyn_b_he:   dynamics term to build dissipation relation
-        %     %   U_outer:    left outer product in elimination
-        %     %   V_outer:    right outer product in elimination
-        % 
-        % 
-        %     if nargin < 4
-        %         herm = true;
-        %     end
-        % 
-        %     [n, nw] = ssize(sys_cl.B);
-        %     nz = ssize(sys_cl.D, 1);
-        %     nt = ssize(quad.U, 1);
-        % 
-        %     center_cl = [sys_cl.A, sys_cl.B;
-        %         sys_cl.C, sys_cl.D];
-        % 
-        %     outer_cl_right= [[eye(n), zeros(n, nw);
-        %         zeros(nw, n), eye(nw)], zeros(n+nw, n+nt)];
-        % 
-        %     outer_cl_left = [zeros(n), zeros(n, nz);
-        %         zeros(nw, n), quad.S;
-        %         zeros(n), zeros(n, nz); %not eye
-        %         zeros(nt, n), quad.T];
-        % 
-        % 
-        %     dyn_b = outer_cl_left * center_cl * outer_cl_right; 
-        % 
-        %     if herm
-        %         dyn_b_he = dyn_b + dyn_b';
-        %     else
-        %         dyn_b_he = dyn_b;
-        %     end
-        % 
-        %     U_outer = -outer_cl_left';
-        %     V_outer = outer_cl_right;
-        % 
-        % end
+        function [dyn_b_he, U_outer, V_outer] = dynamics_block_null(obj, sys_cl, quad, herm)
+            %DYNAMICS_BLOCK_NULL form the supply block in a p2p quadratic objective
+            % problem
+                        %Args:    
+            %   sys_cl: closed-loop system dynamics
+            %   quad:   quadratic performance criteria (used for
+            %   dimensions)
+            %   herm (bool): symmetrize the term? true by default
+            %
+            %Returns:                        
+            %   dyn_b_he:   dynamics term to build dissipation relation
+            %   U_outer:    left outer product in elimination
+            %   V_outer:    right outer product in elimination
+
+
+            if nargin < 4
+                herm = true;
+            end
+
+            [n, nw] = ssize(sys_cl.B);
+            nz = ssize(sys_cl.D, 1);
+            nt = ssize(quad.U, 1);
+
+            center_cl = [sys_cl.A, sys_cl.B;
+                sys_cl.C, sys_cl.D];
+
+            outer_cl_right= [[eye(n), zeros(n, nw);
+                zeros(nw, n), eye(nw)], zeros(n+nw, n+nt)];
+
+            outer_cl_left = [zeros(n), zeros(n, nz);
+                zeros(nw, n), quad.S;
+                zeros(n), zeros(n, nz); %not eye
+                zeros(nt, n), quad.T];
+
+
+            dyn_b = outer_cl_left * center_cl * outer_cl_right; 
+
+            if herm
+                dyn_b_he = dyn_b + dyn_b';
+            else
+                dyn_b_he = dyn_b;
+            end
+
+            U_outer = -outer_cl_left';
+            V_outer = outer_cl_right;
+
+        end
 
 
 

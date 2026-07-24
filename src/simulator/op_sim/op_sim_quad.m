@@ -18,14 +18,17 @@ classdef op_sim_quad < op_sim_interface
             % Args: 
             %   M: a symmetric matrix defining the quadratic form
             %   zstar: critical point to the unconstrained quadratic minimization problem
+            %           is a function  of k.
             
             obj = obj@op_sim_interface();
             obj.M = M;
 
             if nargin < 2
-                obj.zstar = zeros(size(obj.M, 1), 1);
-            else
-                obj.zstar = zstar;
+                zstar = zeros(size(obj.M, 1), 1);
+            end
+
+            if isnumeric(zstar)
+                obj.zstar = @(k) zstar;
             end
                     
     
@@ -33,7 +36,7 @@ classdef op_sim_quad < op_sim_interface
 
         end
 
-        function w = fw(k, z, param)
+        function w = fw(obj, k, z, param)
             %forward evaluation of an oracle w = F(z) 
             %
             %Args: 
@@ -44,10 +47,10 @@ classdef op_sim_quad < op_sim_interface
             %Returns:
             %   w:       the w such that w = F(z)
 
-            w = obj.M(z-obj.zstar);
+            w = obj.M* (z-obj.zstar(k));
         end
 
-        function z = bw(k, v, D, param)
+        function z = bw(obj, k, v, D, param)
             %backwards evaluation of an oracle, generalization of a 
             %proximal evaluation with preconditioner D                      
             %
@@ -61,10 +64,10 @@ classdef op_sim_quad < op_sim_interface
             %   z:       the z such that z = (I - D F)^(-1)(v)
 
             z = (obj.M + kron(eye(dl), inv(D))) \ ...
-                (obj.M*obj.zstar + kron(eye(size(obj.M, 1)/size(D, 1)), D) \ v);
+                (obj.M*obj.zstar(k) + kron(eye(size(obj.M, 1)/size(D, 1)), D) \ v);
         end
 
-        function f_out = f(k, z, param)
+        function f_out = f(obj, k, z, param)
             %function value evaluation, if the operator has a potential
             %could also be a vector of function evaluations in a game.
             %
@@ -76,7 +79,7 @@ classdef op_sim_quad < op_sim_interface
             %Returns:
             %   f_out:   f_out = f(z) if F = \partial f.
 
-            f_out = 0.5*(z-obj.zstar)'*obj.M*(z-obj.zstar); 
+            f_out = 0.5*(z-obj.zstar(k))'*obj.M*(z-obj.zstar(k)); 
         end
         
 
