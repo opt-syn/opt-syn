@@ -25,28 +25,30 @@ classdef genplant
             %
             %Args:
             %   P (ss, sdpss): state space system
-            %   n (struct): partition of the channels into [z, zp, y], [w, wp, u]
+            %   n (struct): optional, dimensions of partition of the channels into [z, zp, y], [w, wp, u]
 
             obj.P = P;
             if isnumeric(P) && ~isempty(P)
                 %static system
                 [obj.ny, obj.nu] = size(P);
-            else              
-                if ~isfield(n, 's')
-                    obj.s = 0;
-                else
-                    obj.s = n.s;
-                end
-                obj.nz = n.nz;
-                obj.nw = n.nw;
-                obj.ny = n.ny;
-                obj.nu = n.nu;      
-
-                if isfield(n, 'nzp')
-                    obj.nzp = n.nzp;            
-                end
-                if isfield(n, 'nwp')
-                    obj.nwp = n.nwp;            
+            else  
+                if nargin > 1
+                    if ~isfield(n, 's')
+                        obj.s = 0;
+                    else
+                        obj.s = n.s;
+                    end
+                    obj.nz = n.nz;
+                    obj.nw = n.nw;
+                    obj.ny = n.ny;
+                    obj.nu = n.nu;      
+    
+                    if isfield(n, 'nzp')
+                        obj.nzp = n.nzp;            
+                    end
+                    if isfield(n, 'nwp')
+                        obj.nwp = n.nwp;            
+                    end
                 end
             end
             
