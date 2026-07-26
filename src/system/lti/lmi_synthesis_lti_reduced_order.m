@@ -97,7 +97,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %algorithm satisfies the performance specifications 
         end
 
-        function [sol] = recover_subcontroller(obj, alg_psi, P_aug, sol)
+        function [sol, K_sub] = recover_subcontroller(obj, alg_psi, P_aug, sol)
             %RECOVER_SUBCONTROLLER recover the subcontroller of the current
             %mode/control
             %Args:
@@ -107,6 +107,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %
             %Returns:
             %   sol: solution structure
+            %   K_sub: the subcontroller
             
             vars_rec = sol.vars;
             rho = sol.rho;
@@ -121,10 +122,10 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             K_report = obj.K_alg_report(P_trans, K_nofeed, model, rho);
             
-            sol.cert.alg_trans = K_report.alg_trans;
-            sol.cert.alg = lft(obj.sys.P, K_report.K);
+            % sol.cert.alg_trans = K_report.alg_trans;            
             sol.cert.model = K_report.model;           
-            sol.K= K_report.K;
+            % sol.K= 
+            sol.cert.K = K_report.K;
             sol.cert.K_sub = K_report.K_sub;
             sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
 
@@ -921,5 +922,6 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
     
 end
+
 
 

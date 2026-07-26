@@ -357,7 +357,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
                 sol.cert.alg_trans{i} = K_report.alg_trans;
                 sol.cert.alg{i} = lft(obj.sys.P{i}, K_report.K);
                 sol.cert.model{i} = K_report.model;           
-                sol.K{i}= K_report.K;
+                sol.cert.K{i}= K_report.K;
                 sol.cert.K_sub{i} = K_report.K_sub;                
 
             end

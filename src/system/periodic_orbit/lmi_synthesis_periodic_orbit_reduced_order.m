@@ -139,9 +139,9 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
             
 
             %export and validate
-            sol.K=  obj.rotate_plant(K_report.K, -1);
+            sol.cert.K=  obj.rotate_plant(K_report.K, -1);
             sol.cert.alg_trans =  K_report.alg_trans;
-            sol.cert.alg = lft(obj.sys.P, sol.K);
+            sol.cert.alg = lft(obj.sys.P, sol.cert.K);
             sol.cert.model = obj.rotate_plant(model, -1);           
             
             sol.cert.K_sub = obj.rotate_plant(K_report.K_sub, -1);
@@ -149,13 +149,7 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
 
             sol.cert.Gcl = Gcl;
             sol.cert.Ycl = Ycl;
-            %revert the coordinate transformation
-            
-            % sol.cert.alg = obj.rotate_plant(sol.cert.alg, -1);            
-            % sol.cert.model = obj.rotate_plant(sol.cert.model, -1);            
-            % sol.K= obj.rotate_plant(sol.K, -1);            
-            % sol.cert.K_sub = obj.rotate_plant(sol.cert.K_sub, -1);                        
-
+ 
         end
                
     end
