@@ -241,7 +241,7 @@ classdef  opt_system_periodic_orbit < opt_system
                 Kper{i} = Kper_sys;
             end
 
-            Pper_poly = genplant_poly(Pper, n);
+            Pper_poly = genplant_poly(Pper);
             
             sys_per = opt_system_periodic(obj.op, Pper_poly, Kper, obj.bind, obj.tracking);
         end
