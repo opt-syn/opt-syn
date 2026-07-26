@@ -14,13 +14,13 @@ The System stores details about the operator classes, networks, and algorithms u
 The Configuration options define options such as numerical tolerances.
 
 
-The System and Configuration are used to define 
-Analysis and Synthesis the  {doc}`managers <../../documentation/doc_manager>`:
+The System and Configuration are used to define the 
+Analysis and Synthesis   {doc}`managers <../../documentation/doc_manager>`:
 ```matlab
 sys = opt_system([arguments]);
 config = opt_config();
-man_ana = opt_analysis(sys, config);
-man_syn = opt_synthesis(sys, config);
+man_ana = opt_analysis(sys, config);  
+man_syn = opt_synthesis(sys, config); 
 ```
 
 

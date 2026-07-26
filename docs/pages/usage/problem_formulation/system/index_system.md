@@ -77,21 +77,17 @@ C_y & D_{yd} & D_{y w_p} & D_{yu}} \mat{c}{x_k^N \hl w_k \\ w_{pk} \\ u_k}, \\
 \end{align*}
 ```
 
-The `Controller` field is ignored in Synthesis, and can therefore  be set to `Controller = []`. In Analysis, the `Controller` is a discrete-time state space system of type `ss`.  
+In Analysis, the `Controller` is a discrete-time state space system of type `ss`.  
+The `Controller` field is ignored in Synthesis, and can therefore  be set to `Controller = []`. 
+
 
 The declaration `Network = []` is used if there are no network dynamics.
-
-<!-- If network dynamics are present,  -->
-
-If network dynamics are present, then the  `Network` is described by a {class}`genplant` object. A {class}`genplant` has two attribute:
-1. {attr}`P`: State space description $(A, B, C, D)$ of the network
-2. {attr}`n`: Dimensions of the partitions $[z, z_p, y]$  $[w, w_p, u]$
-
-The field `P` is a discrete-time state space system of type [ss](https://www.mathworks.com/help/control/ref/ss.html) with sample time $T=1$. The attribute `n` is a struct with integer fields (`nz`, `nzp`, `ny`)  for the dimensions of the output partition and integer fields (`nw`, `nwp`, `nu`) for dimensions of the input partition. 
+If network dynamics are present, then the  `Network` is described by a {class}`genplant` object. The attribute {attr}`P` of a genplant 
+ is a discrete-time state space system of type [ss](https://www.mathworks.com/help/control/ref/ss.html) with sample time $T=1$, defining the dynamical system. The attributes (`nz`, `nzp`, `ny`)  for the output and  (`nw`, `nwp`, `nu`) for the input count dimensions of the respective input and output partitions. 
 
 The {doc}`Templates <../../../documentation/plants/doc_templates>` page documents commands to generates common network structures, such as {class}`bridge_channel_delay` to add  time delays before and after each operator $\{F_i\}_{i =1}^s$. 
 
-## Two-Operator Example
+<!-- ## Two-Operator Example -->
 
 The operator class for a composite optimization problem 
 ```{math}

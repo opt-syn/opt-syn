@@ -4,14 +4,22 @@ classdef opt_solution
 
 
     properties
-        info; %information about the LMI solution
+        sys; %final algorithmic interconnection
+
+
+        status; %zero if feasible, nonzero if infeasible
         dia; %feasibility of solution, should be negative
         objective; %minimization objective
-        status; %zero if feasible, nonzero if infeasible
-        lmi_out; %LMI constraints in the solution
-        sys; %final algorithmic interconnection
+        gain; %validation of performance criteria (passivity, H infinity)
+
+
+        
         rho; %certified linear convergence rate
+
+        info; %information about the LMI solution
+        lmi_out; %LMI constraints in the solution
         cert=[]; %other certificates of the solution
+
         vars; %recovered variables of the problem
         recovery = []; %optional recovery of LMI constraints, blocks and their minimal eigenvalues
     end

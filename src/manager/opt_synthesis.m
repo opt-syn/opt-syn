@@ -228,6 +228,11 @@ classdef opt_synthesis < opt_manager_interface
 
             sol.sys = obj.sys;
             sol.sys.K = sol.cert.K;
+
+            %check regulator equation
+            reg2 = obj.lmi.reg;
+            reg2.sys = sol.sys;
+            sol.cert.regcl = reg2.check_regulator();
         end
 
         %% alternating design
