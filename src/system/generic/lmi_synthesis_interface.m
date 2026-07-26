@@ -933,7 +933,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             sol.cert.Gcl = Gcal;
             sol.cert.Ycl = Ycal;
 
-            sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
+            sol.gain = obj.validate_recovery_gain(sol.cert.alg_psi, sol.cert.iqc_op_all);
 
             
         end

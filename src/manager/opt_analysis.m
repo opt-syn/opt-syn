@@ -286,9 +286,12 @@ classdef opt_analysis < opt_manager_interface
 
             end
 
+            %store the system
             sol.sys = obj.sys;
-            sol.cert.iqc_op = iqc_rec;
+            sol.cert.regcl = obj.lmi.reg.check_regulator();
 
+            %store the IQCs and closed-loop certified systems
+            sol.cert.iqc_op = iqc_rec;
             alg_psi_rec = alg_psi;
 
             if ~iscell(alg_psi)
@@ -307,6 +310,8 @@ classdef opt_analysis < opt_manager_interface
             else
                 sol.cert.alg_psi = alg_psi_rec;
             end
+
+            
         end
         
 

@@ -6,7 +6,7 @@ This page collects the documentation for each object and function in {{osyn}}.
 ```{toctree}
 :maxdepth: 1
 Manager <doc_manager>
-Solutions <doc_solutions>
+Solution <doc_solutions>
 Operator Classes <operators/doc_operators>
 Plants <plants/doc_plants>
 Systems <system/doc_system>
