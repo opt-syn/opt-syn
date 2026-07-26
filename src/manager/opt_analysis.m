@@ -287,7 +287,7 @@ classdef opt_analysis < opt_manager_interface
             end
 
             sol.sys = obj.sys;
-            sol.iqc_op = iqc_rec;
+            sol.cert.iqc_op = iqc_rec;
 
             alg_psi_rec = alg_psi;
 
@@ -303,9 +303,9 @@ classdef opt_analysis < opt_manager_interface
             end
 
             if ~iscell(alg_psi)
-                sol.alg_psi = alg_psi_rec{1};
+                sol.cert.alg_psi = alg_psi_rec{1};
             else
-                sol.alg_psi = alg_psi_rec;
+                sol.cert.alg_psi = alg_psi_rec;
             end
         end
         

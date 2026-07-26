@@ -73,7 +73,7 @@ classdef lmi_synthesis_periodic_orbit < lmi_synthesis_lti
             
             sol.cert.alg = obj.sys.rotate_plant(sol.cert.alg, -1);            
             sol.cert.model = obj.sys.rotate_plant(sol.cert.model, -1);            
-            sol.K= obj.sys.rotate_plant(sol.K, -1);            
+            sol.cert.K= obj.sys.rotate_plant(sol.cert.K, -1);            
             sol.cert.K_sub = obj.sys.rotate_plant(sol.cert.K_sub, -1);                        
 
         end

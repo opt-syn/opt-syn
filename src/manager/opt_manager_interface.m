@@ -137,7 +137,7 @@ classdef (Abstract) opt_manager_interface < handle
             %   sol: solution structure
 
             
-            sol = struct;
+            sol = opt_solution(obj.task);
             
             
             if obj.LMILAB
@@ -154,7 +154,6 @@ classdef (Abstract) opt_manager_interface < handle
 
                 STATUS = (lmi_out.status || (lmi_out.dia(1+OBJECTIVE) > obj.config.tol.dia));
                 sol.info = info_out;
-                sol.info.lmi_out = lmi_out;
                 sol.info.cons = cons;
 
                 
@@ -195,9 +194,7 @@ classdef (Abstract) opt_manager_interface < handle
                 STATUS = t.problem;
             end
             sol.status = STATUS;
-            sol.lmi_out = lmi_out;
-
-            
+            sol.info.lmi_out = lmi_out;          
         end
 
 
@@ -311,7 +308,7 @@ classdef (Abstract) opt_manager_interface < handle
 
                 ncons = length(cons.lmim);
 
-                sol = obj.process_recovery(sol, sol.lmi_out, alg_psi, diss);
+                sol = obj.process_recovery(sol, sol.info.lmi_out, alg_psi, diss);
                 
             end
 
@@ -415,15 +412,15 @@ classdef (Abstract) opt_manager_interface < handle
                 %ugly interface here
                 vars_im = sol_best.vars;
                 if obj.LMILAB
-                    [vrec] = rec_vars(vars_im, sol_best.lmi_out);
+                    [vrec] = rec_vars(vars_im, sol_best.info.lmi_out);
                 else
                     [vrec] = rec_vars(vars_im);
                 end
 
                 sol_best.vars = vrec;
 
-                sol_best = obj.process_recovery(sol_best, sol_best.lmi_out, sol_best.alg_psi, sol_best.diss);
-                sol_best.objective = double(double(sol_best.objective, sol_best.lmi_out));
+                sol_best = obj.process_recovery(sol_best, sol_best.info.lmi_out, sol_best.cert.alg_psi, sol_best.cert.diss);
+                sol_best.objective = double(double(sol_best.objective, sol_best.info.lmi_out));
             end
 
                         
@@ -479,11 +476,11 @@ classdef (Abstract) opt_manager_interface < handle
             [vars, cons, objective, alg_psi, rho, diss] = obj.build_program(spec_curr); 
  
             [sol] = obj.run(vars, cons, objective);
-            sol.objective = double(double(objective, sol.lmi_out));
+            sol.objective = double(double(objective, sol.info.lmi_out));
             sol.rho = rho;
-            sol.alg_psi = alg_psi;
+            sol.cert.alg_psi = alg_psi;
             sol.vars = vars;
-            sol.diss = diss;
+            sol.cert.diss = diss;
         end
 
         %% Constraint optimization

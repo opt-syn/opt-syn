@@ -928,7 +928,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             sol.cert.alg_trans = K_report.alg_trans;
             sol.cert.alg = lft(obj.sys.P, K_report.K);
             sol.cert.model = K_report.model;           
-            sol.K= K_report.K;
+            sol.cert.K= K_report.K;
             sol.cert.K_sub = K_report.K_sub;
             sol.cert.Gcl = Gcal;
             sol.cert.Ycl = Ycal;
