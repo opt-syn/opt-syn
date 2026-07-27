@@ -233,6 +233,7 @@
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../index_documentation.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_solutions.html">Solution</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../operators/doc_set_valued.html">Set-Valued Maps</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../operators/doc_sml.html">Subdifferentials</a></li>
@@ -1583,7 +1584,7 @@ coupled positivity if the IQC has a terminal cost</p>
 <dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface">
 <span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">system.generic.</span></span><span class="sig-name descname"><span class="pre">lmi_synthesis_interface</span></span><a class="headerlink" href="#system.generic.lmi_synthesis_interface" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#system.generic.lmi_dispatch_interface" title="system.generic.lmi_dispatch_interface"><code class="xref mat mat-class docutils literal notranslate"><span class="pre">system.generic.lmi_dispatch_interface</span></code></a></p>
-<p>LMI_ANALYSIS_INTERFACE
+<p>LMI_SYNTHESIS_INTERFACE
 Linear Matrix Inequality constraints for analysis of algorithmic
 interconnections.</p>
 <div class="members docutils container">
@@ -2110,79 +2111,10 @@ constraint</p>
 <section id="dissipation-container">
 <h2>Dissipation Container<a class="headerlink" href="#dissipation-container" title="Link to this heading">#</a></h2>
 <p>The dissipation constraints are stored in <code class="docutils literal notranslate"><span class="pre">diss_data</span></code>. This container is used to construct the LMIs in Analysis and Synthesis.</p>
-<dl class="mat class">
+<dl class="mat attribute">
 <dt class="sig sig-object mat" id="manager.diss_data">
-<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">manager.</span></span><span class="sig-name descname"><span class="pre">diss_data</span></span><a class="headerlink" href="#manager.diss_data" title="Link to this definition">#</a></dt>
-<dd><p>DISS_DATA Stores information about a dissipation inequality
-processed in lmi_analysis and lmi_synthesis routines.
-diss_data objects are formed in the index_specs routine.</p>
-<div class="members docutils container">
-<dl>
-<dt>Constructor Summary</dt><dd><dl class="mat method">
-<dt class="sig sig-object mat" id="manager.diss_data.diss_data">
-<span class="sig-name descname"><span class="pre">diss_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#manager.diss_data.diss_data" title="Link to this definition">#</a></dt>
-<dd><p>construct a dissipation inequality</p>
-</dd></dl>
-
-</dd>
-<dt>Property Summary</dt><dd><dl class="mat attribute">
-<dt class="sig sig-object mat" id="manager.diss_data.ind_curr">
-<span class="sig-name descname"><span class="pre">ind_curr</span></span><a class="headerlink" href="#manager.diss_data.ind_curr" title="Link to this definition">#</a></dt>
-<dd><p>current subsystem index (switched)</p>
-</dd></dl>
-
-<dl class="mat attribute">
-<dt class="sig sig-object mat" id="manager.diss_data.ind_next">
-<span class="sig-name descname"><span class="pre">ind_next</span></span><a class="headerlink" href="#manager.diss_data.ind_next" title="Link to this definition">#</a></dt>
-<dd><p>nextsubsystem index (switched)</p>
-</dd></dl>
-
-<dl class="mat attribute">
-<dt class="sig sig-object mat" id="manager.diss_data.iqc_data">
-<span class="sig-name descname"><span class="pre">iqc_data</span></span><a class="headerlink" href="#manager.diss_data.iqc_data" title="Link to this definition">#</a></dt>
-<dd><p>(cell) iqcs of the individual operators</p>
-</dd></dl>
-
-<dl class="mat attribute">
-<dt class="sig sig-object mat" id="manager.diss_data.iqc_rob">
-<span class="sig-name descname"><span class="pre">iqc_rob</span></span><a class="headerlink" href="#manager.diss_data.iqc_rob" title="Link to this definition">#</a></dt>
-<dd><p>(iqc) iqcs from the operator uncertainty</p>
-</dd></dl>
-
-<dl class="mat attribute">
-<dt class="sig sig-object mat" id="manager.diss_data.ndiss">
-<span class="sig-name descname"><span class="pre">ndiss</span></span><a class="headerlink" href="#manager.diss_data.ndiss" title="Link to this definition">#</a></dt>
-<dd><p>number of specifications</p>
-</dd></dl>
-
-<dl class="mat attribute">
-<dt class="sig sig-object mat" id="manager.diss_data.plant">
-<span class="sig-name descname"><span class="pre">plant</span></span><a class="headerlink" href="#manager.diss_data.plant" title="Link to this definition">#</a></dt>
-<dd><p>(genplant) the plant to analyze/control</p>
-</dd></dl>
-
-<dl class="mat attribute">
-<dt class="sig sig-object mat" id="manager.diss_data.plant_reg">
-<span class="sig-name descname"><span class="pre">plant_reg</span></span><a class="headerlink" href="#manager.diss_data.plant_reg" title="Link to this definition">#</a></dt>
-<dd><p>(genplant) the plant with error channels, used for reduced-ordeer control</p>
-</dd></dl>
-
-<dl class="mat attribute">
-<dt class="sig sig-object mat" id="manager.diss_data.rho">
-<span class="sig-name descname"><span class="pre">rho</span></span><a class="headerlink" href="#manager.diss_data.rho" title="Link to this definition">#</a></dt>
-<dd><p>linear convergence rate</p>
-</dd></dl>
-
-<dl class="mat attribute">
-<dt class="sig sig-object mat" id="manager.diss_data.spec">
-<span class="sig-name descname"><span class="pre">spec</span></span><a class="headerlink" href="#manager.diss_data.spec" title="Link to this definition">#</a></dt>
-<dd><p>(spec) performance specification</p>
-</dd></dl>
-
-</dd>
-</dl>
-</div>
-</dd></dl>
+<span class="sig-prename descclassname"><span class="pre">manager.</span></span><span class="sig-name descname"><span class="pre">diss_data</span></span><a class="headerlink" href="#manager.diss_data" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 </section>
 </section>

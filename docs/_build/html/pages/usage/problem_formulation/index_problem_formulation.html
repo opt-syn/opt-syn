@@ -227,6 +227,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../documentation/index_documentation.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../documentation/doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../documentation/doc_solutions.html">Solution</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../documentation/operators/doc_set_valued.html">Set-Valued Maps</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../documentation/operators/doc_sml.html">Subdifferentials</a></li>
@@ -438,12 +439,12 @@
 </div>
 <p>The System stores details about the operator classes, networks, and algorithms used to solve the inclusion problem.</p>
 <p>The Configuration options define options such as numerical tolerances.</p>
-<p>The System and Configuration are used to define
-Analysis and Synthesis the  <a class="reference internal" href="../../documentation/doc_manager.html"><span class="doc">managers</span></a>:</p>
+<p>The System and Configuration are used to define the
+Analysis and Synthesis   <a class="reference internal" href="../../documentation/doc_manager.html"><span class="doc">managers</span></a>:</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">([</span><span class="nb">arguments</span><span class="p">]);</span>
 <span class="n">config</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_config</span><span class="p">();</span>
-<span class="n">man_ana</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_analysis</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">);</span>
-<span class="n">man_syn</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_synthesis</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">);</span>
+<span class="n">man_ana</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_analysis</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">);</span><span class="w">  </span>
+<span class="n">man_syn</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_synthesis</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">);</span><span class="w"> </span>
 </pre></div>
 </div>
 <p>The Performance Specifications define what convergence rate and robustness criteria are considered in algorithm Analysis and Synthesis.</p>

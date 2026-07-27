@@ -43,6 +43,8 @@
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'pages/usage/problem_formulation/system/bind';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -227,6 +229,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../documentation/index_documentation.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../documentation/doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../documentation/doc_solutions.html">Solution</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../documentation/operators/doc_set_valued.html">Set-Valued Maps</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../documentation/operators/doc_sml.html">Subdifferentials</a></li>
@@ -428,13 +431,53 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="repeated-operator-evaluations">
 <h1>Repeated Operator Evaluations<a class="headerlink" href="#repeated-operator-evaluations" title="Link to this heading">#</a></h1>
-<p>Repeated nonlinearities</p>
-<p>Link to Extragradient method/multistep evaluation.</p>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>Under Construction</p>
+<p>Some optimziation algorithms involve multiple evaluations of operators within a single time step. The Extragradient Method <a class="footnote-reference brackets" href="#footcite-korpelevich1976extragradient" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+<div class="math notranslate nohighlight">
+\[x_{k+1} = x_{k} - \gamma \nabla f(x_k - \gamma \nabla f(x_k)),\]</div>
+<p>can be expressed as the algorithmic interconnection</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mat{c}{x_{k+1} \hl z^1_k \\ z^2_k} &amp;= \mat{c|cc}{I &amp; 0 &amp; -\gamma I \hl I &amp; 0 &amp; 0 \\ I &amp; -\gamma I &amp; 0 } \mat{c}{x_k \hl w^1_k \\ w^2_k}, &amp; \mat{c}{w^1_k \\ w^2_k} &amp;= \mat{c}{\nabla f(z^1_k) \\ \nabla f(z^2_k)}.\end{split}\]</div>
+<p>The  <code class="xref mat mat-attr docutils literal notranslate"><span class="pre">bind</span></code> attribute of <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_system</span></code> stores the indexing of repeated operator evaluations.
+For the Extragradient method, this is <code class="docutils literal notranslate"><span class="pre">bind=[1,</span> <span class="pre">1]</span></code>.</p>
+<p>To give an example with <span class="math notranslate nohighlight">\(s=3\)</span> operators, an algorithm with parameters <span class="math notranslate nohighlight">\(\gamma, \lambda &gt; 0\)</span> described by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mat{c}{x_{k+1} \hl z^1_k \\ z^2_k \\ z^3_k \\ z^4_k} &amp;= 
+\mat{c|cccc}{I &amp; -2\gamma \lambda I &amp; -\gamma \lambda I&amp; -2\gamma \lambda I  &amp; -\gamma  \lambda I \hl 
+I &amp; -\lambda I &amp; 0 &amp; 0 &amp; 0 \\
+I &amp; -3 \lambda I &amp; -\lambda &amp; 0 &amp; 0 \\
+I &amp; -\lambda I &amp; 0 &amp; 0 &amp; 0 \\
+I &amp; -3 \lambda I &amp; -\lambda I &amp; -2 \lambda I &amp; -\lambda I} \mat{c}{x_k \\ w^1_k \\ w^2_k \\ w^3_k \\ w^4_k}, &amp; \mat{c}{w^1_k \\ w^2_k \\ w^3_k \\ w^4_k} &amp;= \mat{c}{F_1 (z^1_k) \\ F_3 (z^2_k)\\ F_2 (z^3_k) \\ F_3(z^4_k)}\end{split}\]</div>
+<p>evaluates the operator <span class="math notranslate nohighlight">\(F_3\)</span> twice in each time step. This algorithm may be modeled using the code</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">Operator_Class</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">,</span><span class="w"> </span><span class="n">op3</span><span class="p">};</span><span class="w"> </span><span class="c">%classes for F1, F2, F3</span>
+<span class="n">A</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="n">B</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="o">-</span><span class="n">lambda</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">gamma</span><span class="p">);</span>
+<span class="n">C</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
+<span class="n">D</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="o">-</span><span class="n">lambda</span><span class="p">);</span>
+
+<span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="n">bind</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">];</span><span class="w"> </span><span class="c">%ordering of operators in repeated evaluations</span>
+
+<span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">Operator_Class</span><span class="p">,</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
+<span class="n">sys</span><span class="p">.</span><span class="n">bind</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">bind</span><span class="p">;</span>
+</pre></div>
 </div>
+<p>In the terminology of <a class="footnote-reference brackets" href="#footcite-morin2024frugal" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, operator splitting problems with repeated evaluations are ‘nonfrugal’.</p>
 </section>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-korpelevich1976extragradient" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Galina M Korpelevich. The extragradient method for finding saddle points and other problems. <em>Matecon</em>, 12:747–756, 1976.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-morin2024frugal" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Martin Morin, Sebastian Banert, and Pontus Giselsson. Frugal Splitting Operators: Representation, Minimal Lifting, and Convergence. <em>SIAM Journal on Optimization</em>, 34(2):1595–1621, 2024.</p>
+</aside>
+</aside>
 
 
                 </article>

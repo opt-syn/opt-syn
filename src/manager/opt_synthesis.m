@@ -236,16 +236,16 @@ classdef opt_synthesis < opt_manager_interface
         end
 
         %% alternating design
-        function [sol_history, vr_history, success] = alternate(obj, iqc_init, order, specs, b_opts)
+        function [sol_history, vr_history, success] = alternate(obj, Niter, order, iqc_init, specs, b_opts)
             %ALTERNATE alternating synthesis and analysis. 
             % use bisection in analysis and synthesis if rho is minimized.
             %
             %
             %Args:
-            %   iqc_init (cell):  initial IQCs for the operators
-            %   order (cell):  orders of the operators
-            %   specs (cell):   performance specifications
-            %   diss (diss_data):   dissipation constraints
+            %   Niter (int): number of alternation iterations
+            %   order (cell):  orders of the operators (for analysis)
+            %   iqc_init (cell):  initial IQCs for the operators (for synthesis)            
+            %   specs (cell):   performance specifications (for both)            
             %   b_opts:   (bisect_opts) bisection options (bisect_opts)
             %Returns:                 
             %   sol_history (cell):  cell of solutions, first row is Synthesis, second row is analysis.
@@ -254,11 +254,20 @@ classdef opt_synthesis < opt_manager_interface
 
 
 
-            Niter = b_opts.Niter;
-
             sol_history = cell(2, Niter);
             vr_history = cell(2, Niter);
 
+            if nargin < 4
+                iqc_init = [];
+            end
+
+            if nargin < 5
+                specs = [];
+            end
+
+            if nargin < 6
+                b_opts = bisect_opts();
+            end
             iqc_curr = iqc_init;
             
             sys_curr = obj.sys;
@@ -308,7 +317,7 @@ classdef opt_synthesis < opt_manager_interface
 
 
                 %then do analysis
-                sys_curr.K = sol_syn_back.K;
+                sys_curr = sol_syn_back.sys;
 
                 ana = opt_analysis(sys_curr);
                 if b_opts.bisect
@@ -329,14 +338,14 @@ classdef opt_synthesis < opt_manager_interface
                 
                 %prepare for next go-around
                 %factor the iqcs from analysis for use in synthesis
-                iqc_curr = cell(length(sol_ana.iqc_op), 1);
+                iqc_curr = cell(length(sol_ana.cert.iqc_op), 1);
                 
                 if i < Niter
                     for j = 1:numel(iqc_curr)
-                        if isnumeric(sol_ana.iqc_op{j})
-                            iqc_curr{j} = sol_ana.iqc_op{j};
+                        if isnumeric(sol_ana.cert.iqc_op{j})
+                            iqc_curr{j} = sol_ana.cert.iqc_op{j};
                         else
-                            iqc_curr{j} = sol_ana.iqc_op{j}.factor();
+                            iqc_curr{j} = sol_ana.cert.iqc_op{j}.factor();
                         end
                     end        
                 end

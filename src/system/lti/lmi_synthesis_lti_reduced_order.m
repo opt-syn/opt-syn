@@ -127,7 +127,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             % sol.K= 
             sol.cert.K = K_report.K;
             sol.cert.K_sub = K_report.K_sub;
-            sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
+            sol.gain = obj.validate_recovery_gain(sol.cert.alg_psi, sol.cert.iqc_op_all);
 
             sol.cert.Gcl = Gcl;
             sol.cert.Ycl = Ycl;
@@ -354,9 +354,10 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
         function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, Pr, vars_diss, vars_reg, vars_K);
             %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
-            %transformation
+            %transformation. Special construction for reduced-order control
+            %
             %Args:    
-            %   P: IQC-filtered generalized plant 
+            %   Pr: IQC-filtered generalized plant
             %   vars_diss:   variables of the problem (dissipation)
             %   vars_reg:   variables of the problem (regulator)            
             %   vars_K:   variables of the problem (controller)    
@@ -425,7 +426,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
                 if n ==0
                     %no filters nor network dynamics 
-                    Acal = [zeros(size(Ak)), GX*Aaug];
+                    Acal = [zeros(n+nf+ns, n), GX*Aaug];
                     Bcal = (GX*Pihatinv * Bpaug);
                     Ccal = (Creg);
 
@@ -448,9 +449,17 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 nz = length(iz);
                 nw = length(iw);
                 ny = length(iy);
+                
+                %check dimensions here
+
+                %before permutation (D on bottom)
+                % U_cl_base = [zeros(nxn, nxiU), B(:, iu);
+                %     eye(nxiU), zeros(nxiU, nu);
+                %     zeros(nz, nxiU), D(iz, iu)]';
+    
                 U_cl_base = [B(:, iu), zeros(nxn, nxiU);
-                    zeros(nxiU, nu), eye(nxiU);
-                    D(iz, iu), zeros(nz, nxiU)]';
+                 zeros(nxiU, nu), eye(nxiU),;
+                 D(iz, iu),  zeros(nz, nxiU)]';
 
                 nxiV = n;
                 V_cl_base = [eye(nxiV), zeros(nxiV, nxn + ns), zeros(nxiV, nw);
@@ -509,6 +518,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
         function [Ak, Bk, Ck, Dk] = recover_K_from_elim(obj, vars_rec)
             %recover the eliminated matrices in the controller            
+            %
             %Args:
             %   vars_rec: recovered variables from solver
             %
@@ -721,7 +731,14 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
 
             diss_trans = struct('P', P_trans, 'rho', vars_rec.rho);
-            sys_cl = obj.system_closed_loop(diss_trans, vars_rec.diss, vars_rec.reg, vars_rec.K);
+
+            elim_orig = obj.elimination;
+            obj.config.syn.elimination = false;
+            
+            vrec_K = struct('A', Ak, 'B', Bk,  'C', Ck,  'D', Dk);
+            
+            sys_cl = obj.system_closed_loop(diss_trans, vars_rec.diss, vars_rec.reg, vrec_K);
+            obj.config.syn.elimination = elim_orig;
 
             XAcl = Ycalinv' * sys_cl.A * Ycalinv;
             XBcl = Ycalinv' * sys_cl.B;

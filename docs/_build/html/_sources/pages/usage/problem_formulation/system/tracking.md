@@ -1,10 +1,10 @@
 # Time-Varying Optimal Solutions
 
-Tracking of the optimal solution.
+The 
 
-By default: constant tracking.
+{footcite}`bianchin2026internal`.
 
-Show an example of sinusoid tracking.
+
 
 
 :::{caution} 

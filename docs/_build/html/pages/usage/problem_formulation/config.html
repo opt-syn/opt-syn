@@ -233,6 +233,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../documentation/index_documentation.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../documentation/doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../documentation/doc_solutions.html">Solution</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../documentation/operators/doc_set_valued.html">Set-Valued Maps</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../documentation/operators/doc_sml.html">Subdifferentials</a></li>
@@ -451,13 +452,29 @@
 <p>Configuration options include numerical tolerances and  recovery prereferences. These are detailed in <a class="reference internal" href="../../documentation/doc_config.html"><span class="doc">Configuration</span></a>.</p>
 <section id="restricting-information-structures">
 <h2>Restricting  Information Structures<a class="headerlink" href="#restricting-information-structures" title="Link to this heading">#</a></h2>
-<p>The sparsity pattern of the controller <span class="math notranslate nohighlight">\(D_K\)</span> in Synthesis can be imposed in the configuration options. This sparsity pattern can be used to enforce an <a class="reference internal" href="#information-structure"><span class="xref myst">Information Structure</span></a> on the generated algorithm.</p>
-<p>As an example, a two-operator splitting algorithm with a forward evaluation on <span class="math notranslate nohighlight">\(F_1\)</span> and a backward evaluation on <span class="math notranslate nohighlight">\(F_2\)</span> can be synthesized using the configuration options</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"> </span><span class="c">%F2 can use information from F1</span>
-<span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"> </span><span class="c">%F2 cannot use information from F1.</span>
+<p>The sparsity pattern of the controller <span class="math notranslate nohighlight">\(D_K\)</span> in Synthesis can be imposed in the configuration options. This sparsity pattern can be used to enforce an <a class="reference internal" href="../../how_it_works/alg_properties.html"><span class="doc">Information Structure</span></a> on the generated algorithm.</p>
+<p>As an example, a two-operator splitting algorithm with <span class="math notranslate nohighlight">\(\Dcl_{11}=0\)</span> (explicit evaluation of <span class="math notranslate nohighlight">\(F_1\)</span>) and <span class="math notranslate nohighlight">\(\Dcl_{22}\neq 0\)</span> (implicit evaluation of <span class="math notranslate nohighlight">\(F_2\)</span>) can be synthesized using the configuration options</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%F2 can use information from F1</span>
+<span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span>
+<span class="w">                     </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"> </span>
+
+<span class="c">%F2 cannot use information from F1</span>
+<span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span>
+<span class="w">                     </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"> </span>
 </pre></div>
 </div>
-<p>By default, <code class="docutils literal notranslate"><span class="pre">config.syn.D_mask</span></code> will be an block-lower-triangular matrix with all ones (all operators admit known backward evaluations).</p>
+<p>Algorithms with both explicit evaluations (<span class="math notranslate nohighlight">\(\Dcl_{11}, \Dcl_{22}\neq 0\)</span>) can be synthesized using</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%F2 can use information from F1</span>
+<span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span>
+<span class="w">                    </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
+
+<span class="c">%F2 cannot use information from F1 </span>
+<span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span>
+<span class="w">                    </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span><span class="w"> </span>
+</pre></div>
+</div>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">config.syn.D_mask</span></code> will be an lower-triangular matrix with all ones. This pattern allows all operators to be evaluated implicitly, and to use information computed from prior operators in the sequence.</p>
+<p>An algorithm with upper-block-triangular nonzero entries of <code class="docutils literal notranslate"><span class="pre">D_mask</span></code> can be Analyzed or Synthesized. However <span style="color:#5D93BF">opt</span>-syn cannot guarantee that the algorithm will be well-posed, nor will it be able to <a class="reference internal" href="../simulation.html"><span class="doc">Simulate</span></a> trajectories of an algorithm execution.</p>
 </section>
 </section>
 
