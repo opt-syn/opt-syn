@@ -48,15 +48,15 @@ classdef  opt_system_interface
             nbind = length(obj.bind);
             if isempty(P)
                 if isempty(K)
-                    c = 1;
+                    c = 1;                    
                 else
                     if iscell(K)
                         c = size(K{1}.D, 1)/nbind;
                     else
                         c = size(K.D, 1)/nbind;
-                    end
-                    obj.P = bridge_pass_through(nbind, c);            
+                    end                    
                 end
+                obj.P = bridge_pass_through(nbind, c);
             else
                 c = P.nz/nbind;
             end

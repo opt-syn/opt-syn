@@ -481,7 +481,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             coord_shift = coords(:, 2);
             coord_shift(1) = 0;
             
-            USE_LAST = all(nxi~=0) || (size(coords, 1)==1);
+            USE_LAST = obj.reduced || all(nxi~=0) || (size(coords, 1)==1);
             
             %store the identity indexers            
             nc = size(coord_first, 1);
@@ -978,8 +978,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %this is the (nonlinearly-warped) system that is certified as
             %possessing the desired performance and robustness
             %specifications
+            
             sys_cl = obj.system_closed_loop(P_trans, vars_rec.diss, vars_rec.reg, vars_rec.K);
-
             sys_cal = ss(G \ sys_cl.A, G \ sys_cl.B, sys_cl.C, sys_cl.D, 1);
 
 

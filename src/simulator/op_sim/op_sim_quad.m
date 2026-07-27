@@ -63,6 +63,7 @@ classdef op_sim_quad < op_sim_interface
             %Returns:
             %   z:       the z such that z = (I - D F)^(-1)(v)
 
+            dl = obj.blocksize(v);
             z = (obj.M + kron(eye(dl), inv(D))) \ ...
                 (obj.M*obj.zstar(k) + kron(eye(size(obj.M, 1)/size(D, 1)), D) \ v);
         end
