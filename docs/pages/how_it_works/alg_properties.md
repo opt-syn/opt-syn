@@ -108,13 +108,13 @@ The operator $H_i: = (F_i^{-1} - \Dcl_{ii})^{-1}$ can be evaluated using
   - $\Dcl_{ii} = 0$
   - $z \mapsto F_i(z)$,
 * - Implicit
-  - $\Dcl_{ii} \succ 0$
-  - $z \mapsto \Dcl_{ii}^{-1} (z - (I - \Dcl_{ii} F_i)^{-1}(z))$
+  - $\Dcl_{ii}$ invertible
+  - $z \mapsto \Dcl_{ii}^{-1} z - \Dcl_{ii}^{-1} (I - \Dcl_{ii} F_i)^{-1}(z)$
 ```
 
 If the backward-evaluation  $(I - \Dcl_{ii} F_i)^{-1}$ is available (such as from a  resolvent/proximal operator), then this algorithm execution is tractable.
 
-The information structure of the algorithm is the block-sparsity pattern of $\Dcl$. If $\Dcl_{ii} = 0$, then $w^i_k$ is explicitly computed from $(x_k, w^1_k, \ldots, w^{i-1}_k)$. If $\Dcl_{ii} \neq 0$, then $w^i_k$ implicitly depends on $(x_k, w^1_k, \ldots, w^{i-1}_k, w^i_k)$. This implicit loop can be broken by proximal/resolvent evaluations for the operator $F_i$, if available. If $\Dcl_{ij} = 0$ with $i > j$, then $w^i_k$ does not use information from the previously computed output $w^j_k$.
+The information structure of the algorithm is the block-sparsity pattern of $\Dcl$. If $\Dcl_{ii} = 0$, then $w^i_k$ is explicitly computed from $(x_k, w^1_k, \ldots, w^{i-1}_k)$. If $\Dcl_{ii} \neq 0$, then $w^i_k$ implicitly depends on $(x_k, w^1_k, \ldots, w^{i-1}_k, w^i_k)$.   If $\Dcl_{ij} = 0$ with $i > j$, then $w^i_k$ does not use information from the previously computed output $w^j_k$.
 
 
 Examples of information structures for $s=2$ operators (with $\bullet$ marking  nonzero entries) are 
@@ -155,3 +155,6 @@ Given an inclusion problem with variable $\beta \in \R^{n_\beta}$, an algorithm 
 ```
 
 The smallest such integer $c$ is the coordinate dimension of the Kronecker structure. Projected Gradient Descent has $c=1$. An algorithm with $c > 1$ can assign different update rules to different coordinate blocks.
+
+
+{{osyn}} certifies Analysis and Synthesis results for algorithms with Kronecker structure. The performance of the resulting algorithm therefore scales independently of dimension.
