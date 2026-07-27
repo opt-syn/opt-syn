@@ -13,9 +13,12 @@ tocdepth: 1
 Under Construction
 :::
 
+```{bibliography}
+
+```
 
 
-## Other Algorithm Analysis/Synthesis Software
+## Other  Software
 
 {{osyn}} is part of a family of computational tools for the analysis and synthesis of optimization algorithms. Other software to perform algorithm analysis and/or synthesis includes:
 
@@ -24,3 +27,13 @@ Under Construction
 | [PEPit](https://pepit.readthedocs.io)| Finite-horizon analysis of first-order methods. |
 | [AutoLyap](https://autolyap.github.io/) | Infinite-horizon Lyapunov analysis of first-order methods. |
 | [decent-bench](https://github.com/team-decent/decent-bench) | Benchmarking of decentralized/distributed/federated optimization optimization algorithms. |
+
+
+Tools to perform analysis and control of dynamical systems include 
+| Name | Description |
+| --- | --- |
+| [Robust Control Toolbox](https://www.mathworks.com/products/robust.html)| MATLAB robust control routines. |
+| [iqclab](https://www.iqclab.eu/) | Robust control analysis/synthesis using Integral Quadratic Constraints |
+| [MPT3](https://www.mpt3.org/) |Computational geometry, reachability sets, model predictive control |
+| [CasADI](https://web.casadi.org/) | Nonlinear optimization and optimal control |
+

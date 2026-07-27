@@ -1,24 +1,110 @@
 # Solve and Validate
 
-:::{caution} 
-Under Construction
-:::
+
+
+The  Analysis and Synthesis problems can be solved once  the appropriate {doc}`managers <../documentation/doc_manager>` are created:
+
+```matlab
+sys = opt_system([arguments]);
+config = opt_config();
+man_ana = opt_analysis(sys, config);  
+man_syn = opt_synthesis(sys, config); 
+```
+
+
 ## Solve
 
-### Single Solve
+Three solution modes are available: 
+1. Single Solution
+2. Bisection
+3. Alternation
+
+### Single Solution
+
+
+The  {meth}`solve_single` routine performs Analysis or Synthesis at given  specifications. The output of {meth}`solve_single` is a {doc}`solution <../documentation/doc_solutions>` structure {class}`opt_solution`. The fields of the solution structure are explained further  below in the [Validation](#Validation) subsection.
+
+Analysis is called by 
+```matlab
+sol_ana_single = man_ana.solve_single(order, specs);
+```
+
+The `order` input is an $s$-length cell array. Each entry  of the `order` cell array is a nonnegative integer or pair of integers:
+```{list-table}
+:header-rows: 1
+* - Order Length
+  - Operator Classes     
+* - 1
+  - {class}`op_gen`, {class}`op_sml_causal`,  {class}`op_quad_causal`
+* - 2
+  - {class}`op_sml`, {class}`op_pcc`,  {class}`op_quad`
+```
+
+The order defines length of the filters in the {doc}`IQCs <../documentation/doc_iqc>`. A higher order requries more computation, but can lead to improved bounds.
+
+The `specs` is a cell array of {doc}`specifications <problem_formulation/specs>`.
+
+
+Synthesis is invoked by 
+```matlab
+sol_syn_single = man_syn.solve_single(iqc, specs);
+```
+
+The `iqc` input is an $s$-length cell array of {doc}`IQCs <../documentation/doc_iqc>`. A default input of `iqc=[]` will perform Synthesis with a set of valid IQCs for the operators, computed by each {doc}`operator class's <../documentation/operators/doc_operators>` 
+{meth}`create_iqc_identity` routine.
+
+
+The objective in Analysis or Synthesis is set using the `target` field in the  {doc}`operator class's <../documentation/doc_specs>`. 
+If `specs{j}.target = true`, then the specification in $i$ is minimized. At most one specification $j$ can have `specs{j}.target = true`.
+If `specs{j}.target=false` for all specifications $j$ then a feasibility problem is solved. 
 
 ### Bisection
 
+The routine {meth}`bisect` performs bisection on a single specification. Parameters of bisection are set using the `bisect_opts` configuration, see `operator class's <../documentation/doc_config>` for more details. The index of the specification in the `spec` to minimize using bisection is set via `bisect_opts.spec_ind`, with a default of index of 1.
+
+The outputs of  {meth}`bisect` are the {class}`opt_solution` structure and the two-element array `v_range`. The entries of `v_range` are the lower and upper bounds of the bisected parameter.
+
+As an example, the Analysis and Synthesis routines for minimizing  the linear convergence rate $\rho$ subject to a $\rho$-weighted  $\ell_2$ gain bound of 100 is 
+```matlab
+spec_rho = spec_stability();
+spec_l2 = spec_e2e(100);
+specs = {spec_rho, spec_l2};
+b_opts = bisect_opts;
+b_opts.spec_ind = 1;
+
+[sol_ana_bisect, v_ana] = man_ana.bisect(order, specs, b_opts);
+[sol_syn_bisect, v_syn] = man_syn.bisect(iqc, specs, b_opts);
+```
+
 ### Alternation
 
-## Validation
+The {meth}`alternate` routine switches between Synthesis and Analysis. It solves a Synthesis problem with fixed IQCs to find a controller, and then solves Analysis with the fixed controller to find IQCs. The Analysis and Synthesis problems may include inner bisection steps.
 
-The `sol` structure contains information about the solution of analysis/synthesis. The solution is feasible if the following conditions are met
+An alternation routine with 3 Synthesis/Analysis steps is performed by 
+```matlab
+Niter = 3; 
+[sol_syn_alternate, v_history] = man_syn.alternate(Niter, iqc, order, specs, b_opts);
+```
 
+The `v_history` output is a cell array with 2 rows and  Niter columns. Each entroy of the cell array stores the  lower and upper bounds from bisection. The top row are the Synthesis bounds, and the bottom row are the Analysis bounds.
+
+##  Validation
+
+{#Validation}
+The {class}`opt_solution` structure contains information about the solution of analysis/synthesis. The solution is feasible if the following conditions are met
 | Name   |  Description  | Valid Condition |
 |----| ---- | ----- | 
-| `STATUS` | Feasibility of problem | `STATUS`=0 if feasible, `STATUS`$\neq$0  if infeasible |
-| `dia` | Constraint violation | `dia`<0 if strictly feasible, `dia`=0 if marginally feasible, `dia` > 0 if infeasible |
-| `gain` | Input passivity index and $H_\infty$ gain | Feasible if `gain(1)` < 0 and `gain(2)` < 1 |
+| `STATUS` | Feasibility of problem | `STATUS`$=0$ if feasible, `STATUS`$\neq 0$  if infeasible |
+| `dia` | Constraint violation | `dia`$<0$ if strictly feasible, `dia`$=0$ if marginally feasible, `dia` $> 0$ if infeasible |
+| `gain` | Input passivity index and $H_\infty$ gain | Feasible if `gain(1)` $< 0$ and `gain(2)` $< 1$ |
+| `rho` | Convergence rate |  Linearly convergent if $\rho < 1$ |
 
-If all of the above conditions are met, then linear convergence is established if and only if `sol.rho` < 1. A finite `sol.rho` > 1 establishes a bounded rate of divergence. No conclusions can be drawn about linear convergence if `sol.rho` = 1. 
+If the option `opt_config.recovery.blocks = true` is used, then `opt_solution.recovery.blocks` contains matrices in the solution that are enforced to be Positive Semidefinite, and `opt_solution.recovery.eb` stores their minimal eigenvalues. `opt_solution.dia` is then negative of the minimal eigenvalue in `opt_solution.recovery.eb`.
+
+
+The variables of the Analysis or Synthesis problem are stored in `opt_solution.vars`. The final algorithmic interconnection/optimization algorithm is stored in `opt_solution.sys`. 
+
+The field `opt_solution.cert` contains Analysis-and-Synthesis-specific certificates of feasibility. In Analysis, the designed IQCs certifying the performance specifications are stored in `opt_solution.cert.iqc_op`. 
+
+In Synthesis, the designed controller is `opt_solution.sys.K`.
+This controller is the interconnection of the internal model `opt_solution.cert.model` and the subcontroller `opt_solution.cert.K_sub`.
