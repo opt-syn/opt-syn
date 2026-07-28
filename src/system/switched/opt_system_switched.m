@@ -168,7 +168,7 @@ classdef  opt_system_switched < opt_system_interface
 
 
         %% build the plant
-        function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data, rho)
+        function [alg_psi, iqc_op, alg_loop] = build_plant(obj, iqc_data)
             %BUILD_PLANT: form the plant to be used for analysis or synthesis
             %
             %Args:
@@ -196,15 +196,11 @@ classdef  opt_system_switched < opt_system_interface
             ds = obj.get_discount();
             for i = 1:obj.Nss
 
-                if ds(i)
-                    rho_curr = rho;
-                else
-                    rho_curr = 1;
-                end
+ 
 
                 param = struct('mode', i);
                 alg = obj.get_alg(param); 
-                [alg_psi{i}, iqc_op, alg_loop{i}] = build_plant_single(obj, alg, iqc_data, rho_curr);
+                [alg_psi{i}, iqc_op, alg_loop{i}] = build_plant_single(obj, alg, iqc_data);
             end
             %repeat this call multiple times for switched systems. This
             %function will be overloaded, whereas build_plant_single will
