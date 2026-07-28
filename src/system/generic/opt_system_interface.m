@@ -170,7 +170,11 @@ classdef  opt_system_interface
                     psi = blkdiag(Psi1, I_zp, Psi2, I_wp);
                     
         
-                    alg_psi = psi * GI; 
+                    alg_psi = genplant(psi * GI); 
+                    alg_psi.nz = ssize(psi.D, 1);
+                    alg_psi.nw = obj.P.nw;
+                    alg_psi.nzp = obj.P.nzp;
+                    alg_psi.nwp = obj.P.nwp;
                 else
 
                     n = obj.P.dump_dim;

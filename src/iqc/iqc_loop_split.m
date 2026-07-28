@@ -263,7 +263,7 @@ classdef iqc_loop_split
             %     perturb = 1e-4;
             % end                                
             np = obj.np;
-            nq = obj.np;
+            nq = obj.nq;
 
  
             %specialized factorization for zames-falb type multipliers
@@ -286,7 +286,7 @@ classdef iqc_loop_split
                     all(obj.Psi2.D(np/2 + (1:nq/2), :)==eye(nq/2), "all");
 
             end
-            %passive is not yet developed
+            
             if is_passive
                 %passive factorization
                 % iqc_factored = obj.passive_factorization();
@@ -526,7 +526,7 @@ classdef iqc_loop_split
 
             %the product (Psi11' Psi1) in state space
             Psi11Psi1 = minreal([Psi11; Psi1],[],false);
-            Psi11Psi1 = balreal(Psi11Psi1);
+            % Psi11Psi1 = balreal(Psi11Psi1);
 
             %matrices  for the product Psi1
             A1hat = Psi11Psi1.A;              B1hat = Psi11Psi1.B; 
@@ -593,7 +593,11 @@ classdef iqc_loop_split
 
             %get the state transformation/compression
             Vh = obj.compute_Vhat(Psih);
-            Xh_V = Vh'*obj.X*Vh;
+            if isempty(obj.X)
+                Xh_V = zeros(size(Vh, 2));
+            else
+                Xh_V = Vh'*obj.X*Vh;
+            end
 
             Mhat = blkdiag(eye(nq),-eye(np));
             Q = [Chat; C1hat C2hat]'*blkdiag(Mhat,-M)*[Chat; C1hat C2hat];

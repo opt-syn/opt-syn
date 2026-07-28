@@ -200,50 +200,77 @@ classdef opt_analysis < opt_manager_interface
                 
                       
                 sp = specs{i};
-                iwp_iqc = (1:(iqc_op.nw))';
-                ir_iqc_first = (1:(iqc_op.np))';
+                % iwp_iqc = (1:(iqc_op.nw))';
+                % ir_iqc_first = (1:(iqc_op.np))';
 
+                % 
+                % count_iqc_in = (iqc_op.nw);
+                % count_iqc_out = (iqc_op.np);
+                % 
+                % if isempty(sp.izp) || isempty(sp.iwp)
+                %     ir_iqc_first_r =[];
+                %     iw_iqc_first_r = [];
+                % else
+                %     iw_iqc_first_r = count_iqc_in + (1:sp.iwp);
+                %     count_iqc_in = count_iqc_in + sp.iwp;
+                % 
+                %     ir_iqc_first_r = count_iqc_out  + (1:sp.izp);
+                %     count_iqc_out = count_iqc_out + sp.izp;
+                % end
+                % 
+                % iwp_iqc = [iwp_iqc; iw_iqc_first_r];
+                % 
+                % ir_iqc0 = [ir_iqc_first; ir_iqc_first_r];
+                % ir_iqc = [ir_iqc0; ir_iqc0 + (iqc_op.np + obj.sys.P.nwp )];
+                % 
+                % sp_ind_w = iwp_iqc;
+                % sp_ind_r = ir_iqc;
+                % 
+                % if iscell(alg_psi)
+                %     [nwr, nww] = ssize(alg_psi{1}.D);                    
+                % else
+                %     [nwr, nww] = ssize(alg_psi.D);
+                % end
 
-                count_iqc_in = (iqc_op.nw);
-                count_iqc_out = (iqc_op.np);
-
-                if isempty(sp.izp) || isempty(sp.iwp)
-                    ir_iqc_first_r =[];
-                    iw_iqc_first_r = [];
-                else
-                    iw_iqc_first_r = count_iqc_in + (1:sp.iwp);
-                    count_iqc_in = count_iqc_in + sp.iwp;
-
-                    ir_iqc_first_r = count_iqc_out  + (1:sp.izp);
-                    count_iqc_out = count_iqc_out + sp.izp;
-                end
-
-                iwp_iqc = [iwp_iqc; iw_iqc_first_r];
-
-                ir_iqc0 = [ir_iqc_first; ir_iqc_first_r];
-                ir_iqc = [ir_iqc0; ir_iqc0 + (iqc_op.np + obj.sys.P.nwp )];
-
-                sp_ind_w = iwp_iqc;
-                sp_ind_r = ir_iqc;
-
+                %output indexer                
                 if iscell(alg_psi)
-                    [nwr, nww] = ssize(alg_psi{1}.D);                    
+                    %TODO: change to genplant_poly type?
+                    nz = alg_psi{1}.nz;
+                    nw = alg_psi{1}.nw;                    
+                    nwp = alg_psi{1}.nwp;
+                    nzp = alg_psi{1}.nzp;
+                    nu = 0;
+                    ny = 0;
                 else
-                    [nwr, nww] = ssize(alg_psi.D);
+                    nz = alg_psi.nz;
+                    nw = alg_psi.nw;
+                    nwp = alg_psi.nwp;
+                    nzp = alg_psi.nzp;
+                    nu = 0;
+                    ny = 0;
                 end
-
-                E_r = full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr));
-                E_w = full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww));
-
+                nzpa = length(sp.izp);
+                nwpa = length(sp.iwp);
+                i_output = 1:(nz+nzpa+ny);
+                j_output = [(1:nz), (nz + sp.izp), nz+nzp + (1:ny)];
+                v_output = ones(length(i_output), 1);
+                E_output = full(sparse(i_output, j_output, v_output, nz+nzpa+ny, nz+nzp+ny));
+                
+                %input indexer
+                i_input = 1:(nw+nwpa+nu);
+                j_input = [(1:nw), (nw + sp.iwp), nw+nwp + (1:nu)];
+                v_input = ones(length(i_input), 1);
+                E_input = full(sparse(i_input, j_input, v_input, nw+nwpa+nu, nw+nwp+nu))';
+                
                 %nonminimal representation of the multiplier-extended plant
                 if iscell(alg_psi)
 
                     alg_screen = cell(size(alg_psi));
                     for j = 1:length(alg_screen)
-                        alg_screen{j} = E_r * alg_psi{j} * E_w;
+                        alg_screen{j} = E_output* alg_psi.P{j} * E_input;
                     end
                 else
-                    alg_screen = E_r * alg_psi * E_w;
+                    alg_screen = E_output * alg_psi.P * E_input;
                 end
 
 
@@ -301,8 +328,8 @@ classdef opt_analysis < opt_manager_interface
             
             
             for i = 1:length(alg_psi_rec)
-                alg_psi_rec{i}.C = double(double(alg_psi_rec{i}.C, lmi_out));
-                alg_psi_rec{i}.D = double(double(alg_psi_rec{i}.D, lmi_out));
+                alg_psi_rec{i}.P.C = double(double(alg_psi_rec{i}.P.C, lmi_out));
+                alg_psi_rec{i}.P.D = double(double(alg_psi_rec{i}.P.D, lmi_out));
                 alg_psi_rec{i} = ss(alg_psi_rec{i}.A, alg_psi_rec{i}.B, alg_psi_rec{i}.C, alg_psi_rec{i}.D, 1);
             end
 
