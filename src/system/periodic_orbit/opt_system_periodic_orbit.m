@@ -211,7 +211,7 @@ classdef  opt_system_periodic_orbit < opt_system
             %repeat this call multiple times for switched systems. This
             %function will be overloaded, whereas build_plant_single will
             %stay the same.
-            [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data, rho);
+            [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data);
 
 
 
