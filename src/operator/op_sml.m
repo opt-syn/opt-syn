@@ -224,20 +224,19 @@ classdef op_sml < op_sml_interface
                 
                     
                 P = obj.dhd_lift(order, vars, iqc);
-    
+                [cons] = dhd_impose(P, cons, obj.LMILAB);
+
                 %impose the exponential discounting
-                nsched = size(rho_sched, 2);
-                h = sum(order)+1;
-                for i = 1:nsched
-                    % rho_1 = kron(diag(rho_sched(1:(order(1)+1), i)), eye(reps));
-                    % rho_2 = kron(diag(rho_sched(1:(order(2)+1), i)), eye(reps));
-                    rho_1 = kron(diag(rho_sched(1:h, i)), eye(reps));
-                    rho_2 = rho_1;
-    
-                    P_rho = rho_1 * P * rho_2;
-    
-                    [cons] = dhd_impose(P_rho, cons, obj.LMILAB);
-                end
+                % nsched = size(rho_sched, 2);
+                % h = sum(order)+1;
+                % for i = 1:nsched
+                %     rho_1 = kron(diag(rho_sched(1:h, i)), eye(reps));
+                %     rho_2 = rho_1;
+                % 
+                %     P_rho = rho_1 * P * rho_2;
+                % 
+                %     [cons] = dhd_impose(P_rho, cons, obj.LMILAB);
+                % end
                 
                 nu = dim(vars.Df1, 1);
                 for i = 1:nu

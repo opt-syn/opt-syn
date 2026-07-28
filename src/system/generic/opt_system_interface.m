@@ -77,7 +77,7 @@ classdef  opt_system_interface
         end    
 
         %% formation of the plant
-        function [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data, rho)
+        function [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data)
             %BUILD_PLANT_SINGLE build a single plant (in a switched
             %system) based on filtering the exponentially-discounted plant 
             %by an IQC
@@ -85,7 +85,6 @@ classdef  opt_system_interface
             %Args:
             %   alg:        original algorithm or network
             %   iqc_data:   IQCs for the oracle uncertainties
-            %   rho:        exponential discount factor
             %
             %Return:
             %   alg_psi:    filtered algorithm 
@@ -108,8 +107,6 @@ classdef  opt_system_interface
 
             w_offset = ssize(alg.B, 2) - wshift;
             z_offset = ssize(alg.C, 1) - wshift;
-            
-
 
             Pwp = blkdiag(P', eye(w_offset));
             Pzp = blkdiag(P, eye(z_offset));
@@ -131,10 +128,14 @@ classdef  opt_system_interface
 
             alg_perm_m = lft(iqc_data.m_same, alg_perm_same, n_same, n_same);
 
-            %exponentially weight the algorithm by the rate rho
-            alg_rho = alg_perm_m;            
-            alg_rho.A = (rho^(-1)) * alg_perm_m.A;
-            alg_rho.B = (rho^(-1)) * alg_perm_m.B;
+    
+
+            %DO NOT exponentially weight the algorithm by the rate rho
+            % alg_perm_m.A = (rho^(-1)) * alg_perm_m.A;
+            % alg_perm_m.B = (rho^(-1)) * alg_perm_m.B;
+            % 
+            % instead, use rho-hard IQCs to allow for different weights in
+            % different specifications
             
             %now apply the IQC to the exponentially-weighted system
 
@@ -143,12 +144,12 @@ classdef  opt_system_interface
             iqc_op = iqc_data.iqc;
 
             if isempty(iqc_op)
-                alg_loop = alg_rho;
-                alg_psi = alg_rho;
+                alg_loop = alg_perm_m;
+                alg_psi = alg_perm_m;
             else
                 loop = iqc_op.loop;
                 nloop = length(loop)/2;
-                alg_loop = lft(loop, alg_rho, nloop, nloop);
+                alg_loop = lft(loop, alg_perm_m, nloop, nloop);
                 
     
     
@@ -207,7 +208,7 @@ classdef  opt_system_interface
                         alg_psi.nzp = alg_psi.nzp - nzp_orig;
                     end
                     
-                end    
+                end
             end
         end
 
