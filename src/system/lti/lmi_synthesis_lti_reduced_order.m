@@ -127,7 +127,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             % sol.K= 
             sol.cert.K = K_report.K;
             sol.cert.K_sub = K_report.K_sub;
-            sol.cert.alg = lft(sol.sys.P, sol.cert.K);
+            sol.cert.alg = lft(obj.sys.P, sol.cert.K);
             sol.cert.alg_psi = rhotrafo(lft(sol.cert.alg_psi, sol.cert.K), sol.rho);
             sol.gain = obj.validate_recovery_gain(sol.cert.alg_psi, sol.cert.iqc_op_all);
 
