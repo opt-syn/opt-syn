@@ -72,7 +72,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
 
             %system block with {A, B, G}
-            sysb = obj.sys_block(diss.plant, G, G);
+            sysb = obj.sys_block(diss.plant, G, G, diss.rho);
 
 
             %supply block with {C, D, M}

@@ -132,7 +132,7 @@ classdef opt_analysis < opt_manager_interface
             cons = append_lmi(cons, -cs + nop*(1+marg), obj.config.LMILAB);
         end
 
-        function [vars, cons, objective, alg_psi, rho, diss] = build_program(obj, specs)
+        function [vars, cons, objective, alg_psi, diss] = build_program(obj, specs)
             %form the analysis program
             %Args:
             %   specs (cell): performance specifications
@@ -151,13 +151,13 @@ classdef opt_analysis < opt_manager_interface
             end
 
             %BUILD_PROGRAM set up the algorithm analysis problem
-            [vars, cons, objective, alg_psi, rho, diss] = build_program@opt_manager_interface(obj, specs); 
+            [vars, cons, objective, alg_psi, diss] = build_program@opt_manager_interface(obj, specs); 
 
 
             %load in the filter constraints      
 
             %this requires a weighting by the exponential discounts            
-            rho_pow = rho.^(obj.schedule);
+            rho_pow = 1.^(obj.schedule);
             %see if this can be parameterized later
             for i = 1:length(obj.sys.op)
                 cons = obj.sys.op{i}.filter_constraints(cons, obj.order{i}, vars.op{i}, rho_pow, obj.iqc_op{i});
@@ -251,6 +251,7 @@ classdef opt_analysis < opt_manager_interface
                 diss{i}.iqc_rob = iqc_op;
                 diss{i}.spec = sp;                    
                 diss{i}.plant = alg_screen;
+                diss{i}.rho = sp.rho;
                 % %need to permute the entries of Mdiag for the partition
             end
 

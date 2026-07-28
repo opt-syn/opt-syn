@@ -87,7 +87,6 @@ classdef opt_synthesis < opt_manager_interface
 
             % [rho, sperf] = obj.perf_specs(specs);
             sperf = specs;
-            rho = sperf{1}.rho;
 
             iqc_op = iqc_data.iqc_op;
 
@@ -130,26 +129,42 @@ classdef opt_synthesis < opt_manager_interface
                 
                 if iscell(alg_psi)
                     %TODO: change to genplant_poly type?
-                    nwr = alg_psi{1}.nz;
-                    nww = alg_psi{1}.nw;                    
+                    nz = alg_psi{1}.nz;
+                    nw = alg_psi{1}.nw;                    
+                    nwp = alg_psi{1}.nwp;
+                    nzp = alg_psi{1}.nzp;
                     nu = alg_psi{1}.nu;
                     ny = alg_psi{1}.ny;
                 else
-                    nwr = alg_psi.nz;
-                    nww = alg_psi.nw;
+                    nz = alg_psi.nz;
+                    nw = alg_psi.nw;
+                    nwp = alg_psi.nwp;
+                    nzp = alg_psi.nzp;
                     nu = alg_psi.nu;
                     ny = alg_psi.ny;
                 end
 
-                nwr = nwr + length(sp.izp);
-                nww = nww + length(sp.iwp);
-
+                %output indexer                
+                nzpa = length(sp.izp);
+                nwpa = length(sp.iwp);
+                i_output = 1:(nz+nzpa+ny);
+                j_output = [(1:nz), (nz + sp.izp), nz+nzp + (1:ny)];
+                v_output = ones(length(i_output), 1);
+                E_output = sparse(i_output, j_output, v_output, nz+nzpa+ny, nz+nzp+ny);
                 
-                E_r = blkdiag(full(sparse(1:length(sp_ind_r), sp_ind_r, ...
-                    ones(1, length(sp_ind_r)), length(sp_ind_r), nwr)), eye(ny));
+                %input indexer
+                i_input = 1:(nw+nwpa+nu);
+                j_input = [(1:nw), (nw + sp.iwp), nw+nwp + (1:nu)];
+                v_input = ones(length(i_input), 1);
+                E_input = sparse(i_output, j_output, v_output, nz+nzpa+ny, nz+nzp+ny)';
+                
+                % 
 
-                E_w = blkdiag(full(sparse(1:length(sp_ind_w), sp_ind_w, ...
-                    ones(1, length(sp_ind_w)), length(sp_ind_w), nww)), eye(nu));
+                % E_r = blkdiag(full(sparse(1:length(sp_ind_r), sp_ind_r, ...
+                %     ones(1, length(sp_ind_r)), length(sp_ind_r), nwr)), eye(ny));
+                % 
+                % E_w = blkdiag(full(sparse(1:length(sp_ind_w), sp_ind_w, ...
+                %     ones(1, length(sp_ind_w)), length(sp_ind_w), nww)), eye(nu));
 
                 
 
@@ -172,7 +187,7 @@ classdef opt_synthesis < opt_manager_interface
 
                     alg_screen = cell(size(alg_psi));
                     for j = 1:length(alg_screen)
-                        alg_screen{j} = genplant(E_r * alg_psi{j}.ss * E_w, n2);
+                        alg_screen{j} = genplant(E_output * alg_psi{j}.ss * E_input, n2);
                     end                    
                     %TODO: write this part: cells/genplant poly
                 else
@@ -181,7 +196,7 @@ classdef opt_synthesis < opt_manager_interface
                     n2.nwp = length(sp.iwp);
                     n2.nzp = length(sp.izp);
 
-                    alg_screen_P = E_r * alg_psi.ss * E_w;
+                    alg_screen_P = E_output * alg_psi.ss * E_input;
                     alg_screen = genplant(alg_screen_P, n2);
 
                     
@@ -192,16 +207,12 @@ classdef opt_synthesis < opt_manager_interface
                 
                 diss{i} = diss_data;
                 diss{i}.iqc_rob = iqc_op;
-                diss{i}.rho = rho;
+                diss{i}.rho = sp.rho;
                 diss{i}.spec = sp;
                 diss{i}.iqc_data = iqc_data;
                 diss{i}.plant = alg_screen;
                 diss{i}.plant_reg = obj.lmi.reg.sys_regulated_aug();
                 diss{i}.ndiss = length(specs);
-
-
-
-
 
                 %TODO: this may run into trouble if one entry has an X.
                 %performance with dynamic multipliers?
@@ -224,6 +235,8 @@ classdef opt_synthesis < opt_manager_interface
             sol.cert.iqc_op = obj.iqc_op;
             sol.cert.iqc_op_all = obj.iqc_op_all;
             sol.vars.rho = sol.rho;
+
+
             [sol] = obj.lmi.process_recovery(sol, lmi_out, alg_psi, diss);            
 
             sol.sys = obj.sys;
@@ -232,7 +245,11 @@ classdef opt_synthesis < opt_manager_interface
             %check regulator equation
             reg2 = obj.lmi.reg;
             reg2.sys = sol.sys;
-            sol.cert.regcl = reg2.check_regulator();
+            regcl = reg2.check_regulator();
+            sol.cert.regcl = regcl;
+
+
+
         end
 
         %% alternating design

@@ -159,15 +159,20 @@ classdef lmi_dispatch_interface < handle
 
 
 
-        function sb = sys_block(obj, plant, Gnew, Gold)
+        function sb = sys_block(obj, plant, Gnew, Gold, rho)
             % SYS_BLOCK system block used in analysis programs
             %Args:    
             %   plant: plant to analyze
             %   Gnew: new storage function
             %   Gold: old storage function
+            %   rho:  discount rate
             %Returns:                        
             %   sb:   dynamics term to build dissipation relation
             %
+
+            if nargin < 5
+                rho = 1;
+            end
             
             
             %
@@ -175,8 +180,8 @@ classdef lmi_dispatch_interface < handle
             %      [A, B]   [0,      Pnew] [A, B]
 
             
-            A = plant.A;
-            B = plant.B;
+            A = rho^(-1) * plant.A;
+            B = rho^(-1) * plant.B;
             
             [n, m] = size(B);  
 
