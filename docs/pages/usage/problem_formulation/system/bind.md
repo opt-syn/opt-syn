@@ -13,7 +13,7 @@ can be expressed as the algorithmic interconnection
 The  {attr}`bind` attribute of {class}`opt_system` stores the indexing of repeated operator evaluations.
  For the Extragradient method, this is `bind=[1, 1]`.
 
-To give an example with $s=3$ operators, an algorithm with parameters $\gamma, \lambda > 0$ described by 
+For an example with $s=3$ operators, the algorithm  with parameters $\gamma, \lambda > 0$ described by 
 ```{math}
 \mat{c}{x_{k+1} \hl z^1_k \\ z^2_k \\ z^3_k \\ z^4_k} &= 
 \mat{c|cccc}{I & -2\gamma \lambda I & -\gamma \lambda I& -2\gamma \lambda I  & -\gamma  \lambda I \hl 
@@ -22,7 +22,7 @@ I & -3 \lambda I & -\lambda & 0 & 0 \\
 I & -\lambda I & 0 & 0 & 0 \\
 I & -3 \lambda I & -\lambda I & -2 \lambda I & -\lambda I} \mat{c}{x_k \\ w^1_k \\ w^2_k \\ w^3_k \\ w^4_k}, & \mat{c}{w^1_k \\ w^2_k \\ w^3_k \\ w^4_k} &= \mat{c}{F_1 (z^1_k) \\ F_3 (z^2_k)\\ F_2 (z^3_k) \\ F_3(z^4_k)}
 ```
-evaluates the operator $F_3$ twice in each time step. This algorithm may be modeled using the code
+evaluates the operator $F_3$ twice per time step: at positions 2 and 4. This algorithm may be modeled using the code
 ```matlab
 Operator_Class = {op1, op2, op3}; %classes for F1, F2, F3
 A = [1];
