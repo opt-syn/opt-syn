@@ -260,7 +260,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             %IMPORTANT!
             %hook up the internal model
             %(maybe it should happen at a higher level?)
-            P = obj.reg.connect_model(diss.plant, diss.ind_curr, diss.rho);
+            P = obj.reg.connect_model(diss.plant, diss.ind_curr);
 
             vars_diss = vcurr.diss;
             vars_diss.GX = vnext.diss.GX;
@@ -338,8 +338,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             
 
             vars_rec = sol.vars;
-            rho = sol.rho;
-            
+
         
             %recover the controller
             [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec);
@@ -351,7 +350,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
 
                 model = obj.reg.get_model(i, vars_rec.reg);
     
-                K_report = obj.K_alg_report(P_trans{i}, K_nofeed{i}, model, rho);
+                K_report = obj.K_alg_report(P_trans{i}, K_nofeed{i}, model);
 
                 %form the algorithm
                 sol.cert.alg_trans{i} = K_report.alg_trans;
@@ -367,8 +366,9 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             n = sol.cert.alg_trans{1}.dump_dim();
             sol.cert.alg_trans = genplant_poly(sol.cert.alg_trans, n);
 
+            alg_psi_rho = rhotrafo(sol.cert.alg_trans, sol.rho);
 
-            sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
+            sol.gain = obj.validate_recovery_gain(alg_psi_rho, sol.cert.iqc_op_all);
         end
 
         function [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec)

@@ -510,6 +510,25 @@ classdef  opt_system_interface
             [iqc_curr, vars_curr,cons_curr] = obj.op{index}.create_iqc(cons, order, rep_curr);
         end
 
+        function sys_sim = export_sim(obj, op_sim)
+            % export the system for use in simulation
+            % with the operators (for iqcs) replaced by operators (in
+            % op_sim)
+            %
+            % Args:
+            %   op_sim: operators for simulation
+            % Return:
+            %   sys_sim: system for use in alg_sim
+            sys_sim = obj;
+            sys_sim.op = op_sim;
+
+            %carry over the coordinate dimensions
+            for i = 1:length(obj.op)
+                sys_sim.op{i}.c = obj.op{i}.c;
+            end
+
+
+        end
 
 
     end
