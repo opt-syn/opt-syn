@@ -150,15 +150,15 @@ classdef opt_synthesis < opt_manager_interface
                 i_output = 1:(nz+nzpa+ny);
                 j_output = [(1:nz), (nz + sp.izp), nz+nzp + (1:ny)];
                 v_output = ones(length(i_output), 1);
-                E_output = sparse(i_output, j_output, v_output, nz+nzpa+ny, nz+nzp+ny);
+                E_output = full(sparse(i_output, j_output, v_output, nz+nzpa+ny, nz+nzp+ny));
                 
                 %input indexer
                 i_input = 1:(nw+nwpa+nu);
                 j_input = [(1:nw), (nw + sp.iwp), nw+nwp + (1:nu)];
                 v_input = ones(length(i_input), 1);
-                E_input = sparse(i_output, j_output, v_output, nz+nzpa+ny, nz+nzp+ny)';
+                E_input = full(sparse(i_input, j_input, v_input, nw+nwpa+nu, nw+nwp+nu))';
                 
-                % 
+                 
 
                 % E_r = blkdiag(full(sparse(1:length(sp_ind_r), sp_ind_r, ...
                 %     ones(1, length(sp_ind_r)), length(sp_ind_r), nwr)), eye(ny));
