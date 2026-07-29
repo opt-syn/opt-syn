@@ -18,10 +18,11 @@ Analysis and Synthesis follow similar workflows:
 4. Solve the profiling problem
 5. Validate the solution, and plot sample trajectories
 
+(#optimization-example-setup)=
 ## Optimization  Example Setup
 
-{#optimization-example-setup}
-A first example involves Analysis and Synthesis of a composite optimization algorithm with two operators,
+
+A first example involves Analysis and Synthesis of a composite optimization algorithm with two functions,
 ```{math}
 \beta^* \in \argmin_{\beta \in \R^c} f_1(\beta) + f_2(\beta),
 ```

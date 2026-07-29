@@ -7,7 +7,7 @@ classdef alg_sim
         sys; %system to simulate
         d;   %number of dimensions (kronecker lift)        
         c=1;  %number of partitions of dimension
-        sampler = []; %random sample routines
+        sampler = op_sim_sampler(); %random sample routines
         EQUALITY = 0; %Is an op_sim_equality object present? True if so.
     end
     
@@ -97,7 +97,7 @@ classdef alg_sim
             ssim.u = zeros( obj.sys.P.nu, dl, T);
             ssim.y = zeros( obj.sys.P.ny, dl, T);
             ssim.xn = zeros( obj.sys.nxn, dl, T);            
-            ssim.xi = zeros( obj.sys.nxi, dl, T);         
+            ssim.xc = zeros( obj.sys.nxi, dl, T);         
             ssim.mode = zeros(1, T);
             ssim.param = cell(1, T);
            
@@ -211,9 +211,9 @@ classdef alg_sim
 
 
                 xn = x(1:obj.sys.nxn, :);
-                xi = x((obj.sys.nxn+1):end, :);
+                xc = x((obj.sys.nxn+1):end, :);
                 ssim.xn(:, :, k) = xn;
-                ssim.xi(:, :, k) = xi;
+                ssim.xc(:, :, k) = xc;
                 ssim.z(:, :, k) = z;
                 ssim.zp(:, :, k) = zp;                
                 ssim.w(:, :, k) = w;

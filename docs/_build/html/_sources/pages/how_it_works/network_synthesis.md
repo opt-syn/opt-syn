@@ -16,7 +16,7 @@ The default case of no network dynamics (direct connection to the oracle $F$) is
         z_k \\ y_k
     } &= \mat{cc}{0 & I \\ I & 0} \mat{c}{
         w_k \\ u_k
-    }
+    }.
 ```
 
 The general network $P$ and controller $K$ have the descrptions

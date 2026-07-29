@@ -38,7 +38,7 @@ For installation and  examples of algorithm  analysis and synthesis workflows, s
 - [Andrea Iannelli](https://www.ist.uni-stuttgart.de/institute/team/Iannelli/): Creator
 
 
-Contact [Jared Miller](https://jarmill.github.io/) for questions, issues, or comments.
+Contact [Jared Miller](https://jarmill.github.io/) for questions, issues, comments, and suggestions.
 
 ```{toctree}
 :maxdepth: 2
@@ -49,7 +49,7 @@ Get Started <pages/get_started>
 How it Works <pages/how_it_works/index_how_it_works>
 Usage <pages/usage/index_usage>
 Examples <pages/examples>
-API Reference <pages/documentation/index_documentation>
+Documentation <pages/documentation/index_documentation>
 Changelog <pages/changelog/changelog>
 Resources <pages/resources>
 ```

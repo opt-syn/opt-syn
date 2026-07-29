@@ -46,7 +46,7 @@ classdef op_sim_equality < op_sim_interface
             %   w:       the w such that w = F(z)
 
 
-            w =  E' * (E*z - b);            
+            w =  obj.E' * (obj.E*z - obj.b);            
         end
 
         function z = bw(obj, k, D, v, param)
@@ -85,7 +85,7 @@ classdef op_sim_equality < op_sim_interface
             %Returns:
             %   f_out:   f_out = norm(Ez - b)
 
-            f_out = norm(E*z - b);
+            f_out = norm(obj.E*z - obj.b);
         end
     end
 end

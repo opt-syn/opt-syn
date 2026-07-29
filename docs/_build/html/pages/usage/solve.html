@@ -173,6 +173,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
 </ul>
@@ -180,7 +181,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../documentation/index_documentation.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../documentation/index_documentation.html">Documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../documentation/doc_manager.html">Manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../documentation/doc_solutions.html">Solution</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -453,16 +454,21 @@
 <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">create_iqc_identity()</span></code> routine.</p>
 <p>The objective in Analysis or Synthesis is set using the <code class="docutils literal notranslate"><span class="pre">target</span></code> field in the  <a class="reference internal" href="../documentation/doc_specs.html"><span class="doc">operator class’s</span></a>.
 If <code class="docutils literal notranslate"><span class="pre">specs{j}.target</span> <span class="pre">=</span> <span class="pre">true</span></code>, then the specification in <span class="math notranslate nohighlight">\(i\)</span> is minimized. At most one specification <span class="math notranslate nohighlight">\(j\)</span> can have <code class="docutils literal notranslate"><span class="pre">specs{j}.target</span> <span class="pre">=</span> <span class="pre">true</span></code>.
-If <code class="docutils literal notranslate"><span class="pre">specs{j}.target=false</span></code> for all specifications <span class="math notranslate nohighlight">\(j\)</span> then a feasibility problem is solved.</p>
+If <code class="docutils literal notranslate"><span class="pre">specs{j}.target=false</span></code> for all specifications <span class="math notranslate nohighlight">\(j\)</span>, then a feasibility problem is solved.</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
 <p>Different specifications can have different rate <span class="math notranslate nohighlight">\(\rho\)</span> in Synthesis if and only if</p>
 <ol class="arabic simple">
-<li><p>the order for each <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_gen</span></code> is 0</p></li>
+<li><p>the order for each <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_gen</span></code> is <code class="docutils literal notranslate"><span class="pre">0</span></code></p></li>
 <li><p>the order for each <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_sml</span></code>, <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_pcc</span></code>, <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_quad</span></code> is <code class="docutils literal notranslate"><span class="pre">[nonnegative,</span> <span class="pre">0]</span></code>.</p></li>
 </ol>
-<p>If these conditions fail, then all specifications must have the same rate <span class="math notranslate nohighlight">\(\rho\)</span> (<code class="docutils literal notranslate"><span class="pre">opt_config.gen.same_rho</span> <span class="pre">=</span> <span class="pre">true</span></code>).</p>
-<p>The <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_manager</span></code> classes will check these conditions, and will override <code class="docutils literal notranslate"><span class="pre">same_rho</span></code> to true if not already set. This issue is related to the presence of noncausal filters in IQC synthesis, using <span class="math notranslate nohighlight">\(\rho\)</span>-hard IQCs</p>
+<p>If these conditions fail, then all specifications</p>
+<ul class="simple">
+<li><p>must have the same rate <span class="math notranslate nohighlight">\(\rho\)</span> (<code class="docutils literal notranslate"><span class="pre">opt_config.gen.same_rho</span> <span class="pre">=</span> <span class="pre">true</span></code>),</p></li>
+<li><p>must hold only in an infinite-horizon sense (in the current implementation).</p></li>
+</ul>
+<p>The <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_manager</span></code> classes will check these conditions, and will override <code class="docutils literal notranslate"><span class="pre">same_rho</span></code> to true if not already set. This issue is due to the presence of noncausal IQC filters.</p>
+ <!-- See {doc}`<../documentation/doc_iqc>` for more detail about this issue. -->
 </div>
 </section>
 <section id="bisection">
@@ -484,12 +490,12 @@ If <code class="docutils literal notranslate"><span class="pre">specs{j}.target=
 <section id="alternation">
 <span id="id4"></span><h3>Alternation<a class="headerlink" href="#alternation" title="Link to this heading">#</a></h3>
 <p>The <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">alternate()</span></code> routine switches between Synthesis and Analysis. It solves a Synthesis problem with fixed IQCs to find a controller, and then solves Analysis with the fixed controller to find IQCs. The Analysis and Synthesis problems may include inner bisection steps.</p>
-<p>An alternation routine with 3 Synthesis/Analysis steps is performed by</p>
+<p>An alternation routine with 3 Synthesis/Analysis steps and inner bisection is performed by</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">Niter</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span>
 <span class="p">[</span><span class="n">sol_syn_alternate</span><span class="p">,</span><span class="w"> </span><span class="n">v_history</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_syn</span><span class="p">.</span><span class="n">alternate</span><span class="p">(</span><span class="n">Niter</span><span class="p">,</span><span class="w"> </span><span class="n">iqc_init</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">,</span><span class="w"> </span><span class="n">specs</span><span class="p">,</span><span class="w"> </span><span class="n">b_opts</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">v_history</span></code> output is a cell array with 2 rows and  Niter columns. Each entroy of the cell array stores the  lower and upper bounds from bisection. The top row are the Synthesis bounds, and the bottom row are the Analysis bounds.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">v_history</span></code> output is a cell array with 2 rows and  Niter columns. Each entroy of the cell array stores the  lower and upper parameter bounds from bisection. The top row are the Synthesis bounds, and the bottom row are the Analysis bounds.</p>
 </section>
 </section>
 <section id="validation">
@@ -526,6 +532,7 @@ If <code class="docutils literal notranslate"><span class="pre">specs{j}.target=
 </tbody>
 </table>
 </div>
+<p>If the algorithm has a block-lower-triangular information structure, and  Analysis or Synthesis is successful at some <span class="math notranslate nohighlight">\(\rho &gt; 0\)</span>, then the algorithm is also well-posed.</p>
 <p>Other attributes of <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_solution</span></code> include</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -535,7 +542,7 @@ If <code class="docutils literal notranslate"><span class="pre">specs{j}.target=
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vars</span></code></p></td>
-<td><p>design variables in the Analysis/Synthesis problem</p></td>
+<td><p>Design variables in the Analysis/Synthesis problem</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sys</span></code></p></td>
 <td><p>System that solves the inclusion problem</p></td>
@@ -546,7 +553,7 @@ If <code class="docutils literal notranslate"><span class="pre">specs{j}.target=
 </tbody>
 </table>
 </div>
-<p>The field <code class="docutils literal notranslate"><span class="pre">opt_solution.cert</span></code> contains Analysis-and-Synthesis-specific certificates of feasibility. In Analysis, the designed IQCs certifying the performance specifications are stored in <code class="docutils literal notranslate"><span class="pre">opt_solution.cert.iqc_op</span></code>.</p>
+<p>The field <code class="docutils literal notranslate"><span class="pre">opt_solution.cert</span></code> contains Analysis-and-Synthesis-specific certificates of feasibility. <code class="docutils literal notranslate"><span class="pre">opt_solution.cert.iqc_op</span></code> stores the cell of IQCs used to constrain operator sequences in the performance specification: this is designed in Analysis and is given in Synthesis.</p>
 <p>In Synthesis, the designed controller is <code class="docutils literal notranslate"><span class="pre">opt_solution.sys.K</span></code>.
 This controller is the interconnection of the internal model <code class="docutils literal notranslate"><span class="pre">opt_solution.cert.model</span></code> and the subcontroller <code class="docutils literal notranslate"><span class="pre">opt_solution.cert.K_sub</span></code>.</p>
 </section>

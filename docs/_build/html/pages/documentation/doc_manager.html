@@ -173,6 +173,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
 </ul>
@@ -180,7 +181,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="index_documentation.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index_documentation.html">Documentation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="doc_solutions.html">Solution</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -547,6 +548,13 @@ in which the oracles <span class="math notranslate nohighlight">\(F_i\)</span> a
 </dd></dl>
 
 </dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="manager.opt_synthesis.iqc_op_ana">
+<span class="sig-name descname"><span class="pre">iqc_op_ana</span></span><a class="headerlink" href="#manager.opt_synthesis.iqc_op_ana" title="Link to this definition">#</a></dt>
+<dd><p>warm start IQC from analysis</p>
+</dd></dl>
+
+</dd>
 <dt>Method Summary</dt><dd><dl class="mat method">
 <dt class="sig sig-object mat" id="manager.opt_synthesis.alternate">
 <span class="sig-name descname"><span class="pre">alternate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">Niter</span></em>, <em class="sig-param"><span class="pre">order</span></em>, <em class="sig-param"><span class="pre">iqc_init</span></em>, <em class="sig-param"><span class="pre">specs</span></em>, <em class="sig-param"><span class="pre">b_opts</span></em><span class="sig-paren">)</span><a class="headerlink" href="#manager.opt_synthesis.alternate" title="Link to this definition">#</a></dt>
@@ -794,9 +802,9 @@ the outer loop of bisection)</p></li>
 </dd></dl>
 
 <dl class="mat method">
-<dt class="sig sig-object mat" id="manager.opt_manager_interface.get_rho">
-<span class="sig-name descname"><span class="pre">get_rho</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">specs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#manager.opt_manager_interface.get_rho" title="Link to this definition">#</a></dt>
-<dd><p>GET_RHO get the common rho in the case of the same rho in all
+<dt class="sig sig-object mat" id="manager.opt_manager_interface.get_common_rho">
+<span class="sig-name descname"><span class="pre">get_common_rho</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">specs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#manager.opt_manager_interface.get_common_rho" title="Link to this definition">#</a></dt>
+<dd><p>GET_COMMON_RHO get the common rho in the case of the same rho in all
 performance specifications. required to use noncausal
 multipliers</p>
 <dl class="field-list simple">
@@ -811,7 +819,7 @@ multipliers</p>
 
 <dl class="mat method">
 <dt class="sig sig-object mat" id="manager.opt_manager_interface.iqc_op_all">
-<span class="sig-name descname"><span class="pre">iqc_op_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#manager.opt_manager_interface.iqc_op_all" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">iqc_op_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">iqc_op</span></em><span class="sig-paren">)</span><a class="headerlink" href="#manager.opt_manager_interface.iqc_op_all" title="Link to this definition">#</a></dt>
 <dd><p>IQC_OP_ALL: all iqcs for the operators</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -841,16 +849,14 @@ multipliers</p>
 <dl class="mat method">
 <dt class="sig sig-object mat" id="manager.opt_manager_interface.perf_specs">
 <span class="sig-name descname"><span class="pre">perf_specs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">specs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#manager.opt_manager_interface.perf_specs" title="Link to this definition">#</a></dt>
-<dd><p>PERF_SPECS get the performance specifications and extract the
-rho convergence rate</p>
+<dd><p>PERF_SPECS index the  performance specifications</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>specs</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">cell</span></code></span>) – performance specifications</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>sperf</strong> – the specification cell without the linear</p></li>
-<li><p><strong>convergence rate</strong> (<em>if there is more than one specification</em>)</p></li>
+<li><p><strong>sperf</strong> – the specification cell</p></li>
 <li><p><strong>ERGODIC</strong> – is ergodic convergence required</p></li>
 </ul>
 </dd>

@@ -170,6 +170,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="pages/examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="pages/examples_simulation/index_example_simulation.html">Simulation</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="pages/examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="pages/examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
 </ul>
@@ -177,7 +178,7 @@
 <li class="toctree-l2"><a class="reference internal" href="pages/examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="pages/documentation/index_documentation.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="pages/documentation/index_documentation.html">Documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_manager.html">Manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pages/documentation/doc_solutions.html">Solution</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="pages/documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -384,14 +385,14 @@
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.alg_plotter">alg_plotter() (simulator.alg_plotter method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_solutions.html#manager.containers.cert_analysis.alg_psi">alg_psi (manager.containers.cert_analysis attribute)</a>
 
       <ul>
         <li><a href="pages/documentation/doc_solutions.html#manager.containers.cert_synthesis.alg_psi">(manager.containers.cert_synthesis attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim">alg_sim (class in simulator)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.alg_sim">alg_sim() (simulator.alg_sim method)</a>
@@ -399,6 +400,10 @@
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out">alg_sim_out (class in simulator)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.alg_sim_out">alg_sim_out() (simulator.alg_sim_out method)</a>
+</li>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_sampler">alg_sim_sampler (class in simulator)</a>
+</li>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_sampler.alg_sim_sampler">alg_sim_sampler() (simulator.alg_sim_sampler method)</a>
 </li>
       <li><a href="pages/documentation/doc_solutions.html#manager.containers.cert_synthesis.alg_trans">alg_trans (manager.containers.cert_synthesis attribute)</a>
 </li>
@@ -1040,6 +1045,8 @@
 </li>
       <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.get_arcs">get_arcs() (system.switched.opt_system_switched method)</a>
 </li>
+      <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.get_common_rho">get_common_rho() (manager.opt_manager_interface method)</a>
+</li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.get_consensus">get_consensus() (system.generic.opt_system_interface method)</a>
 
       <ul>
@@ -1119,8 +1126,6 @@
 </li>
       </ul></li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.get_psi_13">get_psi_13() (iqc.iqc_loop_factored method)</a>
-</li>
-      <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.get_rho">get_rho() (manager.opt_manager_interface method)</a>
 </li>
       <li><a href="pages/documentation/operators/doc_sml.html#operator.op_sml_interface.get_same">get_same() (operator.op_sml_interface method)</a>
 
@@ -1208,10 +1213,10 @@
 </li>
       <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_zp">index_zp() (plant.genplant.genplant method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_solutions.html#manager.containers.opt_solution.info">info (manager.containers.opt_solution attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.input_diss">input_diss (config.opt_config_tol attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.iqc">iqc (iqc.iqc_data_container attribute)</a>
@@ -1241,6 +1246,8 @@
       <li><a href="pages/documentation/doc_solutions.html#manager.containers.cert_synthesis.iqc_op_all">iqc_op_all (manager.containers.cert_synthesis attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.iqc_op_all">iqc_op_all() (manager.opt_manager_interface method)</a>
+</li>
+      <li><a href="pages/documentation/doc_manager.html#manager.opt_synthesis.iqc_op_ana">iqc_op_ana (manager.opt_synthesis attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1711,6 +1718,12 @@
 </li>
       </ul></li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.param">param (simulator.alg_sim_out attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_sampler.param">(simulator.alg_sim_sampler attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_sampler.param0">param0 (simulator.alg_sim_sampler attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.passive_factorize">passive_factorize() (iqc.iqc_loop_split method)</a>
 </li>
@@ -1762,14 +1775,14 @@
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.Phi_basis">Phi_basis (system.generic.regulator_interface attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.reg_cl_out.Pi">Pi (system.generic.reg_cl_out attribute)</a>
 
       <ul>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.Pi">(system.generic.regulator_interface attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.Pi_basis">Pi_basis (system.generic.regulator_interface attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.Pibar">Pibar() (system.lti.lmi_synthesis_lti_reduced_order method)</a>
@@ -1975,6 +1988,8 @@
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.rhotrafo">rhotrafo() (iqc.iqc_loop_factored method)</a>
 
       <ul>
+        <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_split.rhotrafo">(iqc.iqc_loop_split method)</a>
+</li>
         <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.rhotrafo">(plant.genplant.genplant method)</a>
 </li>
       </ul></li>
@@ -2238,6 +2253,8 @@
       </ul></li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.verbose">verbose (config.opt_config_gen attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.visible">visible (simulator.alg_plotter attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -2248,12 +2265,16 @@
 </li>
       <li><a href="pages/documentation/doc_config.html#config.bisect_opts.warm_factor">warm_factor (config.bisect_opts attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_specs.html#spec.spec_p2p.weight">weight (spec.spec_p2p attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.wp">wp (simulator.alg_sim_out attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_sampler.wp">(simulator.alg_sim_sampler attribute)</a>
 </li>
+      </ul></li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.wrap_synth">wrap_synth() (iqc.iqc_loop_factored method)</a>
 </li>
   </ul></td>
@@ -2272,7 +2293,9 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.xi">xi (simulator.alg_sim_out attribute)</a>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_sampler.x0">x0 (simulator.alg_sim_sampler attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.xc">xc (simulator.alg_sim_out attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.xn">xn (simulator.alg_sim_out attribute)</a>
 </li>

@@ -21,7 +21,7 @@ sim_result = simulator.sim(T);
 By default, algorithm execution will occur with zero initial condition and a performance input ($x_0=0$, $w_p = 0$). The  `sampler` field of {class}`alg_sim` has allows for random generation and external signals. 
 ```{list-table}
 :header-rows: 1
-:caption:
+:caption: Fields of `alg_sim.sampler`
 * - Field
   - Description
 * - `x0`
@@ -75,24 +75,41 @@ The output of `alg_sim.sim(T)` is an {class}`alg_sim_out` object. The fields of 
 
 ## Plotting
 
-The {class}`alg_plotter` class accepts a result from simulation.
-A plot of the signals "`w`, `z`, `res_w`, `res_z`" is accomplished by performing
+The {class}`alg_plotter` class accepts a result from simulation, and can then plot any signal stored in  `alg_sim_out`. 
+A plot of the signals ($w$, $z$, $x$) is accomplished by performing
 ```matlab
 plt = alg_plotter(sim_result);
-fig = plt.plot({"w", "z", "res_w", "res_z"});
+fig = plt.plot({"w", "z", "u", "y"});
 ```
 
 The figure number can be set by an optional second argument to {meth}`plot`
 ```matlab
 plt = alg_plotter(sim_result);
 fig1 = plt.plot({"w", "z", "res_w", "res_z"}, 100); %figure number 100
-fig2 = plt.plot({"xn", "u", "y"}, 101); %figure number 101
+fig2 = plt.plot({"xi", "u", "y"}, 101); %figure number 101
 ```
 
 Plottable signals derived from the fields of {class}`alg_sim_out` include `x` (closed-loop state) and `delay` (`mode`-1, used for switched systems).
 
+Helper functions include of {class}`alg_plotter` include
+ :::{list-table} 
+ :header-rows: 1
+*   - Method
+    - Description
+    - Plotted Signals
+*   - {meth}`plot_6`
+    - States, oracles, and convergence
+    - (`xn`, `w`, `res_w`, `xc`, `z`, `res_z`)
+*   - {meth}`plot_6f`
+    - States, oracles, convergence, function values
+    - (`x`, `w`, `res_w`, `f`, `z`, `res_z`)
+*   - {meth}`plot_4`
+    -  oracles, convergence
+    - (`w`, `res_w`, `z`, `res_z`)
+:::{list-table} 
 
-Given a fixed point 
+See {doc}`Plotting <../documentation/doc_plotting> for a full list of helper functions and more details.
+
 
 ## Details of  Execution
 
@@ -140,15 +157,15 @@ The operator $H_i: = (F_i^{-1} - \Dcl_{zw, ii})^{-1}$ can be evaluated using the
 * - Evaluation
   - Method
   - Condition
-  - Operation $H_i$
+  - Operation $z_i \mapsto H_i z_i$
 * - Explicit
   - {meth}`fw`
   - $\Dcl_{zw, ii} = 0$
-  - $z \mapsto F_i(z)$,
+  - $z \mapsto F_i(z_i)$,
 * - Implicit
   - {meth}`bw`
-  - $\Dcl_{ii}$ invertible
-  - $z \mapsto \Dcl_{zw, ii}^{-1} z - \Dcl_{zw, ii}^{-1} (I - \Dcl_{zw, ii} F_i)^{-1}(z)$
+  - $\Dcl_{zw,ii}$ is invertible
+  - $z_i \mapsto \Dcl_{zw, ii}^{-1} [z - (I - \Dcl_{zw, ii} F_i)^{-1}(z_i)]$
 ```
 
 <!-- If the backward-evaluation  $(I - \Dcl_{ii} F_i)^{-1}$ is available (such as from a  resolvent/proximal operator), then this algorithm execution is tractable. -->

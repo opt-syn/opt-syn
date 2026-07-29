@@ -101,14 +101,15 @@ classdef (Abstract) opt_manager_interface < handle
 
             [sperf, ERGODIC] = obj.perf_specs(specs);
 
-            [iqc_data] = obj.iqc_op_all();
-            iqc_data.ERGODIC = ERGODIC;
-
+            
             %override for same rho
             if obj.config.gen.same_rho
-                common_rho = obj.get_rho(sperf);
-                iqc_data.iqc = iqc_data.iqc.rhotrafo(1/common_rho);
-                
+
+                %compensate: the current code assumes that the IQC is
+                %rho-weighted. 
+                common_rho = obj.get_common_rho(sperf);                
+
+                %enforce all attributes to have the same rho
                 ind_stab = 0;
                 for i = 1:length(sperf)
                     sperf{i}.rho = common_rho;
@@ -117,11 +118,37 @@ classdef (Abstract) opt_manager_interface < handle
                     end
                 end
 
-                %drop the exponential stability specification
-                if (i > 0) && (length(sperf)>1)
-                    sperf(i) = [];
+                %drop the exponential stability specification if it is
+                %alone                
+                if (ind_stab > 0) && (length(sperf)>1)
+                    sperf(ind_stab) = [];
                 end
+
+
+
+                if strcmp(obj.task, 'synthesis')
+                    % weight each IQC from analysis, then factor each IQC
+
+                    %this needs to be done individually for each rho
+                    iqc_op_factored = obj.iqc_op_ana;
+                    for i = 1:length(iqc_op_factored)
+                        iqccurr = rhotrafo(obj.iqc_op_ana{i}, common_rho);
+                        iqc_op_factored{i} = iqccurr.factor();
+                    end
+                    obj.iqc_op = iqc_op_factored;
+                    [iqc_data] = obj.iqc_op_all();
+                    iqc_data.iqc = iqc_data.iqc.rhotrafo(1/common_rho);
+                else
+                    [iqc_data] = obj.iqc_op_all();
+                end
+                
+                
+            else
+                %either analysis or the nice situation
+                [iqc_data] = obj.iqc_op_all();
             end
+            iqc_data.ERGODIC = ERGODIC;
+
             
             [alg_psi, iqc_op, alg_loop] = obj.sys.build_plant(iqc_data);
 
@@ -245,8 +272,8 @@ classdef (Abstract) opt_manager_interface < handle
             end
         end
 
-        function rho = get_rho(obj, specs)
-            %GET_RHO get the common rho in the case of the same rho in all
+        function rho = get_common_rho(obj, specs)
+            %GET_COMMON_RHO get the common rho in the case of the same rho in all
             %performance specifications. required to use noncausal
             %multipliers
             %
@@ -267,15 +294,13 @@ classdef (Abstract) opt_manager_interface < handle
         end
 
         function [sperf, ERGODIC] = perf_specs(obj, specs)
-            %PERF_SPECS get the performance specifications and extract the
-            %rho convergence rate 
+            %PERF_SPECS index the  performance specifications 
             %
             %Args:
             %   specs (cell):  performance specifications
             %
             %Returns:
-            %   sperf: the specification cell without the linear
-            %   convergence rate (if there is more than one specification)
+            %   sperf: the specification cell 
             %   ERGODIC: is ergodic convergence required
 
 
@@ -289,19 +314,13 @@ classdef (Abstract) opt_manager_interface < handle
             %specification
             ERGODIC = false;
             for i = 1:length(specs)
-                % if isa(specs{i}, 'spec_stability')
-                %     if length(specs) > 1                        
-                %         sperf(i) = [];
-                %     end
-                % end
                 if isa(specs{i}, 'spec_ergodic')
                     ERGODIC = true;
                 end
             end
 
             for i =1:length(sperf)
-                sperf{i}.id = i;
-                % sperf{i}.rho = rho;
+                sperf{i}.id = i;                
             end
 
 
@@ -536,12 +555,15 @@ classdef (Abstract) opt_manager_interface < handle
         %TODO: fmincon for the p2p objective
 
         %% Formation of Constraints and Plants
-        function [iqc_data] = iqc_op_all(obj)
+        function [iqc_data] = iqc_op_all(obj, iqc_op)
             %IQC_OP_ALL: all iqcs for the operators
             %
             % Returns:
             %   iqc_data (iqc_data_container): information for the iqcs
             
+            if nargin< 2
+                iqc_op = obj.iqc_op;
+            end
             
             %useful for the build_plant routines
             iqc = {};
@@ -549,20 +571,20 @@ classdef (Abstract) opt_manager_interface < handle
             ind_same = [];
             same_count = 0;            
 
-            for i = 1:length(obj.iqc_op)
+            for i = 1:length(iqc_op)
                 c = obj.sys.op{i}.c;
                 if ~obj.sys.op{i}.same
                     %block diagonal of the iqc
                     if isempty(iqc)
-                        iqc = obj.iqc_op{i};
+                        iqc = iqc_op{i};
                     else
-                        iqc = blkdiag(iqc, obj.iqc_op{i});
+                        iqc = blkdiag(iqc, iqc_op{i});
                     end
                     same_count = same_count + (c);
 
                 else
                     %treat the m=L case separately
-                    m_same = blkdiag(m_same, kron(obj.iqc_op{i}, eye(c)));
+                    m_same = blkdiag(m_same, kron(iqc_op{i}, eye(c)));
 
                     ind_same = [ind_same, same_count + (1:(c))];
                     same_count = same_count + length(m_same);

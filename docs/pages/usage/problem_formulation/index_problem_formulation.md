@@ -1,7 +1,7 @@
 # Problem Setup 
 
 Analysis and Synthesis procedures are both specified by the same three properties
-1.  {doc}`System <system/index_system>`
+1.  {doc}`System <system/index_system>` (from the last pages)
 2. Configuration options
 3. Performance specifications
 

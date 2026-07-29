@@ -375,7 +375,6 @@
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execution">Execution</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting">Plotting</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#details-of-execution">Details of  Execution</a></li>
 </ul>
             </nav>
         </div>
@@ -474,76 +473,20 @@
 </section>
 <section id="plotting">
 <h2>Plotting<a class="headerlink" href="#plotting" title="Link to this heading">#</a></h2>
-<p>The <code class="xref mat mat-class docutils literal notranslate"><span class="pre">alg_plotter</span></code> class accepts a result from simulation.
-A plot of the signals “<code class="docutils literal notranslate"><span class="pre">w</span></code>, <code class="docutils literal notranslate"><span class="pre">z</span></code>, <code class="docutils literal notranslate"><span class="pre">res_w</span></code>, <code class="docutils literal notranslate"><span class="pre">res_z</span></code>” is accomplished by performing</p>
+<p>The <code class="xref mat mat-class docutils literal notranslate"><span class="pre">alg_plotter</span></code> class accepts a result from simulation, and can then plot any signal stored in  <code class="docutils literal notranslate"><span class="pre">alg_sim_out</span></code>.
+A plot of the signals (<span class="math notranslate nohighlight">\(w\)</span>, <span class="math notranslate nohighlight">\(z\)</span>, <span class="math notranslate nohighlight">\(x\)</span>) is accomplished by performing</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">sim_result</span><span class="p">);</span>
-<span class="n">fig</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">({</span><span class="s">&quot;w&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;z&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;res_w&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;res_z&quot;</span><span class="p">});</span>
+<span class="n">fig</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">({</span><span class="s">&quot;w&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;z&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;y&quot;</span><span class="p">});</span>
 </pre></div>
 </div>
 <p>The figure number can be set by an optional second argument to <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">plot()</span></code></p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">sim_result</span><span class="p">);</span>
 <span class="n">fig1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">({</span><span class="s">&quot;w&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;z&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;res_w&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;res_z&quot;</span><span class="p">},</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span><span class="w"> </span><span class="c">%figure number 100</span>
-<span class="n">fig2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">({</span><span class="s">&quot;xn&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;y&quot;</span><span class="p">},</span><span class="w"> </span><span class="mi">101</span><span class="p">);</span><span class="w"> </span><span class="c">%figure number 101</span>
+<span class="n">fig2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">({</span><span class="s">&quot;xi&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;y&quot;</span><span class="p">},</span><span class="w"> </span><span class="mi">101</span><span class="p">);</span><span class="w"> </span><span class="c">%figure number 101</span>
 </pre></div>
 </div>
 <p>Plottable signals derived from the fields of <code class="xref mat mat-class docutils literal notranslate"><span class="pre">alg_sim_out</span></code> include <code class="docutils literal notranslate"><span class="pre">x</span></code> (closed-loop state) and <code class="docutils literal notranslate"><span class="pre">delay</span></code> (<code class="docutils literal notranslate"><span class="pre">mode</span></code>-1, used for switched systems).</p>
-<p>Given a fixed point</p>
-</section>
-<section id="details-of-execution">
-<h2>Details of  Execution<a class="headerlink" href="#details-of-execution" title="Link to this heading">#</a></h2>
-<p>The System <code class="docutils literal notranslate"><span class="pre">sys</span></code> executed  by first interconnecting the Network and Controller, and then interconnecting the possibly nonlinear operator <span class="math notranslate nohighlight">\(F\)</span>. This is mathematically described by</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-\text{Operator}: &amp; &amp; w_k &amp; \in F(z_k), \\
-\text{Algorithm}: &amp; &amp; \mat{c}{x_{k+1} \hl z_k \\ z_{p k}} &amp;= \mat{c|cc}{\Acl &amp; \Bcl_z &amp; \Bcl_{z_p} \hl 
-\Ccl_z &amp; \Dcl_{zw} &amp; \Dcl_{z w_p}  \\
-\Ccl_{z_p} &amp; \Dcl_{z_p w} &amp; \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k \\ w_{p k}},
-\end{align*}\end{split}\]</div>
-<p>The closed loop state <span class="math notranslate nohighlight">\(x\)</span> is the concatenation <span class="math notranslate nohighlight">\(x = [x^N, x^c]\)</span>.</p>
-<p><code class="xref mat mat-class docutils literal notranslate"><span class="pre">alg_sim</span></code> execution using <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">sim()</span></code>  requires the <a class="reference internal" href="../how_it_works/alg_properties.html"><span class="doc">algorithm properties</span></a> of  well-posedness and a block-triangular information structures.</p>
-<p>Under these conditions, the System can be partitioned as</p>
-<div class="amsmath math notranslate nohighlight">
-\[\begin{align*}
-\text{Operator}: &amp; &amp; w_k &amp; \in F(z_k), \\
-\text{Algorithm}: &amp; &amp; \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2 \\ \vdots \\ z_k^s \\ z_{p k}} &amp;= \mat{c|cccc:c}{\Acl &amp; \Bcl_{z,1} &amp; \Bcl_{z,2} &amp; \cdots &amp; \Bcl_{z,s} &amp; \Bcl_{z_p} \hl 
-\Ccl_{z 1} &amp; \Dcl_{zw,11} &amp; 0 &amp; \cdots &amp; 0 &amp; \Dcl_{z w_p, 1}  \\
-\Ccl_{z 1} &amp; \Dcl_{zw,21} &amp; \Dcl_{zw,22} &amp; \cdots &amp; 0 &amp; \Dcl_{z w_p, 2}  \\
-\vdots &amp;  \vdots &amp; \vdots &amp;  \ddots &amp; \vdots &amp; \vdots  \\
-\Ccl_{z 1} &amp; \Dcl_{zw, s1} &amp; \Dcl_{zws2} &amp; \cdots &amp; \Dcl_{zw,ss} &amp; \Dcl_{z w_p s}  \\
-\Ccl_{z_p} &amp; \Dcl_{z_p w,1} &amp; \Dcl_{z_p w, 2} &amp; \cdots &amp; \Dcl_{z_p w, s} &amp; \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s \\ w_{p k}},
-\end{align*}\]</div>
-<!-- Algorithm simulation assumes that the System forms a well-posed algorithm with a block-lower triangular  -->
-<p>The iterative loop for algorithm simulation is to evaluate the equations for each <span class="math notranslate nohighlight">\(k \in \N\)</span></p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align}
-w^i_k &amp;= (F_i^{-1} - \Dcl_{zw, ii})^{-1} (\Ccl_i x_k + \textstyle \sum_{j=1}^{i-1} \Dcl_{zw ij} w^j_k),  &amp; &amp; \forall i \in 1, \ldots, s,\\ 
-x_{k+1} &amp;= \Acl x_k + \textstyle \sum_{i=1}^s \Bcl_{wi} w^i_k + \Bcl_{w_p} w_{pk}. \\ 
-z_{p, k+1} &amp;= \Ccl_{z_p} x_k + \textstyle \sum_{i=1}^s \Dcl_{z_p w i} w^i_k + \Dcl_{z_p w_p} w_{pk}.
-\end{align}\end{split}\]</div>
-<p>The operator <span class="math notranslate nohighlight">\(H_i: = (F_i^{-1} - \Dcl_{zw, ii})^{-1}\)</span> can be evaluated using the <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_sim</span></code> methods</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Evaluation</p></th>
-<th class="head"><p>Method</p></th>
-<th class="head"><p>Condition</p></th>
-<th class="head"><p>Operation <span class="math notranslate nohighlight">\(H_i\)</span></p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Explicit</p></td>
-<td><p><code class="xref mat mat-meth docutils literal notranslate"><span class="pre">fw()</span></code></p></td>
-<td><p><span class="math notranslate nohighlight">\(\Dcl_{zw, ii} = 0\)</span></p></td>
-<td><p><span class="math notranslate nohighlight">\(z \mapsto F_i(z)\)</span>,</p></td>
-</tr>
-<tr class="row-odd"><td><p>Implicit</p></td>
-<td><p><code class="xref mat mat-meth docutils literal notranslate"><span class="pre">bw()</span></code></p></td>
-<td><p><span class="math notranslate nohighlight">\(\Dcl_{ii}\)</span> invertible</p></td>
-<td><p><span class="math notranslate nohighlight">\(z \mapsto \Dcl_{zw, ii}^{-1} z - \Dcl_{zw, ii}^{-1} (I - \Dcl_{zw, ii} F_i)^{-1}(z)\)</span></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<!-- If the backward-evaluation  $(I - \Dcl_{ii} F_i)^{-1}$ is available (such as from a  resolvent/proximal operator), then this algorithm execution is tractable. -->
+<p>Helper functions include of <code class="xref mat mat-class docutils literal notranslate"><span class="pre">alg_plotter</span></code> include</p>
 </section>
 </section>
 
@@ -596,7 +539,6 @@ z_{p, k+1} &amp;= \Ccl_{z_p} x_k + \textstyle \sum_{i=1}^s \Dcl_{z_p w i} w^i_k 
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execution">Execution</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting">Plotting</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#details-of-execution">Details of  Execution</a></li>
 </ul>
   </nav></div>
 

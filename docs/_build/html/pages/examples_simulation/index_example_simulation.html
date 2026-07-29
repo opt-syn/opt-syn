@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
-    <title>Synthesis and Networks &#8212; opt-syn</title>
+    <title>Simulation of Algorithms &#8212; opt-syn</title>
   
   
   
@@ -43,13 +43,11 @@
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
-    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/how_it_works/network_synthesis';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/examples_simulation/index_example_simulation';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Usage" href="../usage/index_usage.html" />
-    <link rel="prev" title="IQC Analysis" href="op_uncertainty_iqc.html" />
+    <link rel="next" title="Analysis of Algorithms" href="../examples_analysis/index_example_analysis.html" />
+    <link rel="prev" title="Examples" href="../examples.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -148,12 +146,12 @@
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../get_started.html">Get Started</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="index_how_it_works.html">How it Works</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="opt_algs.html">Optimization Algorithms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="alg_properties.html">Properties of Algorithms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="convergence_conditions.html">Convergence Conditions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="op_uncertainty_iqc.html">IQC Analysis</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Synthesis and Networks</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../how_it_works/index_how_it_works.html">How it Works</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/opt_algs.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/alg_properties.html">Properties of Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/convergence_conditions.html">Convergence Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/op_uncertainty_iqc.html">IQC Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/network_synthesis.html">Synthesis and Networks</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -172,8 +170,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../usage/solve.html">Solve and Validate</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../examples.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Simulation</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
 </ul>
@@ -181,7 +179,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../documentation/index_documentation.html">Documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../documentation/index_documentation.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../documentation/doc_manager.html">Manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../documentation/doc_solutions.html">Solution</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -288,7 +286,7 @@
       
       
       
-      <li><a href="../../_sources/pages/how_it_works/network_synthesis.md" target="_blank"
+      <li><a href="../../_sources/pages/examples_simulation/index_example_simulation.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -351,9 +349,7 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</button>
+
 </div></div>
       
     </div>
@@ -364,21 +360,11 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Synthesis and Networks</h1>
+    <h1>Simulation of Algorithms</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#networked-algorithms">Networked Algorithms</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence-conditions">Convergence Conditions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis">Synthesis</a></li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -388,107 +374,18 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="synthesis-and-networks">
-<h1>Synthesis and Networks<a class="headerlink" href="#synthesis-and-networks" title="Link to this heading">#</a></h1>
-<p>Algorithm synthesis aims to design a convergent optimization algorithm obeying the desired <a class="reference internal" href="alg_properties.html"><span class="doc">properties</span></a>.</p>
-<section id="networked-algorithms">
-<h2>Networked Algorithms<a class="headerlink" href="#networked-algorithms" title="Link to this heading">#</a></h2>
-<p>Synthesis is posed in terms of a Network separating the oracle <span class="math notranslate nohighlight">\(F\)</span> to the controller (you). These networks can model time-delays, cross-talk, channel memory, and other phenomena.</p>
-<p>The default case of no network dynamics (direct connection to the oracle <span class="math notranslate nohighlight">\(F\)</span>) is</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\mat{c}{
-        z_k \\ y_k
-    } &amp;= \mat{cc}{0 &amp; I \\ I &amp; 0} \mat{c}{
-        w_k \\ u_k
-    }.\end{split}\]</div>
-<p>The general network <span class="math notranslate nohighlight">\(P\)</span> and controller <span class="math notranslate nohighlight">\(K\)</span> have the descrptions</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align}
-    P: &amp; &amp; \mat{c}{
-    x^N_{k+1}  \hl z_k \\ y_k
-    } &amp;= \mat{c|cc}{ A &amp; B_w &amp; B_u \hl
-    C_z &amp; D_{zw} &amp; D_{zu} \\
-    C_y &amp; D_{yw} &amp; D_{yu} }\mat{c}{
-        x^N_k \hl w_k \\ u_k
-    } \\ \\ 
-    \Kc : &amp; &amp; \mat{c}{
-        \xi_{k+1}  \hl u_k}&amp;=\mat{c|c}{\Ac &amp; \Bc \hl
-    \Cc &amp; \Dc}\mat{c}{
-        \xi_k \hl y_k
-    }.
-    \end{align}\end{split}\]</div>
-<p>The interconnection of <span class="math notranslate nohighlight">\((P, K)\)</span> is well-posed if <span class="math notranslate nohighlight">\(I - D_{zw} \Dc\)</span> is invertible.</p>
-</section>
-<section id="convergence-conditions">
-<h2>Convergence Conditions<a class="headerlink" href="#convergence-conditions" title="Link to this heading">#</a></h2>
-<p>A subsidiary goal in algorithm synthesis is to ensure that the interconnection  <span class="math notranslate nohighlight">\((F, (P, K))\)</span> satisfies the <a class="reference internal" href="convergence_conditions.html"><span class="doc">convergence conditions</span></a> for optimization algorithms.</p>
-<p>The Regulator Equation condition in the networked setting can be expanded into</p>
-<ol class="arabic simple" start="2">
-<li><p><em>Regulator Equation</em>:  There is a unique solution <span class="math notranslate nohighlight">\((\Pi, \Gamma, \Phi, \Theta)\)</span> to the linear system of equations</p></li>
-</ol>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align}    
-        \mat{c|cc:c}{A &amp; 0 &amp; B_w N &amp; B_y \hl
-        C_z  &amp; \1 &amp; D_{zw}N &amp;  D_{zy} \hdl
-        C_y &amp; 0 &amp; D_{yz}N &amp; D_{yu}} \mat{c}{\Pi\hl I\hdl \Gamma}&amp;=\mat{c}{\Pi \hl 0 \hdl \Phi}, \label{eq:nominal_regulation_control_sys_plant}  \\
-\mat{c|c}{\Ac&amp;\Bc\hl \Cc&amp;\Dc}
-\mat{c}{\Theta\\\Phi}  &amp;= \mat{c}{\Theta \\ \Gamma}. \label{eq:nominal_regulation_control_sys_control}    
-\end{align}\end{split}\]</div>
-<p>If there does not exist a <span class="math notranslate nohighlight">\((\Pi, \Gamma, \Phi)\)</span> triple satisfying the top equation, then a convergent optimization algorithm cannot be found.</p>
-<p>Under the Convergence and Regulator Equation conditions, convergence in all signals is achieved as</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align}
-    \lim_{k \rightarrow \infty}
-    \mat{c}{x_k^N \\ \xi_k \hl  y_k \\u_k} &amp; = \mat{c}{\Pi \\ \Theta \hl \Phi \\ \Gamma} \mat{c}{-\beta^* \\ \hat{w}^*}, &amp;   \lim_{k \rightarrow \infty}
-    \mat{c}{z_k \\ w_k } &amp; =  \mat{c}{z^* \\ w^*} = \mat{c}{\1 \otimes \beta^* \\ N \hat{w}^*}.     
-\end{align}\end{split}\]</div>
-<p>The fixed-point matrix for the closed-loop system is</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align}
-\mathbf{X}^* &amp; := \mat{c}{\Pi \\ \Theta}, &amp; \lim_{k \rightarrow \infty} x_k &amp; := \mathbf{X}^* \mat{c}{-\beta^* \\ \hat{w}^*}
-\end{align}\end{split}\]</div>
-</section>
-<section id="synthesis">
-<h2>Synthesis<a class="headerlink" href="#synthesis" title="Link to this heading">#</a></h2>
-<p>The Regulator Equation requirement enforces structure on possible controllers. We choose controllers <span class="math notranslate nohighlight">\(\Kc\)</span> as the interconnection of an internal model <a class="footnote-reference brackets" href="#footcite-francis1976internal" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and a subcontroller <span class="math notranslate nohighlight">\(K_f\)</span>. This interconnection with <span class="math notranslate nohighlight">\(K = (\text{Model}, K_f)\)</span> involves</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-    \text{Model}: \mat{c}{
-    v_{k+1} \hl  \tilde{y}_k
-    } &amp;= \mat{c|c:cc}{ I &amp; 0 &amp; I &amp; 0 \hl
-    -\Gamma &amp; 0 &amp; 0 &amp;  I \\
-    \Phi &amp; I &amp; 0 &amp; 0  }\mat{c}{
-        v_k \hl y_k \hdl \tilde{u}_k^1 \\ \tilde{u}_k^2
-    }, \\
-    K_f: \mat{c}{
-        \xi^f_{k+1}  \hl \tilde{u}^1_k \\ \tilde{u}^1_k} &amp;=\mat{c|c}{A_f &amp; B_f \hl
-    C_{f1} &amp; D_{f1} \\
-    C_{f2} &amp; D_{f2}}\mat{c}{
-        \xi^f_k \hl \tilde{y}_k 
-    }.
-    \end{align*}\end{split}\]</div>
-<!-- With this internal model,  -->
-<p>Any subcontroller <span class="math notranslate nohighlight">\(K_f\)</span> will ensure that the Regulator Equation requirement in <span class="math notranslate nohighlight">\(K\)</span> is  satisfied. The subcontroller <span class="math notranslate nohighlight">\(K_f\)</span> must then ensure that the interconnection  <span class="math notranslate nohighlight">\((F, (P, \text{Model}, K_f))\)</span> is well-posed and  obeys the convergence and performance requirements. Solving for <span class="math notranslate nohighlight">\(K_f\)</span> can be accomplished through  IQC synthesis methods <a class="footnote-reference brackets" href="#footcite-veenman2011iqc" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
-<p>Synthesis may also involve selecting a solution <span class="math notranslate nohighlight">\((\Pi, \Gamma, \Phi)\)</span> to the regulator equations <a class="footnote-reference brackets" href="#footcite-scherer1997multiobjective" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
-<div class="docutils container" id="id4">
+  <!-- ---
+
+tocdepth: 2
+
+--- -->
+<section class="tex2jax_ignore mathjax_ignore" id="simulation-of-algorithms">
+<h1>Simulation of Algorithms<a class="headerlink" href="#simulation-of-algorithms" title="Link to this heading">#</a></h1>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Under Construction</p>
 </div>
 </section>
-</section>
-<hr class="footnotes docutils" />
-<aside class="footnote-list brackets">
-<aside class="footnote brackets" id="footcite-francis1976internal" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
-<p>Bruce A Francis and Walter Murray Wonham. The internal model principle of control theory. <em>Automatica</em>, 12(5):457–465, 1976.</p>
-</aside>
-<aside class="footnote brackets" id="footcite-veenman2011iqc" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
-<p>Joost Veenman and Carsten W Scherer. IQC-synthesis with general dynamic multipliers. <em>IFAC Proceedings Volumes</em>, 44(1):4600–4605, 2011.</p>
-</aside>
-<aside class="footnote brackets" id="footcite-scherer1997multiobjective" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
-<p>C. Scherer, P. Gahinet, and M. Chilali. Multiobjective Output-Feedback Control via LMI Optimization . <em>IEEE Transactions on Automatic Control</em>, 42(7):896–911, 1997. <a class="reference external" href="https://doi.org/10.1109/9.599969">doi:10.1109/9.599969</a>.</p>
-</aside>
-</aside>
 
 
                 </article>
@@ -502,20 +399,20 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="op_uncertainty_iqc.html"
+       href="../examples.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">IQC Analysis</p>
+        <p class="prev-next-title">Examples</p>
       </div>
     </a>
     <a class="right-next"
-       href="../usage/index_usage.html"
+       href="../examples_analysis/index_example_analysis.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Usage</p>
+        <p class="prev-next-title">Analysis of Algorithms</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -525,25 +422,6 @@
             </div>
             
             
-              
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item"><div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#networked-algorithms">Networked Algorithms</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence-conditions">Convergence Conditions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis">Synthesis</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>

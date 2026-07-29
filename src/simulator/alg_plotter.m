@@ -6,7 +6,8 @@ classdef alg_plotter
         sim_out;  %data in the simulation
         FS = 16;  %fontsize for axis labels
         FST = 20; %fontsize for title  
-        EQUALITY; %is an equality constraint used?        
+        EQUALITY = false; %is an equality constraint used? 
+        visible=true; % should the plot be shown?
     end
     
     methods
@@ -29,12 +30,17 @@ classdef alg_plotter
             %Returns:
             %   fig:    figure environment
                         
-            if (nargin == 3) && isnumeric(fignum) && ~isempty(fignum)
-                fig = figure(fignum);
+
+            if obj.visible
+                if (nargin == 3) && isnumeric(fignum) && ~isempty(fignum)                
+                    fig = figure(fignum);
+                else
+                    fig = figure();                    
+                end
             else
-                fig = figure;
-            end
-            clf
+                fig = figure('visibility', 'off');
+            end               
+            clf(fig, 'reset');
 
             nplt = length(traces);
             if nplt ==3
@@ -69,7 +75,7 @@ classdef alg_plotter
         end
 
         function fig = plot_6(obj, fignum)
-            %PLOT_6 plot the signals ('xn', 'w', 'res_w', 'xi', 'z','res_z')            
+            %PLOT_6 plot the signals ('xn', 'w', 'res_w', 'xc', 'z','res_z')            
             %Args:            
             %   fignum: figure number to display
             %Return:
@@ -79,7 +85,7 @@ classdef alg_plotter
             if nargin < 2
                 fignum = [];
             end
-            sigs = {'xn', 'w', 'res_w', 'xi', 'z', 'res_z'};
+            sigs = {'xn', 'w', 'res_w', 'xc', 'z', 'res_z'};
             fig = obj.plot(sigs, fignum);
         end
 
@@ -100,7 +106,7 @@ classdef alg_plotter
 
 
         function fig = plot_4_err(obj, fignum)
-            %PLOT_4_err plot the error signals/regulated quantities ('xnerr', 'uerr', 'xierr', 'yerr')            
+            %PLOT_4_err plot the error signals/regulated quantities ('xnerr', 'uerr', 'xcerr', 'yerr')            
             %Args:            
             %   fignum: figure number to display
             %Return:
@@ -110,7 +116,7 @@ classdef alg_plotter
             if nargin < 2
                 fignum = [];
             end
-            sigs = {'xnerr', 'uerr', 'xierr', 'yerr'};
+            sigs = {'xnerr', 'uerr', 'xcerr', 'yerr'};
             fig = obj.plot(sigs, fignum);
         end
 
@@ -128,7 +134,7 @@ classdef alg_plotter
         end
 
         function fig = plot_4_sq_err(obj, fignum)
-            %PLOT_4_sq_err plot the squared error signals/regulated quantities ('sq_xnerr', 'sq_uerr', 'sq_xierr', 'sq_yerr')            
+            %PLOT_4_sq_err plot the squared error signals/regulated quantities ('sq_xnerr', 'sq_uerr', 'sq_xcerr', 'sq_yerr')            
             %Args:            
             %   fignum: figure number to display
             %Return:
@@ -136,7 +142,7 @@ classdef alg_plotter
             if nargin < 2
                 fignum = [];
             end
-            sigs = {'sq_xnerr', 'sq_uerr', 'sq_xierr', 'sq_yerr'};
+            sigs = {'sq_xnerr', 'sq_uerr', 'sq_xcerr', 'sq_yerr'};
             fig = obj.plot(sigs, fignum);
         end
 
@@ -162,14 +168,14 @@ classdef alg_plotter
             %   obj: the plotter
             
             obj.sim_out.xnerr = obj.sim_out.xn -  reg_cl.Pi * dstar;
-            obj.sim_out.xierr = obj.sim_out.xi  - reg_cl.Th * dstar;
+            obj.sim_out.xcerr = obj.sim_out.xc  - reg_cl.Th * dstar;
             obj.sim_out.yerr = obj.sim_out.y - reg_cl.Phi * dstar;
             obj.sim_out.uerr = obj.sim_out.u- reg_cl.Gam * dstar;            
 
             fs = @(sig) squeeze(sum(sig.^2, [1, 2]));
 
             obj.sim_out.sq_xnerr = fs(obj.sim_out.xnerr);
-            obj.sim_out.sq_xierr = fs(obj.sim_out.xierr);
+            obj.sim_out.sq_xcerr = fs(obj.sim_out.xcerr);
             obj.sim_out.sq_yerr = fs(obj.sim_out.yerr);
             obj.sim_out.sq_uerr = fs(obj.sim_out.uerr);            
 
@@ -189,11 +195,11 @@ classdef alg_plotter
             if ismember(sig, fieldnames(obj.sim_out))
                 sig_curr = getfield(obj.sim_out, sig);
             elseif strcmp(sig, 'x')
-                sig_curr = [obj.sim_out.xn; obj.sim_out.xi];
+                sig_curr = [obj.sim_out.xn; obj.sim_out.xc];
             elseif strcmp(sig, 'xerr')
-                sig_curr = [obj.sim_out.xnerr; obj.sim_out.xierr];
+                sig_curr = [obj.sim_out.xnerr; obj.sim_out.xcerr];
             elseif strcmp(sig, 'sq_xerr')
-                sig_curr = obj.sim_out.sq_xnerr +  obj.sim_out.sq_xierr;
+                sig_curr = obj.sim_out.sq_xnerr +  obj.sim_out.sq_xcerr;
             elseif strcmp(sig, 'delay')
                 sig_curr = obj.sim_out.mode - 1;
             end
@@ -215,7 +221,7 @@ classdef alg_plotter
                 xlabel('$k$', 'interpreter', 'latex', 'fontsize', obj.FS)
                 ylabel(obj.get_name(sig), 'interpreter', 'latex', 'fontsize', obj.FS)
                 title(obj.get_title(sig), 'interpreter', 'latex', 'fontsize', obj.FST)
-                if ismember(sig, {'res_w', 'res_z', 'sq_xierr', 'sq_xerr', ...
+                if ismember(sig, {'res_w', 'res_z', 'sq_xcerr', 'sq_xerr', ...
                         'sq_xnerr', 'sq_uerr', 'sq_yerr'})
                     set(ax, 'YScale', 'log');
                 end
@@ -254,7 +260,7 @@ classdef alg_plotter
                     name = 'Optimality Error';
                 case 'res_z'
                     name = 'Consensus Error';
-                case 'xi'
+                case 'xc'
                     name = 'State (Controller)';
                 case 'xn'
                     name = 'State (Network)';
@@ -262,7 +268,7 @@ classdef alg_plotter
                     name = 'Primal Feasibility';
                 case 'xerr'
                     name = 'State Error';
-                case 'xierr'
+                case 'xcerr'
                     name = 'State (Controller) Error';
                 case 'xnerr'
                     name = 'State (Network) Error';
@@ -274,7 +280,7 @@ classdef alg_plotter
                 %squared errors
                 case 'sq_xerr'
                     name = 'State Error';
-                case 'sq_xierr'
+                case 'sq_xcerr'
                     name = 'State (Controller) Error';
                 case 'sq_xnerr'
                     name = 'State (Network) Error';
@@ -304,8 +310,8 @@ classdef alg_plotter
                 name_mid = '$w_p$';
             elseif strcmp(sig, 'zp')
                 name_mid = '$z_p$';
-            elseif strcmp(sig, 'xi')
-                name_mid = '$\xi$';
+            elseif strcmp(sig, 'xc')
+                name_mid = '$\xc$';
             elseif strcmp(sig, 'xn')
                 name_mid = '$x_{N}$';
             elseif strcmp(sig, 'eq')
@@ -318,8 +324,8 @@ classdef alg_plotter
                 name_mid = 'delay';
 
             %tracking    
-            elseif strcmp(sig, 'xierr')
-                name_mid = '$\xi - \xi^*$';
+            elseif strcmp(sig, 'xcerr')
+                name_mid = '$\xc - \xc^*$';
             elseif strcmp(sig, 'xerr')
                 name_mid = '$x - x^*$';
             elseif strcmp(sig, 'xnerr')
@@ -330,8 +336,8 @@ classdef alg_plotter
                 name_mid = '$y - y^*$';
 
             %tracking residuals
-            elseif strcmp(sig, 'sq_xierr')
-                name_mid = '$||\xi - \xi^*||^2_2$';
+            elseif strcmp(sig, 'sq_xcerr')
+                name_mid = '$||\xc - \xc^*||^2_2$';
             elseif strcmp(sig, 'sq_xerr')
                 name_mid = '$||x - x^*||^2_2$';
             elseif strcmp(sig, 'sq_xnerr')

@@ -381,6 +381,7 @@
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ergodic-convergence">Ergodic Convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-for-time-varying-dynamical-systems">Performance for Time-Varying Dynamical Systems</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#more-specifications">More Specifications</a></li>
 </ul>
             </nav>
@@ -418,11 +419,6 @@
 </tbody>
 </table>
 </div>
- <!-- so a specification is
-always paired with a performance channel.
-The properties themselves (linear convergence, input-to-state stability, $\ell_2$-gain)
-are defined precisely on the {doc}`Performance Specifications <../../documentation/doc_specs>`
-page. -->
 <p>Most specifications have an additional field <code class="docutils literal notranslate"><span class="pre">rho</span></code> discount rate <span class="math notranslate nohighlight">\(\rho &gt;0\)</span> as an argument.
 Choosing <span class="math notranslate nohighlight">\(\rho &lt; 1\)</span> imposes that the property holds at an exponential rate.</p>
 <p>Refer to <a class="reference internal" href="../../documentation/doc_specs.html"><span class="doc">Performance Specifications</span></a> for information about the specifications and their interfaces.</p>
@@ -472,37 +468,50 @@ sol = man_ana.solve_single(order, perf);
 ``` -->
 <section id="linear-convergence">
 <h2>Linear Convergence<a class="headerlink" href="#linear-convergence" title="Link to this heading">#</a></h2>
-<p>Requests exponential stability of the iterates at rate <span class="math notranslate nohighlight">\(\rho\)</span>. For every
-initial condition <span class="math notranslate nohighlight">\(x_0\)</span> there is a fixed point <span class="math notranslate nohighlight">\(x^*(x_0)\)</span> with</p>
+<p>This imposes exponential stability of the iterates at rate <span class="math notranslate nohighlight">\(\rho\)</span>. For every
+initial condition <span class="math notranslate nohighlight">\(x_0\)</span> there is a fixed point <span class="math notranslate nohighlight">\((x^*(x_0), w^*(x_0), z^*(x_0))\)</span> with</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
 \mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2
   \leq \gamma_0\, \rho^{k} \norm{x_0 - x^*(x_0)}_2, &amp; &amp; \forall k \in \N.
 \end{align*}\end{split}\]</div>
 <p>Linear convergence holds if <span class="math notranslate nohighlight">\(\rho &lt; 1\)</span>.</p>
-<p>This is the most common specification and needs no performance channel of its own (by default <code class="docutils literal notranslate"><span class="pre">iwp=[],</span> <span class="pre">izp=[]</span></code>).</p>
+<p>This is the most common specification and needs no performance channel (by default <code class="docutils literal notranslate"><span class="pre">iwp=[],</span> <span class="pre">izp=[]</span></code>).</p>
 <p>It is specified with</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_stability</span><span class="p">(</span><span class="n">rho</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If no specifications are supplied (<code class="docutils literal notranslate"><span class="pre">specs</span> <span class="pre">=</span> <span class="pre">[]</span></code>), then the default specification used is <code class="docutils literal notranslate"><span class="pre">spec_stability(1)</span></code> with <code class="docutils literal notranslate"><span class="pre">target=true</span></code>.</p>
+<p>The default specification used if none are supplied (<code class="docutils literal notranslate"><span class="pre">specs</span> <span class="pre">=</span> <span class="pre">[]</span></code>) is <code class="docutils literal notranslate"><span class="pre">{spec_stability(1)}</span></code> with <code class="docutils literal notranslate"><span class="pre">target=true</span></code>.</p>
 </div>
+<p>Infinite-horizon exponential stability is that for <span class="math notranslate nohighlight">\(x_0\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\lim_{k \rightarrow \infty}\rho^{-k}\mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2
+\end{align*}\end{split}\]</div>
 </section>
 <section id="quadratic-performance">
 <h2>Quadratic Performance<a class="headerlink" href="#quadratic-performance" title="Link to this heading">#</a></h2>
 <p>Several  specifications are special cases of general <strong>quadratic supply-rate</strong> conditions on
-<span class="math notranslate nohighlight">\((w_p, z_p)\)</span>. A quadratic supply rate condition with respect to matrices <span class="math notranslate nohighlight">\((Q, S, R)\)</span> is the existence of an <span class="math notranslate nohighlight">\(\epsilon &gt; 0\)</span> such that</p>
+<span class="math notranslate nohighlight">\((w_p, z_p)\)</span>. These conditions must be respected for all performance input sequence <span class="math notranslate nohighlight">\((w_{p, k})_{k \in \N}\)</span> with a finite <span class="math notranslate nohighlight">\(\rho\)</span>-weighted ℓ2 norm  <span class="math notranslate nohighlight">\((\sum_{k=0}^T -\epsilon \rho^{-2k} \norm{w_{p, k}}_2^2 &lt; \infty)\)</span>.</p>
+<p>A quadratic supply rate condition with respect to matrices <span class="math notranslate nohighlight">\((Q, S, R)\)</span> is the existence of an <span class="math notranslate nohighlight">\(\epsilon &gt; 0\)</span> such that</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
 \sum_{k=0}^{T}
  \rho^{-2k} \mat{c}{w_{p,k} \\ z_{p,k}}^\top
   \mat{cc}{Q &amp; S \\ S^\top &amp; R}
-  \mat{c}{w_{p,k} \\ z_{p,k}} \; \preceq \; \sum_{k=0}^T -\epsilon \rho^{-2k} \norm{w_{p, k}}_2^2
+  \mat{c}{w_{p,k} \\ z_{p,k}} \; \leq  \; \sum_{k=0}^T -\epsilon \rho^{-2k} \norm{w_{p, k}}_2^2
 \end{align*}\end{split}\]</div>
 <p>for all time horizons <span class="math notranslate nohighlight">\(T &gt; 0\)</span>.</p>
-<p>Quadratic performance specifications are specified by</p>
+<p>Infinite-horizon quadratic performance is that</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+  \limsup_{T \rightarrow \infty} \sum_{k=0}^{T} \rho^{-2k} \mat{c}{w_{p,k} \\ z_{p,k}}^\top
+  \mat{cc}{Q &amp; S \\ S^\top &amp; R}
+  \mat{c}{w_{p,k} \\ z_{p,k}} \; +  \; \epsilon \rho^{-2k} \norm{w_{p, k}}_2^2 \leq 0.
+\end{align*}\end{split}\]</div>
+<p>Quadratic performance specifications are imposed by</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">M</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="n">Q</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="p">;</span><span class="w"> </span><span class="n">S</span><span class="o">&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="p">];</span>
 <span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_quad</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span>
 </pre></div>
@@ -518,26 +527,33 @@ state.</p>
 \sum_{k=0}^T \rho^{-2k} \norm{x_k - x^*(x_0)}_2^2 \leq \gamma\norm{x_0 - x^*(x_0)}_2^2
   + \gamma \sum_{k=0}^T \rho^{-2k} \norm{w_{p, k}}_2^2, &amp; &amp; \forall k \in \N.
 \end{align*}\]</div>
-<p>If <span class="math notranslate nohighlight">\(\rho \in (0, 1)\)</span>, then ℓ2 stability implies an Input-to-State Stability property</p>
+<p>If <span class="math notranslate nohighlight">\(\rho \in (0, 1)\)</span>, then ℓ2 stability implies an Input-to-State Stability property <a class="footnote-reference brackets" href="#footcite-sontag1989smooth" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, </p>
 <!-- This  which constitutes an input-to-state stability condition. There is no performance -->
 <!-- output; only a bounded penalty on $w_p$ is imposed, giving -->
 <div class="math notranslate nohighlight">
 \[\begin{align*}
-\norm{x_k - x^*(x_0)}_2^2 \leq \gamma_x\, \rho^{2k} \norm{x_0 - x^*(x_0)}_2^2
+\norm{x_k - x^*(x_0)}_2^2 \leq \gamma\, \rho^{2k} \norm{x_0 - x^*(x_0)}_2^2
   + \frac{\gamma \rho^2}{1-\rho^2} \max_{t \in 0, \ldots, k} \norm{w_{p, t}}_2^2, &amp; &amp; \forall k \in \N.
 \end{align*}\]</div>
 <p>Linear convergence is recovered from Input-to-State Stability when the
 disturbance vanishes (<span class="math notranslate nohighlight">\(w_p= 0\)</span>).</p>
-<p>Reach for this when you need the iterates to stay
+<p>Use this when you need the iterates to stay
 bounded and convergent under noise but do not need a specific gain; for a gain bound, use
 <span class="math notranslate nohighlight">\(\ell_2\)</span> Gain instead.</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_l2</span><span class="p">(</span><span class="n">iwp</span><span class="p">);</span><span class="w">        </span><span class="c">% no performance output; optional bound: spec_l2(iwp, MU)</span>
 </pre></div>
 </div>
+<p>Infinite-horizon  ℓ2 stability is</p>
+<div class="math notranslate nohighlight">
+\[\begin{align*}
+\limsup_{T \to \infty}
+  \frac{\sum_{k=0}^{T} \rho^{-2k} \norm{x_k - x^*(0)}_2^2}{   \sum_{k=0}^{T} \rho^{-2k} \norm{w_{p,k}}^2_2}
+  \; &lt; \; \gamma^2.
+\end{align*}\]</div>
 </section>
 <section id="l2-gain">
 <h3>ℓ2 Gain<a class="headerlink" href="#l2-gain" title="Link to this heading">#</a></h3>
-<p><em>Energy-to-energy gain.</em> Bounds the induced <span class="math notranslate nohighlight">\(\ell_2\)</span>-gain <span class="math notranslate nohighlight">\(\gamma\)</span> from the performance
+<p><em>Energy-to-energy gain.</em> Bounds the induced ℓ2 gain <span class="math notranslate nohighlight">\(\gamma\)</span> from the performance
 input to the performance output,</p>
 <div class="math notranslate nohighlight">
 \[\begin{align*}
@@ -545,7 +561,7 @@ input to the performance output,</p>
   \frac{\sum_{k=0}^{T} \rho^{2k} \norm{z_{p,k}}_2^2}{   \sum_{k=0}^{T} \rho^{-2k} \norm{w_{p,k}}^2_2}
   \; &lt; \; \gamma^2.
 \end{align*}\]</div>
-<p>For a linear system this, this is the <span class="math notranslate nohighlight">\(H_\infty\)</span> gain.</p>
+<p>For a linear system this, this is the <span class="math notranslate nohighlight">\(H_\infty\)</span> gain under a <span class="math notranslate nohighlight">\(\rho\)</span>-weighting. The ℓ2 gain is an infinite-horizon penalty.</p>
 <p>Use it to quantify how strongly a
 disturbance at <span class="math notranslate nohighlight">\(w_p\)</span> (for example, noise in the gradient evaluations) is amplified at a
 tracked output <span class="math notranslate nohighlight">\(z_p\)</span>.</p>
@@ -567,7 +583,7 @@ input passivity index <span class="math notranslate nohighlight">\(\nu_w\)</span
   \; \geq \;
   \sum_{k=0}^{T} \big( \nu_w \norm{w_{p,k}}_2^2 + \nu_z \norm{z_{p,k}}_2^2 \big).
 \end{align*}\]</div>
-<p>Setting both indices to zero requests plain passivity; positive indices request the
+<p>Setting both indices to zero requests standard passivity; positive indices request the
 correspondingly stronger input- or output-strict passivity properties. The performance input and
 output channels must have the same length.</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">% ind_w = nu_w, ind_z = nu_z</span>
@@ -582,20 +598,26 @@ output channels must have the same length.</p>
 <p>An algorithm with no repeated operator evaluations satisfies ergodic convergence if there exists a <span class="math notranslate nohighlight">\(\gamma&gt;0\)</span> such that</p>
 <div class="math notranslate nohighlight">
 \[\begin{align*}
-\sum_{i=1}^s \left[f_i(z_i) - f_i(z_i^*(x_0)) - (w^*_i)^\top (z^*_i - z^*_i)\right] \leq \frac{\gamma}{k+1} \norm{x_0 - x^*(x_0)}_2^2 &amp; &amp; \forall k \in \N.
+\sum_{i=1}^s \left[f_i(z^i_k) - f_i(z^{*,i}(x_0))\right] - (w^*)^\top (z_k - z^{*}(x_0)) \leq \frac{\gamma}{k+1} \norm{x_0 - x^*(x_0)}_2^2 &amp; &amp; \forall k \in \N.
 \end{align*}\]</div>
-<p>The bracketed quantity is equal to 0 at optimality.</p>
+<p>The bracketed quantity is a duality gap, and is equal to 0 at optimality.
+This  formulation of ergodic convergence in duality gap originates from  <a class="footnote-reference brackets" href="#footcite-upadhyaya2025automated" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> (Section 4.1.2).</p>
 <p>Ergodic convergence requires the introduction of new performance channels for the <span class="math notranslate nohighlight">\((w^*_i)^\top z^*_i\)</span> term. It is implemented as</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">perf_erg</span><span class="p">,</span><span class="w"> </span><span class="n">sys</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_ergodic</span><span class="p">(</span><span class="n">sys</span><span class="p">);</span>
 <span class="n">specs</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">perf_erg</span><span class="p">};</span>
 </pre></div>
 </div>
 <p>Ergodic convergence is weaker than linear convergence. It can certify properties of convex optimization algorithms, whereas establishment of global linear convergence requires strong convexity. Ergodic convergence should only be used if all performance specifications have <span class="math notranslate nohighlight">\(\rho=1\)</span>.</p>
-<p>The IQC-based formulation of ergodic convergence is based on  (Section 4.1) and  <a class="footnote-reference brackets" href="#footcite-upadhyaya2025automated" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> (Section 4.1.2).</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>In the current implementation, Ergodic convergence requires nonstrict feasibility of linear matrix inequalities. In numerical experiments, the minimal eigenvalue of a positive-definite-constrained block is <span class="math notranslate nohighlight">\(\approx (-10^{-12})\)</span>, which is not greater than or equal to  <span class="math notranslate nohighlight">\(0\)</span>. Future developments will hopefully patch this feasibility issue, in the meantime use with caution.</p>
 </div>
+</section>
+<section id="performance-for-time-varying-dynamical-systems">
+<h2>Performance for Time-Varying Dynamical Systems<a class="headerlink" href="#performance-for-time-varying-dynamical-systems" title="Link to this heading">#</a></h2>
+<p>The formulation of the performance specifications may vary for <a class="reference internal" href="system/dynamics.html"><span class="doc">systems with time-variations</span></a>
+All specifications on this page are used as presented for LTI, periodic, and periodic-orbit systems.</p>
+<p>For switched systems, the performance specifications impose a  worst-case bound over all possible switching sequences.</p>
 </section>
 <section id="more-specifications">
 <h2>More Specifications<a class="headerlink" href="#more-specifications" title="Link to this heading">#</a></h2>
@@ -604,8 +626,12 @@ output channels must have the same length.</p>
 </section>
 <hr class="footnotes docutils" />
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="footcite-upadhyaya2025automated" role="doc-footnote">
+<aside class="footnote brackets" id="footcite-sontag1989smooth" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Eduardo D Sontag. Smooth stabilization implies coprime factorization. <em>IEEE transactions on automatic control</em>, 34(4):435–443, 1989.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-upadhyaya2025automated" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
 <p>Manu Upadhyaya, Sebastian Banert, Adrien B Taylor, and Pontus Giselsson. Automated tight Lyapunov analysis for first-order methods. <em>Mathematical Programming</em>, 209(1):133–170, 2025.</p>
 </aside>
 </aside>
@@ -665,6 +691,7 @@ output channels must have the same length.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ergodic-convergence">Ergodic Convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-for-time-varying-dynamical-systems">Performance for Time-Varying Dynamical Systems</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#more-specifications">More Specifications</a></li>
 </ul>
   </nav></div>

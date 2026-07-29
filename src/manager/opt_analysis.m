@@ -35,7 +35,7 @@ classdef opt_analysis < opt_manager_interface
             % Args:
             %   order (cell): orders of the iqcs to search over            
                         
-            ANY_NONCAUSAL = false;
+            
             if ~iscell(order)
                 %declare the orders
                 order0 =order;
@@ -45,17 +45,22 @@ classdef opt_analysis < opt_manager_interface
                     order{i}  = order0;
                 end
 
-                %check if any are noncausal
+                
+            end
+
+
+            %check if any are noncausal
+            ANY_NONCAUSAL = false;
+            for i = 1:length(obj.sys.op)
                 if (isa(obj.sys.op{i}, 'op_gen') && (order(i)>0)) || (length(order(i))==2 && (order(2) > 0))
                     ANY_NONCAUSAL = true;
                 end
             end
-
-            %override to enforce the same rho in all channels
-            if ANY_NONCAUSAL
-                obj.config.gen.same_rho = true;
-                obj.lmi.config.gen.same_rho = true;
-            end
+            % % override to enforce the same rho in all channels
+            % if ANY_NONCAUSAL
+            %     obj.config.gen.same_rho = true;
+            %     obj.lmi.config.gen.same_rho = true;
+            % end
 
             obj = obj.oracle_order(order);
         end
@@ -174,7 +179,8 @@ classdef opt_analysis < opt_manager_interface
 
             %this requires a weighting by the exponential discounts            
             
-            rho_common = obj.get_rho(specs);
+            % rho_common = obj.get_common_rho(specs);
+            rho_common = 1;
             rho_pow = rho_common.^(obj.schedule);
         
             

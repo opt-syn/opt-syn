@@ -97,6 +97,29 @@ classdef iqc_loop_split
             sys = blkdiag(obj.Psi1, obj.Psi2);
         end
 
+
+        function iqc = rhotrafo(obj, rho)
+            %RHOTRAFO exponential weighting of the IQC by rho
+            %
+            %Args:
+            %   rho:    discount rate
+            %
+            %Returns:
+            %   iqc:    output IQC
+            
+            if rho<=0
+                error('rho must be positive');
+            else
+                rhoi=1/rho;
+                iqc = obj;
+                iqc.Psi1.A = iqc.Psi1.A * rhoi;
+                iqc.Psi1.B = iqc.Psi1.B * rhoi;
+                iqc.Psi2.A = iqc.Psi2.A * rhoi;
+                iqc.Psi2.B = iqc.Psi2.B * rhoi;
+            end
+
+        end
+
         function iqc = blkdiag(obj, b)
             %BLKDIAG: block diagonal of the multipliers
             %Args:

@@ -173,6 +173,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
 </ul>
@@ -180,7 +181,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="index_documentation.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index_documentation.html">Documentation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="doc_manager.html">Manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="doc_solutions.html">Solution</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -420,6 +421,12 @@
 <dd><p>data in the simulation</p>
 </dd></dl>
 
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="simulator.alg_plotter.visible">
+<span class="sig-name descname"><span class="pre">visible</span></span><a class="headerlink" href="#simulator.alg_plotter.visible" title="Link to this definition">#</a></dt>
+<dd><p>should the plot be shown?</p>
+</dd></dl>
+
 </dd>
 <dt>Method Summary</dt><dd><dl class="mat method">
 <dt class="sig sig-object mat" id="simulator.alg_plotter.add_opt_sig">
@@ -517,7 +524,7 @@ for use in y-axis labels</p>
 <dl class="mat method">
 <dt class="sig sig-object mat" id="simulator.alg_plotter.plot_4_err">
 <span class="sig-name descname"><span class="pre">plot_4_err</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">fignum</span></em><span class="sig-paren">)</span><a class="headerlink" href="#simulator.alg_plotter.plot_4_err" title="Link to this definition">#</a></dt>
-<dd><p>PLOT_4_err plot the error signals/regulated quantities (‘xnerr’, ‘uerr’, ‘xierr’, ‘yerr’)
+<dd><p>PLOT_4_err plot the error signals/regulated quantities (‘xnerr’, ‘uerr’, ‘xcerr’, ‘yerr’)
 :param fignum: figure number to display</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return<span class="colon">:</span></dt>
@@ -529,7 +536,7 @@ for use in y-axis labels</p>
 <dl class="mat method">
 <dt class="sig sig-object mat" id="simulator.alg_plotter.plot_4_sq_err">
 <span class="sig-name descname"><span class="pre">plot_4_sq_err</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">fignum</span></em><span class="sig-paren">)</span><a class="headerlink" href="#simulator.alg_plotter.plot_4_sq_err" title="Link to this definition">#</a></dt>
-<dd><p>PLOT_4_sq_err plot the squared error signals/regulated quantities (‘sq_xnerr’, ‘sq_uerr’, ‘sq_xierr’, ‘sq_yerr’)
+<dd><p>PLOT_4_sq_err plot the squared error signals/regulated quantities (‘sq_xnerr’, ‘sq_uerr’, ‘sq_xcerr’, ‘sq_yerr’)
 :param fignum: figure number to display</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return<span class="colon">:</span></dt>
@@ -541,7 +548,7 @@ for use in y-axis labels</p>
 <dl class="mat method">
 <dt class="sig sig-object mat" id="simulator.alg_plotter.plot_6">
 <span class="sig-name descname"><span class="pre">plot_6</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">fignum</span></em><span class="sig-paren">)</span><a class="headerlink" href="#simulator.alg_plotter.plot_6" title="Link to this definition">#</a></dt>
-<dd><p>PLOT_6 plot the signals (‘xn’, ‘w’, ‘res_w’, ‘xi’, ‘z’,’res_z’)
+<dd><p>PLOT_6 plot the signals (‘xn’, ‘w’, ‘res_w’, ‘xc’, ‘z’,’res_z’)
 :param fignum: figure number to display</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return<span class="colon">:</span></dt>
