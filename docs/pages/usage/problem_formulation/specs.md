@@ -21,11 +21,6 @@ All specifications have the fields
 *   - `target`
     - should this specification be minimized
 :::
- <!-- so a specification is
-always paired with a performance channel.
-The properties themselves (linear convergence, input-to-state stability, $\ell_2$-gain)
-are defined precisely on the {doc}`Performance Specifications <../../documentation/doc_specs>`
-page. -->
 Most specifications have an additional field `rho` discount rate $\rho >0$ as an argument. 
 Choosing $\rho < 1$ imposes that the property holds at an exponential rate. 
 
@@ -82,8 +77,8 @@ sol = man_ana.solve_single(order, perf);
 
 ## Linear Convergence
 
-Requests exponential stability of the iterates at rate $\rho$. For every
-initial condition $x_0$ there is a fixed point $x^*(x_0)$ with
+This imposes exponential stability of the iterates at rate $\rho$. For every
+initial condition $x_0$ there is a fixed point $(x^*(x_0), w^*(x_0), z^*(x_0))$ with
 
 ```{math}
 \begin{align*}
@@ -94,7 +89,7 @@ initial condition $x_0$ there is a fixed point $x^*(x_0)$ with
 
 Linear convergence holds if $\rho < 1$. 
 
-This is the most common specification and needs no performance channel of its own (by default `iwp=[], izp=[]`).
+This is the most common specification and needs no performance channel (by default `iwp=[], izp=[]`).
 
 It is specified with
 ```matlab
@@ -102,26 +97,46 @@ perf = spec_stability(rho);
 ```
 
 :::{note}
-If no specifications are supplied (`specs = []`), then the default specification used is `spec_stability(1)` with `target=true`.
+
+The default specification used if none are supplied (`specs = []`) is `{spec_stability(1)}` with `target=true`.
 :::
 
+
+Infinite-horizon exponential stability is that for $x_0$, 
+```{math}
+\begin{align*}
+\lim_{k \rightarrow \infty}\rho^{-k}\mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2
+\end{align*}
+```
 
 ## Quadratic Performance
 
 Several  specifications are special cases of general **quadratic supply-rate** conditions on
-$(w_p, z_p)$. A quadratic supply rate condition with respect to matrices $(Q, S, R)$ is the existence of an $\epsilon > 0$ such that 
+$(w_p, z_p)$. These conditions must be respected for all performance input sequence $(w_{p, k})_{k \in \N}$ with a finite $\rho$-weighted &#8467;2 norm  $(\sum_{k=0}^T -\epsilon \rho^{-2k} \norm{w_{p, k}}_2^2 < \infty)$.
+
+
+ A quadratic supply rate condition with respect to matrices $(Q, S, R)$ is the existence of an $\epsilon > 0$ such that 
 
 ```{math}
 \begin{align*}
 \sum_{k=0}^{T}
  \rho^{-2k} \mat{c}{w_{p,k} \\ z_{p,k}}^\top
   \mat{cc}{Q & S \\ S^\top & R}
-  \mat{c}{w_{p,k} \\ z_{p,k}} \; \preceq \; \sum_{k=0}^T -\epsilon \rho^{-2k} \norm{w_{p, k}}_2^2
+  \mat{c}{w_{p,k} \\ z_{p,k}} \; \leq  \; \sum_{k=0}^T -\epsilon \rho^{-2k} \norm{w_{p, k}}_2^2
 \end{align*}
 ```
 for all time horizons $T > 0$. 
 
-Quadratic performance specifications are specified by 
+Infinite-horizon quadratic performance is that 
+```{math}
+\begin{align*}
+  \limsup_{T \rightarrow \infty} \sum_{k=0}^{T} \rho^{-2k} \mat{c}{w_{p,k} \\ z_{p,k}}^\top
+  \mat{cc}{Q & S \\ S^\top & R}
+  \mat{c}{w_{p,k} \\ z_{p,k}} \; +  \; \epsilon \rho^{-2k} \norm{w_{p, k}}_2^2 \leq 0.
+\end{align*}
+```
+
+Quadratic performance specifications are imposed by 
 ```matlab
 M = [Q, S; S', R];
 perf = spec_quad(M, iwp, izp);
@@ -143,12 +158,12 @@ state.
 \end{align*}
 ```
 
-If $\rho \in (0, 1)$, then &#8467;2 stability implies an Input-to-State Stability property 
+If $\rho \in (0, 1)$, then &#8467;2 stability implies an Input-to-State Stability property {footcite}`sontag1989smooth`, {footcite}`schwenkel2026multi` 
 <!-- This  which constitutes an input-to-state stability condition. There is no performance -->
 <!-- output; only a bounded penalty on $w_p$ is imposed, giving -->
 ```{math}
 \begin{align*}
-\norm{x_k - x^*(x_0)}_2^2 \leq \gamma_x\, \rho^{2k} \norm{x_0 - x^*(x_0)}_2^2
+\norm{x_k - x^*(x_0)}_2^2 \leq \gamma\, \rho^{2k} \norm{x_0 - x^*(x_0)}_2^2
   + \frac{\gamma \rho^2}{1-\rho^2} \max_{t \in 0, \ldots, k} \norm{w_{p, t}}_2^2, & & \forall k \in \N.
 \end{align*}
 ```
@@ -158,7 +173,7 @@ Linear convergence is recovered from Input-to-State Stability when the
 disturbance vanishes ($w_p= 0$). 
 
 
-Reach for this when you need the iterates to stay
+Use this when you need the iterates to stay
 bounded and convergent under noise but do not need a specific gain; for a gain bound, use
 $\ell_2$ Gain instead.
 
@@ -166,9 +181,18 @@ $\ell_2$ Gain instead.
 perf = spec_l2(iwp);        % no performance output; optional bound: spec_l2(iwp, MU)
 ```
 
+Infinite-horizon  &#8467;2 stability is 
+```{math}
+\begin{align*}
+\limsup_{T \to \infty}
+  \frac{\sum_{k=0}^{T} \rho^{-2k} \norm{x_k - x^*(0)}_2^2}{   \sum_{k=0}^{T} \rho^{-2k} \norm{w_{p,k}}^2_2}
+  \; < \; \gamma^2.
+\end{align*}
+```
+
 ### &#8467;2 Gain
 
-*Energy-to-energy gain.* Bounds the induced $\ell_2$-gain $\gamma$ from the performance
+*Energy-to-energy gain.* Bounds the induced &#8467;2 gain $\gamma$ from the performance
 input to the performance output,
 
 ```{math}
@@ -179,7 +203,7 @@ input to the performance output,
 \end{align*}
 ```
 
-For a linear system this, this is the $H_\infty$ gain. 
+For a linear system this, this is the $H_\infty$ gain under a $\rho$-weighting. The &#8467;2 gain is an infinite-horizon penalty.
 
 
 Use it to quantify how strongly a
@@ -207,7 +231,7 @@ Passivity is obeyed if for all time horizons $T$ with  with $x_0 = 0, x^*(x_0) =
 \end{align*}
 ```
 
-Setting both indices to zero requests plain passivity; positive indices request the
+Setting both indices to zero requests standard passivity; positive indices request the
 correspondingly stronger input- or output-strict passivity properties. The performance input and
 output channels must have the same length.
 
@@ -216,6 +240,7 @@ output channels must have the same length.
 perf = spec_passivity(ind_w, ind_z, iwp, izp);   
 ```
 
+ 
 ## Ergodic Convergence
 
 Ergodic convergence arises in the optimization setting where all operators are subdifferentials ($F_i = \partial f_i$), and their operators classes are {class}`op_sml`, {class}`op_pcc`, or {class}`op_quad`.
@@ -223,11 +248,11 @@ Ergodic convergence arises in the optimization setting where all operators are s
 An algorithm with no repeated operator evaluations satisfies ergodic convergence if there exists a $\gamma>0$ such that 
 ```{math}
 \begin{align*}
-\sum_{i=1}^s \left[f_i(z_i) - f_i(z_i^*(x_0)) - (w^*_i)^\top (z^*_i - z^*_i)\right] \leq \frac{\gamma}{k+1} \norm{x_0 - x^*(x_0)}_2^2 & & \forall k \in \N.
+\sum_{i=1}^s \left[f_i(z^i_k) - f_i(z^{*,i}(x_0))\right] - (w^*)^\top (z_k - z^{*}(x_0)) \leq \frac{\gamma}{k+1} \norm{x_0 - x^*(x_0)}_2^2 & & \forall k \in \N.
 \end{align*}
 ```
-
-The bracketed quantity is equal to 0 at optimality. The IQC-based formulation of ergodic convergence is based on the work of {footcite}`upadhyaya2025automated` (Section 4.1.2).
+The bracketed quantity is a duality gap, and is equal to 0 at optimality. 
+This  formulation of ergodic convergence in duality gap originates from  {footcite}`upadhyaya2025automated` (Section 4.1.2).
 
 
 Ergodic convergence requires the introduction of new performance channels for the $(w^*_i)^\top z^*_i$ term. It is implemented as 
@@ -246,6 +271,14 @@ Ergodic convergence is weaker than linear convergence. It can certify properties
 :::{warning}
 In the current implementation, Ergodic convergence requires nonstrict feasibility of linear matrix inequalities. In numerical experiments, the minimal eigenvalue of a positive-definite-constrained block is $\approx (-10^{-12})$, which is not greater than or equal to  $0$. Future developments will hopefully patch this feasibility issue, in the meantime use with caution.
 :::
+
+## Performance for Time-Varying Dynamical Systems
+
+
+The formulation of the performance specifications may vary for {doc}`systems with time-variations <system/dynamics>`
+All specifications on this page are used as presented for LTI, periodic, and periodic-orbit systems. 
+
+For switched systems, the performance specifications impose a  worst-case bound over all possible switching sequences.
 
 
 ## More Specifications

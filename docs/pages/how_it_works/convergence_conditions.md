@@ -44,14 +44,14 @@ Sufficient conditions for a well-posed algorithm $(F, G)$ to be linearly converg
 ```{math}
 \begin{align}
 \mat{c}{\mathbf{X}^* \\ 0} = \mat{c|cc}{\Acl & 0 & \Bcl N \hl 
-\Ccl & \1 \otimes I & \Dcl N} \mat{c}{\mathbf{X}^* \\ I}
+\Ccl & \1 \otimes I & \Dcl N} \mat{c}{\mathbf{X}^* \\ I}.
 \end{align}
 ```
 
 The Regulation Equation requirement implies the existence of an $x^*$ for any valid $(w^*, z^*)$ satisfying the fixed point relation 
 ```{math}
 \begin{align}
-\Acl x^* + \Bcl w^* - x^* &= 0, & z^* = \Ccl x^* + \Dcl w^*
+\Acl x^* + \Bcl w^* - x^* &= 0, & z^* = \Ccl x^* + \Dcl w^*.
 \end{align}
 ```
 
@@ -59,7 +59,7 @@ If these two conditions hold, then
 ```{math}
 \begin{align}
 \lim_{k \rightarrow \infty} (w_k, z_k) &= (w^*, z^*), & 
-\lim_{k \rightarrow \infty} x_k &= X^* \mat{c}{-\beta^* \\ \hat{w^*}}
+\lim_{k \rightarrow \infty} x_k &= X^* \mat{c}{-\beta^* \\ \hat{w^*}}.
 \end{align}
 ```
 
@@ -67,4 +67,4 @@ These sufficient conditions are also  necessary if all eigenvalues of $\Acl + \B
 
 
 
-The Robust Stability criterion is a dynamical test, and will be verified using Integral Quadratic Constraints and Linear Matrix Inequality methods. The Regulator Equation can be easily checked by solving a linear system of  equations.
+The Robust Stability criterion is an intensive dynamical test, and will be verified using Integral Quadratic Constraints and Linear Matrix Inequality methods. In contrast, the  Regulator Equation can be easily checked by solving a linear system of  equations.

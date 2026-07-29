@@ -5,6 +5,10 @@ classdef opt_synthesis < opt_manager_interface
     % the fixed-point equation :math:`0 \in \sum_{i=1}^s F_i(\beta^*)`,    
     % in which the oracles :math:`F_i` are interfaced over a dynamical network
     
+    properties
+        iqc_op_ana; %warm start IQC from analysis       
+    end
+
     methods
         function obj = opt_synthesis(sys, config, iqc_op)
             %OPT_SYNTHESIS Constructor for synthesis
@@ -58,22 +62,29 @@ classdef opt_synthesis < opt_manager_interface
             %   iqc_rob: IQCs representing the robust uncertainties
 
             if nargin > 1 && ~isempty(iqc_op)
-                obj.iqc_op = iqc_op;
+                obj.iqc_op_ana = iqc_op;
             else
-                obj.iqc_op = obj.make_blank_iqc();
+                obj.iqc_op_ana = obj.make_blank_iqc();
             end
 
             ANY_NONCAUSAL = false;
-            for i = 1:length(obj.iqc_op)
-                if size(obj.iqc_op{i}.Psi2.A, 1) > 0
+            for i = 1:length(obj.iqc_op_ana)
+                if size(obj.iqc_op_ana{i}.Psi2.A, 1) > 0
                     ANY_NONCAUSAL = true;
                     break
                 end
             end
            
             if ANY_NONCAUSAL
+                %need to perform factorization at each individual rho
                 obj.config.gen.same_rho = true;
                 obj.lmi.config.gen.same_rho = true;
+            else
+                %perform factorization: squeeze down to causal filter
+                obj.iqc_op = obj.iqc_op_ana;
+                for i = 1:length(obj.iqc_op)
+                    obj.iqc_op{i} = obj.iqc_op_ana{i}.factor();
+                end
             end
         end
 
@@ -311,9 +322,9 @@ classdef opt_synthesis < opt_manager_interface
                 end
             end
 
-            for j = 1:numel(iqc_curr)
-                iqc_curr{j} = iqc_curr{j}.factor();
-            end
+            % for j = 1:numel(iqc_curr)
+            %     iqc_curr{j} = iqc_curr{j}.factor();
+            % end
 
             success = false;
             for i = 1:Niter
@@ -368,17 +379,19 @@ classdef opt_synthesis < opt_manager_interface
                 
                 %prepare for next go-around
                 %factor the iqcs from analysis for use in synthesis
-                iqc_curr = cell(length(sol_ana.cert.iqc_op), 1);
-                
-                if i < Niter
-                    for j = 1:numel(iqc_curr)
-                        if isnumeric(sol_ana.cert.iqc_op{j})
-                            iqc_curr{j} = sol_ana.cert.iqc_op{j};
-                        else
-                            iqc_curr{j} = sol_ana.cert.iqc_op{j}.factor();
-                        end
-                    end        
-                end
+                iqc_curr = sol_ana.cert.iqc_op;
+
+                % iqc_curr = cell(length(sol_ana.cert.iqc_op), 1);
+                % 
+                % if i < Niter
+                %     for j = 1:numel(iqc_curr)
+                %         if isnumeric(sol_ana.cert.iqc_op{j})
+                %             iqc_curr{j} = sol_ana.cert.iqc_op{j};
+                %         else
+                %             iqc_curr{j} = sol_ana.cert.iqc_op{j}.factor();
+                %         end
+                %     end        
+                % end
 
             end
 

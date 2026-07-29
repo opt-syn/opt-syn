@@ -10,7 +10,7 @@ classdef alg_sim_out
       u; %controller output/system input
       y; %controller input/system output
       xn; %states of the network
-      xi; %states of the controller
+      xc; %states of the controller
       mode; %mode of the switched system   
       param; %parameters used
       f; %function values (if applicable)

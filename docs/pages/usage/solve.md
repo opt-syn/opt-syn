@@ -72,17 +72,20 @@ The `iqc_init` input is an $s$-length cell array of {doc}`IQCs <../documentation
 
 The objective in Analysis or Synthesis is set using the `target` field in the  {doc}`operator class's <../documentation/doc_specs>`. 
 If `specs{j}.target = true`, then the specification in $i$ is minimized. At most one specification $j$ can have `specs{j}.target = true`.
-If `specs{j}.target=false` for all specifications $j$ then a feasibility problem is solved. 
+If `specs{j}.target=false` for all specifications $j$, then a feasibility problem is solved. 
 
 
 :::{caution}
 Different specifications can have different rate $\rho$ in Synthesis if and only if 
-1. the order for each {class}`op_gen` is 0
+1. the order for each {class}`op_gen` is `0`
 2. the order for each {class}`op_sml`, {class}`op_pcc`, {class}`op_quad` is `[nonnegative, 0]`. 
 
-If these conditions fail, then all specifications must have the same rate $\rho$ (`opt_config.gen.same_rho = true`). 
+If these conditions fail, then all specifications
+- must have the same rate $\rho$ (`opt_config.gen.same_rho = true`), 
+- must hold only in an infinite-horizon sense (in the current implementation).
 
-The {class}`opt_manager` classes will check these conditions, and will override `same_rho` to true if not already set. This issue is related to the presence of noncausal filters in IQC synthesis, using $\rho$-hard IQCs
+The {class}`opt_manager` classes will check these conditions, and will override `same_rho` to true if not already set. This issue is due to the presence of noncausal IQC filters.
+ <!-- See {doc}`<../documentation/doc_iqc>` for more detail about this issue. -->
 :::
 
 (#bisection)=
@@ -108,13 +111,13 @@ b_opts.spec_ind = 1;
 
 The {meth}`alternate` routine switches between Synthesis and Analysis. It solves a Synthesis problem with fixed IQCs to find a controller, and then solves Analysis with the fixed controller to find IQCs. The Analysis and Synthesis problems may include inner bisection steps.
 
-An alternation routine with 3 Synthesis/Analysis steps is performed by 
+An alternation routine with 3 Synthesis/Analysis steps and inner bisection is performed by 
 ```matlab
 Niter = 3; 
 [sol_syn_alternate, v_history] = man_syn.alternate(Niter, iqc_init, order, specs, b_opts);
 ```
 
-The `v_history` output is a cell array with 2 rows and  Niter columns. Each entroy of the cell array stores the  lower and upper bounds from bisection. The top row are the Synthesis bounds, and the bottom row are the Analysis bounds.
+The `v_history` output is a cell array with 2 rows and  Niter columns. Each entroy of the cell array stores the  lower and upper parameter bounds from bisection. The top row are the Synthesis bounds, and the bottom row are the Analysis bounds.
 
 
 ##  Validation
@@ -129,7 +132,7 @@ The {class}`opt_solution` structure contains information about the solution of a
 | `regcl` | Closed-loop regulator equation | Nonempty struct with fields (`S`, `R`, `Pi`, `Gam`, `Phi`, `Th`)| 
 
 
-
+If the algorithm has a block-lower-triangular information structure, and  Analysis or Synthesis is successful at some $\rho > 0$, then the algorithm is also well-posed.
 
 
 Other attributes of {class}`opt_solution` include
@@ -138,7 +141,7 @@ Other attributes of {class}`opt_solution` include
 *   - Field
     - Description    
 *   - `vars`
-    - design variables in the Analysis/Synthesis problem
+    - Design variables in the Analysis/Synthesis problem
 *   - `sys`
     - System that solves the inclusion problem
 *   - `lmi_out`
@@ -146,7 +149,11 @@ Other attributes of {class}`opt_solution` include
 :::
 
 
-The field `opt_solution.cert` contains Analysis-and-Synthesis-specific certificates of feasibility. In Analysis, the designed IQCs certifying the performance specifications are stored in `opt_solution.cert.iqc_op`. 
+The field `opt_solution.cert` contains Analysis-and-Synthesis-specific certificates of feasibility. `opt_solution.cert.iqc_op` stores the cell of IQCs used to constrain operator sequences in the performance specification: this is designed in Analysis and is given in Synthesis.
 
+ 
 In Synthesis, the designed controller is `opt_solution.sys.K`.
 This controller is the interconnection of the internal model `opt_solution.cert.model` and the subcontroller `opt_solution.cert.K_sub`.
+
+
+
