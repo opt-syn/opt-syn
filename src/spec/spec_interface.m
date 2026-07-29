@@ -1,90 +1,118 @@
 classdef spec_interface
-    %SPEC_INTERFACE performance specification for an optimization algorithm system    
-    
-    %default: stability
-    %others include:
-    %   energy to energy gain (ell 2)
-    %   energy to peak gain   (generalized H 2)
-    %   peak to peak gain   (generalized H 2)
-    %   Covariance amplification (H 2)
+    % SPEC_INTERFACE Base class for a performance specification of an algorithm.
+    %
+    % A specification encodes a desired input-output property of the
+    % algorithmic interconnection :math:`(F, G)` as a quadratic supply rate
+    % on the performance channel :math:`(w_p, z_p)`. Concrete specifications
+    % (stability, :math:`\ell_2`-gain, passivity, ...) subclass this
+    % interface and override :mat:meth:`supply` / :mat:meth:`supply_quad`.
+    %
+    % The default (this base class) is a trivial stability specification with
+    % an empty supply rate. The supported specialisations include the
+    % energy-to-energy (:math:`\ell_2`) gain, the energy-to-peak
+    % (generalized :math:`H_2`) gain, the peak-to-peak gain, and covariance
+    % amplification (:math:`H_2`).
+    %
+    % .. note::
+    %
+    %    None of these specifications involve loop transformations, which
+    %    keeps the assembly routines simple.
 
-    %none of these specifications will involve loop transformations
-    %   (simplification of the routines)
-    
     properties
-        iwp = [];    %indices for performance input
-        izp = [];    %indices for performance output        
-        vars;        %variables in the specifications               
-        id = 0;      %identifier/index of the specification
-        target = false; %should this be the target of optimization (within 
-                        %bisection iterations)?        
-        rho = 1; %exponential discounting of specification
-        type = 'generic'; %type of specification
+        iwp = [];       % Indices of the performance-input channel :math:`w_p`.
+        izp = [];       % Indices of the performance-output channel :math:`z_p`.
+        vars;           % Decision variables introduced by the specification.
+        id = 0;         % Identifier / index of the specification.
+        target = false; % Whether this specification is the optimization target
+                        % within bisection iterations.
+        rho = 1;        % Exponential discount factor :math:`\rho` of the specification.
+        type = 'generic'; % Specification type tag.
     end
-    
+
     methods
         function obj = spec_interface(iwp, izp)
-            %SPEC_INTERFACE Constructor
+            % SPEC_INTERFACE Construct a specification on a performance channel.
             %
-            %Args:            
-            %   iwp:    performance inputs in the network    
-            %   izp:    performance outputs in the network            
+            % :param iwp: Performance-input indices in the network.
+            % :type iwp: double (vector)
+            % :param izp: Performance-output indices in the network.
+            % :type izp: double (vector)
+            % :returns: A new specification object.
+            % :rtype: spec_interface
 
             if nargin > 1
                 obj.iwp = iwp;
                 obj.izp = izp;
             end
-                       
+
         end
 
 
         function nzzp = nzp(obj)
-            %number of outputs
+            % NZP Number of performance outputs.
+            %
+            % :returns: Length of the :math:`z_p` index vector.
+            % :rtype: int
             nzzp = length(obj.izp);
         end
 
         function nwwp = nwp(obj)
-            %number of inputs
+            % NWP Number of performance inputs.
+            %
+            % :returns: Length of the :math:`w_p` index vector.
+            % :rtype: int
             nwwp = length(obj.iwp);
         end
 
         function [vars_spec, cons] = create_vars(obj, cons, name, config)
-            %CREATE_VARS form the variables for the problem
+            % CREATE_VARS Create the decision variables for the specification.
             %
-            %Args:                        
-            %   cons:  accumulated constraints            
-            %   name: name of the specification
-            %   config (opt_config): configuration options
+            % The base implementation introduces no variables. Subclasses
+            % override this to add gain or multiplier variables and append
+            % their defining constraints.
             %
-            %Returns:
-            %   vars:  problem variables in specification
-            %   cons:  accumulated constraints
+            % :param cons: Accumulated LMI constraints.
+            % :param name: Name suffix for the created variables.
+            % :type name: char
+            % :param config: Configuration options.
+            % :type config: opt_config
+            % :returns: ``[vars_spec, cons]`` — specification variables and the
+            %    updated constraint set.
+            % :rtype: struct, cell
 
-            vars_spec = [];            
+            vars_spec = [];
         end
 
         function [M] = supply(obj, vars_spec)
-            %SUPPLY quadratic performance specification
+            % SUPPLY Quadratic supply-rate matrix of the specification.
             %
-            %Args:
-            %   vars_spec: problem variables in specification
+            % Returns the matrix :math:`M` defining the running quadratic
+            % cost on :math:`[z_p; w_p]`. The base implementation returns an
+            % empty matrix (no constraint).
             %
-            %Returns:
-            %   M: quadratic running cost matrix in the specification
-
+            % :param vars_spec: Specification variables.
+            % :type vars_spec: struct
+            % :returns: Quadratic running-cost matrix :math:`M`.
+            % :rtype: double
             M = [];
         end
 
 
 
         function [quad, objective] = supply_quad(obj, vars_spec)
-            %SUPPLY_QUAD decomposed quadratic performance specification
+            % SUPPLY_QUAD Decomposed quadratic supply rate.
             %
-            %Args:
-            %   vars_spec: problem variables in specification
+            % Splits the supply-rate matrix returned by :mat:meth:`supply`
+            % into the output/input blocks used to assemble the LMI. If the
+            % supply rate is empty, an empty :math:`\texttt{quad\_param}` is
+            % returned.
             %
-            %Returns:
-            %   quad (quad_param): decomposed quadratic specification
+            % :param vars_spec: Specification variables.
+            % :type vars_spec: struct
+            % :returns: ``[quad, objective]`` — the decomposed quadratic
+            %    (``quad_param``) and the objective contribution (``0`` for the
+            %    base class).
+            % :rtype: quad_param, double
 
             M = obj.supply(vars_spec);
             objective = 0;
@@ -101,14 +129,17 @@ classdef spec_interface
         
 
         function [obj] = set_p(obj, p)
-            %SET_P set a parameter when performing bisection
+            % SET_P Set the bisection parameter of the specification.
             %
-            %Args:
-            %   p: new value of the parameter
+            % Used by the bisection routine to update the swept quantity
+            % (for example the convergence rate :math:`\rho` or an
+            % :math:`\ell_2`-gain bound). The base implementation is a no-op.
             %
-            %Example: 
-            %   convergence rate rho or l2 gain bound
-            
+            % :param p: New value of the swept parameter.
+            % :type p: double
+            % :returns: The updated specification.
+            % :rtype: spec_interface
+
         end
 
     end
@@ -149,4 +180,3 @@ classdef spec_interface
         % end
     
 end
-

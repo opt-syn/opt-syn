@@ -131,7 +131,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             K_report = obj.K_alg_report(P_trans, K_nofeed, model);
             
-            % sol.cert.alg_trans = K_report.alg_trans;            
+            sol.cert.alg_trans = K_report.alg_trans;            
             sol.cert.model = K_report.model;           
             % sol.K= 
             sol.cert.K = K_report.K;
