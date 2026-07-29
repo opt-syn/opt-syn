@@ -158,7 +158,7 @@ classdef op_sml_causal < op_sml_interface
             %   psi1: filter on output (causal)
             %   psi2: filter on input (noncausal components)
 
-            [Af0, Bf0] = block_fir(order);
+            [Af0, Bf0] = block_fir(sum(order));
             Af = kron(eye(reps), Af0 );
             Bf = kron(eye(reps), Bf0);                      
             Cf = vars.Cf;

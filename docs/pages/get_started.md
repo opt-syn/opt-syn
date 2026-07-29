@@ -21,12 +21,12 @@ Analysis and Synthesis follow similar workflows:
 ## Optimization  Example Setup
 
 {#optimization-example-setup}
-We provide an example for analysis and synthesis of a composite optimization algorithm with two operators,
+A first example involves Analysis and Synthesis of a composite optimization algorithm with two operators,
 ```{math}
 \beta^* \in \argmin_{\beta \in \R^c} f_1(\beta) + f_2(\beta),
 ```
 
-An optimal point $\beta$ must satisfy the necessary inclusion condition $0 \in \partial f_1(\beta) + \partial f_2(\beta)$. 
+An optimal point $\beta^*$ must satisfy the necessary inclusion condition $0 \in \partial f_1(\beta) + \partial f_2(\beta)$. 
 
 
 

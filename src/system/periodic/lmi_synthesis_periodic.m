@@ -341,8 +341,19 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
 
         
             %recover the controller
+            if obj.config.gen.same_rho
+                rho_common = sol.rho;
+                for i = 1:obj.Nss
+                    P_trans{i} = rhotrafo(P_trans{i}, rho_common);
+                end
+            else
+                rho_common = 1;
+            end
             [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec);
 
+            for i = 1:obj.Nss
+                K_nofeed{i} = rhotrafo(K_nofeed{i}, 1/rho_common);
+            end
 
             %package it up
             K_report = cell(obj.Nss, 1);
