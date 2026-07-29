@@ -259,7 +259,7 @@ classdef opt_synthesis < opt_manager_interface
             reg2 = obj.lmi.reg;
             reg2.sys = sol.sys;
             regcl = reg2.check_regulator();
-            sol.cert.regcl = regcl;
+            sol.regcl = regcl;
 
 
 

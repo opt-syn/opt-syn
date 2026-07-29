@@ -5,8 +5,6 @@ IQCs with terminal cost can be used to prove stability, performance, and invaria
 ## Boundedness/Stability with IQCs
 
 
-
-
 Let $G_R$ =  $(A_R, B_R, C_R, D_R)$ be a linear system, let $\rho> 0$ be a convergence rate, and  $\mathcal{O}$ be an operator.
 The exponentially weighted iterates $(\ov p, \ov q)$ related by $\ov p_k \in \rho^{-k} \mathcal{O}(\rho^{-k} q_k)$ for the operator $\mathcal{O}$. This pair $(\ov p, \ov q)$ satisfies the IQC
   $(\Psi(\blam), M(\blam), X(\blam))$ for any  $\blam \in \Lambda(\rho)$.

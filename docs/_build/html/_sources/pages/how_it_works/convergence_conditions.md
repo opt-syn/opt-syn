@@ -68,7 +68,3 @@ These sufficient conditions are also  necessary if all eigenvalues of $\Acl + \B
 
 
 The Robust Stability criterion is a dynamical test, and will be verified using Integral Quadratic Constraints and Linear Matrix Inequality methods. The Regulator Equation can be easily checked by solving a linear system of  equations.
-
-:::{caution} 
-Add in references to fixed-point encoding.
-:::

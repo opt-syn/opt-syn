@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'pages/usage/solve';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Simulation" href="simulation.html" />
+    <link rel="next" title="Examples" href="../examples.html" />
     <link rel="prev" title="Performance Specifications" href="problem_formulation/specs.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -157,19 +157,19 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index_usage.html">Usage</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 has-children"><a class="reference internal" href="problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="problem_formulation/system/index_system.html">System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="problem_formulation/system/index_system.html">Build the System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html">Simulate</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="problem_formulation/config.html">Configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="problem_formulation/specs.html">Performance Specifications</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Solve and Validate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simulation.html">Simulate</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -499,11 +499,33 @@ The <code class="xref mat mat-class docutils literal notranslate"><span class="p
 <td><p>Convergence rate</p></td>
 <td><p>Linearly convergent if <span class="math notranslate nohighlight">\(\rho &lt; 1\)</span></p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">regcl</span></code></p></td>
+<td><p>Closed-loop regulator equation</p></td>
+<td><p>Nonempty struct with fields (<code class="docutils literal notranslate"><span class="pre">S</span></code>, <code class="docutils literal notranslate"><span class="pre">R</span></code>, <code class="docutils literal notranslate"><span class="pre">Pi</span></code>, <code class="docutils literal notranslate"><span class="pre">Gam</span></code>, <code class="docutils literal notranslate"><span class="pre">Phi</span></code>, <code class="docutils literal notranslate"><span class="pre">Th</span></code>)</p></td>
+</tr>
 </tbody>
 </table>
 </div>
-<p>If the option <code class="docutils literal notranslate"><span class="pre">opt_config.recovery.blocks</span> <span class="pre">=</span> <span class="pre">true</span></code> is used, then <code class="docutils literal notranslate"><span class="pre">opt_solution.recovery.blocks</span></code> contains matrices in the solution that are enforced to be Positive Semidefinite, and <code class="docutils literal notranslate"><span class="pre">opt_solution.recovery.eb</span></code> stores their minimal eigenvalues. <code class="docutils literal notranslate"><span class="pre">opt_solution.dia</span></code> is then negative of the minimal eigenvalue in <code class="docutils literal notranslate"><span class="pre">opt_solution.recovery.eb</span></code>.</p>
-<p>The variables of the Analysis or Synthesis problem are stored in <code class="docutils literal notranslate"><span class="pre">opt_solution.vars</span></code>. The final algorithmic interconnection/optimization algorithm is stored in <code class="docutils literal notranslate"><span class="pre">opt_solution.sys</span></code>.</p>
+<p>Other attributes of <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_solution</span></code> include</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vars</span></code></p></td>
+<td><p>design variables in the Analysis/Synthesis problem</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sys</span></code></p></td>
+<td><p>System that solves the inclusion problem</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lmi_out</span></code></p></td>
+<td><p>Solution information from the numerical solver (LMILAB)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>The field <code class="docutils literal notranslate"><span class="pre">opt_solution.cert</span></code> contains Analysis-and-Synthesis-specific certificates of feasibility. In Analysis, the designed IQCs certifying the performance specifications are stored in <code class="docutils literal notranslate"><span class="pre">opt_solution.cert.iqc_op</span></code>.</p>
 <p>In Synthesis, the designed controller is <code class="docutils literal notranslate"><span class="pre">opt_solution.sys.K</span></code>.
 This controller is the interconnection of the internal model <code class="docutils literal notranslate"><span class="pre">opt_solution.cert.model</span></code> and the subcontroller <code class="docutils literal notranslate"><span class="pre">opt_solution.cert.K_sub</span></code>.</p>
@@ -531,11 +553,11 @@ This controller is the interconnection of the internal model <code class="docuti
       </div>
     </a>
     <a class="right-next"
-       href="simulation.html"
+       href="../examples.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Simulation</p>
+        <p class="prev-next-title">Examples</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -157,19 +157,19 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/problem_formulation/system/index_system.html">System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="../usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/system/index_system.html">Build the System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/simulation.html">Simulate</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/config.html">Configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/specs.html">Performance Specifications</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../usage/solve.html">Solve and Validate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../usage/simulation.html">Simulate</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -443,10 +443,6 @@ z^* &amp;= \1 \otimes \beta^*, &amp; w^* &amp;= N\hat{w}^*, &amp;  F(\1 \otimes 
 \end{align}\end{split}\]</div>
 <p>These sufficient conditions are also  necessary if all eigenvalues of <span class="math notranslate nohighlight">\(\Acl + \Bcl (I - \Dcl \Delta)^{-1} \Dcl \Ccl\)</span> have absolute value below 1. Fullfillment of the Robust Stability and Regulator Equation requrirements imply that the algorithm is a fixed-point encoding <a class="footnote-reference brackets" href="#footcite-ryu2020uniqueness" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>: every fixed point of the algorithm is a fixed point of the inclusion problem.</p>
 <p>The Robust Stability criterion is a dynamical test, and will be verified using Integral Quadratic Constraints and Linear Matrix Inequality methods. The Regulator Equation can be easily checked by solving a linear system of  equations.</p>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>Add in references to fixed-point encoding.</p>
-</div>
 </section>
 </section>
 <hr class="footnotes docutils" />

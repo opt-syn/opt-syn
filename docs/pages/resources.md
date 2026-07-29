@@ -24,6 +24,7 @@ Under Construction
 
 | Name | Description |
 | --- | --- |
+| [AlgoSynthesis](https://github.com/CarstenScherer/Algorithm-Synthesis) | Jointly convex IQC-based synthesis of $s=1$ gradient-descent algorithms |
 | [PEPit](https://pepit.readthedocs.io)| Finite-horizon analysis of first-order methods. |
 | [AutoLyap](https://autolyap.github.io/) | Infinite-horizon Lyapunov analysis of first-order methods. |
 | [decent-bench](https://github.com/team-decent/decent-bench) | Benchmarking of decentralized/distributed/federated optimization  algorithms. |

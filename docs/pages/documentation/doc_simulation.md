@@ -34,7 +34,7 @@ The operators are defined by `op_sim` classes. Each operator $F$ has three core 
   - $z \mapsto F(z)$,
 * - Backward
   - `bw`
-  - $z \mapsto (I - D F)^{-1} (z)$
+  - $z \mapsto (I - \Dcl F)^{-1} (z)$
 * - Function 
   - `f` 
   - $z \mapsto f(z)$

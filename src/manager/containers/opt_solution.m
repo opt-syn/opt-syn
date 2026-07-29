@@ -18,6 +18,7 @@ classdef opt_solution
 
         info; %information about the LMI solution
         lmi_out; %LMI constraints in the solution
+        regcl; %certificate of closed-loop regulator equation satisfaction
         cert=[]; %other certificates of the solution
 
         vars; %recovered variables of the problem

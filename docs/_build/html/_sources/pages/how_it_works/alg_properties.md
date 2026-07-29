@@ -58,8 +58,6 @@ More performance criteria are discussed in {doc}`Performance <../usage/problem_f
 
 ## Well-Posedness
 
-{#well-posedness}
-
 The interconnection $(F, G)$ may be condensed using the set-valued map $H := (F^{-1} - \Dcl)^{-1}$ as
 ```{math}
 \begin{align*}
@@ -76,7 +74,6 @@ The interconnection is well-posed if  $H$ is globally defined and continuous. We
 
 ## Information Structure and Evaluation
 
-{#information-structure}
 The well-posed algorithmic interconnection $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)$ is a nonlinear iterative procedure. Computation of  $x_{k+1}$ from $x_k$ for general $(F, \Dcl)$ requires the solution of a nonlinear fixed-point equation, and may be computationally intractable. If $\Dcl$ is block-lower-triangular, the system $(\Acl, \Bcl, \Ccl, \Dcl)$ can be then partitioned as 
 ```{math}
 \begin{align}
@@ -90,31 +87,14 @@ The well-posed algorithmic interconnection $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k
 ```
 
 
-Algorithm evaluation can then causally  proceed for each $k \in \N$ as
-```{math}
-\begin{align}
-w^i_k &= (F_i^{-1} - \Dcl_{ii})^{-1} (\Ccl_i x_k + \textstyle \sum_{j=1}^{i-1} \Dcl_{ij} w^j_k),  & & \forall i \in 1, \ldots, k,\\ 
-x_{k+1} &= \Acl x_k + \textstyle \sum_{i=1}^s \Bcl_i w^i_k.
-\end{align}
-```
 
-The operator $H_i: = (F_i^{-1} - \Dcl_{ii})^{-1}$ can be evaluated using
-```{list-table}
-:header-rows: 1
-* - Evaluation
-  - Condition
-  - Operation $H_i$
-* - Explicit
-  - $\Dcl_{ii} = 0$
-  - $z \mapsto F_i(z)$,
-* - Implicit
-  - $\Dcl_{ii}$ invertible
-  - $z \mapsto \Dcl_{ii}^{-1} z - \Dcl_{ii}^{-1} (I - \Dcl_{ii} F_i)^{-1}(z)$
-```
+The information structure of the algorithm is the block-sparsity pattern of $\Dcl$. 
 
-If the backward-evaluation  $(I - \Dcl_{ii} F_i)^{-1}$ is available (such as from a  resolvent/proximal operator), then this algorithm execution is tractable.
+- If $\Dcl_{ii} = 0$, then $w^i_k$ is explicitly computed from $(x_k, w^1_k, \ldots, w^{i-1}_k)$. 
 
-The information structure of the algorithm is the block-sparsity pattern of $\Dcl$. If $\Dcl_{ii} = 0$, then $w^i_k$ is explicitly computed from $(x_k, w^1_k, \ldots, w^{i-1}_k)$. If $\Dcl_{ii} \neq 0$, then $w^i_k$ implicitly depends on $(x_k, w^1_k, \ldots, w^{i-1}_k, w^i_k)$.   If $\Dcl_{ij} = 0$ with $i > j$, then $w^i_k$ does not use information from the previously computed output $w^j_k$.
+- If $\Dcl_{ii} \neq 0$, then $w^i_k$ implicitly depends on $(x_k, w^1_k, \ldots, w^{i-1}_k, w^i_k)$.   
+
+- If $\Dcl_{ij} = 0$ with $i > j$, then $w^i_k$ does not use information from the previously computed output $w^j_k$.
 
 
 Examples of information structures for $s=2$ operators (with $\bullet$ marking  nonzero entries) are 

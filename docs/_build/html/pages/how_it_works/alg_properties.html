@@ -157,19 +157,13 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage/simulation.html">Simulate</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/problem_formulation/system/index_system.html">System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="../usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
-</ul>
-</details></li>
 <li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/config.html">Configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/specs.html">Performance Specifications</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../usage/solve.html">Solve and Validate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../usage/simulation.html">Simulate</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -434,7 +428,6 @@
 </section>
 <section id="well-posedness">
 <h2>Well-Posedness<a class="headerlink" href="#well-posedness" title="Link to this heading">#</a></h2>
-<p>{#well-posedness}</p>
 <p>The interconnection <span class="math notranslate nohighlight">\((F, G)\)</span> may be condensed using the set-valued map <span class="math notranslate nohighlight">\(H := (F^{-1} - \Dcl)^{-1}\)</span> as</p>
 <div class="math notranslate nohighlight">
 \[\begin{align*}
@@ -446,8 +439,7 @@ The interconnection is well-posed if  <span class="math notranslate nohighlight"
 </section>
 <section id="information-structure-and-evaluation">
 <h2>Information Structure and Evaluation<a class="headerlink" href="#information-structure-and-evaluation" title="Link to this heading">#</a></h2>
-<p>{#information-structure}
-The well-posed algorithmic interconnection <span class="math notranslate nohighlight">\(x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)\)</span> is a nonlinear iterative procedure. Computation of  <span class="math notranslate nohighlight">\(x_{k+1}\)</span> from <span class="math notranslate nohighlight">\(x_k\)</span> for general <span class="math notranslate nohighlight">\((F, \Dcl)\)</span> requires the solution of a nonlinear fixed-point equation, and may be computationally intractable. If <span class="math notranslate nohighlight">\(\Dcl\)</span> is block-lower-triangular, the system <span class="math notranslate nohighlight">\((\Acl, \Bcl, \Ccl, \Dcl)\)</span> can be then partitioned as</p>
+<p>The well-posed algorithmic interconnection <span class="math notranslate nohighlight">\(x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)\)</span> is a nonlinear iterative procedure. Computation of  <span class="math notranslate nohighlight">\(x_{k+1}\)</span> from <span class="math notranslate nohighlight">\(x_k\)</span> for general <span class="math notranslate nohighlight">\((F, \Dcl)\)</span> requires the solution of a nonlinear fixed-point equation, and may be computationally intractable. If <span class="math notranslate nohighlight">\(\Dcl\)</span> is block-lower-triangular, the system <span class="math notranslate nohighlight">\((\Acl, \Bcl, \Ccl, \Dcl)\)</span> can be then partitioned as</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align}
 \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2 \\ \vdots \\ z_k^s} &amp;= \mat{c|cccc}{
@@ -457,34 +449,12 @@ The well-posed algorithmic interconnection <span class="math notranslate nohighl
    \vdots &amp; \vdots &amp; \vdots  &amp; \ddots &amp; \vdots\\
    \Ccl_s &amp; \Dcl_{s1} &amp; \Dcl_{s2} &amp; \hdots &amp; \Dcl_{ss}} \mat{c}{x_{k} \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s}
 \end{align}\end{split}\]</div>
-<p>Algorithm evaluation can then causally  proceed for each <span class="math notranslate nohighlight">\(k \in \N\)</span> as</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align}
-w^i_k &amp;= (F_i^{-1} - \Dcl_{ii})^{-1} (\Ccl_i x_k + \textstyle \sum_{j=1}^{i-1} \Dcl_{ij} w^j_k),  &amp; &amp; \forall i \in 1, \ldots, k,\\ 
-x_{k+1} &amp;= \Acl x_k + \textstyle \sum_{i=1}^s \Bcl_i w^i_k.
-\end{align}\end{split}\]</div>
-<p>The operator <span class="math notranslate nohighlight">\(H_i: = (F_i^{-1} - \Dcl_{ii})^{-1}\)</span> can be evaluated using</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Evaluation</p></th>
-<th class="head"><p>Condition</p></th>
-<th class="head"><p>Operation <span class="math notranslate nohighlight">\(H_i\)</span></p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Explicit</p></td>
-<td><p><span class="math notranslate nohighlight">\(\Dcl_{ii} = 0\)</span></p></td>
-<td><p><span class="math notranslate nohighlight">\(z \mapsto F_i(z)\)</span>,</p></td>
-</tr>
-<tr class="row-odd"><td><p>Implicit</p></td>
-<td><p><span class="math notranslate nohighlight">\(\Dcl_{ii}\)</span> invertible</p></td>
-<td><p><span class="math notranslate nohighlight">\(z \mapsto \Dcl_{ii}^{-1} z - \Dcl_{ii}^{-1} (I - \Dcl_{ii} F_i)^{-1}(z)\)</span></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>If the backward-evaluation  <span class="math notranslate nohighlight">\((I - \Dcl_{ii} F_i)^{-1}\)</span> is available (such as from a  resolvent/proximal operator), then this algorithm execution is tractable.</p>
-<p>The information structure of the algorithm is the block-sparsity pattern of <span class="math notranslate nohighlight">\(\Dcl\)</span>. If <span class="math notranslate nohighlight">\(\Dcl_{ii} = 0\)</span>, then <span class="math notranslate nohighlight">\(w^i_k\)</span> is explicitly computed from <span class="math notranslate nohighlight">\((x_k, w^1_k, \ldots, w^{i-1}_k)\)</span>. If <span class="math notranslate nohighlight">\(\Dcl_{ii} \neq 0\)</span>, then <span class="math notranslate nohighlight">\(w^i_k\)</span> implicitly depends on <span class="math notranslate nohighlight">\((x_k, w^1_k, \ldots, w^{i-1}_k, w^i_k)\)</span>.   If <span class="math notranslate nohighlight">\(\Dcl_{ij} = 0\)</span> with <span class="math notranslate nohighlight">\(i &gt; j\)</span>, then <span class="math notranslate nohighlight">\(w^i_k\)</span> does not use information from the previously computed output <span class="math notranslate nohighlight">\(w^j_k\)</span>.</p>
+<p>The information structure of the algorithm is the block-sparsity pattern of <span class="math notranslate nohighlight">\(\Dcl\)</span>.</p>
+<ul class="simple">
+<li><p>If <span class="math notranslate nohighlight">\(\Dcl_{ii} = 0\)</span>, then <span class="math notranslate nohighlight">\(w^i_k\)</span> is explicitly computed from <span class="math notranslate nohighlight">\((x_k, w^1_k, \ldots, w^{i-1}_k)\)</span>.</p></li>
+<li><p>If <span class="math notranslate nohighlight">\(\Dcl_{ii} \neq 0\)</span>, then <span class="math notranslate nohighlight">\(w^i_k\)</span> implicitly depends on <span class="math notranslate nohighlight">\((x_k, w^1_k, \ldots, w^{i-1}_k, w^i_k)\)</span>.</p></li>
+<li><p>If <span class="math notranslate nohighlight">\(\Dcl_{ij} = 0\)</span> with <span class="math notranslate nohighlight">\(i &gt; j\)</span>, then <span class="math notranslate nohighlight">\(w^i_k\)</span> does not use information from the previously computed output <span class="math notranslate nohighlight">\(w^j_k\)</span>.</p></li>
+</ul>
 <p>Examples of information structures for <span class="math notranslate nohighlight">\(s=2\)</span> operators (with <span class="math notranslate nohighlight">\(\bullet\)</span> marking  nonzero entries) are</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
