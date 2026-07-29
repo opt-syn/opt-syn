@@ -1,50 +1,89 @@
 # Performance Specifications
 
-A performance specification is the property you ask {{osyn}} to certify about an
-algorithm. In Analysis it is the property that is verified for a given algorithm; in
-Synthesis it is the property the returned algorithm is required to satisfy. Every
-specification is a condition on the performance channel $(w_p, z_p)$ of the
-{doc}`generalized plant <../../documentation/plants/doc_genplant>`, so a specification is
-always paired with a performance channel.
 
+Performance specifications describe constraints on the behavior of the algorithm. Analysis attempts to certify that an algorithm obeys the specification, and Synthesis tries to form an algorithm that obeys the specifications. 
+
+
+
+
+Every specification is a condition on the performance channel $(w_p, z_p)$ of the
+{doc}`generalized plant <../../documentation/plants/doc_genplant>`.
+
+All specifications have the fields
+:::{list-table} 
+:header-rows: 1
+*   - Field
+    - Description    
+*   - `iwp`
+    - indices of performance input $w_p$
+*   - `izp`
+    - indices of performance output $z_p$
+*   - `target`
+    - should this specification be minimized
+:::
+ <!-- so a specification is
+always paired with a performance channel.
 The properties themselves (linear convergence, input-to-state stability, $\ell_2$-gain)
 are defined precisely on the {doc}`Performance Specifications <../../documentation/doc_specs>`
-page.
+page. -->
+Most specifications have an additional field `rho` discount rate $\rho >0$ as an argument. 
+Choosing $\rho < 1$ imposes that the property holds at an exponential rate. 
 
-Most specifications accept a discount rate $\rho \in (0, 1]$. Choosing $\rho < 1$ requests
-the property at an exponential rate: the specification is then evaluated on the
-$\rho$-weighted signals, and every other specification on the same problem inherits the
-same weighting.
 
-## Usage
+Refer to {doc}`Performance Specifications <../../documentation/doc_specs>` for information about the specifications and their interfaces. 
 
-A specification is built, optionally flagged as the optimization `target`, and passed to
-an Analysis or Synthesis {doc}`manager <../../documentation/doc_manager>` together with the
-IQC `order`:
+
+
+<!-- ## Usage
+
+A performance specification for Analysis or Synthesis is built from a cell of individual specifications.
+
+```matlab
+% linear convergence at rate rho (no performance channel needed)
+rho = 0.92;
+spec1 = spec_stability(rho);
+
+% l2 gain on an existing performance channel with indices (iwp, izp):
+GAIN = 10;
+spec2 = spec_e2e(GAIN, iwp, izp);
+
+%Impose only linear convergence
+specs = {spec1};
+
+%Impose both
+specs = {spec1, spec2};
+
+% l2 gain at 
+spec2_rho = spec_e2e(GAIN, iwp, izp);
+spec2.rho = rho;
+specs = 
+``` -->
+
+<!-- A specification is built, optionally flagged as the optimization `target`, and passed to -->
+<!-- an Analysis or Synthesis {doc}`manager <../../documentation/doc_manager>` together with the -->
+<!-- IQC `order`:
 
 ```matlab
 rho = 0.92;
 
 % linear convergence at rate rho (no performance channel needed)
-perf = spec_stability(rho);
+perf1 = spec_stability(rho);
 
-% ...or an l2 gain on an existing performance channel (iwp, izp):
-perf = spec_e2e(GAIN, iwp, izp);
-perf.target = true;             % minimize the gain during the solve
+% ...or an l2 gain on an existing performance channel with indices (iwp, izp):
+perf2 = spec_e2e(GAIN, iwp, izp);
+perf2.target = true;             % minimize the gain during the solve
 
-% solve once, or bisect for the best rate/gain
+% solve once,
 sol = man_ana.solve_single(order, perf);
-% [sol_best, v_range] = man_ana.bisect(order, perf, bisect_opts());
-```
 
-Set `target = true` on the quantity you want optimized (the gain, or the rate under
-bisection); leave it `false` to check a fixed bound. The performance-channel indices
-`iwp`, `izp` come from the generalized plant definition.
+%or bisect for the best rate/gain
+[sol_best, v_range] = man_ana.bisect(order, perf, bisect_opts());
+``` -->
 
 ## Linear Convergence
 
-Requests exponential stability (linear convergence) of the iterates at rate $\rho$. For every
-initial condition there is a fixed point $x^*(x_0)$ with
+Requests exponential stability of the iterates at rate $\rho$. For every
+initial condition $x_0$ there is a fixed point $x^*(x_0)$ with
 
 ```{math}
 \begin{align*}
@@ -53,33 +92,78 @@ initial condition there is a fixed point $x^*(x_0)$ with
 \end{align*}
 ```
 
-This is the most common specification and needs no performance channel of its own. 
-It is specified with
+Linear convergence holds if $\rho < 1$. 
 
+This is the most common specification and needs no performance channel of its own (by default `iwp=[], izp=[]`).
+
+It is specified with
 ```matlab
 perf = spec_stability(rho);
 ```
 
+:::{note}
+If no specifications are supplied (`specs = []`), then the default specification used is `spec_stability(1)` with `target=true`.
+:::
+
+
 ## Quadratic Performance
 
-Some of the specifications are special cases of **quadratic supply-rate** conditions on
-$(w_p, z_p)$, which imposes
+Several  specifications are special cases of general **quadratic supply-rate** conditions on
+$(w_p, z_p)$. A quadratic supply rate condition with respect to matrices $(Q, S, R)$ is the existence of an $\epsilon > 0$ such that 
 
 ```{math}
 \begin{align*}
 \sum_{k=0}^{T}
-  \mat{c}{z_{p,k} \\ w_{p,k}}^\top
+ \rho^{-2k} \mat{c}{w_{p,k} \\ z_{p,k}}^\top
   \mat{cc}{Q & S \\ S^\top & R}
-  \mat{c}{z_{p,k} \\ w_{p,k}} \; \preceq \; 0
+  \mat{c}{w_{p,k} \\ z_{p,k}} \; \preceq \; \sum_{k=0}^T -\epsilon \rho^{-2k} \norm{w_{p, k}}_2^2
 \end{align*}
 ```
+for all time horizons $T > 0$. 
 
-for a particular choice of the multiplier $\mat{cc}{Q & S \\ S^\top & R}$. 
-It is specified with
-
+Quadratic performance specifications are specified by 
 ```matlab
 M = [Q, S; S', R];
 perf = spec_quad(M, iwp, izp);
+```
+
+The Synthesis procedure requires that $Q = Q^\top$ and $R \prec 0$. 
+
+The below specifications are all specific instances of quadratic performance:
+
+### &#8467;2 Stability
+
+*Stability and ISS.* Certifies that the performance input has a bounded effect on the
+state.
+
+```{math}
+\begin{align*}
+\sum_{k=0}^T \rho^{-2k} \norm{x_k - x^*(x_0)}_2^2 \leq \gamma\norm{x_0 - x^*(x_0)}_2^2
+  + \gamma \sum_{k=0}^T \rho^{-2k} \norm{w_{p, k}}_2^2, & & \forall k \in \N.
+\end{align*}
+```
+
+If $\rho \in (0, 1)$, then &#8467;2 stability implies an Input-to-State Stability property 
+<!-- This  which constitutes an input-to-state stability condition. There is no performance -->
+<!-- output; only a bounded penalty on $w_p$ is imposed, giving -->
+```{math}
+\begin{align*}
+\norm{x_k - x^*(x_0)}_2^2 \leq \gamma_x\, \rho^{2k} \norm{x_0 - x^*(x_0)}_2^2
+  + \frac{\gamma \rho^2}{1-\rho^2} \max_{t \in 0, \ldots, k} \norm{w_{p, t}}_2^2, & & \forall k \in \N.
+\end{align*}
+```
+
+
+Linear convergence is recovered from Input-to-State Stability when the
+disturbance vanishes ($w_p= 0$). 
+
+
+Reach for this when you need the iterates to stay
+bounded and convergent under noise but do not need a specific gain; for a gain bound, use
+$\ell_2$ Gain instead.
+
+```matlab
+perf = spec_l2(iwp);        % no performance output; optional bound: spec_l2(iwp, MU)
 ```
 
 ### &#8467;2 Gain
@@ -90,48 +174,31 @@ input to the performance output,
 ```{math}
 \begin{align*}
 \limsup_{T \to \infty}
-  \frac{\sum_{k=0}^{T} \norm{z_{p,k}}_2}{\sum_{k=0}^{T} \norm{w_{p,k}}_2}
-  \; < \; \gamma .
+  \frac{\sum_{k=0}^{T} \rho^{2k} \norm{z_{p,k}}_2^2}{   \sum_{k=0}^{T} \rho^{-2k} \norm{w_{p,k}}^2_2}
+  \; < \; \gamma^2.
 \end{align*}
 ```
 
-For a linear system this is the $H_\infty$ gain. Use it to quantify how strongly a
+For a linear system this, this is the $H_\infty$ gain. 
+
+
+Use it to quantify how strongly a
 disturbance at $w_p$ (for example, noise in the gradient evaluations) is amplified at a
-tracked output $z_p$. Flag it as the `target` to minimize the gain.
+tracked output $z_p$.
 
 ```matlab
 perf = spec_e2e(GAIN, iwp, izp);   % GAIN is the initial bound
-perf.target = true;
-```
+perf.target = false; %enforce the gain bound
 
-### &#8467;2 Stability
-
-*Stability and ISS.* Certifies that the performance input has a bounded effect on the
-state, which constitutes an input-to-state stability condition. There is no performance
-output; only a bounded penalty on $w_p$ is imposed, giving
-
-```{math}
-\begin{align*}
-\norm{x_k - x^*(x_0)}_2^2 \leq \gamma_x\, \rho^k \norm{x_0 - x^*(x_0)}
-  + \gamma_w \max_{t \in 0, \ldots, k} \norm{\delta w_t}_2^2, & & \forall k \in \N.
-\end{align*}
-```
-
-With $\rho \in (0, 1]$ this establishes ISS, and it recovers linear convergence when the
-disturbance vanishes ($\delta w_k = 0$). Reach for this when you need the iterates to stay
-bounded and convergent under noise but do not need a specific gain; for a gain bound, use
-$\ell_2$ Gain instead.
-
-```matlab
-perf = spec_l2(iwp);        % no performance output; optional bound: spec_l2(iwp, MU)
+perf.target = true; %minimize the gain 
 ```
 
 ### Passivity
 
-Imposes a passivity relation between the performance input and output, optionally with an
-input passivity index $\nu_w$ and output passivity index $\nu_z$: for all horizons with
-$x = 0$,
+Imposes a passivity relation between the performance input and output. Passivity may optionally include an 
+input passivity index $\nu_w$ and an output passivity index $\nu_z$: 
 
+Passivity is obeyed if for all time horizons $T$ with  with $x_0 = 0, x^*(x_0) = 0$, it holds that
 ```{math}
 \begin{align*}
 \sum_{k=0}^{T} z_{p,k}^\top w_{p,k}
@@ -141,14 +208,46 @@ $x = 0$,
 ```
 
 Setting both indices to zero requests plain passivity; positive indices request the
-correspondingly stronger input- or output-strict passivity. The performance input and
+correspondingly stronger input- or output-strict passivity properties. The performance input and
 output channels must have the same length.
 
 ```matlab
-perf = spec_passivity(ind_w, ind_z, iwp, izp);   % ind_w = nu_w, ind_z = nu_z
+% ind_w = nu_w, ind_z = nu_z
+perf = spec_passivity(ind_w, ind_z, iwp, izp);   
 ```
+
+## Ergodic Convergence
+
+Ergodic convergence arises in the optimization setting where all operators are subdifferentials ($F_i = \partial f_i$), and their operators classes are {class}`op_sml`, {class}`op_pcc`, or {class}`op_quad`.
+
+An algorithm with no repeated operator evaluations satisfies ergodic convergence if there exists a $\gamma>0$ such that 
+```{math}
+\begin{align*}
+\sum_{i=1}^s \left[f_i(z_i) - f_i(z_i^*(x_0)) - (w^*_i)^\top (z^*_i - z^*_i)\right] \leq \frac{\gamma}{k+1} \norm{x_0 - x^*(x_0)}_2^2 & & \forall k \in \N.
+\end{align*}
+```
+
+The bracketed quantity is equal to 0 at optimality. 
+
+Ergodic convergence requires the introduction of new performance channels for the $(w^*_i)^\top z^*_i$ term. It is implemented as 
+```matlab
+[perf_erg, sys] = spec_ergodic(sys);
+specs = {perf_erg};
+```
+
+Ergodic convergence is weaker than linear convergence. It can certify properties of convex optimization algorithms, whereas establishment of global linear convergence requires strong convexity. Ergodic convergence should only be used if all performance specifications have $\rho=1$. 
+
+
+
+The IQC-based formulation of ergodic convergence is based on {footcite}`hu2017dissipativitynesterov` (Section 4.1) and  {footcite}`upadhyaya2025automated` (Section 4.1.2).
+
+
+
+:::{warning}
+In the current implementation, Ergodic convergence requires nonstrict feasibility of linear matrix inequalities. In numerical experiments, the minimal eigenvalue of a positive-definite-constrained block is $\approx (-10^{-12})$, which is not greater than or equal to  $0$. Future developments will hopefully patch this feasibility issue, in the meantime use with caution.
+:::
+
 
 ## More Specifications
 
-We plan to implement further performance criteria for both Analysis and Synthesis,
-including peak-to-peak (generalized $H_\infty$) and $H_2$-type covariance amplification.
+We plan to implement further performance criteria for both Analysis and Synthesis.

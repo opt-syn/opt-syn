@@ -130,6 +130,8 @@ The {class}`opt_solution` structure contains information about the solution of a
 
 
 
+
+
 Other attributes of {class}`opt_solution` include
 :::{list-table} 
 :header-rows: 1
