@@ -55,7 +55,7 @@ classdef op_sim_box < op_sim_interface
             %skew the box in the projection
             bskew =  (sqrt(D) \ (ones(c, 1) * obj.BOX));
 
-
+            dl = obj.blocksize(v);
             z = kron(eye(dl), sqrt(D)) * ...
                 clip( kron(eye(dl), sqrt(D)) \ v, -bskew, bskew);
                         

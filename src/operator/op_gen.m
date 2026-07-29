@@ -88,6 +88,10 @@ classdef op_gen  < operator_interface
             %   psi1: filter on output (causal)
             %   psi2: filter on input (noncausal components)
 
+            if ~isscalar(order)
+                order = sum(order);
+            end
+            
             psi_base = obj.build_psi_fir(order, reps);
 
             psi1 = psi_base;

@@ -231,6 +231,22 @@ classdef iqc_loop_factored
             iqc_lift = iqc_loop_split(Psi1_lift, M_lift, C3_lift, D3_lift, Psi2_lift, X_lift, loop_lift);
         end
 
+
+        function iqc_rho = rhotrafo(obj, rho)
+            %RHOTRAFO rho weighting transformation: [A, B; C, D] => [1/rho
+            %A, 1/rho B; C, D]
+            %
+            %Args:
+            %   rho:    exponential weighting
+            %
+            %Returns:
+            %   iqc_rho: rho-weighted  IQC 
+
+            iqc_rho = obj;
+            iqc_rho.Psi1 = rhotrafo(iqc_rho.Psi1, rho);
+            iqc_rho.Psi2 = rhotrafo(iqc_rho.Psi2, rho);
+        end
+
         function P_wrap = wrap_synth(obj, P, n)
             %wrap a genearlized plant with the filters for IQC controller synthesis
             %
@@ -313,4 +329,5 @@ classdef iqc_loop_factored
         end
     end
 end
+
 

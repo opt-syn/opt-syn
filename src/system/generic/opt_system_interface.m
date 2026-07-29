@@ -48,15 +48,15 @@ classdef  opt_system_interface
             nbind = length(obj.bind);
             if isempty(P)
                 if isempty(K)
-                    c = 1;
+                    c = 1;                    
                 else
                     if iscell(K)
                         c = size(K{1}.D, 1)/nbind;
                     else
                         c = size(K.D, 1)/nbind;
-                    end
-                    obj.P = bridge_pass_through(nbind, c);            
+                    end                    
                 end
+                obj.P = bridge_pass_through(nbind, c);
             else
                 c = P.nz/nbind;
             end
@@ -77,7 +77,7 @@ classdef  opt_system_interface
         end    
 
         %% formation of the plant
-        function [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data, rho)
+        function [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data)
             %BUILD_PLANT_SINGLE build a single plant (in a switched
             %system) based on filtering the exponentially-discounted plant 
             %by an IQC
@@ -85,7 +85,6 @@ classdef  opt_system_interface
             %Args:
             %   alg:        original algorithm or network
             %   iqc_data:   IQCs for the oracle uncertainties
-            %   rho:        exponential discount factor
             %
             %Return:
             %   alg_psi:    filtered algorithm 
@@ -108,8 +107,6 @@ classdef  opt_system_interface
 
             w_offset = ssize(alg.B, 2) - wshift;
             z_offset = ssize(alg.C, 1) - wshift;
-            
-
 
             Pwp = blkdiag(P', eye(w_offset));
             Pzp = blkdiag(P, eye(z_offset));
@@ -131,10 +128,14 @@ classdef  opt_system_interface
 
             alg_perm_m = lft(iqc_data.m_same, alg_perm_same, n_same, n_same);
 
-            %exponentially weight the algorithm by the rate rho
-            alg_rho = alg_perm_m;            
-            alg_rho.A = (rho^(-1)) * alg_perm_m.A;
-            alg_rho.B = (rho^(-1)) * alg_perm_m.B;
+    
+
+            %DO NOT exponentially weight the algorithm by the rate rho
+            % alg_perm_m.A = (rho^(-1)) * alg_perm_m.A;
+            % alg_perm_m.B = (rho^(-1)) * alg_perm_m.B;
+            % 
+            % instead, use rho-hard IQCs to allow for different weights in
+            % different specifications
             
             %now apply the IQC to the exponentially-weighted system
 
@@ -143,12 +144,12 @@ classdef  opt_system_interface
             iqc_op = iqc_data.iqc;
 
             if isempty(iqc_op)
-                alg_loop = alg_rho;
-                alg_psi = alg_rho;
+                alg_loop = alg_perm_m;
+                alg_psi = alg_perm_m;
             else
                 loop = iqc_op.loop;
                 nloop = length(loop)/2;
-                alg_loop = lft(loop, alg_rho, nloop, nloop);
+                alg_loop = lft(loop, alg_perm_m, nloop, nloop);
                 
     
     
@@ -169,7 +170,11 @@ classdef  opt_system_interface
                     psi = blkdiag(Psi1, I_zp, Psi2, I_wp);
                     
         
-                    alg_psi = psi * GI; 
+                    alg_psi = genplant(psi * GI); 
+                    alg_psi.nz = ssize(psi.D, 1);
+                    alg_psi.nw = obj.P.nw;
+                    alg_psi.nzp = obj.P.nzp;
+                    alg_psi.nwp = obj.P.nwp;
                 else
 
                     n = obj.P.dump_dim;
@@ -207,7 +212,7 @@ classdef  opt_system_interface
                         alg_psi.nzp = alg_psi.nzp - nzp_orig;
                     end
                     
-                end    
+                end
             end
         end
 
@@ -509,6 +514,25 @@ classdef  opt_system_interface
             [iqc_curr, vars_curr,cons_curr] = obj.op{index}.create_iqc(cons, order, rep_curr);
         end
 
+        function sys_sim = export_sim(obj, op_sim)
+            % export the system for use in simulation
+            % with the operators (for iqcs) replaced by operators (in
+            % op_sim)
+            %
+            % Args:
+            %   op_sim: operators for simulation
+            % Return:
+            %   sys_sim: system for use in alg_sim
+            sys_sim = obj;
+            sys_sim.op = op_sim;
+
+            %carry over the coordinate dimensions
+            for i = 1:length(obj.op)
+                sys_sim.op{i}.c = obj.op{i}.c;
+            end
+
+
+        end
 
 
     end

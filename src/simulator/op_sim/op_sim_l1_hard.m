@@ -55,7 +55,8 @@ classdef op_sim_l1_hard < op_sim_interface
 
 
             %coordinate dimensions
-            dl = size(v, 1)/size(D, 1);
+            dl = obj.blocksize(v);
+            
 
             Dskron = kron(eye(dl), sqrt(D));
             %skew the box in the projection

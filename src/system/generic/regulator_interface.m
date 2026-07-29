@@ -418,14 +418,17 @@ classdef regulator_interface
                 R = blkdiag(Rbeta, eye(dN));
             else
                 [Sbeta, Rbeta] = obj.sys.get_tracked_opt();
+                %constant-in-time subdifferentials/operator outputs
                 if iscell(Sbeta)
+                    %differing exosystems
                     S = cell(size(Sbeta));
                     R = cell(size(Rbeta));
                     for i = 1:numel(S)
                         S{i} = blkdiag(Sbeta{i}, eye(dN));
                         R{i} = blkdiag(Rbeta{i}, eye(dN));
                     end
-                else
+                else       
+                    %common exosystem
                     S = blkdiag(Sbeta, eye(dN));
                     R = blkdiag(Rbeta, eye(dN));
                 end

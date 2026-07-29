@@ -221,7 +221,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %
             %Returns:            
             %   P_model:   generalized plant with internal model attached            
-            P_model = obj.reg.connect_model(diss.plant, diss.rho);
+            P_model = obj.reg.connect_model(diss.plant);
         end
 
         function G = get_storage(obj, vars_diss, vars_reg)
@@ -481,7 +481,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             coord_shift = coords(:, 2);
             coord_shift(1) = 0;
             
-            USE_LAST = all(nxi~=0) || (size(coords, 1)==1);
+            USE_LAST = obj.reduced || all(nxi~=0) || (size(coords, 1)==1);
             
             %store the identity indexers            
             nc = size(coord_first, 1);
@@ -794,7 +794,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         end
 
-        function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
+        function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K, rho);
             %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
             %transformation
             %Args:    
@@ -802,11 +802,17 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %   vars_diss:   variables of the problem (dissipation)
             %   vars_reg:   variables of the problem (regulator)            
             %   vars_K:   variables of the problem (controller)    
+            %   rho:      linear convergence rate
             %Returns:                        
             %   sys_cl:  closed-loop system dynamics
             %   U_cl:    left outer product in elimination
             %   V_cl:    right outer product in elimination
             
+
+            if nargin < 6
+                rho = 1;
+            end
+            rhoi = 1/rho;
 
             GX = vars_diss.GX;
             GY = vars_diss.GY;
@@ -833,9 +839,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             Ck = vars_K.C;
             Dk = vars_K.D;
             %
-            Acal = [A*GY + B(:, iu)*Ck,  A + B(:, iu)*Dk*C(iy, :);
+            Acal = rhoi * [A*GY + B(:, iu)*Ck,  A + B(:, iu)*Dk*C(iy, :);
                 Ak, GX*A + Bk*C(iy, :)];
-            Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
+            Bcal = rhoi * [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
                 GX*B(:, iw) + Bk*D(iy, iw)];
             Ccal = [C(iz, :)*GY+ D(iz, iu)*Ck, C(iz, :) + D(iz, iu)*Dk*C(iy, :)];
             Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);
@@ -890,7 +896,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %get the system with the internal model
             dissend = struct;
             dissend.plant = alg_psi;
-            dissend.rho = sol.rho;            
+            dissend.rho = 1;            
             P_trans =  obj.connect_model(dissend);
             
             %evaluate the variables
@@ -917,13 +923,20 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %(not yet exponentially undiscounted, this happens later)
 
             vars_rec = sol.vars;
-            rho = sol.rho;
-
+                        
+            if obj.config.gen.same_rho
+                rho_common = sol.rho;
+                P_trans = rhotrafo(P_trans, rho_common);
+            else
+                rho_common = 1;
+            end
             [K_nofeed, Gcal, Ycal] = recover_subcontroller_warp(obj, P_trans, vars_rec);
+
+            K_nofeed = rhotrafo(K_nofeed, 1/rho_common);
 
             model = obj.reg.get_model(vars_rec.reg);
 
-            K_report = obj.K_alg_report(P_trans, K_nofeed, model, rho);
+            K_report = obj.K_alg_report(P_trans, K_nofeed, model);
             
             sol.cert.alg_trans = K_report.alg_trans;
             sol.cert.alg = lft(obj.sys.P, K_report.K);
@@ -933,7 +946,11 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             sol.cert.Gcl = Gcal;
             sol.cert.Ycl = Ycal;
 
-            sol.gain = obj.validate_recovery_gain(sol.cert.alg_psi, sol.cert.iqc_op_all);
+            %validate after the rho weighting
+            alg_psi_K = lft(alg_psi, sol.cert.K);           
+            alg_psi_rho = rhotrafo(alg_psi_K, sol.rho);
+
+            sol.gain = obj.validate_recovery_gain(alg_psi_rho, sol.cert.iqc_op_all);
 
             
         end
@@ -978,12 +995,15 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %this is the (nonlinearly-warped) system that is certified as
             %possessing the desired performance and robustness
             %specifications
-            sys_cl = obj.system_closed_loop(P_trans, vars_rec.diss, vars_rec.reg, vars_rec.K);
+            
+            % elim_orig = obj.elimination;
+            % obj.config.syn.elimination = false;
+            % sys_cl = obj.system_closed_loop(P_trans, vars_rec.diss, vars_rec.reg, vars_rec.K, 1);
+            % sys_cal = ss(G \ sys_cl.A, G \ sys_cl.B, sys_cl.C, sys_cl.D, 1);
+            % obj.config.syn.elimination = elim_orig;
 
-            sys_cal = ss(G \ sys_cl.A, G \ sys_cl.B, sys_cl.C, sys_cl.D, 1);
 
-
-            [A, B, C, D] = ssdata(P_trans);
+            [A, B, C, D] = ssdata(rhotrafo(P_trans, rho_common));
 
             iz = [P_trans.index_z(), P_trans.index_zp()];
             iw = [P_trans.index_w(), P_trans.index_wp()];
@@ -1117,14 +1137,13 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
 
-        function K_report = K_alg_report(obj, P_trans, K_nofeed, model, rho)
+        function K_report = K_alg_report(obj, P_trans, K_nofeed, model)
             %K_ALG_REPORT recover the algorithmic interconnection and the
             %controller
             %Args:
             %   P_trans:    the transformed generalized plant before IQC
             %   K_nofeed:   subcontroller without direct feedthrough
             %   model:      internal model
-            %   rho:        convergence rate
             %Return:
             %   K_report:   controller output structure
             
@@ -1163,10 +1182,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             alg_trans_nofeed = lft(P_trans_nofeed, K_nofeed);
 
 
-            K_sub= rhotrafo(K_feed, 1/rho);
-            % K_sub_full = rhotrafo(K_feed_full, 1/rho);
-            %connect the internal model: form the controller
-
+            K_sub = K_feed;
+            
             
 
             K = lft(model, K_sub);
@@ -1184,22 +1201,25 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         end
 
-        function gain = validate_recovery_gain(obj, alg_trans, iqc_op_all)
+        function gain = validate_recovery_gain(obj, alg_psi, iqc_op_all, rho)
             %VALIDATE_RECOVERY validate that the system obeys the stability
             %constraint
             %
             %Args:
-            %   alg_trans: the plant with confirmed performance by LMIs
+            %   alg_psi: the plant with confirmed performance by LMIs
             %   iqc_op_all: all IQCs
             %Return:
             %   gain:   [Passivity index, H-infinity index].
 
+            if nargin < 4
+                rho = 1;
+            end
 
             %  (TODO: performance specs)
 
 
             %closed-loop and weighted system
-            P = alg_trans.P(alg_trans.index_z, alg_trans.index_w);
+            P = alg_psi.P(alg_psi.index_z, alg_psi.index_w);
 
             M = iqc_op_all.iqc.M;
             M = (M + M')/2;

@@ -76,7 +76,7 @@ classdef (Abstract) opt_manager_interface < handle
 
 
 
-        function [vars, cons, objective, alg_psi, rho, diss] = build_program(obj, specs)
+        function [vars, cons, objective, alg_psi, diss] = build_program(obj, specs)
             %BUILD_PROGRAM set up the algorithm analysis or synthesis problem
             %Args:
             %   specs: specifications            
@@ -84,8 +84,8 @@ classdef (Abstract) opt_manager_interface < handle
             %   vars:   variables of the problem        
             %   cons (lmibl):   accumulated constraints
             %   objective: objective to minimize
-            %   alg_psi (genplant/genplantpoly):    generalized plant
-            %   rho (float):    convergence rate
+            %   alg_psi (genplant/genplantpoly):    generalized plant,
+            %   before internal model
             %   diss:   current dissipation inequality
                       
 
@@ -99,12 +99,31 @@ classdef (Abstract) opt_manager_interface < handle
             %alg_loop: used for debugging. The algorithm after signal 
             % transformationsbefore, but before cascade by the filters    
 
-            [rho, sperf, ERGODIC] = obj.perf_specs(specs);
+            [sperf, ERGODIC] = obj.perf_specs(specs);
 
             [iqc_data] = obj.iqc_op_all();
             iqc_data.ERGODIC = ERGODIC;
+
+            %override for same rho
+            if obj.config.gen.same_rho
+                common_rho = obj.get_rho(sperf);
+                iqc_data.iqc = iqc_data.iqc.rhotrafo(1/common_rho);
+                
+                ind_stab = 0;
+                for i = 1:length(sperf)
+                    sperf{i}.rho = common_rho;
+                    if isa(sperf{i}, 'spec_stability')
+                        ind_stab = i;
+                    end
+                end
+
+                %drop the exponential stability specification
+                if (i > 0) && (length(sperf)>1)
+                    sperf(i) = [];
+                end
+            end
             
-            [alg_psi, iqc_op, alg_loop] = obj.sys.build_plant(iqc_data, rho);
+            [alg_psi, iqc_op, alg_loop] = obj.sys.build_plant(iqc_data);
 
 
 
@@ -226,21 +245,40 @@ classdef (Abstract) opt_manager_interface < handle
             end
         end
 
-        function [rho, sperf, ERGODIC] = perf_specs(obj, specs)
+        function rho = get_rho(obj, specs)
+            %GET_RHO get the common rho in the case of the same rho in all
+            %performance specifications. required to use noncausal
+            %multipliers
+            %
+            %Args:
+            %   specs (cell):  array of specifications
+            %
+            %Returns:
+            %   rho (double): the common rho 
+            rho = 1;
+
+            if obj.config.gen.same_rho
+                for i = 1:length(specs)
+                    if isa(specs{i}, 'spec_stability')
+                        rho = specs{i}.rho;
+                    end
+                end
+            end
+        end
+
+        function [sperf, ERGODIC] = perf_specs(obj, specs)
             %PERF_SPECS get the performance specifications and extract the
             %rho convergence rate 
             %
             %Args:
-            %   specs:  performance specifications
+            %   specs (cell):  performance specifications
             %
             %Returns:
-            %   rho: the linear convergence rate
             %   sperf: the specification cell without the linear
             %   convergence rate (if there is more than one specification)
+            %   ERGODIC: is ergodic convergence required
 
 
-            % TODO: improve this part.
-            rho = 1;
             if nargin < 2
                 sperf = obj.specs;
             else
@@ -251,12 +289,11 @@ classdef (Abstract) opt_manager_interface < handle
             %specification
             ERGODIC = false;
             for i = 1:length(specs)
-                if isa(specs{i}, 'spec_stability')
-                    if length(specs) > 1                        
-                        sperf(i) = [];
-                    end
-                    rho = specs{i}.rho;
-                end
+                % if isa(specs{i}, 'spec_stability')
+                %     if length(specs) > 1                        
+                %         sperf(i) = [];
+                %     end
+                % end
                 if isa(specs{i}, 'spec_ergodic')
                     ERGODIC = true;
                 end
@@ -264,7 +301,7 @@ classdef (Abstract) opt_manager_interface < handle
 
             for i =1:length(sperf)
                 sperf{i}.id = i;
-                sperf{i}.rho = rho;
+                % sperf{i}.rho = rho;
             end
 
 
@@ -284,10 +321,11 @@ classdef (Abstract) opt_manager_interface < handle
             obj = obj.process_argument(arg);            
             obj = obj.add_specifications(specs);
             
-            [vars, cons, objective, alg_psi, rho, diss] = obj.build_program(); 
+            [vars, cons, objective, alg_psi, diss] = obj.build_program(); 
 
             % objective = obj.get_objective(vars);
             
+
             % objective = 0;
             [sol] = obj.run(vars, cons, objective);
 
@@ -302,7 +340,11 @@ classdef (Abstract) opt_manager_interface < handle
 
                 sol.vars = vrec;
 
-                sol.rho = rho;
+                for i = 1:length(obj.specs)
+                    if isa(obj.specs{i}, 'spec_stability')
+                        sol.rho = obj.specs{i}.rho;
+                    end
+                end
                 sol.cert.alg_psi = alg_psi;
                 sol.objective = double(double(objective, sol.info.lmi_out));
 
@@ -473,11 +515,17 @@ classdef (Abstract) opt_manager_interface < handle
 
             spec_curr = obj.modify_spec(pcurr, spec, b_opts);
 
-            [vars, cons, objective, alg_psi, rho, diss] = obj.build_program(spec_curr); 
+            [vars, cons, objective, alg_psi, diss] = obj.build_program(spec_curr); 
  
             [sol] = obj.run(vars, cons, objective);
             sol.objective = double(double(objective, sol.info.lmi_out));
-            sol.rho = rho;
+            
+            for i = 1:length(spec_curr)
+                if isa(spec_curr{i}, 'spec_stability')
+                    sol.rho = spec_curr{i}.rho;
+                end
+            end
+
             sol.cert.alg_psi = alg_psi;
             sol.vars = vars;
             sol.cert.diss = diss;
@@ -521,6 +569,7 @@ classdef (Abstract) opt_manager_interface < handle
                 end            
             end
 
+            
             iqc_data =iqc_data_container;
             iqc_data.iqc = iqc;
             iqc_data.m_same = m_same;

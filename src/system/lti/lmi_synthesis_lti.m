@@ -79,7 +79,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %(maybe it should happen at a higher level?)
             P = obj.connect_model(diss);
 
-            [sys_cl, U_cl, V_cl] = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
+            [sys_cl, U_cl, V_cl] = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K, diss.rho);
             
             %index the quadratic specification
             vars_spec = vars.spec{diss.spec.id};
@@ -464,7 +464,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             el = obj.config.syn.elimination;               
         end
 
-        function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K);
+        function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K, rho);
             %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
             %transformation
             %Args:    
@@ -472,12 +472,18 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %   vars_diss:   variables of the problem (dissipation)
             %   vars_reg:   variables of the problem (regulator)            
             %   vars_K:   variables of the problem (controller)    
+            %   rho: linear convergence rate
             %Returns:                        
             %   sys_cl:  closed-loop system dynamics
             %   U_cl:    left outer product in elimination
             %   V_cl:    right outer product in elimination
             
 
+            if nargin < 6
+                rho = 1;
+            end
+             rhoi  = 1/rho;
+             
             if obj.elimination
                 %knock out the terms
 
@@ -487,7 +493,9 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
                 [A, B, C, D] = ssdata(P);
 
-                
+                A =  rhoi * A;
+                B =  rhoi * B;
+
                 iu = P.index_u;
                 iw = [P.index_w, P.index_wp];
                
@@ -608,7 +616,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             else
                 U_cl = [];
                 V_cl = [];
-                sys_cl = system_closed_loop@lmi_synthesis_interface(obj, P,  vars_diss, vars_reg, vars_K);
+                sys_cl = system_closed_loop@lmi_synthesis_interface(obj, P,  vars_diss, vars_reg, vars_K, rho);
             end
 
         end

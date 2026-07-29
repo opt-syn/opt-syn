@@ -62,6 +62,19 @@ classdef opt_synthesis < opt_manager_interface
             else
                 obj.iqc_op = obj.make_blank_iqc();
             end
+
+            ANY_NONCAUSAL = false;
+            for i = 1:length(obj.iqc_op)
+                if size(obj.iqc_op{i}.Psi2.A, 1) > 0
+                    ANY_NONCAUSAL = true;
+                    break
+                end
+            end
+           
+            if ANY_NONCAUSAL
+                obj.config.gen.same_rho = true;
+                obj.lmi.config.gen.same_rho = true;
+            end
         end
 
         function [diss] = index_specs(obj, alg_psi, iqc_data, specs)
@@ -87,7 +100,6 @@ classdef opt_synthesis < opt_manager_interface
 
             % [rho, sperf] = obj.perf_specs(specs);
             sperf = specs;
-            rho = sperf{1}.rho;
 
             iqc_op = iqc_data.iqc_op;
 
@@ -130,26 +142,42 @@ classdef opt_synthesis < opt_manager_interface
                 
                 if iscell(alg_psi)
                     %TODO: change to genplant_poly type?
-                    nwr = alg_psi{1}.nz;
-                    nww = alg_psi{1}.nw;                    
+                    nz = alg_psi{1}.nz;
+                    nw = alg_psi{1}.nw;                    
+                    nwp = alg_psi{1}.nwp;
+                    nzp = alg_psi{1}.nzp;
                     nu = alg_psi{1}.nu;
                     ny = alg_psi{1}.ny;
                 else
-                    nwr = alg_psi.nz;
-                    nww = alg_psi.nw;
+                    nz = alg_psi.nz;
+                    nw = alg_psi.nw;
+                    nwp = alg_psi.nwp;
+                    nzp = alg_psi.nzp;
                     nu = alg_psi.nu;
                     ny = alg_psi.ny;
                 end
 
-                nwr = nwr + length(sp.izp);
-                nww = nww + length(sp.iwp);
-
+                %output indexer                
+                nzpa = length(sp.izp);
+                nwpa = length(sp.iwp);
+                i_output = 1:(nz+nzpa+ny);
+                j_output = [(1:nz), (nz + sp.izp), nz+nzp + (1:ny)];
+                v_output = ones(length(i_output), 1);
+                E_output = full(sparse(i_output, j_output, v_output, nz+nzpa+ny, nz+nzp+ny));
                 
-                E_r = blkdiag(full(sparse(1:length(sp_ind_r), sp_ind_r, ...
-                    ones(1, length(sp_ind_r)), length(sp_ind_r), nwr)), eye(ny));
+                %input indexer
+                i_input = 1:(nw+nwpa+nu);
+                j_input = [(1:nw), (nw + sp.iwp), nw+nwp + (1:nu)];
+                v_input = ones(length(i_input), 1);
+                E_input = full(sparse(i_input, j_input, v_input, nw+nwpa+nu, nw+nwp+nu))';
+                
+                 
 
-                E_w = blkdiag(full(sparse(1:length(sp_ind_w), sp_ind_w, ...
-                    ones(1, length(sp_ind_w)), length(sp_ind_w), nww)), eye(nu));
+                % E_r = blkdiag(full(sparse(1:length(sp_ind_r), sp_ind_r, ...
+                %     ones(1, length(sp_ind_r)), length(sp_ind_r), nwr)), eye(ny));
+                % 
+                % E_w = blkdiag(full(sparse(1:length(sp_ind_w), sp_ind_w, ...
+                %     ones(1, length(sp_ind_w)), length(sp_ind_w), nww)), eye(nu));
 
                 
 
@@ -172,7 +200,7 @@ classdef opt_synthesis < opt_manager_interface
 
                     alg_screen = cell(size(alg_psi));
                     for j = 1:length(alg_screen)
-                        alg_screen{j} = genplant(E_r * alg_psi{j}.ss * E_w, n2);
+                        alg_screen{j} = genplant(E_output * alg_psi{j}.ss * E_input, n2);
                     end                    
                     %TODO: write this part: cells/genplant poly
                 else
@@ -181,7 +209,7 @@ classdef opt_synthesis < opt_manager_interface
                     n2.nwp = length(sp.iwp);
                     n2.nzp = length(sp.izp);
 
-                    alg_screen_P = E_r * alg_psi.ss * E_w;
+                    alg_screen_P = E_output * alg_psi.ss * E_input;
                     alg_screen = genplant(alg_screen_P, n2);
 
                     
@@ -192,16 +220,12 @@ classdef opt_synthesis < opt_manager_interface
                 
                 diss{i} = diss_data;
                 diss{i}.iqc_rob = iqc_op;
-                diss{i}.rho = rho;
+                diss{i}.rho = sp.rho;
                 diss{i}.spec = sp;
                 diss{i}.iqc_data = iqc_data;
                 diss{i}.plant = alg_screen;
                 diss{i}.plant_reg = obj.lmi.reg.sys_regulated_aug();
                 diss{i}.ndiss = length(specs);
-
-
-
-
 
                 %TODO: this may run into trouble if one entry has an X.
                 %performance with dynamic multipliers?
@@ -224,6 +248,8 @@ classdef opt_synthesis < opt_manager_interface
             sol.cert.iqc_op = obj.iqc_op;
             sol.cert.iqc_op_all = obj.iqc_op_all;
             sol.vars.rho = sol.rho;
+
+
             [sol] = obj.lmi.process_recovery(sol, lmi_out, alg_psi, diss);            
 
             sol.sys = obj.sys;
@@ -232,20 +258,24 @@ classdef opt_synthesis < opt_manager_interface
             %check regulator equation
             reg2 = obj.lmi.reg;
             reg2.sys = sol.sys;
-            sol.cert.regcl = reg2.check_regulator();
+            regcl = reg2.check_regulator();
+            sol.cert.regcl = regcl;
+
+
+
         end
 
         %% alternating design
-        function [sol_history, vr_history, success] = alternate(obj, iqc_init, order, specs, b_opts)
+        function [sol_history, vr_history, success] = alternate(obj, Niter, order, iqc_init, specs, b_opts)
             %ALTERNATE alternating synthesis and analysis. 
             % use bisection in analysis and synthesis if rho is minimized.
             %
             %
             %Args:
-            %   iqc_init (cell):  initial IQCs for the operators
-            %   order (cell):  orders of the operators
-            %   specs (cell):   performance specifications
-            %   diss (diss_data):   dissipation constraints
+            %   Niter (int): number of alternation iterations
+            %   order (cell):  orders of the operators (for analysis)
+            %   iqc_init (cell):  initial IQCs for the operators (for synthesis)            
+            %   specs (cell):   performance specifications (for both)            
             %   b_opts:   (bisect_opts) bisection options (bisect_opts)
             %Returns:                 
             %   sol_history (cell):  cell of solutions, first row is Synthesis, second row is analysis.
@@ -254,11 +284,20 @@ classdef opt_synthesis < opt_manager_interface
 
 
 
-            Niter = b_opts.Niter;
-
             sol_history = cell(2, Niter);
             vr_history = cell(2, Niter);
 
+            if nargin < 4
+                iqc_init = [];
+            end
+
+            if nargin < 5
+                specs = [];
+            end
+
+            if nargin < 6
+                b_opts = bisect_opts();
+            end
             iqc_curr = iqc_init;
             
             sys_curr = obj.sys;
@@ -308,7 +347,7 @@ classdef opt_synthesis < opt_manager_interface
 
 
                 %then do analysis
-                sys_curr.K = sol_syn_back.K;
+                sys_curr = sol_syn_back.sys;
 
                 ana = opt_analysis(sys_curr);
                 if b_opts.bisect
@@ -329,14 +368,14 @@ classdef opt_synthesis < opt_manager_interface
                 
                 %prepare for next go-around
                 %factor the iqcs from analysis for use in synthesis
-                iqc_curr = cell(length(sol_ana.iqc_op), 1);
+                iqc_curr = cell(length(sol_ana.cert.iqc_op), 1);
                 
                 if i < Niter
                     for j = 1:numel(iqc_curr)
-                        if isnumeric(sol_ana.iqc_op{j})
-                            iqc_curr{j} = sol_ana.iqc_op{j};
+                        if isnumeric(sol_ana.cert.iqc_op{j})
+                            iqc_curr{j} = sol_ana.cert.iqc_op{j};
                         else
-                            iqc_curr{j} = sol_ana.iqc_op{j}.factor();
+                            iqc_curr{j} = sol_ana.cert.iqc_op{j}.factor();
                         end
                     end        
                 end

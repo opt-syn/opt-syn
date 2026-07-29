@@ -56,21 +56,6 @@ classdef  opt_system < opt_system_interface
             end
         end
 
-        function sys_sim = export_sim(obj, op_sim)
-            % export the system for use in simulation
-            % with the operators (for iqcs) replaced by operators (in
-            % op_sim)
-            %
-            % Args:
-            %   op_sim: operators for simulation
-            % Return:
-            %   sys_sim: system for use in alg_sim
-            sys_sim = obj;
-            sys_sim.op = op_sim;
-
-
-        end
-
         
 
         %% build the plant
@@ -107,10 +92,7 @@ classdef  opt_system < opt_system_interface
             %repeat this call multiple times for switched systems. This
             %function will be overloaded, whereas build_plant_single will
             %stay the same.
-            [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data, rho);
-
-                      
-
+            [alg_psi, iqc_op, alg_loop] = build_plant_single(obj, alg, iqc_data);
         end 
 
         
