@@ -1,24 +1,35 @@
 classdef spec_e2e < spec_interface
-    %SPEC_E2E specification for an energy to energy gain
-    
-    %limsup_{T -> inf} sum_{k=0}^T norm(zp_k, 2)/norm(wp_k, 2) < gain
+    % SPEC_E2E Energy-to-energy (:math:`\ell_2`) gain specification.
     %
+    % Bounds the induced :math:`\ell_2`-gain from the performance input to
+    % the performance output:
     %
-    % For a linear system, this is the H infinity gain 
+    % .. math::
+    %
+    %    \limsup_{T \to \infty}
+    %    \frac{\sum_{k=0}^{T} \norm{z_{p,k}}_2}{\sum_{k=0}^{T} \norm{w_{p,k}}_2}
+    %    \; < \; \gamma .
+    %
+    % for any :math:`w_p` with finite energy. For a linear system this is 
+    % the :math:`H_\infty` gain. It is the specification minimized when 
+    % sweeping for the best achievable gain.
 
-    
-    
     properties        
-        gain = 1; %l2 gain (hard constraint)
+        gain = 1; % :math:`\ell_2` gain :math:`\gamma` (hard constraint).
     end
     
     methods
         function obj = spec_e2e(GAIN, iwp, izp)
-            %SPEC_E2E Constructor
+            % SPEC_E2E Construct an energy-to-energy gain specification.
             %
-            %Args:            
-            %   iwp:    performance inputs in the network    
-            %   izp:    performance outputs in the network            
+            % :param GAIN: Gain bound :math:`\gamma`.
+            % :type GAIN: double
+            % :param iwp: Performance-input indices in the network.
+            % :type iwp: double (vector)
+            % :param izp: Performance-output indices in the network.
+            % :type izp: double (vector)
+            % :returns: A new energy-to-energy gain specification.
+            % :rtype: spec_e2e
    
             obj@spec_interface(iwp, izp);
             obj.gain = GAIN;
@@ -26,13 +37,16 @@ classdef spec_e2e < spec_interface
         end
         
         function M = supply(obj, vars_spec)
-            %SUPPLY quadratic performance specification
+            % SUPPLY Quadratic supply-rate matrix of the specification.
             %
-            %Args:
-            %   vars_spec: problem variables in specification
+            % Builds the block-diagonal supply rate
+            % :math:`\operatorname{blkdiag}(\gamma^{-1} I,\, -\gamma I)` on
+            % :math:`[z_p; w_p]`.
             %
-            %Returns:
-            %   M: quadratic running cost matrix in the specification
+            % :param vars_spec: Specification variables.
+            % :type vars_spec: struct
+            % :returns: Quadratic running-cost matrix :math:`M`.
+            % :rtype: double
 
             gamma = obj.gain;
 
@@ -44,12 +58,17 @@ classdef spec_e2e < spec_interface
         end
 
        function [quad, objective] = supply_quad(obj, vars_spec)
-            %SUPPLY_QUAD decomposed quadratic performance specification            %
-            %Args:
-            %   vars_spec: problem variables in specification
+            % SUPPLY_QUAD Decomposed quadratic supply rate.
             %
-            %Returns:
-            %   quad (quad_param): decomposed quadratic specification
+            % When this specification is the optimization target, the gain
+            % variable ``mu_l2`` is minimized; otherwise the base-class
+            % decomposition is used.
+            %
+            % :param vars_spec: Specification variables (expects ``mu_l2``).
+            % :type vars_spec: struct
+            % :returns: ``[quad, objective]`` — the decomposed quadratic and the
+            %    objective contribution.
+            % :rtype: quad_param, double
 
            if obj.target
                nwp = length(obj.iwp);
@@ -72,26 +91,28 @@ classdef spec_e2e < spec_interface
        end
 
        function [obj] = set_p(obj, p)
-            %SET_P set a parameter when performing bisection
+            % SET_P Set the bisection parameter (the :math:`\ell_2` gain).
             %
-            %Args:
-            %   p: new value of the parameter (l2 gain)
+            % :param p: New value of the gain bound.
+            % :type p: double
+            % :returns: The updated specification.
+            % :rtype: spec_e2e
 
             obj.gain = p;
             
        end
 
        function [vars, cons] = create_vars(obj, cons, name, config)
-            %CREATE_VARS form the variables for the problem                        
+            % CREATE_VARS Create the gain variable and its constraints.
             %
-            %Args:                        
-            %   cons:  accumulated constraints            
-            %   name: name of the specification
-            %   config (opt_config): configuration options
-            %
-            %Returns:
-            %   vars:  problem variables in specification
-            %   cons:  accumulated constraints
+            % :param cons: Accumulated LMI constraints.
+            % :param name: Name suffix for the created variable.
+            % :type name: char
+            % :param config: Configuration options.
+            % :type config: opt_config
+            % :returns: ``[vars, cons]`` — struct with field ``mu_l2`` and the
+            %    updated constraint set.
+            % :rtype: struct, cell
             if nargin < 3
                 name = [];
             end
@@ -112,4 +133,3 @@ classdef spec_e2e < spec_interface
         end
     end
 end
-
