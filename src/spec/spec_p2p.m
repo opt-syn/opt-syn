@@ -6,10 +6,8 @@ classdef spec_p2p < spec_interface
     % (over time) of the output is bounded by :math:`\gamma` times the peak
     % of the input,
     %
-    % .. math::
-    %
-    %    \sup_{k \geq 0} \norm{z_{p,k}}_2 \; \leq \;
-    %    \gamma \, \sup_{k \geq 0} \norm{w_{p,k}}_2.
+    % :math:`\sup_{k \geq 0} \norm{z_{p,k}}_2 \; \leq \; \gamma \, \sup_{k
+    % \geq 0} \norm{w_{p,k}}_2.`
     %
 
     properties        

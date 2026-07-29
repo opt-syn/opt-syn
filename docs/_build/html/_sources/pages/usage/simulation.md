@@ -34,7 +34,7 @@ By default, algorithm execution will occur with zero initial condition and a per
   - Subsequent value of problem-dependent parameters
 ```
 
-The output of `alg_sim.sim(T)` is a {class}`alg_sim_out` object. The fields of `alg_sim_out` include
+The output of `alg_sim.sim(T)` is an {class}`alg_sim_out` object. The fields of `alg_sim_out` include
 :::{list-table} 
 :widths: 2 8 2 8 2 8 
 *   - `xn`
@@ -96,7 +96,7 @@ Given a fixed point
 
 ## Details of  Execution
 
-The System `sys` executed  by first interconnecting the Network and Controller (linear systems), and then interconnecting the operator $F$ (nonlinearity). This is mathematically described by 
+The System `sys` executed  by first interconnecting the Network and Controller, and then interconnecting the possibly nonlinear operator $F$. This is mathematically described by 
 ```{math}
 \begin{align*}
 \text{Operator}: & & w_k & \in F(z_k), \\
@@ -105,24 +105,27 @@ The System `sys` executed  by first interconnecting the Network and Controller (
 \Ccl_{z_p} & \Dcl_{z_p w} & \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k \\ w_{p k}},
 \end{align*}
 ```
-The closed loop state is the concatenation $x = [x^N, x^c]$. 
+The closed loop state $x$ is the concatenation $x = [x^N, x^c]$. 
 
-The System is well-posed if $(F^{-1} - \Dcl)^{-1}$ is invertible, and has a lower-triangular information structure if $\Dcl_{zw}$ is block-lower-triangular (see {doc}`Algorithm Properties <../how_it_works/alg_properties>`). Under these conditions, the System can be partitioned as 
+
+{class}`alg_sim` execution using {meth}`sim`  requires the {doc}`algorithm properties <../how_it_works/alg_properties>` of  well-posedness and a block-triangular information structures. 
+
+Under these conditions, the System can be partitioned as 
 
 \begin{align*}
 \text{Operator}: & & w_k & \in F(z_k), \\
-\text{Algorithm}: & & \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2 \\ \vdots \\ z_k^s \\ z_{p k}} &= \mat{c|cccc:c}{\Acl & \Bcl_{z1} & \Bcl_{z2} & \cdots & \Bcl_{zs} & \Bcl_{z_p} \hl 
-\Ccl_{z 1} & \Dcl_{zw11} & 0 & \cdots & 0 & \Dcl_{z w_p 1}  \\
-\Ccl_{z 1} & \Dcl_{zw21} & \Dcl_{zw22} & \cdots & 0 & \Dcl_{z w_p 2}  \\
+\text{Algorithm}: & & \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2 \\ \vdots \\ z_k^s \\ z_{p k}} &= \mat{c|cccc:c}{\Acl & \Bcl_{z,1} & \Bcl_{z,2} & \cdots & \Bcl_{z,s} & \Bcl_{z_p} \hl 
+\Ccl_{z 1} & \Dcl_{zw,11} & 0 & \cdots & 0 & \Dcl_{z w_p, 1}  \\
+\Ccl_{z 1} & \Dcl_{zw,21} & \Dcl_{zw,22} & \cdots & 0 & \Dcl_{z w_p, 2}  \\
 \vdots &  \vdots & \vdots &  \ddots & \vdots & \vdots  \\
-\Ccl_{z 1} & \Dcl_{zws1} & \Dcl_{zws2} & \cdots & \Dcl_{zwss} & \Dcl_{z w_p s}  \\
-\Ccl_{z_p} & \Dcl_{z_p w 1} & \Dcl_{z_p w 2} & \cdots & \Dcl_{z_p w s} & \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s \\ w_{p k}},
+\Ccl_{z 1} & \Dcl_{zw, s1} & \Dcl_{zws2} & \cdots & \Dcl_{zw,ss} & \Dcl_{z w_p s}  \\
+\Ccl_{z_p} & \Dcl_{z_p w,1} & \Dcl_{z_p w, 2} & \cdots & \Dcl_{z_p w, s} & \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s \\ w_{p k}},
 \end{align*}
 
 
 <!-- Algorithm simulation assumes that the System forms a well-posed algorithm with a block-lower triangular  -->
 
-Algorithm simulation then causally proceeds for each $k \in \N$ as
+The iterative loop for algorithm simulation is to evaluate the equations for each $k \in \N$
 ```{math}
 \begin{align}
 w^i_k &= (F_i^{-1} - \Dcl_{zw, ii})^{-1} (\Ccl_i x_k + \textstyle \sum_{j=1}^{i-1} \Dcl_{zw ij} w^j_k),  & & \forall i \in 1, \ldots, s,\\ 
@@ -145,7 +148,7 @@ The operator $H_i: = (F_i^{-1} - \Dcl_{zw, ii})^{-1}$ can be evaluated using the
 * - Implicit
   - {meth}`bw`
   - $\Dcl_{ii}$ invertible
-  - $z \mapsto \Dcl_{zw ii}^{-1} z - \Dcl_{zw ii}^{-1} (I - \Dcl_{zw ii} F_i)^{-1}(z)$
+  - $z \mapsto \Dcl_{zw, ii}^{-1} z - \Dcl_{zw, ii}^{-1} (I - \Dcl_{zw, ii} F_i)^{-1}(z)$
 ```
 
 <!-- If the backward-evaluation  $(I - \Dcl_{ii} F_i)^{-1}$ is available (such as from a  resolvent/proximal operator), then this algorithm execution is tractable. -->

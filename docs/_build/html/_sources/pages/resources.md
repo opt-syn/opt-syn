@@ -38,3 +38,4 @@ Other tools to perform analysis and control of dynamical systems include
 | [MPT3](https://www.mpt3.org/) |Computational geometry, reachability sets, model predictive control |
 | [CasADI](https://web.casadi.org/) | Nonlinear optimization and optimal control |
 | [GPOPS-II](https://web.casadi.org/) | Optimal control and trajectory planning |
+|[multi-iqc](https://github.com/Schwenkel/multi-objective-iqc-synthesis) | Multiobjective IQC synthesis in discrete-time

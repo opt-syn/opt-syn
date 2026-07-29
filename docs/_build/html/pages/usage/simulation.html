@@ -421,7 +421,7 @@
 </tbody>
 </table>
 </div>
-<p>The output of <code class="docutils literal notranslate"><span class="pre">alg_sim.sim(T)</span></code> is a <code class="xref mat mat-class docutils literal notranslate"><span class="pre">alg_sim_out</span></code> object. The fields of <code class="docutils literal notranslate"><span class="pre">alg_sim_out</span></code> include</p>
+<p>The output of <code class="docutils literal notranslate"><span class="pre">alg_sim.sim(T)</span></code> is an <code class="xref mat mat-class docutils literal notranslate"><span class="pre">alg_sim_out</span></code> object. The fields of <code class="docutils literal notranslate"><span class="pre">alg_sim_out</span></code> include</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <colgroup>
 <col style="width: 6.7%" />
@@ -491,7 +491,7 @@ A plot of the signals “<code class="docutils literal notranslate"><span class=
 </section>
 <section id="details-of-execution">
 <h2>Details of  Execution<a class="headerlink" href="#details-of-execution" title="Link to this heading">#</a></h2>
-<p>The System <code class="docutils literal notranslate"><span class="pre">sys</span></code> executed  by first interconnecting the Network and Controller (linear systems), and then interconnecting the operator <span class="math notranslate nohighlight">\(F\)</span> (nonlinearity). This is mathematically described by</p>
+<p>The System <code class="docutils literal notranslate"><span class="pre">sys</span></code> executed  by first interconnecting the Network and Controller, and then interconnecting the possibly nonlinear operator <span class="math notranslate nohighlight">\(F\)</span>. This is mathematically described by</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
 \text{Operator}: &amp; &amp; w_k &amp; \in F(z_k), \\
@@ -499,20 +499,21 @@ A plot of the signals “<code class="docutils literal notranslate"><span class=
 \Ccl_z &amp; \Dcl_{zw} &amp; \Dcl_{z w_p}  \\
 \Ccl_{z_p} &amp; \Dcl_{z_p w} &amp; \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k \\ w_{p k}},
 \end{align*}\end{split}\]</div>
-<p>The closed loop state is the concatenation <span class="math notranslate nohighlight">\(x = [x^N, x^c]\)</span>.</p>
-<p>The System is well-posed if <span class="math notranslate nohighlight">\((F^{-1} - \Dcl)^{-1}\)</span> is invertible, and has a lower-triangular information structure if <span class="math notranslate nohighlight">\(\Dcl_{zw}\)</span> is block-lower-triangular (see <a class="reference internal" href="../how_it_works/alg_properties.html"><span class="doc">Algorithm Properties</span></a>). Under these conditions, the System can be partitioned as</p>
+<p>The closed loop state <span class="math notranslate nohighlight">\(x\)</span> is the concatenation <span class="math notranslate nohighlight">\(x = [x^N, x^c]\)</span>.</p>
+<p><code class="xref mat mat-class docutils literal notranslate"><span class="pre">alg_sim</span></code> execution using <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">sim()</span></code>  requires the <a class="reference internal" href="../how_it_works/alg_properties.html"><span class="doc">algorithm properties</span></a> of  well-posedness and a block-triangular information structures.</p>
+<p>Under these conditions, the System can be partitioned as</p>
 <div class="amsmath math notranslate nohighlight">
 \[\begin{align*}
 \text{Operator}: &amp; &amp; w_k &amp; \in F(z_k), \\
-\text{Algorithm}: &amp; &amp; \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2 \\ \vdots \\ z_k^s \\ z_{p k}} &amp;= \mat{c|cccc:c}{\Acl &amp; \Bcl_{z1} &amp; \Bcl_{z2} &amp; \cdots &amp; \Bcl_{zs} &amp; \Bcl_{z_p} \hl 
-\Ccl_{z 1} &amp; \Dcl_{zw11} &amp; 0 &amp; \cdots &amp; 0 &amp; \Dcl_{z w_p 1}  \\
-\Ccl_{z 1} &amp; \Dcl_{zw21} &amp; \Dcl_{zw22} &amp; \cdots &amp; 0 &amp; \Dcl_{z w_p 2}  \\
+\text{Algorithm}: &amp; &amp; \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2 \\ \vdots \\ z_k^s \\ z_{p k}} &amp;= \mat{c|cccc:c}{\Acl &amp; \Bcl_{z,1} &amp; \Bcl_{z,2} &amp; \cdots &amp; \Bcl_{z,s} &amp; \Bcl_{z_p} \hl 
+\Ccl_{z 1} &amp; \Dcl_{zw,11} &amp; 0 &amp; \cdots &amp; 0 &amp; \Dcl_{z w_p, 1}  \\
+\Ccl_{z 1} &amp; \Dcl_{zw,21} &amp; \Dcl_{zw,22} &amp; \cdots &amp; 0 &amp; \Dcl_{z w_p, 2}  \\
 \vdots &amp;  \vdots &amp; \vdots &amp;  \ddots &amp; \vdots &amp; \vdots  \\
-\Ccl_{z 1} &amp; \Dcl_{zws1} &amp; \Dcl_{zws2} &amp; \cdots &amp; \Dcl_{zwss} &amp; \Dcl_{z w_p s}  \\
-\Ccl_{z_p} &amp; \Dcl_{z_p w 1} &amp; \Dcl_{z_p w 2} &amp; \cdots &amp; \Dcl_{z_p w s} &amp; \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s \\ w_{p k}},
+\Ccl_{z 1} &amp; \Dcl_{zw, s1} &amp; \Dcl_{zws2} &amp; \cdots &amp; \Dcl_{zw,ss} &amp; \Dcl_{z w_p s}  \\
+\Ccl_{z_p} &amp; \Dcl_{z_p w,1} &amp; \Dcl_{z_p w, 2} &amp; \cdots &amp; \Dcl_{z_p w, s} &amp; \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s \\ w_{p k}},
 \end{align*}\]</div>
 <!-- Algorithm simulation assumes that the System forms a well-posed algorithm with a block-lower triangular  -->
-<p>Algorithm simulation then causally proceeds for each <span class="math notranslate nohighlight">\(k \in \N\)</span> as</p>
+<p>The iterative loop for algorithm simulation is to evaluate the equations for each <span class="math notranslate nohighlight">\(k \in \N\)</span></p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align}
 w^i_k &amp;= (F_i^{-1} - \Dcl_{zw, ii})^{-1} (\Ccl_i x_k + \textstyle \sum_{j=1}^{i-1} \Dcl_{zw ij} w^j_k),  &amp; &amp; \forall i \in 1, \ldots, s,\\ 
@@ -537,7 +538,7 @@ z_{p, k+1} &amp;= \Ccl_{z_p} x_k + \textstyle \sum_{i=1}^s \Dcl_{z_p w i} w^i_k 
 <tr class="row-odd"><td><p>Implicit</p></td>
 <td><p><code class="xref mat mat-meth docutils literal notranslate"><span class="pre">bw()</span></code></p></td>
 <td><p><span class="math notranslate nohighlight">\(\Dcl_{ii}\)</span> invertible</p></td>
-<td><p><span class="math notranslate nohighlight">\(z \mapsto \Dcl_{zw ii}^{-1} z - \Dcl_{zw ii}^{-1} (I - \Dcl_{zw ii} F_i)^{-1}(z)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(z \mapsto \Dcl_{zw, ii}^{-1} z - \Dcl_{zw, ii}^{-1} (I - \Dcl_{zw, ii} F_i)^{-1}(z)\)</span></p></td>
 </tr>
 </tbody>
 </table>

@@ -1,4 +1,4 @@
-# API Reference
+# Documentation
 
 This page collects the documentation for each object and function in {{osyn}}.
 

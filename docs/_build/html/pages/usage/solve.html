@@ -404,18 +404,18 @@
 <h2>Solve<a class="headerlink" href="#solve" title="Link to this heading">#</a></h2>
 <p>Three solution modes are available:</p>
 <ol class="arabic simple">
-<li><p>Single Solution</p></li>
-<li><p>Bisection</p></li>
-<li><p>Alternation</p></li>
+<li><p><a class="reference internal" href="#single-solution"><span class="xref myst">Single Solution</span></a></p></li>
+<li><p><a class="reference internal" href="#bisection"><span class="xref myst">Bisection</span></a></p></li>
+<li><p><a class="reference internal" href="#alternation"><span class="xref myst">Alternation</span></a></p></li>
 </ol>
 <section id="single-solution">
-<h3>Single Solution<a class="headerlink" href="#single-solution" title="Link to this heading">#</a></h3>
-<p>The  <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">solve_single()</span></code> routine performs Analysis or Synthesis at given  specifications. The output of <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">solve_single()</span></code> is a <a class="reference internal" href="../documentation/doc_solutions.html"><span class="doc">solution</span></a> structure <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_solution</span></code>. The fields of the solution structure are explained further  below in the <a class="reference internal" href="#validation"><span class="xref myst">Validation</span></a>.</p>
+<span id="id1"></span><h3>Single Solution<a class="headerlink" href="#single-solution" title="Link to this heading">#</a></h3>
+<p>The  <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">solve_single()</span></code> routine performs Analysis or Synthesis at given  specifications. The output of <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">solve_single()</span></code> is a <a class="reference internal" href="../documentation/doc_solutions.html"><span class="doc">solution</span></a> structure <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_solution</span></code>. The fields of the solution structure are explained further  below in <a class="reference internal" href="#validation"><span class="xref myst">Validation</span></a>.</p>
 <p>Analysis is called by</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">sol_ana_single</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_ana</span><span class="p">.</span><span class="n">solve_single</span><span class="p">(</span><span class="n">order</span><span class="p">,</span><span class="w"> </span><span class="n">specs</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">order</span></code> input is an <span class="math notranslate nohighlight">\(s\)</span>-length cell array. Each entry  of the <code class="docutils literal notranslate"><span class="pre">order</span></code> cell array is a nonnegative integer or pair of integers:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">order</span></code> input is an <span class="math notranslate nohighlight">\(s\)</span>-length cell array. Each entry  of the <code class="docutils literal notranslate"><span class="pre">order</span></code> cell array is one or two  nonnegative integers:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Order Length</p></th>
@@ -432,20 +432,41 @@
 </tbody>
 </table>
 </div>
-<p>The order defines length of the filters in the <a class="reference internal" href="../documentation/doc_iqc.html"><span class="doc">IQCs</span></a>. A higher order requries more computation, but can lead to improved bounds.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">specs</span></code> is a cell array of <a class="reference internal" href="problem_formulation/specs.html"><span class="doc">specifications</span></a>.</p>
-<p>Synthesis is invoked by</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">sol_syn_single</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_syn</span><span class="p">.</span><span class="n">solve_single</span><span class="p">(</span><span class="n">iqc</span><span class="p">,</span><span class="w"> </span><span class="n">specs</span><span class="p">);</span>
+<p>The order defines length of the filters in the <a class="reference internal" href="../documentation/doc_iqc.html"><span class="doc">IQCs</span></a>. A higher order requries more computation, but can lead to improved bounds. An example order declaration is</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_gen</span><span class="p">([</span><span class="nb">arguments</span><span class="p">]);</span>
+<span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sml</span><span class="p">([</span><span class="nb">arguments</span><span class="p">]);</span>
+<span class="n">op3</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_quad</span><span class="p">([</span><span class="nb">arguments</span><span class="p">]);</span>
+<span class="n">order</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]};</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">iqc</span></code> input is an <span class="math notranslate nohighlight">\(s\)</span>-length cell array of <a class="reference internal" href="../documentation/doc_iqc.html"><span class="doc">IQCs</span></a>. A default input of <code class="docutils literal notranslate"><span class="pre">iqc=[]</span></code> will perform Synthesis with a set of valid IQCs for the operators, computed by each <a class="reference internal" href="../documentation/operators/doc_operators.html"><span class="doc">operator class’s</span></a>
+<p>The <code class="docutils literal notranslate"><span class="pre">specs</span></code> is a cell array of <a class="reference internal" href="problem_formulation/specs.html"><span class="doc">specifications</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Analysis is performed with respect to a common certificate among all performance specifications in <code class="docutils literal notranslate"><span class="pre">specs</span></code> <a class="footnote-reference brackets" href="#footcite-scherer1997multiobjective" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. Requiring this common certificate may yield conservatism as compared to doing Analysis separately for each specification in <code class="docutils literal notranslate"><span class="pre">specs</span></code>.</p>
+<p>The common certificate is required if <a class="reference internal" href="#alternation"><span class="xref myst">Alternation</span></a> between Analysis and Synthesis is performed.</p>
+</div>
+<p>Synthesis is invoked by</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">sol_syn_single</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_syn</span><span class="p">.</span><span class="n">solve_single</span><span class="p">(</span><span class="n">iqc_init</span><span class="p">,</span><span class="w"> </span><span class="n">specs</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">iqc_init</span></code> input is an <span class="math notranslate nohighlight">\(s\)</span>-length cell array of <a class="reference internal" href="../documentation/doc_iqc.html"><span class="doc">IQCs</span></a> to warm-start the Synthesis process. A default input of <code class="docutils literal notranslate"><span class="pre">iqc=[]</span></code> will compute valid warm-starts using each <a class="reference internal" href="../documentation/operators/doc_operators.html"><span class="doc">operator class’s</span></a>
 <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">create_iqc_identity()</span></code> routine.</p>
 <p>The objective in Analysis or Synthesis is set using the <code class="docutils literal notranslate"><span class="pre">target</span></code> field in the  <a class="reference internal" href="../documentation/doc_specs.html"><span class="doc">operator class’s</span></a>.
 If <code class="docutils literal notranslate"><span class="pre">specs{j}.target</span> <span class="pre">=</span> <span class="pre">true</span></code>, then the specification in <span class="math notranslate nohighlight">\(i\)</span> is minimized. At most one specification <span class="math notranslate nohighlight">\(j\)</span> can have <code class="docutils literal notranslate"><span class="pre">specs{j}.target</span> <span class="pre">=</span> <span class="pre">true</span></code>.
 If <code class="docutils literal notranslate"><span class="pre">specs{j}.target=false</span></code> for all specifications <span class="math notranslate nohighlight">\(j\)</span> then a feasibility problem is solved.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Different specifications can have different rate <span class="math notranslate nohighlight">\(\rho\)</span> in Synthesis if and only if</p>
+<ol class="arabic simple">
+<li><p>the order for each <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_gen</span></code> is 0</p></li>
+<li><p>the order for each <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_sml</span></code>, <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_pcc</span></code>, <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_quad</span></code> is <code class="docutils literal notranslate"><span class="pre">[nonnegative,</span> <span class="pre">0]</span></code>.</p></li>
+</ol>
+<p>If these conditions fail, then all specifications must have the same rate <span class="math notranslate nohighlight">\(\rho\)</span> (<code class="docutils literal notranslate"><span class="pre">opt_config.gen.same_rho</span> <span class="pre">=</span> <span class="pre">true</span></code>).</p>
+<p>The <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_manager</span></code> classes will check these conditions, and will override <code class="docutils literal notranslate"><span class="pre">same_rho</span></code> to true if not already set. This issue is related to the presence of noncausal filters in IQC synthesis, using <span class="math notranslate nohighlight">\(\rho\)</span>-hard IQCs</p>
+</div>
 </section>
 <section id="bisection">
-<h3>Bisection<a class="headerlink" href="#bisection" title="Link to this heading">#</a></h3>
+<span id="id3"></span><h3>Bisection<a class="headerlink" href="#bisection" title="Link to this heading">#</a></h3>
 <p>The routine <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">bisect()</span></code> performs bisection on a single specification. Parameters of bisection are set using the <code class="docutils literal notranslate"><span class="pre">bisect_opts</span></code> configuration, see <code class="docutils literal notranslate"><span class="pre">operator</span> <span class="pre">class's</span> <span class="pre">&lt;../documentation/doc_config&gt;</span></code> for more details. The index of the specification in the <code class="docutils literal notranslate"><span class="pre">spec</span></code> to minimize using bisection is set via <code class="docutils literal notranslate"><span class="pre">bisect_opts.spec_ind</span></code>, with a default of index of 1.</p>
 <p>The outputs of  <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">bisect()</span></code> are the <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_solution</span></code> structure and the two-element array <code class="docutils literal notranslate"><span class="pre">v_range</span></code>. The entries of <code class="docutils literal notranslate"><span class="pre">v_range</span></code> are the lower and upper bounds of the bisected parameter.</p>
 <p>As an example, the Analysis and Synthesis routines for minimizing  the linear convergence rate <span class="math notranslate nohighlight">\(\rho\)</span> subject to a <span class="math notranslate nohighlight">\(\rho\)</span>-weighted  <span class="math notranslate nohighlight">\(\ell_2\)</span> gain bound of 100 is</p>
@@ -456,16 +477,16 @@ If <code class="docutils literal notranslate"><span class="pre">specs{j}.target=
 <span class="n">b_opts</span><span class="p">.</span><span class="n">spec_ind</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 
 <span class="p">[</span><span class="n">sol_ana_bisect</span><span class="p">,</span><span class="w"> </span><span class="n">v_ana</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_ana</span><span class="p">.</span><span class="n">bisect</span><span class="p">(</span><span class="n">order</span><span class="p">,</span><span class="w"> </span><span class="n">specs</span><span class="p">,</span><span class="w"> </span><span class="n">b_opts</span><span class="p">);</span>
-<span class="p">[</span><span class="n">sol_syn_bisect</span><span class="p">,</span><span class="w"> </span><span class="n">v_syn</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_syn</span><span class="p">.</span><span class="n">bisect</span><span class="p">(</span><span class="n">iqc</span><span class="p">,</span><span class="w"> </span><span class="n">specs</span><span class="p">,</span><span class="w"> </span><span class="n">b_opts</span><span class="p">);</span>
+<span class="p">[</span><span class="n">sol_syn_bisect</span><span class="p">,</span><span class="w"> </span><span class="n">v_syn</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_syn</span><span class="p">.</span><span class="n">bisect</span><span class="p">(</span><span class="n">iqc_init</span><span class="p">,</span><span class="w"> </span><span class="n">specs</span><span class="p">,</span><span class="w"> </span><span class="n">b_opts</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
 <section id="alternation">
-<h3>Alternation<a class="headerlink" href="#alternation" title="Link to this heading">#</a></h3>
+<span id="id4"></span><h3>Alternation<a class="headerlink" href="#alternation" title="Link to this heading">#</a></h3>
 <p>The <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">alternate()</span></code> routine switches between Synthesis and Analysis. It solves a Synthesis problem with fixed IQCs to find a controller, and then solves Analysis with the fixed controller to find IQCs. The Analysis and Synthesis problems may include inner bisection steps.</p>
 <p>An alternation routine with 3 Synthesis/Analysis steps is performed by</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">Niter</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span>
-<span class="p">[</span><span class="n">sol_syn_alternate</span><span class="p">,</span><span class="w"> </span><span class="n">v_history</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_syn</span><span class="p">.</span><span class="n">alternate</span><span class="p">(</span><span class="n">Niter</span><span class="p">,</span><span class="w"> </span><span class="n">iqc</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">,</span><span class="w"> </span><span class="n">specs</span><span class="p">,</span><span class="w"> </span><span class="n">b_opts</span><span class="p">);</span>
+<span class="p">[</span><span class="n">sol_syn_alternate</span><span class="p">,</span><span class="w"> </span><span class="n">v_history</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_syn</span><span class="p">.</span><span class="n">alternate</span><span class="p">(</span><span class="n">Niter</span><span class="p">,</span><span class="w"> </span><span class="n">iqc_init</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">,</span><span class="w"> </span><span class="n">specs</span><span class="p">,</span><span class="w"> </span><span class="n">b_opts</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">v_history</span></code> output is a cell array with 2 rows and  Niter columns. Each entroy of the cell array stores the  lower and upper bounds from bisection. The top row are the Synthesis bounds, and the bottom row are the Analysis bounds.</p>
@@ -473,8 +494,7 @@ If <code class="docutils literal notranslate"><span class="pre">specs{j}.target=
 </section>
 <section id="validation">
 <h2>Validation<a class="headerlink" href="#validation" title="Link to this heading">#</a></h2>
-<p>{#Validation}
-The <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_solution</span></code> structure contains information about the solution of analysis/synthesis. The solution is feasible if the following conditions are met</p>
+<p>The <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_solution</span></code> structure contains information about the solution of analysis/synthesis. The solution is feasible if the following conditions are met</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Name</p></th>
@@ -531,6 +551,13 @@ The <code class="xref mat mat-class docutils literal notranslate"><span class="p
 This controller is the interconnection of the internal model <code class="docutils literal notranslate"><span class="pre">opt_solution.cert.model</span></code> and the subcontroller <code class="docutils literal notranslate"><span class="pre">opt_solution.cert.K_sub</span></code>.</p>
 </section>
 </section>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-scherer1997multiobjective" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
+<p>C. Scherer, P. Gahinet, and M. Chilali. Multiobjective Output-Feedback Control via LMI Optimization . <em>IEEE Transactions on Automatic Control</em>, 42(7):896–911, 1997. <a class="reference external" href="https://doi.org/10.1109/9.599969">doi:10.1109/9.599969</a>.</p>
+</aside>
+</aside>
 
 
                 </article>
