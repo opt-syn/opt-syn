@@ -98,11 +98,23 @@ The {class}`opt_solution` structure contains information about the solution of a
 | `dia` | Constraint violation | `dia`$<0$ if strictly feasible, `dia`$=0$ if marginally feasible, `dia` $> 0$ if infeasible |
 | `gain` | Input passivity index and $H_\infty$ gain | Feasible if `gain(1)` $< 0$ and `gain(2)` $< 1$ |
 | `rho` | Convergence rate |  Linearly convergent if $\rho < 1$ |
+| `regcl` | Closed-loop regulator equation | Nonempty struct with fields (`S`, `R`, `Pi`, `Gam`, `Phi`, `Th`)| 
 
-If the option `opt_config.recovery.blocks = true` is used, then `opt_solution.recovery.blocks` contains matrices in the solution that are enforced to be Positive Semidefinite, and `opt_solution.recovery.eb` stores their minimal eigenvalues. `opt_solution.dia` is then negative of the minimal eigenvalue in `opt_solution.recovery.eb`.
 
 
-The variables of the Analysis or Synthesis problem are stored in `opt_solution.vars`. The final algorithmic interconnection/optimization algorithm is stored in `opt_solution.sys`. 
+Other attributes of {class}`opt_solution` include
+:::{list-table} 
+:header-rows: 1
+*   - Field
+    - Description    
+*   - `vars`
+    - design variables in the Analysis/Synthesis problem
+*   - `sys`
+    - System that solves the inclusion problem
+*   - `lmi_out`
+    - Solution information from the numerical solver (LMILAB)
+:::
+
 
 The field `opt_solution.cert` contains Analysis-and-Synthesis-specific certificates of feasibility. In Analysis, the designed IQCs certifying the performance specifications are stored in `opt_solution.cert.iqc_op`. 
 

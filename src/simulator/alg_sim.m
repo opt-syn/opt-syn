@@ -12,7 +12,7 @@ classdef alg_sim
     end
     
     methods 
-        function obj = alg_sim(sys, d, c, sampler)
+        function obj = alg_sim(sys, d, sampler)
             %ALG_SIM Construct an alg_sim object    
             %
             % Args:
@@ -34,11 +34,11 @@ classdef alg_sim
             obj.sys = sys;
             obj.d = d;
             
-            if nargin >=3
-                obj.c = c;
-            end
+            
+            obj.c = obj.sys.op{1}.c;
+            
 
-            if nargin >= 4                
+            if nargin >= 3               
                 obj.sampler = sampler;
             else
                 obj.sampler = struct('wp', @(param) [], 'param', @(param) [], ...

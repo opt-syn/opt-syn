@@ -6,8 +6,7 @@ classdef cert_synthesis
         K_sub; %subcontroller (before the internal model interconnection)
         K; %controller (after internal model interconnection)
         alg; %algorithm (controller and network)
-        model; % (genplant/genplant_poly) internal model used to certify regulation constraint
-        regcl; %certificate of closed-loop regulator equation satisfaction
+        model; % (genplant/genplant_poly) internal model used to certify regulation constraint        
 
         diss; % (diss_data) dissipation constraints
         iqc_op; %(cell of iqc) the IQCs for the individual operators

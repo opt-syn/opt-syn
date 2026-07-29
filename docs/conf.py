@@ -28,7 +28,7 @@ extensions = [
     'sphinx.ext.napoleon',  
     'sphinx.ext.mathjax',
     'sphinx_favicon',     
-    'sphinxcontrib.bibtex',
+    'sphinxcontrib.bibtex',    
     'myst_parser'
 ]
 
@@ -110,7 +110,6 @@ myst_enable_extensions = [
     "tasklist",
     "substitution"
 ]
-
 
 myst_substitutions = {
     "osyn" : '<span style="color:#5D93BF">opt</span>-syn'

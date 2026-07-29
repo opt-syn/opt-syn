@@ -306,7 +306,8 @@ classdef opt_analysis < opt_manager_interface
 
             %store the system
             sol.sys = obj.sys;
-            sol.cert.regcl = obj.lmi.reg.check_regulator();
+            %confirm regulator equation
+            sol.regcl = obj.lmi.reg.check_regulator();
 
             %store the IQCs and closed-loop certified systems
             sol.cert.iqc_op = iqc_rec;
