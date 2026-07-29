@@ -1,18 +1,22 @@
 classdef spec_passivity < spec_interface
-    %SPEC_PASSIVITY specification for a passivity specification
-
-    
-    %at all T when x=0:
+    % SPEC_PASSIVITY Passivity specification with input/output indices.
     %
-    %sum_{k=0}^T (zp_k)' (wp_k) >  sum_{k=0}^T ind_w |wp_k|^2 + ind_z |zp_k|^2
+    % Imposes a (possibly indexed) passivity supply rate on the performance
+    % channel: for all horizons :math:`T` with :math:`x = 0`,
     %
+    % .. math::
+    %
+    %    \sum_{k=0}^{T} z_{p,k}^\top w_{p,k}
+    %    \; \geq \;
+    %    \sum_{k=0}^{T} \big( \nu_w \norm{w_{p,k}}^2 + \nu_z \norm{z_{p,k}}^2 \big),
+    %
+    % where :math:`\nu_w = \texttt{ind_w}` is the input passivity index and
+    % :math:`\nu_z = \texttt{ind_z}` is the output passivity index. The plain
+    % passivity supply rate is recovered with both indices set to zero.
 
-
-    
-    
     properties        
-        ind_w = 0; %input passivity index
-        ind_z = 0; %output passivity index        
+        ind_w = 0; % Input passivity index :math:`\nu_w`.
+        ind_z = 0; % Output passivity index :math:`\nu_z`.
     end
 
     % type='passivity';
@@ -20,7 +24,19 @@ classdef spec_passivity < spec_interface
     
     methods
         function obj = spec_passivity(ind_w, ind_z, iwp, izp)
-            %SPEC_PASSIVITY Constructor
+            % SPEC_PASSIVITY Construct a passivity specification.
+            %
+            % :param ind_w: Input passivity index :math:`\nu_w`.
+            % :type ind_w: double
+            % :param ind_z: Output passivity index :math:`\nu_z`.
+            % :type ind_z: double
+            % :param iwp: Performance-input indices in the network.
+            % :type iwp: double (vector)
+            % :param izp: Performance-output indices in the network.
+            % :type izp: double (vector)
+            % :returns: A new passivity specification.
+            % :rtype: spec_passivity
+            % :raises: Error if ``iwp`` and ``izp`` have different lengths.
           
             obj@spec_interface(iwp, izp);
             obj.ind_w = ind_w;
@@ -32,14 +48,12 @@ classdef spec_passivity < spec_interface
         end
         
         function M = supply(obj, vars_spec)
-            %SUPPLY quadratic performance specification
-            %for passivity indices                       
+            % SUPPLY Quadratic supply-rate matrix for the passivity indices.
             %
-            %Args:
-            %   vars_spec: problem variables in specification
-            %
-            %Returns:
-            %   M: quadratic running cost matrix in the specification
+            % :param vars_spec: Specification variables.
+            % :type vars_spec: struct
+            % :returns: Quadratic running-cost matrix :math:`M`.
+            % :rtype: double
 
 
             M0 = -[-obj.ind_z, 1; 1, -obj.ind_w];
@@ -48,13 +62,17 @@ classdef spec_passivity < spec_interface
         end
 
        function [quad, objective] = supply_quad(obj, vars_spec)
-            %SUPPLY_QUAD decomposed quadratic performance specification
+            % SUPPLY_QUAD Decomposed quadratic supply rate.
             %
-            %Args:
-            %   vars_spec: problem variables in specification
+            % When this specification is the optimization target, a passivity
+            % margin ``ind_pass`` is introduced and maximized; otherwise the
+            % base-class decomposition is used.
             %
-            %Returns:
-            %   quad (quad_param): decomposed quadratic specification
+            % :param vars_spec: Specification variables (expects ``ind_pass``).
+            % :type vars_spec: struct
+            % :returns: ``[quad, objective]`` — the decomposed quadratic and the
+            %    objective contribution.
+            % :rtype: quad_param, double
 
            if obj.target
                nwp = length(obj.iwp);
@@ -85,7 +103,12 @@ classdef spec_passivity < spec_interface
        end
 
        function [obj] = set_p(obj, p)
-            %SET_P set a parameter when performing bisection
+            % SET_P Set the bisection parameter (the input passivity index).
+            %
+            % :param p: New value of the input passivity index :math:`\nu_w`.
+            % :type p: double
+            % :returns: The updated specification.
+            % :rtype: spec_passivity
 
 
             obj.ind_w = p;
@@ -93,16 +116,16 @@ classdef spec_passivity < spec_interface
        end
 
        function [vars, cons] = create_vars(obj, cons, name, config)
-            %CREATE_VARS form the variables for the problem    
+            % CREATE_VARS Create the passivity margin variable.
             %
-            %Args:                        
-            %   cons:  accumulated constraints            
-            %   name: name of the specification
-            %   config (opt_config): configuration options
-            %
-            %Returns:
-            %   vars:  problem variables in specification
-            %   cons:  accumulated constraints
+            % :param cons: Accumulated LMI constraints.
+            % :param name: Name suffix for the created variable.
+            % :type name: char
+            % :param config: Configuration options.
+            % :type config: opt_config
+            % :returns: ``[vars, cons]`` — struct with field ``ind_pass`` and the
+            %    (unchanged) constraint set.
+            % :rtype: struct, cell
 
             if nargin < 3
                 name = [];
@@ -118,4 +141,3 @@ classdef spec_passivity < spec_interface
         end
     end
 end
-

@@ -1,24 +1,33 @@
 classdef spec_p2p < spec_interface
-    %SPEC_P2P specification for a peak to peak gain
+    % SPEC_P2P Peak-to-peak gain specification.
     %
-    %In development
-
-    %sup_{T >= 0} norm(zp_k, 2)/norm(wp_k, 2) < gain
+    % Bounds the induced peak-to-peak norm (the :math:`*`-norm of a linear
+    % system) from the performance input to the performance output: the peak
+    % (over time) of the output is bounded by :math:`\gamma` times the peak
+    % of the input,
     %
+    % .. math::
     %
-    % This is the peak-to-peak induced norm (*-norm of a linear system)
-
-
+    %    \sup_{k \geq 0} \norm{z_{p,k}}_2 \; \leq \;
+    %    \gamma \, \sup_{k \geq 0} \norm{w_{p,k}}_2 .
 
     properties        
-        gain = 1; %peak to peak gain
-        weight = 0.5; %
+        gain = 1;     % Peak-to-peak gain :math:`\gamma`.
+        weight = 0.5; % Weighting between the peak and gain terms.
     end
 
     methods
         function obj = spec_p2p(GAIN, iwp, izp)
-            %SPEC_P2P Construct an instance of this class
-            %   Detailed explanation goes here
+            % SPEC_P2P Construct a peak-to-peak gain specification.
+            %
+            % :param GAIN: Peak-to-peak gain bound :math:`\gamma`.
+            % :type GAIN: double
+            % :param iwp: Performance-input indices in the network.
+            % :type iwp: double (vector)
+            % :param izp: Performance-output indices in the network.
+            % :type izp: double (vector)
+            % :returns: A new peak-to-peak specification.
+            % :rtype: spec_p2p
             % if nargin < 4
             %     rho = 1;
             % end            
@@ -28,13 +37,15 @@ classdef spec_p2p < spec_interface
         end
 
         function M = supply(obj, vars_spec)
-            %SUPPLY quadratic performance specification
+            % SUPPLY Quadratic supply-rate matrix of the specification.
             %
-            %Args:
-            %   vars_spec: problem variables in specification
+            % Returns :math:`-\texttt{gain} \cdot I` on the performance input
+            % channel.
             %
-            %Returns:
-            %   M: quadratic running cost matrix in the specification
+            % :param vars_spec: Specification variables.
+            % :type vars_spec: struct
+            % :returns: Quadratic running-cost matrix :math:`M`.
+            % :rtype: double
 
             M0 = -obj.gain;
 
@@ -42,13 +53,13 @@ classdef spec_p2p < spec_interface
         end
 
         function quad = quad_terminal(obj, vars_spec)
-            %QUAD_TERMINAL matrix for  the terminal p2p expression
+            % QUAD_TERMINAL tbd
             %
-            %Args:
-            %   vars_spec: problem variables in specification
-            %
-            %Returns:
-            %   quad (quad_param): decomposed terminal quadratic specification
+            % :param vars_spec: Specification variables
+            %    (expects ``mu_p2p``, ``gam_p2p``).
+            % :type vars_spec: struct
+            % :returns: Decomposed terminal quadratic.
+            % :rtype: quad_param
 
             %
             nwp = length(obj.iwp);
@@ -69,13 +80,18 @@ classdef spec_p2p < spec_interface
        end
 
        function [quad, objective] = supply_quad(obj, vars_spec)
-            %SUPPLY_QUAD decomposed quadratic performance specification
+            % SUPPLY_QUAD Decomposed quadratic supply rate.
             %
-            %Args:
-            %   vars_spec: problem variables in specification
+            % Builds the running quadratic on the performance input channel.
+            % When this specification is the optimization target, the peak
+            % gain ``gam_p2p`` is minimized.
             %
-            %Returns:
-            %   quad (quad_param): decomposed quadratic specification
+            % :param vars_spec: Specification variables
+            %    (expects ``mu_p2p``, ``gam_p2p``).
+            % :type vars_spec: struct
+            % :returns: ``[quad, objective]`` — the decomposed quadratic and the
+            %    objective contribution.
+            % :rtype: quad_param, double
 
            
                nwp = length(obj.iwp);
@@ -101,15 +117,20 @@ classdef spec_p2p < spec_interface
        end
 
         function [vars, cons] = create_vars(obj, cons, name, config)
-            %CREATE_VARS form the variables for the problem                        
-            %Args:                        
-            %   cons:  accumulated constraints            
-            %   name: name of the specification
-            %   config (opt_config): configuration options
+            % CREATE_VARS Create the peak-to-peak variables and constraints.
             %
-            %Returns:
-            %   vars:  problem variables in specification
-            %   cons:  accumulated constraints
+            % Introduces ``mu_p2p`` and (when targeted) ``gam_p2p``, with the
+            % ordering and non-negativity constraints of the peak-to-peak
+            % certificate.
+            %
+            % :param cons: Accumulated LMI constraints.
+            % :param name: Name suffix for the created variables.
+            % :type name: char
+            % :param config: Configuration options.
+            % :type config: opt_config
+            % :returns: ``[vars, cons]`` — struct with fields ``mu_p2p``,
+            %    ``gam_p2p`` and the updated constraint set.
+            % :rtype: struct, cell
 
             if nargin < 3
                 name = [];
@@ -139,4 +160,3 @@ classdef spec_p2p < spec_interface
         end
     end
 end
-
