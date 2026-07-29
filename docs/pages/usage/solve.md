@@ -19,11 +19,11 @@ Three solution modes are available:
 2. [Bisection](#bisection)
 3. [Alternation](#alternation)
 
-
+(#single-solution)=
 ### Single Solution
 
 
-The  {meth}`solve_single` routine performs Analysis or Synthesis at given  specifications. The output of {meth}`solve_single` is a {doc}`solution <../documentation/doc_solutions>` structure {class}`opt_solution`. The fields of the solution structure are explained further  below in the [Validation](#validation) subsection.
+The  {meth}`solve_single` routine performs Analysis or Synthesis at given  specifications. The output of {meth}`solve_single` is a {doc}`solution <../documentation/doc_solutions>` structure {class}`opt_solution`. The fields of the solution structure are explained further  below in [Validation](#validation).
 
 Analysis is called by 
 ```matlab
@@ -47,7 +47,7 @@ The order defines length of the filters in the {doc}`IQCs <../documentation/doc_
 ```matlab
 op1 = op_gen([arguments]);
 op2 = op_sml([arguments]);
-op3 = op_sml([arguments]);
+op3 = op_quad([arguments]);
 order = {1, [2, 0], [1, 1]};
 ```
 
@@ -56,7 +56,9 @@ The `specs` is a cell array of {doc}`specifications <problem_formulation/specs>`
 
 
 :::{note}
-Analysis is performed with respect to a common certificate among all performance specifications in `specs` {footcite}`scherer1997multiobjective`. This common certificate yields possible conservatism as compared to doing Analysis separately for each specification in `specs`. The common certificate is required if [Alternation](#alternation) between Analysis and Synthesis is performed.
+Analysis is performed with respect to a common certificate among all performance specifications in `specs` {footcite}`scherer1997multiobjective`. Requiring this common certificate may yield conservatism as compared to doing Analysis separately for each specification in `specs`. 
+
+The common certificate is required if [Alternation](#alternation) between Analysis and Synthesis is performed.
 :::
 
 Synthesis is invoked by 
@@ -64,7 +66,7 @@ Synthesis is invoked by
 sol_syn_single = man_syn.solve_single(iqc_init, specs);
 ```
 
-The `iqc_init` input is an $s$-length cell array of {doc}`IQCs <../documentation/doc_iqc_init>` to warm-start the Synthesis process. A default input of `iqc=[]` will compute valid warm-starts using each {doc}`operator class's <../documentation/operators/doc_operators>` 
+The `iqc_init` input is an $s$-length cell array of {doc}`IQCs <../documentation/doc_iqc>` to warm-start the Synthesis process. A default input of `iqc=[]` will compute valid warm-starts using each {doc}`operator class's <../documentation/operators/doc_operators>` 
 {meth}`create_iqc_identity` routine.
 
 
@@ -75,12 +77,15 @@ If `specs{j}.target=false` for all specifications $j$ then a feasibility problem
 
 :::{caution}
 Different specifications can have different rate $\rho$ in Synthesis if and only if 
-1. the order for each `op_gen`s is 0
-2. the order for each `op_sml`, `op_pcc`, `op_quad` is `[nonnegative, 0]`. 
+1. the order for each {class}`op_gen` is 0
+2. the order for each {class}`op_sml`, {class}`op_pcc`, {class}`op_quad` is `[nonnegative, 0]`. 
 
-Otherwise,  all specifications must have the same rate $\rho$ (`opt_config.gen.same_rho = true`). The {class}`opt_manager` classes will check these conditions, and will override `same_rho` to true if not already set. This issue is related to the presence of noncausal filters in IQC synthesis. 
+If these conditions fail, then all specifications must have the same rate $\rho$ (`opt_config.gen.same_rho = true`). 
+
+The {class}`opt_manager` classes will check these conditions, and will override `same_rho` to true if not already set. This issue is related to the presence of noncausal filters in IQC synthesis, using $\rho$-hard IQCs
 :::
 
+(#bisection)=
 ### Bisection
 
 The routine {meth}`bisect` performs bisection on a single specification. Parameters of bisection are set using the `bisect_opts` configuration, see `operator class's <../documentation/doc_config>` for more details. The index of the specification in the `spec` to minimize using bisection is set via `bisect_opts.spec_ind`, with a default of index of 1.
@@ -98,7 +103,7 @@ b_opts.spec_ind = 1;
 [sol_ana_bisect, v_ana] = man_ana.bisect(order, specs, b_opts);
 [sol_syn_bisect, v_syn] = man_syn.bisect(iqc_init, specs, b_opts);
 ```
-
+(#alternation)=
 ### Alternation
 
 The {meth}`alternate` routine switches between Synthesis and Analysis. It solves a Synthesis problem with fixed IQCs to find a controller, and then solves Analysis with the fixed controller to find IQCs. The Analysis and Synthesis problems may include inner bisection steps.
@@ -111,9 +116,9 @@ Niter = 3;
 
 The `v_history` output is a cell array with 2 rows and  Niter columns. Each entroy of the cell array stores the  lower and upper bounds from bisection. The top row are the Synthesis bounds, and the bottom row are the Analysis bounds.
 
+
 ##  Validation
 
-{#Validation}
 The {class}`opt_solution` structure contains information about the solution of analysis/synthesis. The solution is feasible if the following conditions are met
 | Name   |  Description  | Valid Condition |
 |----| ---- | ----- | 
@@ -122,6 +127,8 @@ The {class}`opt_solution` structure contains information about the solution of a
 | `gain` | Input passivity index and $H_\infty$ gain | Feasible if `gain(1)` $< 0$ and `gain(2)` $< 1$ |
 | `rho` | Convergence rate |  Linearly convergent if $\rho < 1$ |
 | `regcl` | Closed-loop regulator equation | Nonempty struct with fields (`S`, `R`, `Pi`, `Gam`, `Phi`, `Th`)| 
+
+
 
 
 
