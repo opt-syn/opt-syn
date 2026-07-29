@@ -22,7 +22,7 @@ Three solution modes are available:
 ### Single Solution
 
 
-The  {meth}`solve_single` routine performs Analysis or Synthesis at given  specifications. The output of {meth}`solve_single` is a {doc}`solution <../documentation/doc_solutions>` structure {class}`opt_solution`. The fields of the solution structure are explained further  below in the [Validation](#Validation) subsection.
+The  {meth}`solve_single` routine performs Analysis or Synthesis at given  specifications. The output of {meth}`solve_single` is a {doc}`solution <../documentation/doc_solutions>` structure {class}`opt_solution`. The fields of the solution structure are explained further  below in the [Validation](#validation).
 
 Analysis is called by 
 ```matlab

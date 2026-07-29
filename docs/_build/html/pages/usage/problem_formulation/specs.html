@@ -43,6 +43,8 @@
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'pages/usage/problem_formulation/specs';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -155,6 +157,12 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../index_usage.html">Usage</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="system/index_system.html">Build the System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="../simulation.html">Simulate</a></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="index_problem_formulation.html">Problem Setup</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="config.html">Configuration</a></li>
@@ -365,6 +373,7 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-convergence">Linear Convergence</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-performance">Quadratic Performance</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l2-gain">ℓ2 Gain</a></li>
@@ -386,53 +395,133 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="performance-specifications">
 <h1>Performance Specifications<a class="headerlink" href="#performance-specifications" title="Link to this heading">#</a></h1>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>Under Construction</p>
+<p>A performance specification is the property you ask <span style="color:#5D93BF">opt</span>-syn to certify about an
+algorithm. In Analysis it is the property that is verified for a given algorithm; in
+Synthesis it is the property the returned algorithm is required to satisfy. Every
+specification is a condition on the performance channel <span class="math notranslate nohighlight">\((w_p, z_p)\)</span> of the
+<a class="reference internal" href="../../documentation/plants/doc_genplant.html"><span class="doc">generalized plant</span></a>, so a specification is
+always paired with a performance channel.</p>
+<p>The properties themselves (linear convergence, input-to-state stability, <span class="math notranslate nohighlight">\(\ell_2\)</span>-gain)
+are defined precisely on the <a class="reference internal" href="../../documentation/doc_specs.html"><span class="doc">Performance Specifications</span></a>
+page.</p>
+<p>Most specifications accept a discount rate <span class="math notranslate nohighlight">\(\rho \in (0, 1]\)</span>. Choosing <span class="math notranslate nohighlight">\(\rho &lt; 1\)</span> requests
+the property at an exponential rate: the specification is then evaluated on the
+<span class="math notranslate nohighlight">\(\rho\)</span>-weighted signals, and every other specification on the same problem inherits the
+same weighting.</p>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<p>A specification is built, optionally flagged as the optimization <code class="docutils literal notranslate"><span class="pre">target</span></code>, and passed to
+an Analysis or Synthesis <a class="reference internal" href="../../documentation/doc_manager.html"><span class="doc">manager</span></a> together with the
+IQC <code class="docutils literal notranslate"><span class="pre">order</span></code>:</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">0.92</span><span class="p">;</span>
+
+<span class="c">% linear convergence at rate rho (no performance channel needed)</span>
+<span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_stability</span><span class="p">(</span><span class="n">rho</span><span class="p">);</span>
+
+<span class="c">% ...or an l2 gain on an existing performance channel (iwp, izp):</span>
+<span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_e2e</span><span class="p">(</span><span class="n">GAIN</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span>
+<span class="n">perf</span><span class="p">.</span><span class="n">target</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">             </span><span class="c">% minimize the gain during the solve</span>
+
+<span class="c">% solve once, or bisect for the best rate/gain</span>
+<span class="n">sol</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_ana</span><span class="p">.</span><span class="n">solve_single</span><span class="p">(</span><span class="n">order</span><span class="p">,</span><span class="w"> </span><span class="n">perf</span><span class="p">);</span>
+<span class="c">% [sol_best, v_range] = man_ana.bisect(order, perf, bisect_opts());</span>
+</pre></div>
 </div>
+<p>Set <code class="docutils literal notranslate"><span class="pre">target</span> <span class="pre">=</span> <span class="pre">true</span></code> on the quantity you want optimized (the gain, or the rate under
+bisection); leave it <code class="docutils literal notranslate"><span class="pre">false</span></code> to check a fixed bound. The performance-channel indices
+<code class="docutils literal notranslate"><span class="pre">iwp</span></code>, <code class="docutils literal notranslate"><span class="pre">izp</span></code> come from the generalized plant definition.</p>
+</section>
 <section id="linear-convergence">
 <h2>Linear Convergence<a class="headerlink" href="#linear-convergence" title="Link to this heading">#</a></h2>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>Under Construction</p>
+<p>Requests exponential stability (linear convergence) of the iterates at rate <span class="math notranslate nohighlight">\(\rho\)</span>. For every
+initial condition there is a fixed point <span class="math notranslate nohighlight">\(x^*(x_0)\)</span> with</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2
+  \leq \gamma_0\, \rho^{k} \norm{x_0 - x^*(x_0)}_2, &amp; &amp; \forall k \in \N.
+\end{align*}\end{split}\]</div>
+<p>This is the most common specification and needs no performance channel of its own.
+It is specified with</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_stability</span><span class="p">(</span><span class="n">rho</span><span class="p">);</span>
+</pre></div>
 </div>
 </section>
 <section id="quadratic-performance">
 <h2>Quadratic Performance<a class="headerlink" href="#quadratic-performance" title="Link to this heading">#</a></h2>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>Under Construction</p>
+<p>Some of the specifications are special cases of <strong>quadratic supply-rate</strong> conditions on
+<span class="math notranslate nohighlight">\((w_p, z_p)\)</span>, which imposes</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\sum_{k=0}^{T}
+  \mat{c}{z_{p,k} \\ w_{p,k}}^\top
+  \mat{cc}{Q &amp; S \\ S^\top &amp; R}
+  \mat{c}{z_{p,k} \\ w_{p,k}} \; \preceq \; 0
+\end{align*}\end{split}\]</div>
+<p>for a particular choice of the multiplier <span class="math notranslate nohighlight">\(\mat{cc}{Q &amp; S \\ S^\top &amp; R}\)</span>.
+It is specified with</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">M</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="n">Q</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="p">;</span><span class="w"> </span><span class="n">S</span><span class="o">&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="p">];</span>
+<span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_quad</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span>
+</pre></div>
 </div>
-<p>Text goes here</p>
-<p>Text goes here</p>
 <section id="l2-gain">
 <h3>ℓ2 Gain<a class="headerlink" href="#l2-gain" title="Link to this heading">#</a></h3>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>Under Construction</p>
+<p><em>Energy-to-energy gain.</em> Bounds the induced <span class="math notranslate nohighlight">\(\ell_2\)</span>-gain <span class="math notranslate nohighlight">\(\gamma\)</span> from the performance
+input to the performance output,</p>
+<div class="math notranslate nohighlight">
+\[\begin{align*}
+\limsup_{T \to \infty}
+  \frac{\sum_{k=0}^{T} \norm{z_{p,k}}_2}{\sum_{k=0}^{T} \norm{w_{p,k}}_2}
+  \; &lt; \; \gamma .
+\end{align*}\]</div>
+<p>For a linear system this is the <span class="math notranslate nohighlight">\(H_\infty\)</span> gain. Use it to quantify how strongly a
+disturbance at <span class="math notranslate nohighlight">\(w_p\)</span> (for example, noise in the gradient evaluations) is amplified at a
+tracked output <span class="math notranslate nohighlight">\(z_p\)</span>. Flag it as the <code class="docutils literal notranslate"><span class="pre">target</span></code> to minimize the gain.</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_e2e</span><span class="p">(</span><span class="n">GAIN</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span><span class="w">   </span><span class="c">% GAIN is the initial bound</span>
+<span class="n">perf</span><span class="p">.</span><span class="n">target</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</pre></div>
 </div>
-<p>Energy to Energy Gain</p>
 </section>
 <section id="l2-stability">
 <h3>ℓ2 Stability<a class="headerlink" href="#l2-stability" title="Link to this heading">#</a></h3>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>Under Construction</p>
+<p><em>Stability and ISS.</em> Certifies that the performance input has a bounded effect on the
+state, which constitutes an input-to-state stability condition. There is no performance
+output; only a bounded penalty on <span class="math notranslate nohighlight">\(w_p\)</span> is imposed, giving</p>
+<div class="math notranslate nohighlight">
+\[\begin{align*}
+\norm{x_k - x^*(x_0)}_2^2 \leq \gamma_x\, \rho^k \norm{x_0 - x^*(x_0)}
+  + \gamma_w \max_{t \in 0, \ldots, k} \norm{\delta w_t}_2^2, &amp; &amp; \forall k \in \N.
+\end{align*}\]</div>
+<p>With <span class="math notranslate nohighlight">\(\rho \in (0, 1]\)</span> this establishes ISS, and it recovers linear convergence when the
+disturbance vanishes (<span class="math notranslate nohighlight">\(\delta w_k = 0\)</span>). Reach for this when you need the iterates to stay
+bounded and convergent under noise but do not need a specific gain; for a gain bound, use
+<span class="math notranslate nohighlight">\(\ell_2\)</span> Gain instead.</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_l2</span><span class="p">(</span><span class="n">iwp</span><span class="p">);</span><span class="w">        </span><span class="c">% no performance output; optional bound: spec_l2(iwp, MU)</span>
+</pre></div>
 </div>
-<p>Stability and ISS condition</p>
 </section>
 <section id="passivity">
 <h3>Passivity<a class="headerlink" href="#passivity" title="Link to this heading">#</a></h3>
-<div class="admonition caution">
-<p class="admonition-title">Caution</p>
-<p>Under Construction</p>
+<p>Imposes a passivity relation between the performance input and output, optionally with an
+input passivity index <span class="math notranslate nohighlight">\(\nu_w\)</span> and output passivity index <span class="math notranslate nohighlight">\(\nu_z\)</span>: for all horizons with
+<span class="math notranslate nohighlight">\(x = 0\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\begin{align*}
+\sum_{k=0}^{T} z_{p,k}^\top w_{p,k}
+  \; \geq \;
+  \sum_{k=0}^{T} \big( \nu_w \norm{w_{p,k}}_2^2 + \nu_z \norm{z_{p,k}}_2^2 \big).
+\end{align*}\]</div>
+<p>Setting both indices to zero requests plain passivity; positive indices request the
+correspondingly stronger input- or output-strict passivity. The performance input and
+output channels must have the same length.</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_passivity</span><span class="p">(</span><span class="n">ind_w</span><span class="p">,</span><span class="w"> </span><span class="n">ind_z</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span><span class="w">   </span><span class="c">% ind_w = nu_w, ind_z = nu_z</span>
+</pre></div>
 </div>
-<p>Passivity</p>
 </section>
 </section>
 <section id="more-specifications">
 <h2>More Specifications<a class="headerlink" href="#more-specifications" title="Link to this heading">#</a></h2>
-<p>We plan on implementing more performance criteria for analysis and synthesis.</p>
+<p>We plan to implement further performance criteria for both Analysis and Synthesis,
+including peak-to-peak (generalized <span class="math notranslate nohighlight">\(H_\infty\)</span>) and <span class="math notranslate nohighlight">\(H_2\)</span>-type covariance amplification.</p>
 </section>
 </section>
 
@@ -483,6 +572,7 @@
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-convergence">Linear Convergence</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-performance">Quadratic Performance</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l2-gain">ℓ2 Gain</a></li>

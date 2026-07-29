@@ -15,21 +15,22 @@ man_syn = opt_synthesis(sys, config);
 ## Solve
 
 Three solution modes are available: 
-1. Single Solution
-2. Bisection
-3. Alternation
+1. [Single Solution](#single-solution)
+2. [Bisection](#bisection)
+3. [Alternation](#alternation)
+
 
 ### Single Solution
 
 
-The  {meth}`solve_single` routine performs Analysis or Synthesis at given  specifications. The output of {meth}`solve_single` is a {doc}`solution <../documentation/doc_solutions>` structure {class}`opt_solution`. The fields of the solution structure are explained further  below in the [Validation](#Validation) subsection.
+The  {meth}`solve_single` routine performs Analysis or Synthesis at given  specifications. The output of {meth}`solve_single` is a {doc}`solution <../documentation/doc_solutions>` structure {class}`opt_solution`. The fields of the solution structure are explained further  below in the [Validation](#validation) subsection.
 
 Analysis is called by 
 ```matlab
 sol_ana_single = man_ana.solve_single(order, specs);
 ```
 
-The `order` input is an $s$-length cell array. Each entry  of the `order` cell array is a nonnegative integer or pair of integers:
+The `order` input is an $s$-length cell array. Each entry  of the `order` cell array is one or two  nonnegative integers:
 ```{list-table}
 :header-rows: 1
 * - Order Length
@@ -40,23 +41,45 @@ The `order` input is an $s$-length cell array. Each entry  of the `order` cell a
   - {class}`op_sml`, {class}`op_pcc`,  {class}`op_quad`
 ```
 
-The order defines length of the filters in the {doc}`IQCs <../documentation/doc_iqc>`. A higher order requries more computation, but can lead to improved bounds.
+The order defines length of the filters in the {doc}`IQCs <../documentation/doc_iqc>`. A higher order requries more computation, but can lead to improved bounds. An example order declaration is
 
-The `specs` is a cell array of {doc}`specifications <problem_formulation/specs>`.
 
+```matlab
+op1 = op_gen([arguments]);
+op2 = op_sml([arguments]);
+op3 = op_sml([arguments]);
+order = {1, [2, 0], [1, 1]};
+```
+
+
+The `specs` is a cell array of {doc}`specifications <problem_formulation/specs>`. 
+
+
+:::{note}
+Analysis is performed with respect to a common certificate among all performance specifications in `specs` {footcite}`scherer1997multiobjective`. This common certificate yields possible conservatism as compared to doing Analysis separately for each specification in `specs`. The common certificate is required if [Alternation](#alternation) between Analysis and Synthesis is performed.
+:::
 
 Synthesis is invoked by 
 ```matlab
-sol_syn_single = man_syn.solve_single(iqc, specs);
+sol_syn_single = man_syn.solve_single(iqc_init, specs);
 ```
 
-The `iqc` input is an $s$-length cell array of {doc}`IQCs <../documentation/doc_iqc>`. A default input of `iqc=[]` will perform Synthesis with a set of valid IQCs for the operators, computed by each {doc}`operator class's <../documentation/operators/doc_operators>` 
+The `iqc_init` input is an $s$-length cell array of {doc}`IQCs <../documentation/doc_iqc_init>` to warm-start the Synthesis process. A default input of `iqc=[]` will compute valid warm-starts using each {doc}`operator class's <../documentation/operators/doc_operators>` 
 {meth}`create_iqc_identity` routine.
 
 
 The objective in Analysis or Synthesis is set using the `target` field in the  {doc}`operator class's <../documentation/doc_specs>`. 
 If `specs{j}.target = true`, then the specification in $i$ is minimized. At most one specification $j$ can have `specs{j}.target = true`.
 If `specs{j}.target=false` for all specifications $j$ then a feasibility problem is solved. 
+
+
+:::{caution}
+Different specifications can have different rate $\rho$ in Synthesis if and only if 
+1. the order for each `op_gen`s is 0
+2. the order for each `op_sml`, `op_pcc`, `op_quad` is `[nonnegative, 0]`. 
+
+Otherwise,  all specifications must have the same rate $\rho$ (`opt_config.gen.same_rho = true`). The {class}`opt_manager` classes will check these conditions, and will override `same_rho` to true if not already set. This issue is related to the presence of noncausal filters in IQC synthesis. 
+:::
 
 ### Bisection
 
@@ -73,7 +96,7 @@ b_opts = bisect_opts;
 b_opts.spec_ind = 1;
 
 [sol_ana_bisect, v_ana] = man_ana.bisect(order, specs, b_opts);
-[sol_syn_bisect, v_syn] = man_syn.bisect(iqc, specs, b_opts);
+[sol_syn_bisect, v_syn] = man_syn.bisect(iqc_init, specs, b_opts);
 ```
 
 ### Alternation
@@ -83,7 +106,7 @@ The {meth}`alternate` routine switches between Synthesis and Analysis. It solves
 An alternation routine with 3 Synthesis/Analysis steps is performed by 
 ```matlab
 Niter = 3; 
-[sol_syn_alternate, v_history] = man_syn.alternate(Niter, iqc, order, specs, b_opts);
+[sol_syn_alternate, v_history] = man_syn.alternate(Niter, iqc_init, order, specs, b_opts);
 ```
 
 The `v_history` output is a cell array with 2 rows and  Niter columns. Each entroy of the cell array stores the  lower and upper bounds from bisection. The top row are the Synthesis bounds, and the bottom row are the Analysis bounds.
