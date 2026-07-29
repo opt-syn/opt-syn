@@ -1,0 +1,1097 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
+    <title>Switched &#8212; opt-syn</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=720ed60b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=e1a75a79"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/documentation/system/doc_switched';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Periodic Systems" href="doc_periodic.html" />
+    <link rel="prev" title="Linear Time Invariant Systems" href="doc_lti.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/opt_syn_logo_light.svg" class="logo__image only-light" alt="opt-syn - Home"/>
+    <img src="../../../_static/opt_syn_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="opt-syn - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../get_started.html">Get Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../how_it_works/index_how_it_works.html">How it Works</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/opt_algs.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/alg_properties.html">Properties of Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/convergence_conditions.html">Convergence Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/op_uncertainty_iqc.html">IQC Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/network_synthesis.html">Synthesis and Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../usage/problem_formulation/system/index_system.html">System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/problem_formulation/config.html">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/problem_formulation/specs.html">Performance Specifications</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/solve.html">Solve and Validate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/simulation.html">Simulate</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index_documentation.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_solutions.html">Solution</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../operators/doc_set_valued.html">Set-Valued Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../operators/doc_sml.html">Subdifferentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../operators/doc_quadratic.html">Gradients of Quadratics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../plants/doc_genplant.html">Generalized Plants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../plants/doc_templates.html">Plant Templates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="doc_system.html">Systems</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Switched</a></li>
+<li class="toctree-l3"><a class="reference internal" href="doc_periodic.html">Periodic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="doc_periodic_orbit.html">Periodic-Orbit</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_iqc.html">Integral Quadratic Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_specs.html">Performance Specifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_config.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog/0.1.0.html">What’s new in 0.1.0</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/jarmill/opt-syn" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/pages/documentation/system/doc_switched.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Switched</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regulator">Regulator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lmi-analysis">LMI Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lmi-synthesis">LMI Synthesis</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="switched">
+<h1>Switched<a class="headerlink" href="#switched" title="Link to this heading">#</a></h1>
+<p>A switched linear system with <span class="math notranslate nohighlight">\(N_s\)</span> modes is described by a collection of <span class="math notranslate nohighlight">\(N_s\)</span> LTI systems (modes), and a directed, unweighted adjacency graph <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> with <span class="math notranslate nohighlight">\(N_s\)</span> vertices. Each subsystem <span class="math notranslate nohighlight">\(j\)</span> of the switched system can be represented as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_j &amp; \Bcl_j \hl \Ccl_j &amp; \Dcl_j } \mat{c}{x_k \\ w_k}.\end{split}\]</div>
+<p>The function <span class="math notranslate nohighlight">\(\text{mode}: \N \rightarrow 1, \ldots, N_s\)</span> chooses the active subsystem at time <span class="math notranslate nohighlight">\(k\)</span>. A trajectory <span class="math notranslate nohighlight">\((x, w, z, \text{mode})_{k \in \N}\)</span> of a switched system  satisfies the relations</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{split}\begin{align*}
+&amp; \mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_{\textrm{mode}(k)} &amp; \Bcl_{\textrm{mode}(k)} \hl \Ccl_{\textrm{mode}(k)} &amp; \Dcl_{\textrm{mode}(k)} } \mat{c}{x_k \\ w_k} &amp; &amp; \forall k \in \N.
+&amp; (\textrm{mode}(k), \textrm{mode}(k+1)) \in \text{Edges}(\Gs)  &amp; &amp; \forall k \in \N.
+\begin{align*}\end{split}\\
+## System\\\begin{split}The algorithmic interconnection is 
+```{math}
+\begin{align*}
+w_k &amp; \in F_k(z_k), \,  \\
+ \mat{c}{x^N_{k+1} \hl z_k \\ y_k} &amp;= \mat{c|cc}{A_{\textrm{mode}(k)} &amp; B_{\textrm{mode}(k), \,  z} &amp; B_{\textrm{mode}(k), \,  u} \hl 
+C_{\textrm{mode}(k), \,  z} &amp; D_{\textrm{mode}(k), \,  zd} &amp; D_{\textrm{mode}(k), \,  zu} \\ C_{\textrm{mode}(k), \,  y} &amp; D_{\textrm{mode}(k), \,  yd} &amp; D_{\textrm{mode}(k), \,  yu}} \mat{c}{x_k^N \hl w_k \\ u_k}, \\
+ \mat{c}{\xi_{k+1} \\ y_k} &amp;=  \mat{c|c}{A_{K, \textrm{mode}(k)} &amp; B_{K, \textrm{mode}(k)} \hl C_{K, \textrm{mode}(k)} &amp; D_{K, \textrm{mode}(k)} } \mat{c}{\xi_k \\ y_k}
+\end{align*}\end{split}\end{aligned}\end{align} \]</div>
+ <!-- & -->
+<!-- \mat{c}{\xi_{k+1} \\ u_k} &= \mat{c|c}{\Ac_k & \Bc_k \hl \Cc & \Dc_k } \mat{c}{\xi_k \\ y_k} -->
+<!-- 
+C_{\textrm{mode}(k), \,  y} & D_{\textrm{mode}(k), \,  yd} & D_{\textrm{mode}(k), \,  yu}} \mat{c}{x_k^N \hl z_k \\ u_k}, -->
+<dl class="mat class">
+<dt class="sig sig-object mat" id="system.switched.opt_system_switched">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">system.switched.</span></span><span class="sig-name descname"><span class="pre">opt_system_switched</span></span><a class="headerlink" href="#system.switched.opt_system_switched" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="doc_system.html#system.generic.opt_system_interface" title="system.generic.opt_system_interface"><code class="xref mat mat-class docutils literal notranslate"><span class="pre">system.generic.opt_system_interface</span></code></a></p>
+<p>OPT_SYSTEM_SWITCHED interconnection of network and operators
+polytopic setting: a cell A = sum theta_i A_i for parameters theta_i</p>
+<p>useful for switched systems, periodic systems, and LPV systems</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.opt_system_switched.opt_system_switched">
+<span class="sig-name descname"><span class="pre">opt_system_switched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">op</span></em>, <em class="sig-param"><span class="pre">P</span></em>, <em class="sig-param"><span class="pre">K</span></em>, <em class="sig-param"><span class="pre">adj</span></em>, <em class="sig-param"><span class="pre">bind</span></em>, <em class="sig-param"><span class="pre">tracking</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.opt_system_switched.opt_system_switched" title="Link to this definition">#</a></dt>
+<dd><p>OPT_SYSTEM constructor</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.switched.opt_system_switched.adj">
+<span class="sig-name descname"><span class="pre">adj</span></span><a class="headerlink" href="#system.switched.opt_system_switched.adj" title="Link to this definition">#</a></dt>
+<dd><p>switching graph  (adjacency matrix)</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.opt_system_switched.build_plant">
+<span class="sig-name descname"><span class="pre">build_plant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">iqc_data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.opt_system_switched.build_plant" title="Link to this definition">#</a></dt>
+<dd><p>BUILD_PLANT: form the plant to be used for analysis or synthesis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iqc_data</strong> – from manager.iqc_op_all, information about the
+operator iqc descriptions</p></li>
+<li><p><strong>rho</strong> – exponential weighting</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>alg_psi</strong> – plant with filters (psi)</p></li>
+<li><p><strong>iqc_op</strong> – iqcs for the robust uncertainties</p></li>
+<li><p><strong>alg_loop</strong> – plant without filters, but after loop
+transformation (should be stable)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.opt_system_switched.discount_schedule">
+<span class="sig-name descname"><span class="pre">discount_schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">ordermax</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.opt_system_switched.discount_schedule" title="Link to this definition">#</a></dt>
+<dd><p>DISCOUNT_SCHEDULE exponential weights encountered when
+applying the FIR filters
+:param ordermax: maximum order of the IQCs</p>
+<dl class="field-list">
+<dt class="field-odd">Return<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pow</strong> – Exponent sequence of discounts</p>
+<dl class="simple">
+<dt>Example:</dt><dd><p>[0; 1; 2] -&gt; rho.^[0; 1; 2] for uniform exponential stability
+[0; 0; 1] -&gt; rho.^[0; 0; 1] for shuffled switched stability</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.opt_system_switched.get_K">
+<span class="sig-name descname"><span class="pre">get_K</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.opt_system_switched.get_K" title="Link to this definition">#</a></dt>
+<dd><p>TODO: override this with parameters</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.opt_system_switched.get_P">
+<span class="sig-name descname"><span class="pre">get_P</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.opt_system_switched.get_P" title="Link to this definition">#</a></dt>
+<dd><p>GET_P get the plant</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.opt_system_switched.get_arcs">
+<span class="sig-name descname"><span class="pre">get_arcs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.opt_system_switched.get_arcs" title="Link to this definition">#</a></dt>
+<dd><p>GET_ARCS get transitions in the adjacency matrix</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.opt_system_switched.get_discount">
+<span class="sig-name descname"><span class="pre">get_discount</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.opt_system_switched.get_discount" title="Link to this definition">#</a></dt>
+<dd><p>which subsystems are exponentially discounted?</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.opt_system_switched.get_type">
+<span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.opt_system_switched.get_type" title="Link to this definition">#</a></dt>
+<dd><p>get the type of the switched system</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.opt_system_switched.nxi">
+<span class="sig-name descname"><span class="pre">nxi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.opt_system_switched.nxi" title="Link to this definition">#</a></dt>
+<dd><p>nxi: number of states in controller</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.opt_system_switched.nxn">
+<span class="sig-name descname"><span class="pre">nxn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.opt_system_switched.nxn" title="Link to this definition">#</a></dt>
+<dd><p>nxn: number of states in network</p>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<section id="regulator">
+<h2>Regulator<a class="headerlink" href="#regulator" title="Link to this heading">#</a></h2>
+<p>The subsystems for an open switched system with disturbance <span class="math notranslate nohighlight">\(d\)</span> and regulated error <span class="math notranslate nohighlight">\(e\)</span> may be described as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+d_{k+1} &amp;= S_j d_(k), \,  \\
+\mat{c}{x_{k+1} \hl e_k \\ y_k} &amp;= \mat{c|cc}{A_j &amp; B_{j, d} &amp; B_{j, u} \hl 
+C_{j, e} &amp; D_{j, ed} &amp; D_{j, eu} \\
+C_{j, y} &amp; D_{j, yd} &amp; D_{j, yu}} \mat{c}{x_k \hl d_k \\ u_k}.
+\end{align}\end{split}\]</div>
+<p>The one-step regulator equations for this system are to find <span class="math notranslate nohighlight">\((\Pi_j, \Gamma_j, \Phi_j)_{j=1}^{N_s}\)</span> satisfying</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+\mat{c}{\Pi_{j} S_i \hl 0 \\ \Phi_i} &amp;= \mat{c|cc}{A_i &amp; B_{i, d} &amp; B_{i, u} \hl
+C_{i, e} &amp; D_{i, ed} &amp; D_{i, eu} \\
+C_{i, y} &amp; D_{i, yd} &amp; D_{i, yu}} \mat{c}{\Pi_i \hl I \\ \Gamma_i}.
+\end{align}\end{split}\]</div>
+<p>over all arcs <span class="math notranslate nohighlight">\((i, j)\)</span> in the graph <span class="math notranslate nohighlight">\(\mathcal{G}\)</span>.</p>
+<p>Certification of robust stability and feasibility of these regulator equations are sufficient but not necessary to prove convergence.
+If these regulator equations fail, then there may exist a well-posed and convergent optimization algorithm for this network, but <span style="color:#5D93BF">opt</span>-syn will not find it.</p>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="system.switched.regulator_switched">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">system.switched.</span></span><span class="sig-name descname"><span class="pre">regulator_switched</span></span><a class="headerlink" href="#system.switched.regulator_switched" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="doc_system.html#system.generic.regulator_interface" title="system.generic.regulator_interface"><code class="xref mat mat-class docutils literal notranslate"><span class="pre">system.generic.regulator_interface</span></code></a></p>
+<p>REGULATOR_SWITCHED Regulator for switched systems</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.regulator_switched.regulator_switched">
+<span class="sig-name descname"><span class="pre">regulator_switched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.regulator_switched.regulator_switched" title="Link to this definition">#</a></dt>
+<dd><p>REGULATOR_SWITCHED build the regulator</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.regulator_switched.Nss">
+<span class="sig-name descname"><span class="pre">Nss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.regulator_switched.Nss" title="Link to this definition">#</a></dt>
+<dd><p>NSS: number of subsystems</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.regulator_switched.check_regulator">
+<span class="sig-name descname"><span class="pre">check_regulator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.regulator_switched.check_regulator" title="Link to this definition">#</a></dt>
+<dd><p>CHECK_REGULATOR is the regulator equation satisfied?</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>reg_cl</strong> (<em>reg_cl_out</em>) – closed-loop regulator structure if succesful, empty if infeasible.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.regulator_switched.connect_model">
+<span class="sig-name descname"><span class="pre">connect_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">plant</span></em>, <em class="sig-param"><span class="pre">ind</span></em>, <em class="sig-param"><span class="pre">rho</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.regulator_switched.connect_model" title="Link to this definition">#</a></dt>
+<dd><p>connect the model (nominal regulator equation)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plant</strong> – original system</p></li>
+<li><p><strong>ind</strong> – index to examine</p></li>
+<li><p><strong>rho</strong> – exponential weighting</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>plant_model</strong> – plant and model together</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.regulator_switched.create_vars">
+<span class="sig-name descname"><span class="pre">create_vars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.regulator_switched.create_vars" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS: create variables that parameterize the nullspace
+:param param_null: should the nullspace be searched (as
+:type param_null: bool
+:param variables):</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_reg</strong> – structure with fields (Pi, Gam, Phi)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.regulator_switched.form_internal_model">
+<span class="sig-name descname"><span class="pre">form_internal_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.regulator_switched.form_internal_model" title="Link to this definition">#</a></dt>
+<dd><p>FORM_INTERNAL_MODEL create the internal model by solving the regulator
+equation. Inputs are the system (P, bind, tracking, op)
+op is important for which oracles are equaltiy constraints and
+which are inequality constraints</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If regulator equation is unsolvable, then no optimization
+algorithm can be found.</p>
+</div>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.regulator_switched.get_model">
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">ind</span></em>, <em class="sig-param"><span class="pre">vars_reg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.regulator_switched.get_model" title="Link to this definition">#</a></dt>
+<dd><p>fetch the internal model (nominal) at mode ‘ind’
+with edits, allow for selection of model within feasible set
+:param vars_reg: variables of the problem        (regulator)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> – the full-order internal model</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="lmi-analysis">
+<h2>LMI Analysis<a class="headerlink" href="#lmi-analysis" title="Link to this heading">#</a></h2>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="system.switched.lmi_analysis_switched">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">system.switched.</span></span><span class="sig-name descname"><span class="pre">lmi_analysis_switched</span></span><a class="headerlink" href="#system.switched.lmi_analysis_switched" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="doc_system.html#system.generic.lmi_analysis_interface" title="system.generic.lmi_analysis_interface"><code class="xref mat mat-class docutils literal notranslate"><span class="pre">system.generic.lmi_analysis_interface</span></code></a></p>
+<p>LMI_ANALYSIS_SWITCHED analysis LMIs for algorithmic interconnections
+involving switched linear networks and controllers</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_analysis_switched.lmi_analysis_switched">
+<span class="sig-name descname"><span class="pre">lmi_analysis_switched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys</span></em>, <em class="sig-param"><span class="pre">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_analysis_switched.lmi_analysis_switched" title="Link to this definition">#</a></dt>
+<dd><p>LMI_DISPATCH_LTI Construct an instance of this class
+Detailed explanation goes here</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_analysis_switched.Nss">
+<span class="sig-name descname"><span class="pre">Nss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_analysis_switched.Nss" title="Link to this definition">#</a></dt>
+<dd><p>NSS: Number of subsystems</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_analysis_switched.cons_dynamic">
+<span class="sig-name descname"><span class="pre">cons_dynamic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_analysis_switched.cons_dynamic" title="Link to this definition">#</a></dt>
+<dd><p>CONS form the dissipation and sign constraints</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vars</strong> – variables of the problem</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>diss</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">diss_data</span></code></span>) – structure describing the dissipation constraint            %</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>objective</strong> – term to be minimized</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_analysis_switched.create_vars_spec">
+<span class="sig-name descname"><span class="pre">create_vars_spec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">specs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_analysis_switched.create_vars_spec" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS_SPEC declare variables for the specifications</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>alg_psi</strong> – the filtered algorithmic interconnection</p></li>
+<li><p><strong>name</strong> – a name for the variable</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>vars_spec</strong> – variables of the problem in the specifications</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_analysis_switched.create_vars_storage">
+<span class="sig-name descname"><span class="pre">create_vars_storage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_analysis_switched.create_vars_storage" title="Link to this definition">#</a></dt>
+<dd><p>create_vars_storage create variables for the dissipation
+constraints. A cell of G(s) functions, one for each subsystem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>alg_psi</strong> – the filtered algorithmic interconnection</p></li>
+<li><p><strong>name</strong> – a name for the variable</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>vars_diss</strong> – variables of the problem in the dissipation constraints</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_analysis_switched.e2e_target">
+<span class="sig-name descname"><span class="pre">e2e_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_analysis_switched.e2e_target" title="Link to this definition">#</a></dt>
+<dd><p>E2E_TARGET: use a Schur complement to minimize the energy to
+energy gain of the transfer function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vars</strong> – variables of the problem</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>diss</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">diss_data</span></code></span>) – structure describing the dissipation constraint</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>objective</strong> – term to be minimized</p></li>
+<li><p><strong>con_M</strong> – PSD blocks for the dynamics constraint</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_analysis_switched.quad">
+<span class="sig-name descname"><span class="pre">quad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_analysis_switched.quad" title="Link to this definition">#</a></dt>
+<dd><p>QUAD: certificate of infinite-horizon quadratic performance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vars</strong> – variables of the problem</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>diss</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">diss_data</span></code></span>) – structure describing the dissipation constraint</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>objective</strong> – term to be minimized</p></li>
+<li><p><strong>con_M</strong> – PSD blocks for the dynamics constraint</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="lmi-synthesis">
+<h2>LMI Synthesis<a class="headerlink" href="#lmi-synthesis" title="Link to this heading">#</a></h2>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">system.switched.</span></span><span class="sig-name descname"><span class="pre">lmi_synthesis_switched</span></span><a class="headerlink" href="#system.switched.lmi_synthesis_switched" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="doc_system.html#system.generic.lmi_synthesis_interface" title="system.generic.lmi_synthesis_interface"><code class="xref mat mat-class docutils literal notranslate"><span class="pre">system.generic.lmi_synthesis_interface</span></code></a></p>
+<p>LMI_SYNTHESIS_SWITCHED synthesis LMIs for algorithmic interconnections
+involving switched linear networks and controllers</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched.lmi_synthesis_switched">
+<span class="sig-name descname"><span class="pre">lmi_synthesis_switched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys</span></em>, <em class="sig-param"><span class="pre">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_synthesis_switched.lmi_synthesis_switched" title="Link to this definition">#</a></dt>
+<dd><p>LMI_SYNTHESIS_SWITCHED Constructor</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched.Nss">
+<span class="sig-name descname"><span class="pre">Nss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_synthesis_switched.Nss" title="Link to this definition">#</a></dt>
+<dd><p>NSS: Number of subsystems</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched.common">
+<span class="sig-name descname"><span class="pre">common</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_synthesis_switched.common" title="Link to this definition">#</a></dt>
+<dd><p>is a common storage function used?</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched.con_spread">
+<span class="sig-name descname"><span class="pre">con_spread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">vars</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_synthesis_switched.con_spread" title="Link to this definition">#</a></dt>
+<dd><p>CON_SPREAD increase numerical conditioning by separating the
+primal and dual blocks. Invoke this over multiple subsystems</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>GX</strong> – primal storage matrix</p></li>
+<li><p><strong>GY</strong> – dualstorage matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>cons</strong> – accumulated constraints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched.cons_dynamic">
+<span class="sig-name descname"><span class="pre">cons_dynamic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_synthesis_switched.cons_dynamic" title="Link to this definition">#</a></dt>
+<dd><p>CONS form the dissipation and sign constraints</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vars</strong> – variables of the problem</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>diss</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">diss_data</span></code></span>) – structure describing the dissipation
+constraint</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>objective</strong> – term to be minimized</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched.create_vars_controller">
+<span class="sig-name descname"><span class="pre">create_vars_controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_synthesis_switched.create_vars_controller" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS_CONTROLLER create the nonlinearly-transformed
+controller matrices
+:param cons: accumulated constraints
+:param alg_psi: the filtered algorithmic interconnection
+:param name: a name for the variable
+:param D_mask: sparsity pattern for D of the controller</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vars_K</strong> – controller variables [Ak, Bk, Ck, Dk], or some subset if elimination is used.</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched.create_vars_storage">
+<span class="sig-name descname"><span class="pre">create_vars_storage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_synthesis_switched.create_vars_storage" title="Link to this definition">#</a></dt>
+<dd><p>create_vars_storage create variables for the dissipation
+constraints. A cell of G(s) functions, one for each subsystem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>alg_psi</strong> – the filtered algorithmic interconnection</p></li>
+<li><p><strong>name</strong> – a name for the variable</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>vars_diss</strong> – variables of the problem in the dissipation constraints</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched.get_D_mask">
+<span class="sig-name descname"><span class="pre">get_D_mask</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_synthesis_switched.get_D_mask" title="Link to this definition">#</a></dt>
+<dd><p>GET_D_MASK get the direct feedthrough terms</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>D_mask</strong> – sparsity pattern for D of the controller</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched.get_vars_involved">
+<span class="sig-name descname"><span class="pre">get_vars_involved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">ind</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_synthesis_switched.get_vars_involved" title="Link to this definition">#</a></dt>
+<dd><p>GET_VARS_INVOLVED get variables involved in the current mode
+:param vars: variables of the problem
+:param ind: index of subsystem/mode</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_inv</strong> – variables (diss, reg) at subsystem ind</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched.quad">
+<span class="sig-name descname"><span class="pre">quad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_synthesis_switched.quad" title="Link to this definition">#</a></dt>
+<dd><p>QUAD: certificate of infinite-horizon quadratic performance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>specs</strong> – performance specifications</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>vars_spec</strong> – variables for performance specification
+cons:   accumulated constraints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched.recover_subcontroller">
+<span class="sig-name descname"><span class="pre">recover_subcontroller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">P_trans</span></em>, <em class="sig-param"><span class="pre">sol</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_synthesis_switched.recover_subcontroller" title="Link to this definition">#</a></dt>
+<dd><p>RECOVER_SUBCONTROLLER recover the subcontroller of the current
+mode/control</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alg_psi</strong> – the filtered algorithmic interconnection</p></li>
+<li><p><strong>P_trans</strong> – the transformed generalized plant before IQC</p></li>
+<li><p><strong>sol</strong> – solution structure</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>sol</strong> – solution structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched.recover_subcontroller_warp">
+<span class="sig-name descname"><span class="pre">recover_subcontroller_warp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">P_trans</span></em>, <em class="sig-param"><span class="pre">vars_rec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_synthesis_switched.recover_subcontroller_warp" title="Link to this definition">#</a></dt>
+<dd><p>RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
+controller
+:param alg_psi: the filtered algorithmic interconnection
+:param P_trans: the transformed generalized plant before IQC
+:param sol: solution structure</p>
+<dl class="simple">
+<dt>Output:</dt><dd><p>K_nofeed: subcontroller without direct feedthrough
+Gcl:    closed-loop storage matrix (original)
+Ycl:    similarity transformation/nonlinear warping</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.switched.lmi_synthesis_switched.validate_recovery_gain">
+<span class="sig-name descname"><span class="pre">validate_recovery_gain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">alg_trans</span></em>, <em class="sig-param"><span class="pre">iqc_op_all</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.switched.lmi_synthesis_switched.validate_recovery_gain" title="Link to this definition">#</a></dt>
+<dd><p>VALIDATE_RECOVERY validate that the system obeys the stability
+constraint   (not yet supported)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alg_trans</strong> – the plant with confirmed performance by LMIs</p></li>
+<li><p><strong>iqc_op_all</strong> – all IQCs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>gain</strong> – [Passivity index, H-infinity index].</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="doc_lti.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Linear  Time Invariant Systems</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="doc_periodic.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Periodic Systems</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regulator">Regulator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lmi-analysis">LMI Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lmi-synthesis">LMI Synthesis</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By opt-syn team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, opt-syn team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

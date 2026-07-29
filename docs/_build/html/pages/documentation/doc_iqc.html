@@ -1,0 +1,991 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
+    <title>Integral Quadratic Constraints &#8212; opt-syn</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=720ed60b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=e1a75a79"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/documentation/doc_iqc';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Performance Specifications" href="doc_specs.html" />
+    <link rel="prev" title="Periodic-orbit Systems" href="system/doc_periodic_orbit.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/opt_syn_logo_light.svg" class="logo__image only-light" alt="opt-syn - Home"/>
+    <img src="../../_static/opt_syn_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="opt-syn - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started.html">Get Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../how_it_works/index_how_it_works.html">How it Works</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/opt_algs.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/alg_properties.html">Properties of Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/convergence_conditions.html">Convergence Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/op_uncertainty_iqc.html">IQC Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/network_synthesis.html">Synthesis and Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/problem_formulation/system/index_system.html">System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/config.html">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/specs.html">Performance Specifications</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/solve.html">Solve and Validate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/simulation.html">Simulate</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index_documentation.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_solutions.html">Solution</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="operators/doc_set_valued.html">Set-Valued Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="operators/doc_sml.html">Subdifferentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="operators/doc_quadratic.html">Gradients of Quadratics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="plants/doc_genplant.html">Generalized Plants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plants/doc_templates.html">Plant Templates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="system/doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system/doc_switched.html">Switched</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system/doc_periodic.html">Periodic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system/doc_periodic_orbit.html">Periodic-Orbit</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Integral Quadratic Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_specs.html">Performance Specifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_config.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog/0.1.0.html">What’s new in 0.1.0</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/jarmill/opt-syn" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/pages/documentation/doc_iqc.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Integral Quadratic Constraints</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iqcs-for-analysis">IQCS for Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iqcs-for-synthesis">IQCS for Synthesis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iqc-routines">IQC Routines</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-structure">Analysis Structure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis-structure">Synthesis Structure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-container">Data Container</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="integral-quadratic-constraints">
+<h1>Integral Quadratic Constraints<a class="headerlink" href="#integral-quadratic-constraints" title="Link to this heading">#</a></h1>
+<p>Input-output sequences of the operators satisfy a family of relations defined by <a class="reference internal" href="../how_it_works/op_uncertainty_iqc.html"><span class="doc">Integral Quadratic Constraints (IQC)</span></a>.  Analysis searches over the IQCs, while Synthesis returns a controller with fixed IQCs.</p>
+<section id="iqcs-for-analysis">
+<h2>IQCS for Analysis<a class="headerlink" href="#iqcs-for-analysis" title="Link to this heading">#</a></h2>
+<p>The IQC structure for analysis of operators is a tuple <span class="math notranslate nohighlight">\((\Psi, M, X, \ell)\)</span>, in which <span class="math notranslate nohighlight">\(\Psi\)</span> is structured as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+        \Psi = \mat{cc}{\Psi_1 &amp; 0 \\ 0 &amp; \Psi_2}: &amp; &amp; \mat{c}{\psi^1_{k+1} \\ \psi^2_{k+1} \hl p^\psi_{k} \\ q^\psi_{k}} =  \mat{cc|cc}{A_1 &amp; 0 &amp; B_1 &amp; 0 \\
+        0 &amp; A_2 &amp; 0 &amp; B_2 \hl
+        C_1 &amp; 0 &amp; D_1 &amp; 0 \\
+        0 &amp; C_2 &amp; 0 &amp; D_2 
+}  \mat{c}{\psi^1_{k+1} \\ \psi^2_{k+1} \hl p_k \\ q_k}.
+\end{align}\end{split}\]</div>
+<p>The analysis IQCs may be tall: the dimensions of <span class="math notranslate nohighlight">\((p^\psi, q^\psi)\)</span> may be larger than the dimensions of <span class="math notranslate nohighlight">\((p, q)\)</span> respectively.</p>
+</section>
+<section id="iqcs-for-synthesis">
+<h2>IQCS for Synthesis<a class="headerlink" href="#iqcs-for-synthesis" title="Link to this heading">#</a></h2>
+<p>IQC synthesis requires filters in which the dimensions of <span class="math notranslate nohighlight">\((p^\psi, q^\psi)\)</span> and <span class="math notranslate nohighlight">\((p, q)\)</span> are equal. The class of filters used are</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+        \Psi = \mat{cc}{\hat \Psi_1 &amp; \hat \Psi_3 \\ 0 &amp; \hat \Psi_2}: &amp; &amp; \mat{c}{\psi^1_{k+1} \\ \psi^2_{k+1} \hl p^\psi_{k} \\ q^\psi_{k}} =  \mat{cc|cc}{\hat A_1 &amp; 0 &amp;\hat  B_1 &amp; 0 \\
+        0 &amp; \hat A_2 &amp; 0 &amp; \hat B_2 \hl
+        \hat C_1 &amp; \hat C_3 &amp; \hat D_1 &amp; \hat D_3 \\
+        0 &amp; \hat C_2 &amp; 0 &amp; \hat D_2 
+}  \mat{c}{\psi^1_{k+1} \\ \psi^2_{k+1} \hl p_k \\ q_k}.
+\end{align}\end{split}\]</div>
+<p>In IQC synthesis, it is required that <span class="math notranslate nohighlight">\(\Psi_1, \Psi_2, \Psi_3\)</span> are all stable, and that <span class="math notranslate nohighlight">\(\Psi_2\)</span> has a stable inverse. A tall IQC from analysis must be factorized into this square form first.</p>
+</section>
+<section id="iqc-routines">
+<h2>IQC Routines<a class="headerlink" href="#iqc-routines" title="Link to this heading">#</a></h2>
+<p>The iqcs routines are <code class="docutils literal notranslate"><span class="pre">iqc_loop_split</span></code> (analysis) and <code class="docutils literal notranslate"><span class="pre">iqc_loop_factored</span></code> (synthesis).</p>
+<section id="analysis-structure">
+<h3>Analysis Structure<a class="headerlink" href="#analysis-structure" title="Link to this heading">#</a></h3>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">iqc.</span></span><span class="sig-name descname"><span class="pre">iqc_loop_split</span></span><a class="headerlink" href="#iqc.iqc_loop_split" title="Link to this definition">#</a></dt>
+<dd><p>IQC_LOOP_SPLIT Description of an IQC satisfied by an operator’s input-output sequences.</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.iqc_loop_split">
+<span class="sig-name descname"><span class="pre">iqc_loop_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">Psi1</span></em>, <em class="sig-param"><span class="pre">M</span></em>, <em class="sig-param"><span class="pre">loop</span></em>, <em class="sig-param"><span class="pre">Psi2</span></em>, <em class="sig-param"><span class="pre">X</span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.iqc_loop_split" title="Link to this definition">#</a></dt>
+<dd><p>IQC_LOOP_SPLIT Constructor</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.M">
+<span class="sig-name descname"><span class="pre">M</span></span><a class="headerlink" href="#iqc.iqc_loop_split.M" title="Link to this definition">#</a></dt>
+<dd><p>running cost</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.Psi1">
+<span class="sig-name descname"><span class="pre">Psi1</span></span><a class="headerlink" href="#iqc.iqc_loop_split.Psi1" title="Link to this definition">#</a></dt>
+<dd><p>primal filter (output of nonlinearity)</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.Psi2">
+<span class="sig-name descname"><span class="pre">Psi2</span></span><a class="headerlink" href="#iqc.iqc_loop_split.Psi2" title="Link to this definition">#</a></dt>
+<dd><p>dual filter   (input of nonlinearity)</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.X">
+<span class="sig-name descname"><span class="pre">X</span></span><a class="headerlink" href="#iqc.iqc_loop_split.X" title="Link to this definition">#</a></dt>
+<dd><p>terminal cost</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.loop">
+<span class="sig-name descname"><span class="pre">loop</span></span><a class="headerlink" href="#iqc.iqc_loop_split.loop" title="Link to this definition">#</a></dt>
+<dd><p>loop transformation (in lft/star product form)</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.blkdiag">
+<span class="sig-name descname"><span class="pre">blkdiag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">b</span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.blkdiag" title="Link to this definition">#</a></dt>
+<dd><p>BLKDIAG: block diagonal of the multipliers
+:param b: the other IQC
+:type b: iqc_loop_split</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iqc</strong> – the output IQC</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.compute_Vhat">
+<span class="sig-name descname"><span class="pre">compute_Vhat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">Psih</span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.compute_Vhat" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>find a state-coordinate change matrix,</dt><dd><p>such that Vhat*Ahat=Apsi*Vhat, Vhat*Bhat=Bpsi, and
+Chat=Cpsi*Vhat by solving system of linear equations.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Psih</strong> – squared iqc filter</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Vh</strong> – state-coordinate change</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.factor">
+<span class="sig-name descname"><span class="pre">factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">perturb</span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.factor" title="Link to this definition">#</a></dt>
+<dd><p>FACTOR factorization of the IQC for synthesis. The tall
+filters must be factored into a square system to allow for
+inversion and IQC synthesis.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Returns:</dt><dd><p>iqc_factored (iqc_loop_factored): factored IQC with same frequency response</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.get_psi">
+<span class="sig-name descname"><span class="pre">get_psi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.get_psi" title="Link to this definition">#</a></dt>
+<dd><p>get the multiplier by block diagonalization
+:Returns: <strong>sys</strong> (<em>ss/sdpss</em>) – the multiplier</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.hinf_factorize">
+<span class="sig-name descname"><span class="pre">hinf_factorize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.hinf_factorize" title="Link to this definition">#</a></dt>
+<dd><p>HINF_FACTORIZE perform an h-infinity type factorization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iqc_factored</strong> (<em>iqc_loop_factored</em>) – factored IQC with same frequency response</p></li>
+<li><p><strong>Vh</strong> – state coordinate change</p></li>
+<li><p><strong>Z</strong> – terminal cost matrix</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.lift">
+<span class="sig-name descname"><span class="pre">lift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">c</span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.lift" title="Link to this definition">#</a></dt>
+<dd><p>LIFT: kronecker by c (coordinates)
+:param c: dimension of the lift
+:type c: int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iqc_lift</strong> (<em>iqc_loop_split</em>) – the output IQC</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.nf">
+<span class="sig-name descname"><span class="pre">nf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.nf" title="Link to this definition">#</a></dt>
+<dd><p>NF number of states in the IQC filter</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.np">
+<span class="sig-name descname"><span class="pre">np</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.np" title="Link to this definition">#</a></dt>
+<dd><p>number of outputs (channel one)</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.nq">
+<span class="sig-name descname"><span class="pre">nq</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.nq" title="Link to this definition">#</a></dt>
+<dd><p>number of outputs (channel two)</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.nw">
+<span class="sig-name descname"><span class="pre">nw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.nw" title="Link to this definition">#</a></dt>
+<dd><p>number of inputs (channel two)</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.nx1">
+<span class="sig-name descname"><span class="pre">nx1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.nx1" title="Link to this definition">#</a></dt>
+<dd><p>NX1 number of states in filter 1</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.nx2">
+<span class="sig-name descname"><span class="pre">nx2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.nx2" title="Link to this definition">#</a></dt>
+<dd><p>NX2 number of states in filter 2</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.nz">
+<span class="sig-name descname"><span class="pre">nz</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.nz" title="Link to this definition">#</a></dt>
+<dd><p>number of inputs (channel one)</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.passive_factorize">
+<span class="sig-name descname"><span class="pre">passive_factorize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.passive_factorize" title="Link to this definition">#</a></dt>
+<dd><p>passive_FACTORIZE perform a canonical factorization for
+operators with passive-type running costs. This is used for
+the class <span class="math notranslate nohighlight">\(S_{m, L}\)</span>.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Returns:</dt><dd><p>iqc_factored (iqc_loop_factored): factored IQC with same frequency response
+Vh: state coordinate change
+Z:  terminal cost matrix</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_split.recover">
+<span class="sig-name descname"><span class="pre">recover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">lmi_out</span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_split.recover" title="Link to this definition">#</a></dt>
+<dd><p>RECOVER: recover the numerical values of an IQC from an LMI
+solution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lmi_out</strong> – solution of the program</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="synthesis-structure">
+<h3>Synthesis Structure<a class="headerlink" href="#synthesis-structure" title="Link to this heading">#</a></h3>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">iqc.</span></span><span class="sig-name descname"><span class="pre">iqc_loop_factored</span></span><a class="headerlink" href="#iqc.iqc_loop_factored" title="Link to this definition">#</a></dt>
+<dd><p>IQC_LOOP_FACTORED factored IQCs that are amenable to synthesis</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.iqc_loop_factored">
+<span class="sig-name descname"><span class="pre">iqc_loop_factored</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">Psi1</span></em>, <em class="sig-param"><span class="pre">Psi2</span></em>, <em class="sig-param"><span class="pre">C3</span></em>, <em class="sig-param"><span class="pre">D3</span></em>, <em class="sig-param"><span class="pre">M</span></em>, <em class="sig-param"><span class="pre">X</span></em>, <em class="sig-param"><span class="pre">loop</span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.iqc_loop_factored" title="Link to this definition">#</a></dt>
+<dd><p>IQC_LOOP_FACTORED Constructor</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.C3">
+<span class="sig-name descname"><span class="pre">C3</span></span><a class="headerlink" href="#iqc.iqc_loop_factored.C3" title="Link to this definition">#</a></dt>
+<dd><p>crossover D matrix</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.D3">
+<span class="sig-name descname"><span class="pre">D3</span></span><a class="headerlink" href="#iqc.iqc_loop_factored.D3" title="Link to this definition">#</a></dt>
+<dd><p>crossover D matrix</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.M">
+<span class="sig-name descname"><span class="pre">M</span></span><a class="headerlink" href="#iqc.iqc_loop_factored.M" title="Link to this definition">#</a></dt>
+<dd><p>running cost</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.Psi1">
+<span class="sig-name descname"><span class="pre">Psi1</span></span><a class="headerlink" href="#iqc.iqc_loop_factored.Psi1" title="Link to this definition">#</a></dt>
+<dd><p>primal filter (output of nonlinearity)</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.Psi2">
+<span class="sig-name descname"><span class="pre">Psi2</span></span><a class="headerlink" href="#iqc.iqc_loop_factored.Psi2" title="Link to this definition">#</a></dt>
+<dd><p>dual filter   (input of nonlinearity)</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.X">
+<span class="sig-name descname"><span class="pre">X</span></span><a class="headerlink" href="#iqc.iqc_loop_factored.X" title="Link to this definition">#</a></dt>
+<dd><p>terminal cost</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.loop">
+<span class="sig-name descname"><span class="pre">loop</span></span><a class="headerlink" href="#iqc.iqc_loop_factored.loop" title="Link to this definition">#</a></dt>
+<dd><p>signal transformation matrix</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.blkdiag">
+<span class="sig-name descname"><span class="pre">blkdiag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">b</span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.blkdiag" title="Link to this definition">#</a></dt>
+<dd><p>BLKDIAG: block diagonal of the multipliers
+:param b: the other IQC
+:type b: iqc_loop_split</p>
+<dl class="field-list">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iqc</strong> – the output IQC</p>
+<p>if length(varargin) == 1</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.factor">
+<span class="sig-name descname"><span class="pre">factor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.factor" title="Link to this definition">#</a></dt>
+<dd><p>the IQC is already factored, do nothing</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.get_psi">
+<span class="sig-name descname"><span class="pre">get_psi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.get_psi" title="Link to this definition">#</a></dt>
+<dd><p>GET_PSI form the triangular filter system
+:Returns: <strong>psi_out</strong> – the output filter</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.get_psi_13">
+<span class="sig-name descname"><span class="pre">get_psi_13</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.get_psi_13" title="Link to this definition">#</a></dt>
+<dd><p>GET_PSI_13 form the triangular multiplier
+only [psi1, psi3; 0, I], used for synthesis
+:Returns: <strong>psi_out</strong> – the output filter portion</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.lift">
+<span class="sig-name descname"><span class="pre">lift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">c</span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.lift" title="Link to this definition">#</a></dt>
+<dd><p>LIFT: kronecker by c (coordinates)
+:param c: dimension of the lift
+:type c: int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iqc_lift</strong> (<em>iqc_loop_split</em>) – the output IQC</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.nf">
+<span class="sig-name descname"><span class="pre">nf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.nf" title="Link to this definition">#</a></dt>
+<dd><p>NF number of states in the filter</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.np">
+<span class="sig-name descname"><span class="pre">np</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.np" title="Link to this definition">#</a></dt>
+<dd><p>number of outputs (channel one)</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.nq">
+<span class="sig-name descname"><span class="pre">nq</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.nq" title="Link to this definition">#</a></dt>
+<dd><p>number of outputs (channel two)</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.nw">
+<span class="sig-name descname"><span class="pre">nw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.nw" title="Link to this definition">#</a></dt>
+<dd><p>number of inputs (channel two)</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.nz">
+<span class="sig-name descname"><span class="pre">nz</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.nz" title="Link to this definition">#</a></dt>
+<dd><p>number of inputs (channel one)</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.psi2_inv">
+<span class="sig-name descname"><span class="pre">psi2_inv</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.psi2_inv" title="Link to this definition">#</a></dt>
+<dd><p>PSI2_INV inverse of the parameter psi2
+:Returns: <strong>psi_inv</strong> – inverse of obj.Psi2</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.rhotrafo">
+<span class="sig-name descname"><span class="pre">rhotrafo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">rho</span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.rhotrafo" title="Link to this definition">#</a></dt>
+<dd><p>RHOTRAFO rho weighting transformation: [A, B; C, D] =&gt; [1/rho
+A, 1/rho B; C, D]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rho</strong> – exponential weighting</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>iqc_rho</strong> – rho-weighted  IQC</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_loop_factored.wrap_synth">
+<span class="sig-name descname"><span class="pre">wrap_synth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">P</span></em>, <em class="sig-param"><span class="pre">n</span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_loop_factored.wrap_synth" title="Link to this definition">#</a></dt>
+<dd><p>wrap a genearlized plant with the filters for IQC controller synthesis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P</strong> – nominal plant to be controlled, before IQC incorporation</p></li>
+<li><p><strong>n</strong> – dimension counter</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>P_wrap</strong> – the generalized plant for IQC synthesis</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="data-container">
+<h3>Data Container<a class="headerlink" href="#data-container" title="Link to this heading">#</a></h3>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="iqc.iqc_data_container">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">iqc.</span></span><span class="sig-name descname"><span class="pre">iqc_data_container</span></span><a class="headerlink" href="#iqc.iqc_data_container" title="Link to this definition">#</a></dt>
+<dd><p>IQC_DATA container for the IQC arising from operators</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="iqc.iqc_data_container.iqc_data_container">
+<span class="sig-name descname"><span class="pre">iqc_data_container</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqc.iqc_data_container.iqc_data_container" title="Link to this definition">#</a></dt>
+<dd><p>IQC_DATA Constructor</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_data_container.ERGODIC">
+<span class="sig-name descname"><span class="pre">ERGODIC</span></span><a class="headerlink" href="#iqc.iqc_data_container.ERGODIC" title="Link to this definition">#</a></dt>
+<dd><p>(bool) true if function values</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_data_container.augmented">
+<span class="sig-name descname"><span class="pre">augmented</span></span><a class="headerlink" href="#iqc.iqc_data_container.augmented" title="Link to this definition">#</a></dt>
+<dd><p>(bool) true if reduced-order control;</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_data_container.ind_same">
+<span class="sig-name descname"><span class="pre">ind_same</span></span><a class="headerlink" href="#iqc.iqc_data_container.ind_same" title="Link to this definition">#</a></dt>
+<dd><p>(int array) indices for which m = L</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_data_container.iqc">
+<span class="sig-name descname"><span class="pre">iqc</span></span><a class="headerlink" href="#iqc.iqc_data_container.iqc" title="Link to this definition">#</a></dt>
+<dd><p>(iqc_loop_split/iqc_loop_factored)the iqc</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_data_container.iqc_op">
+<span class="sig-name descname"><span class="pre">iqc_op</span></span><a class="headerlink" href="#iqc.iqc_data_container.iqc_op" title="Link to this definition">#</a></dt>
+<dd><p>accumulated iqc for operators</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_data_container.m_same">
+<span class="sig-name descname"><span class="pre">m_same</span></span><a class="headerlink" href="#iqc.iqc_data_container.m_same" title="Link to this definition">#</a></dt>
+<dd><p>(bool) for Sml, does m=L? If so, there is no uncertainty</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_data_container.rotate">
+<span class="sig-name descname"><span class="pre">rotate</span></span><a class="headerlink" href="#iqc.iqc_data_container.rotate" title="Link to this definition">#</a></dt>
+<dd><p>(bool) true if periodic-orbit</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="iqc.iqc_data_container.task">
+<span class="sig-name descname"><span class="pre">task</span></span><a class="headerlink" href="#iqc.iqc_data_container.task" title="Link to this definition">#</a></dt>
+<dd><p>(string) analysis or synthesis</p>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="system/doc_periodic_orbit.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Periodic-orbit Systems</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="doc_specs.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Performance Specifications</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iqcs-for-analysis">IQCS for Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iqcs-for-synthesis">IQCS for Synthesis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iqc-routines">IQC Routines</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-structure">Analysis Structure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis-structure">Synthesis Structure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-container">Data Container</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By opt-syn team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, opt-syn team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

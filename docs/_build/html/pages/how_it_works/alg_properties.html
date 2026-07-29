@@ -1,0 +1,643 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
+    <title>Properties of Algorithms &#8212; opt-syn</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=720ed60b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=e1a75a79"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/how_it_works/alg_properties';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Convergence Conditions (Analysis)" href="convergence_conditions.html" />
+    <link rel="prev" title="Optimization Algorithms" href="opt_algs.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/opt_syn_logo_light.svg" class="logo__image only-light" alt="opt-syn - Home"/>
+    <img src="../../_static/opt_syn_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="opt-syn - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started.html">Get Started</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index_how_it_works.html">How it Works</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="opt_algs.html">Optimization Algorithms</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Properties of Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="convergence_conditions.html">Convergence Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="op_uncertainty_iqc.html">IQC Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="network_synthesis.html">Synthesis and Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../usage/problem_formulation/system/index_system.html">System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/config.html">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/specs.html">Performance Specifications</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/solve.html">Solve and Validate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/simulation.html">Simulate</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../documentation/index_documentation.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_solutions.html">Solution</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_set_valued.html">Set-Valued Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_sml.html">Subdifferentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_quadratic.html">Gradients of Quadratics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/plants/doc_genplant.html">Generalized Plants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/plants/doc_templates.html">Plant Templates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_switched.html">Switched</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_periodic.html">Periodic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_periodic_orbit.html">Periodic-Orbit</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_iqc.html">Integral Quadratic Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_specs.html">Performance Specifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_config.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog/0.1.0.html">What’s new in 0.1.0</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/jarmill/opt-syn" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/pages/how_it_works/alg_properties.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Properties of Algorithms</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence">Convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance">Performance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#well-posedness">Well-Posedness</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information-structure-and-evaluation">Information Structure and Evaluation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kronecker-structure">Kronecker Structure</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="properties-of-algorithms">
+<h1>Properties of Algorithms<a class="headerlink" href="#properties-of-algorithms" title="Link to this heading">#</a></h1>
+<p>Desirable properties of optimization algorithms are convergence, performance,  well-posedness, and information structures. In Analysis, we aim to verify that an algorithm achieves these properties. In Synthesis, we try to generate an algorithm meeting these properties.</p>
+<section id="convergence">
+<h2>Convergence<a class="headerlink" href="#convergence" title="Link to this heading">#</a></h2>
+<p>A fixed-point of the algorithm <span class="math notranslate nohighlight">\((F, G)\)</span> is a tuple <span class="math notranslate nohighlight">\((x^*, w^*, z^*)\)</span> satisfying</p>
+<div class="math notranslate nohighlight">
+\[\begin{align*}
+ (F, G): &amp; &amp; \mat{c}{x^* \hl z^*} &amp;= \mat{c|c}{\Acl &amp; \Bcl \hl \Ccl &amp; \Dcl}   \mat{c}{x^* \hl w^*}, &amp; w^* \in  F(z^*).
+\end{align*}\]</div>
+<p>The algorithm is convergent if for every initial condition <span class="math notranslate nohighlight">\(x_0\)</span>, there exists a fixed point <span class="math notranslate nohighlight">\((x^*(x_0), w^*(x_0), z^*(x_0))\)</span> such that</p>
+<ol class="arabic simple">
+<li><p><span class="math notranslate nohighlight">\((w^*(x_0) , z^*(x_0))\)</span> solves the zero-inclusion problem</p></li>
+<li><p><span class="math notranslate nohighlight">\(\lim_{k\rightarrow \infty} \mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2 = 0\)</span>.</p></li>
+</ol>
+<p>The algorithm is linearly (exponentially) convergent in state with rate <span class="math notranslate nohighlight">\(\rho \in (0, 1)\)</span> if there exists a constant <span class="math notranslate nohighlight">\(\gamma_0&gt; 0\)</span> with</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+ \mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2  \leq \gamma_0 \rho^{k} \norm{x_0 - x^*(x_0)}_2 &amp; &amp; \forall k \in \N, \ x_0.
+\end{align*}\end{split}\]</div>
+</section>
+<section id="performance">
+<h2>Performance<a class="headerlink" href="#performance" title="Link to this heading">#</a></h2>
+<p>The algorithm may be required to operate in noisy and non-ideal environments. Robustness can of the algorithm can be quantified by performance metrics.</p>
+<p>As an example,  noise <span class="math notranslate nohighlight">\(\delta w\)</span> can be introduced into the (sub)-gradient evaluations. The noisy algorithmic loop is</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+  \mat{c}{x_{k+1} \hl z_k} &amp;= \mat{c|c}{\Acl &amp; \Bcl \hl \Ccl &amp; \Dcl}   \mat{c}{x_{k} \hl w_k + \delta w_k}, &amp; w_k \in  F(z_k).
+\end{align*}\]</div>
+<p>The system is input-to-state stable if there exists gains <span class="math notranslate nohighlight">\(\gamma_x, \gamma_w \geq 0\)</span> and a rate <span class="math notranslate nohighlight">\(\rho \in (0, 1)\)</span> such that</p>
+<div class="math notranslate nohighlight">
+\[\begin{align*}
+\norm{x_k - x^*(x_0)}_2^2 \leq \gamma_x \rho^k \norm{x_0 - x^*(x_0)} + \gamma_w \max_{t \in 0, \ldots, k} \norm{\delta w_t}_2^2, &amp; &amp; \forall k \in \N,  x_0.
+\end{align*}\]</div>
+<p>Input to state stability is a measure of robustness. It implies linear convergence if <span class="math notranslate nohighlight">\(\delta w_k = 0\)</span> for all <span class="math notranslate nohighlight">\(k\)</span>.</p>
+<!-- The algorithm has a finite  $\ell_2$-gain if there exists a $\gamma_x$ such that 
+```{math}
+\begin{align*}
+ \lim_{T \rightarrow \infty} \frac{\sum_{k=0}^T \norm{ x_k - x^*(x_0)}_2^2}{\sum_{k=0}^T \norm{\delta w_k}_2^2}  \leq \gamma_w   & & \text{if  x_0 = x^*(x_0)}.
+\end{align*}
+```  -->
+<p>More performance criteria are discussed in <a class="reference internal" href="../usage/problem_formulation/specs.html"><span class="doc">Performance</span></a>.</p>
+</section>
+<section id="well-posedness">
+<h2>Well-Posedness<a class="headerlink" href="#well-posedness" title="Link to this heading">#</a></h2>
+<p>{#well-posedness}</p>
+<p>The interconnection <span class="math notranslate nohighlight">\((F, G)\)</span> may be condensed using the set-valued map <span class="math notranslate nohighlight">\(H := (F^{-1} - \Dcl)^{-1}\)</span> as</p>
+<div class="math notranslate nohighlight">
+\[\begin{align*}
+ (F, G): &amp; &amp; x_{k+1} &amp;\in \Acl x_k + \Bcl H(\Ccl x_k).
+\end{align*}\]</div>
+<p><br />
+The interconnection is well-posed if  <span class="math notranslate nohighlight">\(H\)</span> is globally defined and continuous. Well-posedness implies that the sequence <span class="math notranslate nohighlight">\((x_k, w_k, z_k)_{k \in \N}\)</span> exists and is unique for every  initial state <span class="math notranslate nohighlight">\(x_0\)</span>. A well-posed algorithm therefore satisfies the explicit relation <span class="math notranslate nohighlight">\(x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)\)</span> for all <span class="math notranslate nohighlight">\(k\)</span>.</p>
+<p><span style="color:#5D93BF">opt</span>-syn only studies well-posed algorithms. Non-well-posed algorithms such as subgradient descent and Frank-Wolfe are currently out of scope.</p>
+</section>
+<section id="information-structure-and-evaluation">
+<h2>Information Structure and Evaluation<a class="headerlink" href="#information-structure-and-evaluation" title="Link to this heading">#</a></h2>
+<p>{#information-structure}
+The well-posed algorithmic interconnection <span class="math notranslate nohighlight">\(x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)\)</span> is a nonlinear iterative procedure. Computation of  <span class="math notranslate nohighlight">\(x_{k+1}\)</span> from <span class="math notranslate nohighlight">\(x_k\)</span> for general <span class="math notranslate nohighlight">\((F, \Dcl)\)</span> requires the solution of a nonlinear fixed-point equation, and may be computationally intractable. If <span class="math notranslate nohighlight">\(\Dcl\)</span> is block-lower-triangular, the system <span class="math notranslate nohighlight">\((\Acl, \Bcl, \Ccl, \Dcl)\)</span> can be then partitioned as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+\mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2 \\ \vdots \\ z_k^s} &amp;= \mat{c|cccc}{
+   \Acl &amp; \Bcl_1 &amp; \Bcl_2  &amp; \hdots &amp; \Bcl_s \hl
+   \Ccl_1 &amp; \Dcl_{11} &amp; 0 &amp;   \hdots &amp; 0\\
+   \Ccl_2 &amp; \Dcl_{21 } &amp; \Dcl_{22} &amp;   \hdots &amp; 0\\
+   \vdots &amp; \vdots &amp; \vdots  &amp; \ddots &amp; \vdots\\
+   \Ccl_s &amp; \Dcl_{s1} &amp; \Dcl_{s2} &amp; \hdots &amp; \Dcl_{ss}} \mat{c}{x_{k} \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s}
+\end{align}\end{split}\]</div>
+<p>Algorithm evaluation can then causally  proceed for each <span class="math notranslate nohighlight">\(k \in \N\)</span> as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+w^i_k &amp;= (F_i^{-1} - \Dcl_{ii})^{-1} (\Ccl_i x_k + \textstyle \sum_{j=1}^{i-1} \Dcl_{ij} w^j_k),  &amp; &amp; \forall i \in 1, \ldots, k,\\ 
+x_{k+1} &amp;= \Acl x_k + \textstyle \sum_{i=1}^s \Bcl_i w^i_k.
+\end{align}\end{split}\]</div>
+<p>The operator <span class="math notranslate nohighlight">\(H_i: = (F_i^{-1} - \Dcl_{ii})^{-1}\)</span> can be evaluated using</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Evaluation</p></th>
+<th class="head"><p>Condition</p></th>
+<th class="head"><p>Operation <span class="math notranslate nohighlight">\(H_i\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Explicit</p></td>
+<td><p><span class="math notranslate nohighlight">\(\Dcl_{ii} = 0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(z \mapsto F_i(z)\)</span>,</p></td>
+</tr>
+<tr class="row-odd"><td><p>Implicit</p></td>
+<td><p><span class="math notranslate nohighlight">\(\Dcl_{ii}\)</span> invertible</p></td>
+<td><p><span class="math notranslate nohighlight">\(z \mapsto \Dcl_{ii}^{-1} z - \Dcl_{ii}^{-1} (I - \Dcl_{ii} F_i)^{-1}(z)\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>If the backward-evaluation  <span class="math notranslate nohighlight">\((I - \Dcl_{ii} F_i)^{-1}\)</span> is available (such as from a  resolvent/proximal operator), then this algorithm execution is tractable.</p>
+<p>The information structure of the algorithm is the block-sparsity pattern of <span class="math notranslate nohighlight">\(\Dcl\)</span>. If <span class="math notranslate nohighlight">\(\Dcl_{ii} = 0\)</span>, then <span class="math notranslate nohighlight">\(w^i_k\)</span> is explicitly computed from <span class="math notranslate nohighlight">\((x_k, w^1_k, \ldots, w^{i-1}_k)\)</span>. If <span class="math notranslate nohighlight">\(\Dcl_{ii} \neq 0\)</span>, then <span class="math notranslate nohighlight">\(w^i_k\)</span> implicitly depends on <span class="math notranslate nohighlight">\((x_k, w^1_k, \ldots, w^{i-1}_k, w^i_k)\)</span>.   If <span class="math notranslate nohighlight">\(\Dcl_{ij} = 0\)</span> with <span class="math notranslate nohighlight">\(i &gt; j\)</span>, then <span class="math notranslate nohighlight">\(w^i_k\)</span> does not use information from the previously computed output <span class="math notranslate nohighlight">\(w^j_k\)</span>.</p>
+<p>Examples of information structures for <span class="math notranslate nohighlight">\(s=2\)</span> operators (with <span class="math notranslate nohighlight">\(\bullet\)</span> marking  nonzero entries) are</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p></p></th>
+<th class="head text-center"><p>Sequential</p></th>
+<th class="head text-center"><p>Parallel</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>Only Implicit</p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(\mat{cc}{\bullet &amp; 0 \\ \bullet &amp; \bullet}\)</span></p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(\mat{cc}{\bullet &amp; 0 \\ 0 &amp; \bullet}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>Mixed</p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(\mat{cc}{0 &amp; 0 \\ \bullet &amp; \bullet}, \quad  \mat{cc}{\bullet &amp; 0 \\ \bullet &amp; 0}\)</span></p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\( \mat{cc}{0&amp; 0 \\ 0 &amp; \bullet}, \quad   \mat{cc}{\bullet &amp; 0 \\ 0 &amp; 0}\)</span></p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>Only Explicit</p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(\mat{cc}{0 &amp; 0 \\ \bullet &amp; 0}\)</span></p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(\mat{cc}{0 &amp; 0 \\ 0 &amp; 0}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The sequential schemes each have a <span class="math notranslate nohighlight">\(\bullet\)</span> in the lower-left position: <span class="math notranslate nohighlight">\(w^2\)</span> is computed based on information from <span class="math notranslate nohighlight">\(w^1\)</span>. Parallel schemes can evaluate <span class="math notranslate nohighlight">\(w^1\)</span> and <span class="math notranslate nohighlight">\(w^2\)</span> separately.</p>
+<p>In Analysis, the information structure can be verified by inspection. Synthesis may be constrained to return algorithms with a desired information structure.</p>
+</section>
+<section id="kronecker-structure">
+<h2>Kronecker Structure<a class="headerlink" href="#kronecker-structure" title="Link to this heading">#</a></h2>
+<p>The Projected Gradient Descent algorithm with parameter <span class="math notranslate nohighlight">\(\gamma &gt; 0\)</span> and description</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+ \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &amp;= \mat{c|cc}{I &amp; -\gamma I &amp; -\gamma I \hl I &amp;0 &amp; 0 \\
+ I &amp; -\gamma I &amp; -\gamma I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, &amp; \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\nabla f_1(z_k^1) \\ \partial f_2(z_k^2)}
+\end{align*},\end{split}\]</div>
+<p>has an identity <span class="math notranslate nohighlight">\(I\)</span> factor in each entry of <span class="math notranslate nohighlight">\((\Acl, \Bcl, \Ccl, \Dcl)\)</span>. This is an instance of a Kronecker structure: the Projected Gradient Descent algorithm can be expressed using a Kronecker product as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+ \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &amp;= \left[ \mat{c|cc}{1 &amp; -\gamma  &amp; -\gamma  \hl 1 &amp;0 &amp; 0 \\
+ 1 &amp; -\gamma  &amp; -\gamma  }  \otimes I \right]\mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, &amp; \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\nabla f_1(z_k^1) \\ \partial f_2(z_k^2)}
+\end{align*},\end{split}\]</div>
+<p>Given an inclusion problem with variable <span class="math notranslate nohighlight">\(\beta \in \R^{n_\beta}\)</span>, an algorithm <span class="math notranslate nohighlight">\((F, G)\)</span>  has Kronecker structure if there exists an integer <span class="math notranslate nohighlight">\(c\)</span> and matrices <span class="math notranslate nohighlight">\((\Acl^a, \Bcl^a, \Ccl^a, \Dcl^a)\)</span> with</p>
+<div class="math notranslate nohighlight">
+\[\mat{c|c}{\Acl &amp; \Bcl \hl \Ccl &amp; \Dcl} = \left[\mat{c|c}{\Acl^a &amp; \Bcl^a \hl \Ccl^a &amp; \Dcl^a} \otimes I_{n_\beta / c} \right]\]</div>
+<p>The smallest such integer <span class="math notranslate nohighlight">\(c\)</span> is the coordinate dimension of the Kronecker structure. Projected Gradient Descent has <span class="math notranslate nohighlight">\(c=1\)</span>. An algorithm with <span class="math notranslate nohighlight">\(c &gt; 1\)</span> can assign different update rules to different coordinate blocks.</p>
+<p><span style="color:#5D93BF">opt</span>-syn certifies Analysis and Synthesis results for algorithms with Kronecker structure. The performance of the resulting algorithm therefore scales independently of dimension.</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="opt_algs.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Optimization Algorithms</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="convergence_conditions.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Convergence Conditions (Analysis)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence">Convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance">Performance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#well-posedness">Well-Posedness</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information-structure-and-evaluation">Information Structure and Evaluation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kronecker-structure">Kronecker Structure</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By opt-syn team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, opt-syn team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

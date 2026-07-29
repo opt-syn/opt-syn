@@ -89,8 +89,9 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             % dissend = struct('plant', diss{1}.plant_reg, 'rho', sol.rho);
             P_trans =  obj.connect_model(diss{1});
             
+
             %evaluate the variables
-            [sol] = obj.recover_subcontroller(alg_psi, P_trans.P, sol);
+            [sol] = obj.recover_subcontroller(alg_psi, P_trans, sol);
                       
             %verify performance of the algorithm
             %TODO: a postprocessing LMI (?) to check that the recovered 
@@ -102,7 +103,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %mode/control
             %Args:
             %   alg_psi:   the filtered algorithmic interconnection
-            %   P_trans:    the transformed generalized plant before IQC
+            %   P_aug:    the transformed augmented generalized plant before IQC
             %   sol: solution structure
             %
             %Returns:
@@ -112,22 +113,32 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             vars_rec = sol.vars;
             rho = sol.rho;
 
+            if obj.config.gen.same_rho
+                rho_common = sol.rho;
+                P_aug = rhotrafo(P_aug, rho_common);
+            else
+                rho_common = 1;
+            end
+
             [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_aug, vars_rec);
 
+            K_nofeed = rhotrafo(K_nofeed, 1/rho_common);
 
             
             model = obj.reg.get_model(vars_rec.reg);            
             modelrho = rhotrafo(model, sol.rho);
             P_trans = lft(alg_psi, modelrho);
 
-            K_report = obj.K_alg_report(P_trans, K_nofeed, model, rho);
+            K_report = obj.K_alg_report(P_trans, K_nofeed, model);
             
             sol.cert.alg_trans = K_report.alg_trans;            
             sol.cert.model = K_report.model;           
             % sol.K= 
             sol.cert.K = K_report.K;
             sol.cert.K_sub = K_report.K_sub;
-            sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
+            sol.cert.alg = lft(obj.sys.P, sol.cert.K);
+            sol.cert.alg_psi = rhotrafo(lft(sol.cert.alg_psi, sol.cert.K), sol.rho);
+            sol.gain = obj.validate_recovery_gain(sol.cert.alg_psi, sol.cert.iqc_op_all);
 
             sol.cert.Gcl = Gcl;
             sol.cert.Ycl = Ycl;
@@ -161,7 +172,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             diss.iqc_data.augmented = true;
             [Plant, ~, alg_loop_aug] = sys_aug.build_plant(diss.iqc_data, diss.rho);
 
-            P_model = struct('P', Plant, 'rho', diss.rho);
+            P_model = Plant;
+            % P_model = struct('P', Plant, 'rho', diss.rho);
             % P_model = obj.reg.connect_model(diss.plant, diss.rho);
         end
 
@@ -352,14 +364,16 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             % cons = [];
         end
 
-        function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, Pr, vars_diss, vars_reg, vars_K);
+        function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, P, vars_diss, vars_reg, vars_K, rho);
             %SYSTEM_CLOSED_LOOP closed-loop matrix after nonlinear
-            %transformation
+            %transformation. Special construction for reduced-order control
+            %
             %Args:    
-            %   P: IQC-filtered generalized plant 
+            %   P: IQC-filtered generalized plant
             %   vars_diss:   variables of the problem (dissipation)
             %   vars_reg:   variables of the problem (regulator)            
-            %   vars_K:   variables of the problem (controller)    
+            %   vars_K:   variables of the problem (controller)
+            %   rho: linear convergence rate
             %Returns:                        
             %   sys_cl:  closed-loop system dynamics
             %   U_cl:    left outer product in elimination
@@ -368,11 +382,10 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             GX = vars_diss.GX;
             GY = vars_diss.GY;
 
-            
-            P = Pr.P;
-
-            rho = Pr.rho;
-
+            if nargin < 6
+                rho = 1;
+            end
+ 
             [S, R] = obj.reg.exosystem();
 
             rhoi = (1/rho);
@@ -382,7 +395,13 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             Pihatinv = obj.Pihat(vars_diss, vars_reg, true);
 
             
+            %rho weight the system
+            %includes a reverting of rho-weighting the IQC if 
+            %opt.config.gen.same_rho == true;
             [A, B, C, D] = ssdata(P);
+            A = rhoi * A;
+            B = rhoi * B;
+
             iu = P.index_u;
             iw = [P.index_w];
 
@@ -403,8 +422,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %follows formulation of (26) in 
             %https://www.sciencedirect.com/science/article/pii/S0005109808005402
 
-            Ak = vars_K.A;
-            Bk = vars_K.B;
+            Ak = rhoi* vars_K.A;
+            Bk = rhoi * vars_K.B;
             Ck = vars_K.C;
             Dk = vars_K.D;
             
@@ -425,7 +444,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
                 if n ==0
                     %no filters nor network dynamics 
-                    Acal = [zeros(size(Ak)), GX*Aaug];
+                    Acal = [zeros(n+nf+ns, n), GX*Aaug];
                     Bcal = (GX*Pihatinv * Bpaug);
                     Ccal = (Creg);
 
@@ -433,7 +452,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 else
                     %some filter or network dynamics
                     Acal = [A*GY,  Pibar * Aaug ;
-                        zeros(n+nf+ns, n), GX*Aaug];
+                        zeros(n+ns, n), GX*Aaug];
                     Bcal = [B(:, iw);
                         GX*Pihatinv * Bpaug];
                     Ccal = [C(iz, :)*GY, Creg];
@@ -448,9 +467,17 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 nz = length(iz);
                 nw = length(iw);
                 ny = length(iy);
+                
+                %check dimensions here
+
+                %before permutation (D on bottom)
+                % U_cl_base = [zeros(nxn, nxiU), B(:, iu);
+                %     eye(nxiU), zeros(nxiU, nu);
+                %     zeros(nz, nxiU), D(iz, iu)]';
+    
                 U_cl_base = [B(:, iu), zeros(nxn, nxiU);
-                    zeros(nxiU, nu), eye(nxiU);
-                    D(iz, iu), zeros(nz, nxiU)]';
+                 zeros(nxiU, nu), eye(nxiU),;
+                 D(iz, iu),  zeros(nz, nxiU)]';
 
                 nxiV = n;
                 V_cl_base = [eye(nxiV), zeros(nxiV, nxn + ns), zeros(nxiV, nw);
@@ -509,6 +536,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
         function [Ak, Bk, Ck, Dk] = recover_K_from_elim(obj, vars_rec)
             %recover the eliminated matrices in the controller            
+            %
             %Args:
             %   vars_rec: recovered variables from solver
             %
@@ -719,45 +747,49 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             cl_error = Ycal' * Xhatcal * Ycal - Gcl;
 
 
-
-            diss_trans = struct('P', P_trans, 'rho', vars_rec.rho);
-            sys_cl = obj.system_closed_loop(diss_trans, vars_rec.diss, vars_rec.reg, vars_rec.K);
-
-            XAcl = Ycalinv' * sys_cl.A * Ycalinv;
-            XBcl = Ycalinv' * sys_cl.B;
-            Ccl = sys_cl.C * Ycalinv;
-            Dcl = sys_cl.D;
-
-            Acl = Xhatcalinv * XAcl;
-            Bcl = Xhatcalinv * XBcl;
-
-
-
-            %manual check of antipassivity
-            [nz, nw] = size(Dcl);
+            % elim_orig = obj.elimination;
+            % obj.config.syn.elimination = false;
             
-            Ablock = [Acl, Bcl; eye(size(Acl)), zeros(2*n+ns, nw)];
-            Sblock = kron([0, 1; 1, 0], eye(nw));
-            Xblock = blkdiag(Xhatcal, -Xhatcal);
-            Cblock = [Ccl, Dcl; zeros(nw, 2*n+ns), eye(nw)];
-            if nz == nw
-                ANTI = Ablock'*Xblock*Ablock + Cblock'*Sblock*Cblock;
-            
-
-
-
-                %this is the closed-loop response (after loop transformations
-                % and multiplier augmentation), should satisfy the desired
-                %performance specifications.
-                sys_cl_rec = ss(Acl, Bcl, Ccl, Dcl, 1);
-    
-                A_rec = Acl(end-n+1 : end, end-n+1 : end); %this is the controller A matrix,             
-                % should match with later recovery.
-    
-                %the performance of the recovered controller should match the
-                %closed-loop quantity
-                pass_rec = -getPassiveIndex(-sys_cl_rec, 'input');
-            end
+            % vrec_K = struct('A', Ak, 'B', Bk,  'C', Ck,  'D', Dk);
+            % 
+            % sys_cl = obj.system_closed_loop(P_trans, vars_rec.diss, vars_rec.reg, vrec_K);
+            % obj.config.syn.elimination = elim_orig;
+            % 
+            % XAcl = Ycalinv' * sys_cl.A * Ycalinv;
+            % XBcl = Ycalinv' * sys_cl.B;
+            % Ccl = sys_cl.C * Ycalinv;
+            % Dcl = sys_cl.D;
+            % 
+            % Acl = Xhatcalinv * XAcl;
+            % Bcl = Xhatcalinv * XBcl;
+            % 
+            % 
+            % 
+            % %manual check of antipassivity
+            % [nz, nw] = size(Dcl);
+            % 
+            % Ablock = [Acl, Bcl; eye(size(Acl)), zeros(2*n+ns, nw)];
+            % Sblock = kron([0, 1; 1, 0], eye(nw));
+            % Xblock = blkdiag(Xhatcal, -Xhatcal);
+            % Cblock = [Ccl, Dcl; zeros(nw, 2*n+ns), eye(nw)];
+            % if nz == nw
+            %     ANTI = Ablock'*Xblock*Ablock + Cblock'*Sblock*Cblock;
+            % 
+            % 
+            % 
+            % 
+            %     %this is the closed-loop response (after loop transformations
+            %     % and multiplier augmentation), should satisfy the desired
+            %     %performance specifications.
+            %     sys_cl_rec = ss(Acl, Bcl, Ccl, Dcl, 1);
+            % 
+            %     A_rec = Acl(end-n+1 : end, end-n+1 : end); %this is the controller A matrix,             
+            %     % should match with later recovery.
+            % 
+            %     %the performance of the recovered controller should match the
+            %     %closed-loop quantity
+            %     pass_rec = -getPassiveIndex(-sys_cl_rec, 'input');
+            % end
             %now reconstruct a controller
 
             %recovery by transformation (preferred) or by solving a second
@@ -779,17 +811,17 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             nu = length(iu);
             ny = length(iy);
 
-            rhoi = 1/vars_rec.rho;
+
 
             %augmented system from the regulation conditions
             [S, R] = obj.reg.exosystem();
-            Aaug = [A, B(:, id); zeros(ns, n), rhoi * S];            
+            Aaug = [A, B(:, id); zeros(ns, n),  S];            
             Bpaug = [B(:, iw); zeros(ns, length(iw))];
             Caug = [C(iy, :), D(iy, id)];
                         
 
             %original matrices in the system
-            Agam = [A, -B(:, iu)*Gam; zeros(ns, n), rhoi * S];
+            Agam = [A, -B(:, iu)*Gam; zeros(ns, n),  S];
             
             
             
@@ -880,8 +912,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             Ckt = Ck + Gam*Z;
             Dkt = Dk;
 
-            LblockI = [eye(n), rhoi * [zeros(nf, ns); Pi], B(:, iu);
-                zeros(ns, n), rhoi * eye(ns), zeros(ns, nu);
+            LblockI = [eye(n),  [zeros(nf, ns); Pi], B(:, iu);
+                zeros(ns, n),  eye(ns), zeros(ns, nu);
                 zeros(nu, n), zeros(nu, ns), eye(nu)];
 
             Cblock = [Akt, Bkt;

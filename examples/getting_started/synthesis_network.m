@@ -8,11 +8,13 @@ ops = {op1, op2};
 DELAY = [2, 0];
 network_delay = bridge_channel_delay(DELAY, DELAY);
 
-
+config = opt_config();
+config.syn.elimination = true;
+config.syn.reduced_order = true;
 %form the system and the analysis manager
 sys_delay = opt_system(ops, network_delay);
-man_delay = opt_synthesis(sys_delay);
-sol_best_delay = man_delay.bisect();
+man_delay = opt_synthesis(sys_delay, config);
+sol_best_delay = man_delay.bisect()
 
 
 %% plot an execution

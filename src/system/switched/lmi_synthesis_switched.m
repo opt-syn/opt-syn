@@ -346,9 +346,9 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             %IMPORTANT!
             %hook up the internal model
             %(maybe it should happen at a higher level?)
-            P = obj.reg.connect_model(diss.plant, diss.ind_curr, diss.rho);            
+            P = obj.reg.connect_model(diss.plant, diss.ind_curr);            
 
-            sys_cl = obj.system_closed_loop(P, vslack.diss, vslack.reg, vars.K{diss.ind_curr});
+            sys_cl = obj.system_closed_loop(P, vslack.diss, vslack.reg, vars.K{diss.ind_curr}, diss.rho);
             
             %index the quadratic specification
             np = diss.iqc_rob.np;
@@ -424,10 +424,22 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             
 
             vars_rec = sol.vars;
-            rho = sol.rho;
-                    
+
             %recover the controller
+            if obj.config.gen.same_rho
+                rho_common = sol.rho;
+                for i = 1:obj.Nss
+                    P_trans{i} = rhotrafo(P_trans{i}, rho_common);
+                end
+            else
+                rho_common = 1;
+            end
+
             [K_nofeed,Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec);
+
+            for i = 1:obj.Nss
+                K_nofeed{i} = rhotrafo(K_nofeed{i}, 1/rho_common);
+            end
 
             %package it up
             K_report = cell(obj.Nss, 1);
@@ -439,15 +451,11 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             sol.cert.Ycl = Ycl;
             for i = 1:obj.Nss
 
-                if ds(i)
-                    curr_rho = rho;
-                else
-                    curr_rho = 1;
-                end
+ 
                 
                 model = obj.reg.get_model(i, vars_rec.reg);
     
-                K_report = obj.K_alg_report(P_trans{i}, K_nofeed{i}, model, curr_rho);
+                K_report = obj.K_alg_report(P_trans{i}, K_nofeed{i}, model);
 
                 %form the algorithm                
                 sol.cert.alg_trans{i} = K_report.alg_trans;

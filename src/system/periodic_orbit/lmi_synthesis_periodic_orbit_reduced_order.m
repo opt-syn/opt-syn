@@ -70,7 +70,7 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
             P_trans =  obj.connect_model(dissend);
 
             %evaluate the variables
-            [sol] = obj.recover_subcontroller(alg_psi, P_trans.P, sol);
+            [sol] = obj.recover_subcontroller(alg_psi, P_trans, sol);
 
 
             % sol.G = obj.get_storage(sol.vars.diss, sol.vars.reg);
@@ -133,7 +133,7 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
             P_trans = lft(alg_psi, modelrho);
             % K_rot = obj.rotate_plant(K_nofeed, -1);
 
-            K_report = obj.K_alg_report(P_trans, K_nofeed, model, rho);
+            K_report = obj.K_alg_report(P_trans, K_nofeed, model);
             
             
             
@@ -145,7 +145,8 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
             sol.cert.model = obj.rotate_plant(model, -1);           
             
             sol.cert.K_sub = obj.rotate_plant(K_report.K_sub, -1);
-            sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
+            alg_rho = rhotrafo(sol.cert.alg_trans, sol.rho);
+            sol.gain = obj.validate_recovery_gain(alg_rho, sol.cert.iqc_op_all);
 
             sol.cert.Gcl = Gcl;
             sol.cert.Ycl = Ycl;

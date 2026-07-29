@@ -5,6 +5,7 @@ classdef opt_config_gen
         solver = 'lmilab'; %which solver to use
         verbose = false; %level of output
         impose_X = true; %apply PD constraint to the storage matrix
+        same_rho = false; %use the same convergence rate in all performance specifications
     end
     
     methods

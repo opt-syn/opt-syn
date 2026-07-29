@@ -34,17 +34,32 @@ classdef opt_analysis < opt_manager_interface
             %
             % Args:
             %   order (cell): orders of the iqcs to search over            
-            
+                        
+            ANY_NONCAUSAL = false;
             if ~iscell(order)
+                %declare the orders
                 order0 =order;
                 nop = length(obj.sys.op);
                 order = cell(nop, 1);
                 for i = 1:nop
                     order{i}  = order0;
                 end
+
+                %check if any are noncausal
+                if (isa(obj.sys.op{i}, 'op_gen') && (order(i)>0)) || (length(order(i))==2 && (order(2) > 0))
+                    ANY_NONCAUSAL = true;
+                end
             end
+
+            %override to enforce the same rho in all channels
+            if ANY_NONCAUSAL
+                obj.config.gen.same_rho = true;
+                obj.lmi.config.gen.same_rho = true;
+            end
+
             obj = obj.oracle_order(order);
         end
+
 
 
         function [obj, vars, cons] = oracle_order(obj,order, ind)
@@ -132,7 +147,9 @@ classdef opt_analysis < opt_manager_interface
             cons = append_lmi(cons, -cs + nop*(1+marg), obj.config.LMILAB);
         end
 
-        function [vars, cons, objective, alg_psi, rho, diss] = build_program(obj, specs)
+
+
+        function [vars, cons, objective, alg_psi, diss] = build_program(obj, specs)
             %form the analysis program
             %Args:
             %   specs (cell): performance specifications
@@ -141,8 +158,7 @@ classdef opt_analysis < opt_manager_interface
             %   cons:       accumulated constraints
             %   objective:  single value to be minimized in inner loop (not
             %               the outer loop of bisection)            
-            %   alg_psi:  generalized plant
-            %   rho (float):  linear convergence rate            
+            %   alg_psi:  generalized plant                 
             %   diss (diss_data):   dissipation constraints
 
 
@@ -151,13 +167,17 @@ classdef opt_analysis < opt_manager_interface
             end
 
             %BUILD_PROGRAM set up the algorithm analysis problem
-            [vars, cons, objective, alg_psi, rho, diss] = build_program@opt_manager_interface(obj, specs); 
+            [vars, cons, objective, alg_psi, diss] = build_program@opt_manager_interface(obj, specs); 
 
 
             %load in the filter constraints      
 
             %this requires a weighting by the exponential discounts            
-            rho_pow = rho.^(obj.schedule);
+            
+            rho_common = obj.get_rho(specs);
+            rho_pow = rho_common.^(obj.schedule);
+        
+            
             %see if this can be parameterized later
             for i = 1:length(obj.sys.op)
                 cons = obj.sys.op{i}.filter_constraints(cons, obj.order{i}, vars.op{i}, rho_pow, obj.iqc_op{i});
@@ -200,50 +220,47 @@ classdef opt_analysis < opt_manager_interface
                 
                       
                 sp = specs{i};
-                iwp_iqc = (1:(iqc_op.nw))';
-                ir_iqc_first = (1:(iqc_op.np))';
+ 
 
-
-                count_iqc_in = (iqc_op.nw);
-                count_iqc_out = (iqc_op.np);
-
-                if isempty(sp.izp) || isempty(sp.iwp)
-                    ir_iqc_first_r =[];
-                    iw_iqc_first_r = [];
-                else
-                    iw_iqc_first_r = count_iqc_in + (1:sp.iwp);
-                    count_iqc_in = count_iqc_in + sp.iwp;
-
-                    ir_iqc_first_r = count_iqc_out  + (1:sp.izp);
-                    count_iqc_out = count_iqc_out + sp.izp;
-                end
-
-                iwp_iqc = [iwp_iqc; iw_iqc_first_r];
-
-                ir_iqc0 = [ir_iqc_first; ir_iqc_first_r];
-                ir_iqc = [ir_iqc0; ir_iqc0 + (iqc_op.np + obj.sys.P.nwp )];
-
-                sp_ind_w = iwp_iqc;
-                sp_ind_r = ir_iqc;
-
+                %output indexer                
                 if iscell(alg_psi)
-                    [nwr, nww] = ssize(alg_psi{1}.D);                    
+                    %TODO: change to genplant_poly type?
+                    nz = alg_psi{1}.nz;
+                    nw = alg_psi{1}.nw;                    
+                    nwp = alg_psi{1}.nwp;
+                    nzp = alg_psi{1}.nzp;
+                    nu = 0;
+                    ny = 0;
                 else
-                    [nwr, nww] = ssize(alg_psi.D);
+                    nz = alg_psi.nz;
+                    nw = alg_psi.nw;
+                    nwp = alg_psi.nwp;
+                    nzp = alg_psi.nzp;
+                    nu = 0;
+                    ny = 0;
                 end
-
-                E_r = full(sparse(1:length(sp_ind_r), sp_ind_r, ones(1, length(sp_ind_r)), length(sp_ind_r), nwr));
-                E_w = full(sparse(1:length(sp_ind_w), sp_ind_w, ones(1, length(sp_ind_w)), length(sp_ind_w), nww));
-
+                nzpa = length(sp.izp);
+                nwpa = length(sp.iwp);
+                i_output = 1:(nz+nzpa+ny);
+                j_output = [(1:nz), (nz + sp.izp), nz+nzp + (1:ny)];
+                v_output = ones(length(i_output), 1);
+                E_output = full(sparse(i_output, j_output, v_output, nz+nzpa+ny, nz+nzp+ny));
+                
+                %input indexer
+                i_input = 1:(nw+nwpa+nu);
+                j_input = [(1:nw), (nw + sp.iwp), nw+nwp + (1:nu)];
+                v_input = ones(length(i_input), 1);
+                E_input = full(sparse(i_input, j_input, v_input, nw+nwpa+nu, nw+nwp+nu))';
+                
                 %nonminimal representation of the multiplier-extended plant
                 if iscell(alg_psi)
 
                     alg_screen = cell(size(alg_psi));
                     for j = 1:length(alg_screen)
-                        alg_screen{j} = E_r * alg_psi{j} * E_w;
+                        alg_screen{j} = E_output* alg_psi.P{j} * E_input;
                     end
                 else
-                    alg_screen = E_r * alg_psi * E_w;
+                    alg_screen = E_output * alg_psi.P * E_input;
                 end
 
 
@@ -251,6 +268,7 @@ classdef opt_analysis < opt_manager_interface
                 diss{i}.iqc_rob = iqc_op;
                 diss{i}.spec = sp;                    
                 diss{i}.plant = alg_screen;
+                diss{i}.rho = sp.rho;
                 % %need to permute the entries of Mdiag for the partition
             end
 
@@ -300,8 +318,8 @@ classdef opt_analysis < opt_manager_interface
             
             
             for i = 1:length(alg_psi_rec)
-                alg_psi_rec{i}.C = double(double(alg_psi_rec{i}.C, lmi_out));
-                alg_psi_rec{i}.D = double(double(alg_psi_rec{i}.D, lmi_out));
+                alg_psi_rec{i}.P.C = double(double(alg_psi_rec{i}.P.C, lmi_out));
+                alg_psi_rec{i}.P.D = double(double(alg_psi_rec{i}.P.D, lmi_out));
                 alg_psi_rec{i} = ss(alg_psi_rec{i}.A, alg_psi_rec{i}.B, alg_psi_rec{i}.C, alg_psi_rec{i}.D, 1);
             end
 
