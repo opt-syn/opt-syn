@@ -37,4 +37,4 @@ config.syn.D_mask = [0, 0;
 By default, `config.syn.D_mask` will be an lower-triangular matrix with all ones. This pattern allows all operators to be evaluated implicitly, and to use information computed from prior operators in the sequence. 
 
 
-An algorithm with upper-block-triangular nonzero entries of `D_mask` can be Analyzed or Synthesized. However {{osyn}} cannot guarantee that the algorithm will be well-posed, nor will it be able to {doc}`Simulate <../simulation>` trajectories of an algorithm execution.
+An algorithm with upper-block-triangular nonzero entries of `D_mask` can be Analyzed or Synthesized. However {{osyn}} cannot guarantee that the resulting algorithm will be well-posed, nor will it be able to {doc}`Simulate <../simulation>` trajectories of an algorithm execution.

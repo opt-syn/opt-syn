@@ -103,6 +103,25 @@ classdef (Abstract) opt_manager_interface < handle
 
             [iqc_data] = obj.iqc_op_all();
             iqc_data.ERGODIC = ERGODIC;
+
+            %override for same rho
+            if obj.config.gen.same_rho
+                common_rho = obj.get_rho(sperf);
+                iqc_data.iqc = iqc_data.iqc.rhotrafo(1/common_rho);
+                
+                ind_stab = 0;
+                for i = 1:length(sperf)
+                    sperf{i}.rho = common_rho;
+                    if isa(sperf{i}, 'spec_stability')
+                        ind_stab = i;
+                    end
+                end
+
+                %drop the exponential stability specification
+                if (i > 0) && (length(sperf)>1)
+                    sperf(i) = [];
+                end
+            end
             
             [alg_psi, iqc_op, alg_loop] = obj.sys.build_plant(iqc_data);
 
@@ -223,6 +242,27 @@ classdef (Abstract) opt_manager_interface < handle
             %assign indices to the specifications
             for i = 1:numel(obj.specs)
                 obj.specs{i}.id = i;
+            end
+        end
+
+        function rho = get_rho(obj, specs)
+            %GET_RHO get the common rho in the case of the same rho in all
+            %performance specifications. required to use noncausal
+            %multipliers
+            %
+            %Args:
+            %   specs (cell):  array of specifications
+            %
+            %Returns:
+            %   rho (double): the common rho 
+            rho = 1;
+
+            if obj.config.gen.same_rho
+                for i = 1:length(specs)
+                    if isa(specs{i}, 'spec_stability')
+                        rho = specs{i}.rho;
+                    end
+                end
             end
         end
 
@@ -529,6 +569,7 @@ classdef (Abstract) opt_manager_interface < handle
                 end            
             end
 
+            
             iqc_data =iqc_data_container;
             iqc_data.iqc = iqc;
             iqc_data.m_same = m_same;

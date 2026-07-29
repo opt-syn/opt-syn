@@ -923,9 +923,16 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %(not yet exponentially undiscounted, this happens later)
 
             vars_rec = sol.vars;
-            
-
+                        
+            if obj.config.gen.same_rho
+                rho_common = sol.rho;
+                P_trans = rhotrafo(P_trans, rho_common);
+            else
+                rho_common = 1;
+            end
             [K_nofeed, Gcal, Ycal] = recover_subcontroller_warp(obj, P_trans, vars_rec);
+
+            K_nofeed = rhotrafo(K_nofeed, 1/rho_common);
 
             model = obj.reg.get_model(vars_rec.reg);
 
@@ -996,7 +1003,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             % obj.config.syn.elimination = elim_orig;
 
 
-            [A, B, C, D] = ssdata(P_trans);
+            [A, B, C, D] = ssdata(rhotrafo(P_trans, rho_common));
 
             iz = [P_trans.index_z(), P_trans.index_zp()];
             iw = [P_trans.index_w(), P_trans.index_wp()];

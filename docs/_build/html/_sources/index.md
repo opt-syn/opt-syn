@@ -8,15 +8,20 @@ tocdepth: 1
 
 
 
-Analysis and Synthesis of first-order algorithms (MATLAB).
+Analysis and Synthesis of First-Order Algorithms (MATLAB)
 
 ---
+
+{{osyn}}: <span style="color:#5D93BF">optimization</span> (algorithm) synthesis.
 
 ## Overview
 
 
-{{osyn}} uses methods from robust control theory to analyze and synthesize first-order optimization algorithms. These algorithms may arise from networked environments including channel memory, constant or time-varying delays, and cross-talk. Target performance criteria for analysis includes worst-case  linear convergence rates and tracking bounds. Synthesis tries to design an optimization algorithm satisfying these desired constraints. 
-The analysis and synthesis problems are posed as convex problems with  Linear Matrix Inequality constraints, and are solved using [LMILab](https://www.mathworks.com/help/robust/ug/introduction.html).
+{{osyn}} uses methods analyzes and synthesizes first-order optimization algorithms from robust control theory. The target performance criteria for Analysis includes worst-case linear convergence rates and gain bounds for the amplification of errors. The Synthesis process tries to design an optimization algorithm satisfying these desired constraints. 
+The analysis and synthesis problems are posed as convex problems with  Linear Matrix Inequality constraints, and are solved using [LMILab](https://www.mathworks.com/help/robust/ug/introduction.html).  These algorithms 
+Analysis and Synthesis may be performed for algorithms arising in networked environments,  including cases with channel memory, constant or time-varying delays, and cross-talk.
+
+
 
 ## Get Started
 

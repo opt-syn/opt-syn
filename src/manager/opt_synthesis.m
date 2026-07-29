@@ -62,6 +62,19 @@ classdef opt_synthesis < opt_manager_interface
             else
                 obj.iqc_op = obj.make_blank_iqc();
             end
+
+            ANY_NONCAUSAL = false;
+            for i = 1:length(obj.iqc_op)
+                if size(obj.iqc_op{i}.Psi2.A, 1) > 0
+                    ANY_NONCAUSAL = true;
+                    break
+                end
+            end
+           
+            if ANY_NONCAUSAL
+                obj.config.gen.same_rho = true;
+                obj.lmi.config.gen.same_rho = true;
+            end
         end
 
         function [diss] = index_specs(obj, alg_psi, iqc_data, specs)

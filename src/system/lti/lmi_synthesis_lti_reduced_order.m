@@ -89,6 +89,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             % dissend = struct('plant', diss{1}.plant_reg, 'rho', sol.rho);
             P_trans =  obj.connect_model(diss{1});
             
+
             %evaluate the variables
             [sol] = obj.recover_subcontroller(alg_psi, P_trans, sol);
                       
@@ -102,7 +103,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %mode/control
             %Args:
             %   alg_psi:   the filtered algorithmic interconnection
-            %   P_trans:    the transformed generalized plant before IQC
+            %   P_aug:    the transformed augmented generalized plant before IQC
             %   sol: solution structure
             %
             %Returns:
@@ -112,8 +113,16 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             vars_rec = sol.vars;
             rho = sol.rho;
 
+            if obj.config.gen.same_rho
+                rho_common = sol.rho;
+                P_aug = rhotrafo(P_aug, rho_common);
+            else
+                rho_common = 1;
+            end
+
             [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_aug, vars_rec);
 
+            K_nofeed = rhotrafo(K_nofeed, 1/rho_common);
 
             
             model = obj.reg.get_model(vars_rec.reg);            
@@ -376,9 +385,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             if nargin < 6
                 rho = 1;
             end
-            rhoi  = 1/rho;
-             
-
+ 
             [S, R] = obj.reg.exosystem();
 
             rhoi = (1/rho);
@@ -388,7 +395,9 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             Pihatinv = obj.Pihat(vars_diss, vars_reg, true);
 
             
-            
+            %rho weight the system
+            %includes a reverting of rho-weighting the IQC if 
+            %opt.config.gen.same_rho == true;
             [A, B, C, D] = ssdata(P);
             A = rhoi * A;
             B = rhoi * B;
@@ -443,7 +452,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 else
                     %some filter or network dynamics
                     Acal = [A*GY,  Pibar * Aaug ;
-                        zeros(n+nf+ns, n), GX*Aaug];
+                        zeros(n+ns, n), GX*Aaug];
                     Bcal = [B(:, iw);
                         GX*Pihatinv * Bpaug];
                     Ccal = [C(iz, :)*GY, Creg];

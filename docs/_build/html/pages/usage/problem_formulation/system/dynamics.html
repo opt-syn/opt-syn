@@ -27,17 +27,17 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=720ed60b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../../../_static/documentation_options.js?v=e1a75a79"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
@@ -46,7 +46,6 @@
     <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'pages/usage/problem_formulation/system/dynamics';</script>
-    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="Configuration" href="../config.html" />
@@ -54,26 +53,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-  
-    
-    <script src="../../../../_static/searchtools.js"></script>
-    <script src="../../../../_static/language_data.js"></script>
-    <script src="../../../../searchindex.js"></script>
-  
   </head>
-  <body data-default-mode="">
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
-
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-  
-  
-  
+
   
   <dialog id="pst-search-dialog">
     
@@ -99,51 +92,7 @@
 </div>
 
   
-    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
-<div class="bd-header__inner bd-page-width">
-  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
-    <span class="fa-solid fa-bars"></span>
-  </button>
-  
-  
-  <div class="col-lg-9 navbar-header-items">
-    
-    
-    <div class="navbar-header-items__end">
-      
-        <div class="navbar-item navbar-persistent--container">
-          
-
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button>
-        </div>
-      
-      
-    </div>
-    
-  </div>
-  
-  
-    <div class="navbar-persistent--mobile">
-
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button>
-    </div>
-  
-
-  
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
-      <span class="fa-solid fa-outdent"></span>
-    </button>
-  
-</div>
-
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
     </header>
   
 
@@ -233,6 +182,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../documentation/index_documentation.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../documentation/doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../documentation/doc_solutions.html">Solution</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../documentation/operators/doc_set_valued.html">Set-Valued Maps</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../documentation/operators/doc_sml.html">Subdifferentials</a></li>
@@ -390,18 +340,11 @@
 
 
 
-<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
-    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end">
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
-  </ul>
-</div>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -429,7 +372,7 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="pst-show_toc_level nav section-nav flex-column">
+                <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#periodic">Periodic</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#periodic-orbit">Periodic-Orbit</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#switched">Switched</a></li>
@@ -450,14 +393,16 @@
 <div class="math notranslate nohighlight">
 \[\begin{split}\mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_k &amp; \Bcl_k \hl \Ccl_k &amp; \Dcl_k } \mat{c}{x_k \\ w_k}, &amp; \forall k \in \N.\end{split}\]</div>
 <p>Linear Time Invariant (LTI) systems are a special case of LTV systems where <span class="math notranslate nohighlight">\((\Acl, \Bcl, \Ccl, \Dcl)\)</span> are constant in time.
-The <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_system</span></code> class in the <span class="xref std std-ref">System</span> page involves networks and controllers that are only  Linear Time Invariant (LTI).</p>
+The <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_system</span></code> class in the <a class="reference internal" href="index_system.html"><span class="doc">System</span></a> page involves networks and controllers that are only  Linear Time Invariant (LTI).</p>
 <p>This page documents time-varying dynamical systems that are supported by <span style="color:#5D93BF">opt</span>-syn.</p>
 <p>In all types of dynamical systems listed on this page,  one of the network or controller can be LTI. If both the network and controller are LTI, then <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_system</span></code> should be used instead of the broader time-varying system class.</p>
 <section id="periodic">
 <h2>Periodic<a class="headerlink" href="#periodic" title="Link to this heading">#</a></h2>
 <p>A linear time-varying  system is periodic if there exists an integer <span class="math notranslate nohighlight">\(h\)</span> such that</p>
 <div class="math notranslate nohighlight">
-\[ \mat{c|c}{\Acl_k &amp; \Bcl_k \hl \Ccl_k &amp; \Dcl_k }  = \mat{c|c}{\Acl_{k+h} &amp; \Bcl_{k+h} \hl \Ccl_{k+h} &amp; \Dcl_{k+h} } &amp; &amp; \forall k \in \N.\]</div>
+\[\begin{align*}
+ \mat{c|c}{\Acl_k &amp; \Bcl_k \hl \Ccl_k &amp; \Dcl_k }  = \mat{c|c}{\Acl_{k+h} &amp; \Bcl_{k+h} \hl \Ccl_{k+h} &amp; \Dcl_{k+h} } &amp; &amp; \forall k \in \N.
+ \end{align*}\]</div>
 <p>Systems with periodic networks and controllers can be specified using the command</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">sys_per</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system_periodic</span><span class="p">(</span><span class="n">Operator_Class</span><span class="p">,</span><span class="w"> </span><span class="n">Network</span><span class="p">,</span><span class="w"> </span><span class="n">Controller</span><span class="p">);</span>
 </pre></div>
@@ -475,14 +420,14 @@ If the network is LTI, then the controller can be an <span class="math notransla
 <p>A periodic-orbit linear system is an <span class="math notranslate nohighlight">\(h\)</span>-periodic linear system
 in which there exists matrices  <span class="math notranslate nohighlight">\((M_x, M_w, M_z)\)</span> such that</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}M_x^h &amp;= M_x, \ M_w^h = M_w, M_z^h = M_z, 
+\[\begin{split}M_x^h &amp;= M_x, \ M_w^h = M_w, M_z^h = M_z, \\
  \mat{c|c}{\Acl_k &amp; \Bcl_k \hl \Ccl_k &amp; \Dcl_k }  &amp;= \mat{c c}{M_x &amp; 0 \\ 0 &amp; M_y}^{-k} \mat{c|c}{\Acl_{0} &amp; \Bcl_{0} \hl \Ccl_{0} &amp; \Dcl_{0} } \mat{c c}{M_x &amp; 0 \\ 0 &amp; M_u}^k, &amp; &amp; \forall k \in \N.\end{split}\]</div>
+<p>Cyclic Coordinate-Descent algorithms are instances of periodic-orbit algorithms satisfying this simplified structure.</p>
+<p>The <span style="color:#5D93BF">opt</span>-syn implementation of periodic-orbit systems is simplified. The matrix <span class="math notranslate nohighlight">\(M \in \R^{c \times c}\)</span> must satisfy <span class="math notranslate nohighlight">\(M = M^\top, M^h = M\)</span>, where <span class="math notranslate nohighlight">\(c\)</span> is the coordinate dimension of the Kronecker Structure. All other matrices follow from <span class="math notranslate nohighlight">\(M\)</span> by Kronecker structure (e.g. <span class="math notranslate nohighlight">\(M_x = I_{n_x/c} \otimes M\)</span>).</p>
 <p>Systems with periodic-orbit  networks and controllers can be specified using the command</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">sys_orbit</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system_periodic_orbit</span><span class="p">(</span><span class="n">Operator_Class</span><span class="p">,</span><span class="w"> </span><span class="n">Network</span><span class="p">,</span><span class="w"> </span><span class="n">Controller</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>The <span style="color:#5D93BF">opt</span>-syn implementation of periodic-orbit systems is simplified. The matrix <span class="math notranslate nohighlight">\(M \in \R^{c \times c}\)</span> must satisfy <span class="math notranslate nohighlight">\(M = M^\top, M^h = M\)</span>, where <span class="math notranslate nohighlight">\(c\)</span> is the coordinate dimension of the Kronecker Structure.</p>
-<p>Cyclic Coordinate-Descent algorithms are instances of periodic-orbit algorithms satisfying this simplified structure.</p>
 <p>Periodic-orbit systems can be enumerated into periodic systems and  lifted into LTI systems:</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">sys_per</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sys_orbit</span><span class="p">.</span><span class="n">export_periodic</span><span class="p">();</span>
 <span class="n">sys_lti</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sys_orbit</span><span class="p">.</span><span class="n">periodic_lift</span><span class="p">();</span>
@@ -494,12 +439,12 @@ in which there exists matrices  <span class="math notranslate nohighlight">\((M_
 <p>A switched linear system with <span class="math notranslate nohighlight">\(N_s\)</span> modes is described by a collection of <span class="math notranslate nohighlight">\(N_s\)</span> LTI systems (modes), and a directed, unweighted adjacency graph <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> with <span class="math notranslate nohighlight">\(N_s\)</span> vertices. Each subsystem <span class="math notranslate nohighlight">\(j\)</span> of the switched system can be represented as</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_j &amp; \Bcl_j \hl \Ccl_j &amp; \Dcl_j } \mat{c}{x_k \\ w_k}.\end{split}\]</div>
-<p>The function <span class="math notranslate nohighlight">\(\text{mode}: \N \rightarrow 1, \ldots, N_s\)</span> chooses the active subsystem at time <span class="math notranslate nohighlight">\(k\)</span>. A trajectory <span class="math notranslate nohighlight">\((x, w, z, \text{mode})_{k \in \N}\)</span> of a switched system  satisfies the relations</p>
+<p>The function <span class="math notranslate nohighlight">\(\theta: \N \rightarrow \{1, \ldots, N_s\}\)</span> chooses the active subsystem at time <span class="math notranslate nohighlight">\(k\)</span>. A trajectory <span class="math notranslate nohighlight">\((x, w, z, \theta)_{k \in \N}\)</span> of a switched system  satisfies the relations</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-&amp; \mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_{\textrm{mode}(k)} &amp; \Bcl_{\textrm{mode}(k)} \hl \Ccl_{\textrm{mode}(k)} &amp; \Dcl_{\textrm{mode}(k)} } \mat{c}{x_k \\ w_k} &amp; &amp; \forall k \in \N.
-&amp; (\textrm{mode}(k), \textrm{mode}(k+1)) \in \text{Edges}(\Gs)  &amp; &amp; \forall k \in \N.
-\begin{align*}\end{split}\]</div>
+&amp; \mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_{\theta(k)} &amp; \Bcl_{\theta(k)} \hl \Ccl_{\theta(k)} &amp; \Dcl_{\theta(k)} } \mat{c}{x_k \\ w_k} &amp; &amp; \forall k \in \N, \\
+&amp; (\theta(k), \theta(k+1)) \in \text{Edges}(\mathcal{G}).
+\end{align*}\end{split}\]</div>
 <p>Switched systems can model network phenomena such as time-varying delays and communication drops. Periodic and periodic-orbit systems are specific instances of switched systems.</p>
 <p>A system with switched system  networks and controllers can be specified using the command</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">sys_per</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system_switched</span><span class="p">(</span><span class="n">Operator_Class</span><span class="p">,</span><span class="w"> </span><span class="n">Network</span><span class="p">,</span><span class="w"> </span><span class="n">Controller</span><span class="p">,</span><span class="w"> </span><span class="n">G</span><span class="p">);</span>
@@ -555,7 +500,7 @@ in which there exists matrices  <span class="math notranslate nohighlight">\((M_
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="pst-show_toc_level nav section-nav flex-column">
+    <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#periodic">Periodic</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#periodic-orbit">Periodic-Orbit</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#switched">Switched</a></li>
@@ -607,8 +552,8 @@ By opt-syn team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

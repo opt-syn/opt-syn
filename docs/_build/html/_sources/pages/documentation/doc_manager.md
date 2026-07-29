@@ -1,7 +1,7 @@
 # Manager
 
 
-The {class}`manager` class is the highest level class in the {{osyn}} project. The Analysis and Synthesis problems are posed using the {class}`opt_analysis` and {class}`opt_synthesis` classes, respectively. The {module}`manager` classes are invoked in the {doc}`Problem Formulation <../usage/problem_formulation/index_problem_formulation>` page, and their usage is explained in the {doc}`Solve <../usage/solve>` page.
+The {class}`manager` class is the highest level class in the {{osyn}} project. The Analysis and Synthesis problems are posed using the {class}`opt_analysis` and {class}`opt_synthesis` classes, respectively. The {class}`manager` classes are invoked in the {doc}`Problem Formulation <../usage/problem_formulation/index_problem_formulation>` page, and their usage is explained in the {doc}`Solve <../usage/solve>` page.
 
 
 

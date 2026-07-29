@@ -4,7 +4,7 @@ Our computational linear convergence results are based on a subset of zero-inclu
 
 ## Parameterization
 
-The pair $(w^*, z^*)$ may be parameterized using the consensus matrix
+The pair $(w^*, z^*)$ may be parameterized using the consensus matrix {footcite}`upadhyaya2025automated`
 ```{math}
 \begin{align}
 N &:= \mat{cc}{I & 0 &  \hdots & 0 \\
@@ -34,13 +34,13 @@ Uniqueness requires that the map $z \mapsto 0 $ is not in $\F$.
 
 
 Sufficient conditions for a well-posed algorithm $(F, G)$ to be linearly convergent at rate $\rho \in (0, 1)$  for all $F \in \F$ are if
-1. Convergence: For all $\ov x_0$ and $F \in \F$ with $0 \in F(0)$, we have $\lim_{k\rightarrow \infty} \ov x_k \rightarrow 0$ for the system
+1. *Robust Stability:* For all $\ov x_0$ and $F \in \F$ with $0 \in F(0)$, we have $\lim_{k\rightarrow \infty} \ov x_k \rightarrow 0$ for the system
 ```{math}
 \begin{align}
 \mat{c}{\ov x_{k+1} \hl \ov{z}_k} &= \mat{c|c}{\rhoi \Acl & \rhoi \Bcl \hl \Ccl & \Dcl} \mat{c}{\ov x_{k} \hl \ov{w}_k}, & \ov{w}_k \in \rho^{-k} F(\rho^k \ov{z_k}),
 \end{align}
 ```
-2. Regulator Equation:  There is a solution $\mathbf{X}^*$ to the linear system of equations
+2. Solvability of *Regulator Equation:*  There is a solution $\mathbf{X}^*$ to the linear system of equations
 ```{math}
 \begin{align}
 \mat{c}{\mathbf{X}^* \\ 0} = \mat{c|cc}{\Acl & 0 & \Bcl N \hl 
@@ -63,11 +63,11 @@ If these two conditions hold, then
 \end{align}
 ```
 
-These sufficient conditions are also  necessary if $\Acl + \Bcl (I - \Dcl \Delta)^{-1} \Dcl \Ccl$ is Schur (all eigenvalues have absolute value below 1). 
+These sufficient conditions are also  necessary if all eigenvalues of $\Acl + \Bcl (I - \Dcl \Delta)^{-1} \Dcl \Ccl$ have absolute value below 1. Fullfillment of the Robust Stability and Regulator Equation requrirements imply that the algorithm is a fixed-point encoding {footcite}`ryu2020uniqueness`: every fixed point of the algorithm is a fixed point of the inclusion problem.
 
 
 
-The Convergence criterion is a dynamical test, and will be verified using Integral Quadratic Constraints and Linear Matrix Inequality methods. The Regulator Equation can be easily checked by solving a system of equations.
+The Robust Stability criterion is a dynamical test, and will be verified using Integral Quadratic Constraints and Linear Matrix Inequality methods. The Regulator Equation can be easily checked by solving a linear system of  equations.
 
 :::{caution} 
 Add in references to fixed-point encoding.

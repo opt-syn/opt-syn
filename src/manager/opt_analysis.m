@@ -34,17 +34,32 @@ classdef opt_analysis < opt_manager_interface
             %
             % Args:
             %   order (cell): orders of the iqcs to search over            
-            
+                        
+            ANY_NONCAUSAL = false;
             if ~iscell(order)
+                %declare the orders
                 order0 =order;
                 nop = length(obj.sys.op);
                 order = cell(nop, 1);
                 for i = 1:nop
                     order{i}  = order0;
                 end
+
+                %check if any are noncausal
+                if (isa(obj.sys.op{i}, 'op_gen') && (order(i)>0)) || (length(order(i))==2 && (order(2) > 0))
+                    ANY_NONCAUSAL = true;
+                end
             end
+
+            %override to enforce the same rho in all channels
+            if ANY_NONCAUSAL
+                obj.config.gen.same_rho = true;
+                obj.lmi.config.gen.same_rho = true;
+            end
+
             obj = obj.oracle_order(order);
         end
+
 
 
         function [obj, vars, cons] = oracle_order(obj,order, ind)
@@ -132,6 +147,8 @@ classdef opt_analysis < opt_manager_interface
             cons = append_lmi(cons, -cs + nop*(1+marg), obj.config.LMILAB);
         end
 
+
+
         function [vars, cons, objective, alg_psi, diss] = build_program(obj, specs)
             %form the analysis program
             %Args:
@@ -141,8 +158,7 @@ classdef opt_analysis < opt_manager_interface
             %   cons:       accumulated constraints
             %   objective:  single value to be minimized in inner loop (not
             %               the outer loop of bisection)            
-            %   alg_psi:  generalized plant
-            %   rho (float):  linear convergence rate            
+            %   alg_psi:  generalized plant                 
             %   diss (diss_data):   dissipation constraints
 
 
@@ -157,7 +173,11 @@ classdef opt_analysis < opt_manager_interface
             %load in the filter constraints      
 
             %this requires a weighting by the exponential discounts            
-            rho_pow = 1.^(obj.schedule);
+            
+            rho_common = obj.get_rho(specs);
+            rho_pow = rho_common.^(obj.schedule);
+        
+            
             %see if this can be parameterized later
             for i = 1:length(obj.sys.op)
                 cons = obj.sys.op{i}.filter_constraints(cons, obj.order{i}, vars.op{i}, rho_pow, obj.iqc_op{i});
@@ -200,37 +220,7 @@ classdef opt_analysis < opt_manager_interface
                 
                       
                 sp = specs{i};
-                % iwp_iqc = (1:(iqc_op.nw))';
-                % ir_iqc_first = (1:(iqc_op.np))';
-
-                % 
-                % count_iqc_in = (iqc_op.nw);
-                % count_iqc_out = (iqc_op.np);
-                % 
-                % if isempty(sp.izp) || isempty(sp.iwp)
-                %     ir_iqc_first_r =[];
-                %     iw_iqc_first_r = [];
-                % else
-                %     iw_iqc_first_r = count_iqc_in + (1:sp.iwp);
-                %     count_iqc_in = count_iqc_in + sp.iwp;
-                % 
-                %     ir_iqc_first_r = count_iqc_out  + (1:sp.izp);
-                %     count_iqc_out = count_iqc_out + sp.izp;
-                % end
-                % 
-                % iwp_iqc = [iwp_iqc; iw_iqc_first_r];
-                % 
-                % ir_iqc0 = [ir_iqc_first; ir_iqc_first_r];
-                % ir_iqc = [ir_iqc0; ir_iqc0 + (iqc_op.np + obj.sys.P.nwp )];
-                % 
-                % sp_ind_w = iwp_iqc;
-                % sp_ind_r = ir_iqc;
-                % 
-                % if iscell(alg_psi)
-                %     [nwr, nww] = ssize(alg_psi{1}.D);                    
-                % else
-                %     [nwr, nww] = ssize(alg_psi.D);
-                % end
+ 
 
                 %output indexer                
                 if iscell(alg_psi)
