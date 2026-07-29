@@ -26,42 +26,49 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=720ed60b" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="_static/documentation_options.js?v=e1a75a79"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -87,7 +94,47 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -289,11 +336,18 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
 
 
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -378,6 +432,8 @@
 </li>
       <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.adj">adj (system.switched.opt_system_switched attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_solutions.html#manager.containers.cert_synthesis.alg">alg (manager.containers.cert_synthesis attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter">alg_plotter (class in simulator)</a>
 </li>
       <li><a href="pages/documentation/doc_plotting.html#simulator.alg_plotter.alg_plotter">alg_plotter() (simulator.alg_plotter method)</a>
@@ -397,6 +453,8 @@
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out">alg_sim_out (class in simulator)</a>
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.alg_sim_out">alg_sim_out() (simulator.alg_sim_out method)</a>
+</li>
+      <li><a href="pages/documentation/doc_solutions.html#manager.containers.cert_synthesis.alg_trans">alg_trans (manager.containers.cert_synthesis attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_synthesis.alternate">alternate() (manager.opt_synthesis method)</a>
 </li>
@@ -669,9 +727,11 @@
 </li>
         <li><a href="pages/documentation/doc_specs.html#spec.spec_e2e.create_vars">(spec.spec_e2e method)</a>
 </li>
-        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.create_vars">(spec.spec_interface method)</a>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_ergodic.create_vars">(spec.spec_ergodic method)</a>
 </li>
         <li><a href="pages/documentation/doc_specs.html#spec.spec_l2.create_vars">(spec.spec_l2 method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_p2p.create_vars">(spec.spec_p2p method)</a>
 </li>
         <li><a href="pages/documentation/doc_specs.html#spec.spec_passivity.create_vars">(spec.spec_passivity method)</a>
 </li>
@@ -866,6 +926,8 @@
         <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.EQUALITY">(simulator.alg_sim attribute)</a>
 </li>
       </ul></li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_ergodic.erg_pass">erg_pass (spec.spec_ergodic attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.ERGODIC">ERGODIC (iqc.iqc_data_container attribute)</a>
 
       <ul>
@@ -966,12 +1028,14 @@
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.G_min">G_min (config.opt_config_tol attribute)</a>
 </li>
-      <li><a href="pages/documentation/doc_solutions.html#manager.containers.cert_synthesis.gain">gain (manager.containers.cert_synthesis attribute)</a>
+      <li><a href="pages/documentation/doc_solutions.html#manager.containers.opt_solution.gain">gain (manager.containers.opt_solution attribute)</a>
 
       <ul>
         <li><a href="pages/documentation/doc_specs.html#spec.spec_e2e.gain">(spec.spec_e2e attribute)</a>
 </li>
         <li><a href="pages/documentation/doc_specs.html#spec.spec_l2.gain">(spec.spec_l2 attribute)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_p2p.gain">(spec.spec_p2p attribute)</a>
 </li>
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.reg_cl_out.Gam">Gam (system.generic.reg_cl_out attribute)</a>
@@ -1135,11 +1199,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/operators/doc_operators.html#operator.operator_interface.id">id (operator.operator_interface attribute)</a>
-
-      <ul>
-        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.id">(spec.spec_interface attribute)</a>
 </li>
-      </ul></li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.impose_X">impose_X (config.opt_config_gen attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.ind_same">ind_same (iqc.iqc_data_container attribute)</a>
@@ -1156,6 +1216,8 @@
         <li><a href="pages/documentation/doc_manager.html#manager.opt_synthesis.index_specs">(manager.opt_synthesis method)</a>
 </li>
       </ul></li>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_u">index_u() (plant.genplant.genplant method)</a>
+</li>
       <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_w">index_w() (plant.genplant.genplant method)</a>
 </li>
       <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_wp">index_wp() (plant.genplant.genplant method)</a>
@@ -1166,10 +1228,10 @@
 </li>
       <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.index_zp">index_zp() (plant.genplant.genplant method)</a>
 </li>
-      <li><a href="pages/documentation/doc_solutions.html#manager.containers.opt_solution.info">info (manager.containers.opt_solution attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_solutions.html#manager.containers.opt_solution.info">info (manager.containers.opt_solution attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_tol.input_diss">input_diss (config.opt_config_tol attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.iqc">iqc (iqc.iqc_data_container attribute)</a>
@@ -1199,10 +1261,6 @@
       <li><a href="pages/documentation/doc_solutions.html#manager.containers.cert_synthesis.iqc_op_all">iqc_op_all (manager.containers.cert_synthesis attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.iqc_op_all">iqc_op_all() (manager.opt_manager_interface method)</a>
-</li>
-      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.iwp">iwp (spec.spec_interface attribute)</a>
-</li>
-      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.izp">izp (spec.spec_interface attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1428,15 +1486,17 @@
         <li><a href="pages/documentation/system/doc_switched.html#system.switched.regulator_switched.Nss">(system.switched.regulator_switched method)</a>
 </li>
       </ul></li>
-      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.nu">nu (plant.genplant.genplant attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.nu">nu (plant.genplant.genplant attribute)</a>
+</li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.nu">nu() (system.generic.opt_system_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.null_reg_all">null_reg_all() (system.generic.regulator_interface method)</a>
 </li>
       <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.nw">nw (plant.genplant.genplant attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_ergodic.Nw">Nw (spec.spec_ergodic attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.nw">nw() (iqc.iqc_loop_factored method)</a>
 
@@ -1445,8 +1505,6 @@
 </li>
       </ul></li>
       <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.nwp">nwp (plant.genplant.genplant attribute)</a>
-</li>
-      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.nwp">nwp() (spec.spec_interface method)</a>
 </li>
       <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.nx">nx() (plant.genplant.genplant method)</a>
 
@@ -1483,8 +1541,6 @@
 </li>
       </ul></li>
       <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.nzp">nzp (plant.genplant.genplant attribute)</a>
-</li>
-      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.nzp">nzp() (spec.spec_interface method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1786,6 +1842,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.quad_objective">quad_objective() (system.generic.lmi_dispatch_interface method)</a>
 </li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_p2p.quad_terminal">quad_terminal() (spec.spec_p2p method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1852,10 +1910,10 @@
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.reg_cl_out.reg_cl_out">reg_cl_out() (system.generic.reg_cl_out method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.reg_K_sys_all">reg_K_sys_all() (system.generic.regulator_interface method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.reg_K_sys_indiv">reg_K_sys_indiv() (system.generic.regulator_interface method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.reg_K_sys_next">reg_K_sys_next() (system.generic.regulator_interface method)</a>
@@ -1866,8 +1924,14 @@
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.reg_sys_next">reg_sys_next() (system.generic.regulator_interface method)</a>
 </li>
-      <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_analysis_interface.regcl">regcl (system.generic.lmi_analysis_interface attribute)</a>
+      <li><a href="pages/documentation/doc_solutions.html#manager.containers.cert_analysis.regcl">regcl (manager.containers.cert_analysis attribute)</a>
+
+      <ul>
+        <li><a href="pages/documentation/doc_solutions.html#manager.containers.cert_synthesis.regcl">(manager.containers.cert_synthesis attribute)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_analysis_interface.regcl">(system.generic.lmi_analysis_interface attribute)</a>
+</li>
+      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface">regulator_interface (class in system.generic)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.regulator_interface">regulator_interface() (system.generic.regulator_interface method)</a>
@@ -1893,11 +1957,7 @@
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.res_z">res_z (simulator.alg_sim_out attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_solutions.html#manager.containers.opt_solution.rho">rho (manager.containers.opt_solution attribute)</a>
-
-      <ul>
-        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.rho">(spec.spec_interface attribute)</a>
 </li>
-      </ul></li>
       <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.rhotrafo">rhotrafo() (plant.genplant.genplant method)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.rotate">rotate (iqc.iqc_data_container attribute)</a>
@@ -1941,7 +2001,7 @@
       <li><a href="pages/documentation/doc_specs.html#spec.spec_e2e.set_p">set_p() (spec.spec_e2e method)</a>
 
       <ul>
-        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.set_p">(spec.spec_interface method)</a>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_ergodic.set_p">(spec.spec_ergodic method)</a>
 </li>
         <li><a href="pages/documentation/doc_specs.html#spec.spec_l2.set_p">(spec.spec_l2 method)</a>
 </li>
@@ -1976,15 +2036,19 @@
 </li>
       <li><a href="pages/documentation/doc_specs.html#spec.spec_e2e.spec_e2e">spec_e2e() (spec.spec_e2e method)</a>
 </li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_ergodic">spec_ergodic (class in spec)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_ergodic.spec_ergodic">spec_ergodic() (spec.spec_ergodic method)</a>
+</li>
       <li><a href="pages/documentation/doc_config.html#config.bisect_opts.spec_ind">spec_ind (config.bisect_opts attribute)</a>
-</li>
-      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface">spec_interface (class in spec)</a>
-</li>
-      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.spec_interface">spec_interface() (spec.spec_interface method)</a>
 </li>
       <li><a href="pages/documentation/doc_specs.html#spec.spec_l2">spec_l2 (class in spec)</a>
 </li>
       <li><a href="pages/documentation/doc_specs.html#spec.spec_l2.spec_l2">spec_l2() (spec.spec_l2 method)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_p2p">spec_p2p (class in spec)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_p2p.spec_p2p">spec_p2p() (spec.spec_p2p method)</a>
 </li>
       <li><a href="pages/documentation/doc_specs.html#spec.spec_passivity">spec_passivity (class in spec)</a>
 </li>
@@ -2033,9 +2097,11 @@
       <li><a href="pages/documentation/doc_specs.html#spec.spec_e2e.supply">supply() (spec.spec_e2e method)</a>
 
       <ul>
-        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.supply">(spec.spec_interface method)</a>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_ergodic.supply">(spec.spec_ergodic method)</a>
 </li>
         <li><a href="pages/documentation/doc_specs.html#spec.spec_l2.supply">(spec.spec_l2 method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_p2p.supply">(spec.spec_p2p method)</a>
 </li>
         <li><a href="pages/documentation/doc_specs.html#spec.spec_passivity.supply">(spec.spec_passivity method)</a>
 </li>
@@ -2051,9 +2117,11 @@
       <li><a href="pages/documentation/doc_specs.html#spec.spec_e2e.supply_quad">supply_quad() (spec.spec_e2e method)</a>
 
       <ul>
-        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.supply_quad">(spec.spec_interface method)</a>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_ergodic.supply_quad">(spec.spec_ergodic method)</a>
 </li>
         <li><a href="pages/documentation/doc_specs.html#spec.spec_l2.supply_quad">(spec.spec_l2 method)</a>
+</li>
+        <li><a href="pages/documentation/doc_specs.html#spec.spec_p2p.supply_quad">(spec.spec_p2p method)</a>
 </li>
         <li><a href="pages/documentation/doc_specs.html#spec.spec_passivity.supply_quad">(spec.spec_passivity method)</a>
 </li>
@@ -2088,8 +2156,6 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.target">target (spec.spec_interface attribute)</a>
-</li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_data_container.task">task (iqc.iqc_data_container attribute)</a>
 
       <ul>
@@ -2114,12 +2180,8 @@
 </li>
       <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.Ts">Ts() (plant.genplant.genplant method)</a>
 </li>
-      <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.type">type (spec.spec_interface attribute)</a>
-
-      <ul>
-        <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.type">(system.generic.opt_system_interface attribute)</a>
+      <li><a href="pages/documentation/system/doc_system.html#system.generic.opt_system_interface.type">type (system.generic.opt_system_interface attribute)</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -2153,8 +2215,6 @@
       <ul>
         <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.vars">(manager.opt_manager_interface attribute)</a>
 </li>
-        <li><a href="pages/documentation/doc_specs.html#spec.spec_interface.vars">(spec.spec_interface attribute)</a>
-</li>
       </ul></li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config_gen.verbose">verbose (config.opt_config_gen attribute)</a>
 </li>
@@ -2170,6 +2230,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_p2p.weight">weight (spec.spec_p2p attribute)</a>
+</li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim_out.wp">wp (simulator.alg_sim_out attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_iqc.html#iqc.iqc_loop_factored.wrap_synth">wrap_synth() (iqc.iqc_loop_factored method)</a>
@@ -2285,8 +2347,8 @@ By opt-syn team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
   </footer>
