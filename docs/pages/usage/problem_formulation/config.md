@@ -23,18 +23,18 @@ config.syn.D_mask = [0, 0;
                      0, 1]; 
 ```
 
-Algorithms with both explicit evaluations ($\Dcl_{11}, \Dcl_{22}\neq 0$) can be synthesized using 
+Algorithms with both explicit evaluations ($\Dcl_{11}, \Dcl_{22} =  0$) can be synthesized using 
  ```matlab
  %F2 can use information from F1
 config.syn.D_mask = [0, 0; 
-                     1, 0];
+                      1, 0];
 
 %F2 cannot use information from F1 
 config.syn.D_mask = [0, 0; 
-                     0, 0]; 
+                      0, 0]; 
 ```
 
-By default, `config.syn.D_mask` will be an lower-triangular matrix with all ones. This pattern allows all operators to be evaluated implicitly, and to use information computed from prior operators in the sequence. 
+By default, `config.syn.D_mask` will be an lower-triangular matrix with all ones.
 
 
 An algorithm with upper-block-triangular nonzero entries of `D_mask` can be Analyzed or Synthesized. However {{osyn}} cannot guarantee that the resulting algorithm will be well-posed, nor will it be able to {doc}`Simulate <../simulation>` trajectories of an algorithm execution.

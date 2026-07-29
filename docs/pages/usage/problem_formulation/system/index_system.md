@@ -196,7 +196,7 @@ The System descripition can be extended in three main capacities:
 
 
 ```{toctree}
-:maxdepth: 2
+:maxdepth: 1
 Repeated Operator Evaluations <bind>
 Time-Varying Optimal Solutions <tracking>
 Time-Varying Dynamical Systems <dynamics>
