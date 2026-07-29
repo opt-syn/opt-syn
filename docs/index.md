@@ -32,11 +32,13 @@ For installation and  examples of algorithm  analysis and synthesis workflows, s
 
 ## Contributors
 
-- [Jared Miller](https://jarmill.github.io/): Creator and maintainer.
-- [Fabian Jakob](https://www.ist.uni-stuttgart.de/institute/team/Jakob-00004/): Creator.
-- [Carsten Scherer](https://www.imng.uni-stuttgart.de/institute/team/Scherer-00006/): Creator.
-- [Andrea Iannelli](https://www.ist.uni-stuttgart.de/institute/team/Iannelli/): Creator.
+- [Jared Miller](https://jarmill.github.io/): Creator and maintainer
+- [Fabian Jakob](https://www.ist.uni-stuttgart.de/institute/team/Jakob-00004/): Creator
+- [Carsten Scherer](https://www.imng.uni-stuttgart.de/institute/team/Scherer-00006/): Creator
+- [Andrea Iannelli](https://www.ist.uni-stuttgart.de/institute/team/Iannelli/): Creator
 
+
+Contact [Jared Miller](https://jarmill.github.io/) for questions, issues, or comments.
 
 ```{toctree}
 :maxdepth: 2
