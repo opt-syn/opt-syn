@@ -3,34 +3,48 @@ classdef op_gen  < operator_interface
     
     
     properties
-        LINEAR = false;             %is the operator a linear map?
-        prop = {'monotone', 0};     %properties of the operator
-                                    %   monotone
-                                    %   cocoercive
-                                    %   lipschitz
-                                    %   inverse lipschitz              
+        monotone = []; %monotonicity constant
+        cocoercive =[]; %cocoercive constant
+        lipschitz = []; %lipschitz  constant
+        inverse_lipschitz=[]; %inverse_lipschitz constant
     end
     
     methods
-        function obj = op_gen(prop, c)
+        function obj = op_gen(c)
             %OP_GEN Construct a general operator (possibly a set-valued
             %map that does not have a potential function) 
             %
-            %Args:
-            %   prop (cell): list of properties, keyword in odd indices, value in
-            %           even indices
+            %fill in properties by .set assignments after the constructor
+            %
+            %Args:            
             %   c:  dimension of coordinate lift
 
 
-            if nargin < 2
+            if nargin < 1
                 c = 1;
             end
             obj@operator_interface(c)   
-            
-            if nargin > 0
-                obj.prop = prop;
-            end
+                        
             obj.c = c;
+
+
+        end        
+
+        function prop = prop_report(obj)
+            %PROP_REPORT get list of all properties
+
+            prop_names = {'monotone', 'lipschitz', ...
+                'inverse_lipschitz', 'cocoercive'};
+
+            prop= {};
+            for i = 1:length(prop_names)
+                curr = obj.(prop_names{i});
+
+                if ~isempty(curr) && isnumeric(curr)
+                    prop_new = {prop_names{i}, curr};
+                    prop = [prop; prop_new];
+                end
+            end
 
 
         end
@@ -40,7 +54,7 @@ classdef op_gen  < operator_interface
             %
             %Returns:
             %   pc:     number of properties
-              pc = size(obj.prop, 1);
+            pc= size(obj.prop_report(), 1);
         end
              
         function mu = get_mu(obj)
@@ -48,12 +62,9 @@ classdef op_gen  < operator_interface
             %
             %Returns:
             %   mu:     strong monotonicity parameter
-            mu = [];
-            for i = 1:obj.prop_count
-                if strcmp(obj.prop{i, 1}, 'monotone')
-                    mu = obj.prop{i, 2};
-                end
-            end
+            
+            mu = obj.monotone;
+            
         end
 
         function loop_out = build_loop(obj, reps)
@@ -66,13 +77,24 @@ classdef op_gen  < operator_interface
             %   loop_out: signal transformation matrix for the operator
 
 
+
             mu = obj.get_mu();
 
+
             if isempty(mu)
-                mu = 0;
+                beta = obj.cocoercive;
+                if isempty(beta)
+                    loop_out = eye(2*reps);
+                else
+                    loop_out = [eye(reps), -beta*eye(reps); zeros(reps), eye(reps)];
+                end
+
+            else
+                loop_out = [eye(reps), zeros(reps); -mu*eye(reps), eye(reps)];
             end
-        
-            loop_out = [zeros(reps), eye(reps); eye(reps), mu*eye(reps)];
+            
+
+            % loop_out = [zeros(reps), eye(reps); eye(reps), mu*eye(reps)];
             
         end
 
@@ -113,10 +135,10 @@ classdef op_gen  < operator_interface
             % cs = ones(1, n) * vars.cM * ones(m, 1);
 
             cs = 0;
-            % for i = 1:obj.prop_count
-                % cs = cs + trace(vars.cM{i}) + trace(vars.cX{i});
-            % end
-            cs = 1;
+            for i = 1:obj.prop_count
+                cs = cs + trace(vars.cM{i}) + trace(vars.cX{i});
+            end
+            % cs = 1;
 
         end
 
@@ -195,28 +217,29 @@ classdef op_gen  < operator_interface
             sz = ssize(var_curr{1}, 1);                                 
 
             zz = zeros(sz);
-            pc = obj.prop_count;
-
-            mu = obj.get_mu();
-
-            %loop transformation for the strong monotonicity (?)
-            if isempty(mu)
-                loop_mat = eye(sz*2);
-            else
-                loop_mat = kron([mu, 1; 1, 0], eye(sz));
-                % loop_mat = [eye(sz), zz; mu*eye(sz), eye(sz)];
-                % loop_mat = inv([eye(sz), zz; -mu * eye(sz), eye(sz)]);
-            end
+            
+            loop_mat = inv(obj.build_loop(sz));
+            % mu = obj.get_mu();
+            % 
+            % %loop transformation for the strong monotonicity (?)
+            % %make sure that 0 is in the set of considered uncertainties
+            % if isempty(mu)
+            %     loop_mat = eye(sz*2);
+            % else
+            %     % loop_mat = kron([mu, 1; 1, 0], eye(sz));
+            %     loop_mat = kron([1, 0; mu, 1], eye(sz));                
+            % end
 
             cost = zeros(2*sz);
             
-            
+            prop = obj.prop_report();
+            pc = obj.prop_count;
             for p = 1:pc
                 cDBM = var_curr{p};
                 csym = (cDBM+cDBM');
-                    switch obj.prop{p, 1}
+                    switch prop{p, 1}
                         case 'monotone'
-                            % mu = obj.prop{p, 2};
+                            % mu = prop{p, 2};
                             % M12 = M12 + cDBM;
                             Mcurr = [zz, cDBM; cDBM', zz];
                             Mloop = Mcurr;
@@ -225,22 +248,22 @@ classdef op_gen  < operator_interface
                             % M22 = M22 - (cDBM + cDBM') * (mu); 
                             % 
                         case 'cocoercive'
-                            beta = obj.prop{p, 2};
+                            beta = prop{p, 2};
 
-                            Mcurr = [-csym*(beta), cDBM'; cDBM, zz];
+                            Mcurr = [zz, cDBM'; cDBM, -csym*(beta)];
                             Mloop = loop_mat'*Mcurr*loop_mat;
     
                         case 'lipschitz'
-                            L2 = obj.prop{p, 2}^2;
+                            L2 = prop{p, 2}^2;
                             % M11 = M11 - (cDBM + cDBM'); 
                             % M22 = M22 + cDBM * L2; 
 
-                            Mcurr = [-csym, zz; zz', L2*csym];
+                            Mcurr = [L2*csym, zz; zz', -csym];
                             Mloop = loop_mat'*Mcurr*loop_mat;
     
                         case 'inv_lipschitz'
-                            L2 = obj.prop{p, 2}^2;
-                            Mcurr = [L2*csym, zz; zz', -csym];
+                            L2 = prop{p, 2}^2;
+                            Mcurr = [-csym, zz; zz', L2*csym];
                                                         
                             Mloop = loop_mat'*Mcurr*loop_mat;
                         
@@ -251,7 +274,7 @@ classdef op_gen  < operator_interface
                 
             end
 
-            % cost = [M11, M12; M12', M22];
+ 
         end
 
 
@@ -281,33 +304,12 @@ classdef op_gen  < operator_interface
             nschedX = size(rho_sched_drop, 2);
 
             for i = 1:obj.prop_count
-                %exponential discounting of M
-                if obj.LINEAR
-                    [cons] = dhd_impose(vars.cM{i}, cons, obj.LMILAB);
-                    if order > 0
-                        [cons] = dhd_impose(vars.cX{i}, cons, obj.LMILAB);
-                    end
-                else
-                    for j =1:nsched
-                        rho_1 = kron(diag(rho_sched(1:(order+1), j)), eye(reps));
-                        rho_2 = rho_1;
-        
-                        M_rho = rho_1 * vars.cM{i} * rho_2;
-                        [cons] = dhd_impose(M_rho, cons, obj.LMILAB);
-                    end
-    
-                    %DHD imposition of X
-                    %exponential discounting 
-                    if order > 0                    
-                        for j =1:nschedX
-                            rho_1 = kron(diag(rho_sched_drop(1:(order), j)), eye(reps));
-                            rho_2 = rho_1;
-        
-                            X_rho = rho_1 * vars.cX{i} * rho_2;
-                            [cons] = dhd_impose(X_rho, cons, obj.LMILAB);
-                        end
-                    end
+                %impose DHD constraints
+                [cons] = dhd_impose(vars.cM{i}, cons, obj.LMILAB);
+                if order > 0
+                    [cons] = dhd_impose(vars.cX{i}, cons, obj.LMILAB);
                 end
+            
             end
 
         end

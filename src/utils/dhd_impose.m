@@ -31,7 +31,7 @@ end
     cv = cell(n*m - n, 1);
     count = 1;
     for i =1:n
-        %off-diagonal terms are nonnegative
+        %off-diagonal terms are nonpositive
         ei = zeros(1, n);
         ei(i) = 1;
         for j = 1:m
@@ -39,7 +39,7 @@ end
                 ej = zeros(m, 1);
                 ej(j) = 1;
             
-                vc = ei * M * ej;
+                vc = -ei * M * ej;
                 cv{count} = vc;
                 count = count + 1;
                 % cons = append_lmi(cons, -vc, LMILAB);
