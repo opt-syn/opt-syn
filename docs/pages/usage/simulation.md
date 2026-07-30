@@ -19,7 +19,7 @@ sim_result = simulator.sim(T);
 
 
 By default, algorithm execution will occur with zero initial condition and a performance input ($x_0=0$, $w_p = 0$). The  `sampler` field of {class}`alg_sim` has allows for random generation and external signals. 
-```{list-table}
+:::{list-table}
 :header-rows: 1
 :caption: Fields of `alg_sim.sampler`
 * - Field
@@ -32,7 +32,7 @@ By default, algorithm execution will occur with zero initial condition and a per
   - Initial value of problem-dependent parameters
 * - `param`  
   - Subsequent value of problem-dependent parameters
-```
+:::
 
 The output of `alg_sim.sim(T)` is an {class}`alg_sim_out` object. The fields of `alg_sim_out` include
 :::{list-table} 
@@ -106,7 +106,7 @@ Helper functions include of {class}`alg_plotter` include
 *   - {meth}`plot_4`
     -  oracles, convergence
     - (`w`, `res_w`, `z`, `res_z`)
-:::{list-table} 
+:::
 
 See {doc}`Plotting <../documentation/doc_plotting> for a full list of helper functions and more details.
 
@@ -152,7 +152,7 @@ z_{p, k+1} &= \Ccl_{z_p} x_k + \textstyle \sum_{i=1}^s \Dcl_{z_p w i} w^i_k + \D
 ```
 
 The operator $H_i: = (F_i^{-1} - \Dcl_{zw, ii})^{-1}$ can be evaluated using the {class}`op_sim` methods 
-```{list-table}
+:::{list-table}
 :header-rows: 1
 * - Evaluation
   - Method
@@ -166,7 +166,7 @@ The operator $H_i: = (F_i^{-1} - \Dcl_{zw, ii})^{-1}$ can be evaluated using the
   - {meth}`bw`
   - $\Dcl_{zw,ii}$ is invertible
   - $z_i \mapsto \Dcl_{zw, ii}^{-1} [z - (I - \Dcl_{zw, ii} F_i)^{-1}(z_i)]$
-```
+:::
 
 <!-- If the backward-evaluation  $(I - \Dcl_{ii} F_i)^{-1}$ is available (such as from a  resolvent/proximal operator), then this algorithm execution is tractable. -->
 
