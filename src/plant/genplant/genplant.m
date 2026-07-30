@@ -50,6 +50,9 @@ classdef genplant
             % :returns: A new ``genplant`` object.
             % :rtype: genplant
 
+            if isa(P, 'tf')
+                P = ss(P);
+            end
             obj.P = P;
             if isnumeric(P) && ~isempty(P)
                 % static system

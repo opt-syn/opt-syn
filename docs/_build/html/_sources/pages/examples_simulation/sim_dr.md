@@ -19,7 +19,7 @@ We  use Douglas-Rachford to solve a composite optimization problem
 
 We describe the necessary optimality condition for this problem using the operators $F_1 = \partial f$, and $F_2 = \partial \mathbb{I}_{\norm{\cdot}_\infty \leq 10}$ 
 ```{math}
-0 \in \partial  f(\beta^*) + \partial \mathbb{I}_{\norm{\cdot}_\infty(\beta^*).
+0 \in \partial  f(\beta^*) + \partial \mathbb{I}_{\norm{\cdot}_\infty}(\beta^*).
 ```
 
 ## No Noise

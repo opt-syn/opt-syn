@@ -227,6 +227,7 @@
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="index_example_simulation.html">Simulation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Noisy Douglas Rachford</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_tracking.html">Tracking an Oscillator</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -464,7 +465,7 @@ It is characterized by  parameters <span class="math notranslate nohighlight">\(
 \[\beta^* \in \argmin_{\norm{\beta}_\infty \leq 10} f(\beta)\]</div>
 <p>We describe the necessary optimality condition for this problem using the operators <span class="math notranslate nohighlight">\(F_1 = \partial f\)</span>, and <span class="math notranslate nohighlight">\(F_2 = \partial \mathbb{I}_{\norm{\cdot}_\infty \leq 10}\)</span></p>
 <div class="math notranslate nohighlight">
-\[0 \in \partial  f(\beta^*) + \partial \mathbb{I}_{\norm{\cdot}_\infty(\beta^*).\]</div>
+\[0 \in \partial  f(\beta^*) + \partial \mathbb{I}_{\norm{\cdot}_\infty}(\beta^*).\]</div>
 <section id="no-noise">
 <h2>No Noise<a class="headerlink" href="#no-noise" title="Link to this heading">#</a></h2>
 <p>We execute the Douglas-Rachford scheme with parameters <span class="math notranslate nohighlight">\(\gamma = 0.4, \lambda = 1\)</span> for a problem where <span class="math notranslate nohighlight">\(f_1\)</span> is a convex quadratic (eigenvalue bounds <span class="math notranslate nohighlight">\(m = 1, L = 10\)</span>). Figure <a class="reference internal" href="#dr-clean"><span class="xref myst">1</span></a> plots a trajectory of Douglas-Rachford starting from <span class="math notranslate nohighlight">\(x_0 = 0\)</span> is</p>

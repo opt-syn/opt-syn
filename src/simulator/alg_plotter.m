@@ -326,7 +326,7 @@ classdef alg_plotter
 
             %tracking    
             elseif strcmp(sig, 'xcerr')
-                name_mid = '$\xc - \xc^*$';
+                name_mid = '$x_c - x_c^*$';
             elseif strcmp(sig, 'xerr')
                 name_mid = '$x - x^*$';
             elseif strcmp(sig, 'xnerr')
@@ -338,7 +338,7 @@ classdef alg_plotter
 
             %tracking residuals
             elseif strcmp(sig, 'sq_xcerr')
-                name_mid = '$||\xc - \xc^*||^2_2$';
+                name_mid = '$||x_c - x_c^*||^2_2$';
             elseif strcmp(sig, 'sq_xerr')
                 name_mid = '$||x - x^*||^2_2$';
             elseif strcmp(sig, 'sq_xnerr')

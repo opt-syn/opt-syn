@@ -1,0 +1,685 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
+    <title>Channel Memory &#8212; opt-syn</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=720ed60b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../_static/documentation_options.js?v=e1a75a79"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/examples_simulation/sim_channel_memory_symmetric';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Repeated Evaluations" href="sim_bind.html" />
+    <link rel="prev" title="Noisy Douglas Rachford" href="sim_dr.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/opt_syn_light.svg" class="logo__image only-light" alt="opt-syn - Home"/>
+    <img src="../../_static/opt_syn_dark.svg" class="logo__image only-dark pst-js-only" alt="opt-syn - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started.html">Get Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../how_it_works/index_how_it_works.html">How it Works</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/opt_algs.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/alg_properties.html">Properties of Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/convergence_conditions.html">Convergence Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/op_uncertainty_iqc.html">IQC Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/network_synthesis.html">Synthesis and Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/system/index_system.html">Build the System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/simulation.html">Simulate</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/config.html">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/specs.html">Performance Specifications</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/solve.html">Solve and Validate</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../examples.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index_example_simulation.html">Simulation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_tracking.html">Tracking an Oscillator</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../documentation/index_documentation.html">Documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_solutions.html">Solution</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_set_valued.html">Set-Valued Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_sml.html">Subdifferentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_quadratic.html">Gradients of Quadratics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/plants/doc_genplant.html">Generalized Plants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/plants/doc_templates.html">Plant Templates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_switched.html">Switched</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_periodic.html">Periodic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_periodic_orbit.html">Periodic-Orbit</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_iqc.html">Integral Quadratic Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_specs.html">Performance Specifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_config.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog/0.1.0.html">What’s new in 0.1.0</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/jarmill/opt-syn" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/pages/examples_simulation/sim_channel_memory_symmetric.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Channel Memory</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="channel-memory">
+<h1>Channel Memory<a class="headerlink" href="#channel-memory" title="Link to this heading">#</a></h1>
+<p>This example involves a two-operator inclusion problem. Memory effects are present in the communication link to and from evaluation of <span class="math notranslate nohighlight">\(F_1\)</span>.
+The intensity of the memory effects are represented by a scalar <span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span>.
+The network effects are described by a transfer function matrix</p>
+<div class="math notranslate nohighlight">
+\[\begin{split} \mat{c}{z \hdl y} =  \mat{cc:cc}{0 &amp; 0 &amp; \frac{\mathbf{z}}{\mathbf{z} +\alpha} I&amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; I \hdl
+\frac{\mathbf{z}}{\mathbf{z} +\alpha} I&amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; I &amp; 0 &amp; 0}  \mat{c}{w \hdl u},\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> is the unit shift operator <span class="math notranslate nohighlight">\(((\mathbf{z} x)_k :=  x_{k+1}\)</span> for all <span class="math notranslate nohighlight">\(k \in \N\)</span>).</p>
+<p>A state-space realization of this transfer function matrix is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split} \text{Network}: \qquad  \mat{c}{x_{k+1}^N \hl z_k \hdl y_k} =  \mat{cc|cc:cc}{-\alpha I &amp; 0 &amp; \frac{1}{2} I &amp; 0 &amp; 0 &amp; 0 \\
+ 0 &amp; -\alpha I &amp; 0 &amp; 0 &amp; \frac{1}{2}I &amp; 0  \hl
+ 0 &amp; -2\alpha I &amp; 0 &amp; 0 &amp; I &amp; 0  \\
+ 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; I  \hdl
+ -2 \alpha I &amp; 0 &amp; I &amp; 0 &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; 0 &amp; I &amp; 0 &amp; 0}  \mat{c}{x_{k}^N \hl w_k \hdl u_k}.\end{split}\]</div>
+<p>The degenerate case of <span class="math notranslate nohighlight">\(\alpha=0\)</span> is no network dynamics.</p>
+<p>The controller structure with parameters <span class="math notranslate nohighlight">\((\gamma, \lambda) \geq 0\)</span> used to solve the two-operator inclusion problem is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split} \text{Network}: \qquad  \mat{c}{x_{k+1}^c \hl u_k^1 \\ u_k^2} =  \mat{c|cc}{I &amp; -\gamma \lambda &amp; -\gamma \lambda \frac{1}{\alpha+1} \\
+ (1+\alpha) I &amp; 0 &amp; 0 \\
+ I &amp; -\gamma I &amp; -\gamma\frac{1}{\alpha+1} I }  \mat{c}{x_{k}^c \hl y_k^1 \\ y_k^2}.\end{split}\]</div>
+<p>This controller structure is parameterized by <span class="math notranslate nohighlight">\(\alpha\)</span>. If <span class="math notranslate nohighlight">\(\alpha = 0\)</span> and <span class="math notranslate nohighlight">\(\lambda = 1\)</span>, then this controller is the same as Projected Gradient Descent.
+The controller structure is chosen to ensure that the <a class="reference internal" href="../how_it_works/network_synthesis.html"><span class="doc">Regulator Equation</span></a> condition for algorithm convergence is satisfied for all values <span class="math notranslate nohighlight">\((\gamma, \lambda)\)</span>. Projected Gradient Descent fails the regulator equation requirement of convergence when <span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span>.</p>
+<p>We use this algorithm to solve a composite optimization problem</p>
+<div class="math notranslate nohighlight">
+\[\beta^* \in \argmin_{\norm{\beta}_1 \leq 100 } f(\beta)\]</div>
+<p>where <span class="math notranslate nohighlight">\(f\)</span> is a convex quadratic with <span class="math notranslate nohighlight">\(m=1\)</span>, <span class="math notranslate nohighlight">\(L=5\)</span>.</p>
+<p>Figure <a class="reference internal" href="#sym-trace"><span class="xref myst">1</span></a> plots a trace of algorithm execution starting from <span class="math notranslate nohighlight">\(x_0 = 0\)</span>, highlighting the states of the network and controller.</p>
+<figure class="align-center" id="sym-trace">
+<img alt="../../_images/sim_channel_sym_dark.png" class="only-dark" src="../../_images/sim_channel_sym_dark.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 1:</em> Trace of execution and convergence</span><a class="headerlink" href="#sym-trace" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id1">
+<img alt="../../_images/sim_channel_sym_light.png" class="only-light" src="../../_images/sim_channel_sym_light.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 1:</em> Trace of execution and convergence</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>We now establish tracking properties using the Regulator Equations.</p>
+<p>The solution to the Regulator Equations for this network and controller are</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\Pi &amp;= \mat{cc}{0 &amp; \frac{1}{2(\alpha+1)}I \\ -\frac{1}{2} I &amp; 0 }, \Gamma &amp;= \mat{cc}{-(\alpha+1) I &amp; 0 \\
+-I &amp; 0 }, \\
+\Phi &amp;= \mat{cc}{0 &amp; \frac{1}{2(\alpha+1)}I \\ 0  &amp; -I }, \Theta &amp;= \mat{c}{-I &amp; 0}.
+\end{align*}\end{split}\]</div>
+<p>The pair <span class="math notranslate nohighlight">\((\beta^*, w^*)\)</span> solving the composite optimization problem is unique, because  <span class="math notranslate nohighlight">\(f\)</span> is strongly convex with a nonempty constraint set is nonempty, and <span class="math notranslate nohighlight">\(f\)</span> is smooth.
+Algorithm convergence implies tracking of the signals <span class="math notranslate nohighlight">\((x^N, x^c, y, u)\)</span> with</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+    \lim_{k \rightarrow \infty}
+    \mat{c}{x_k^N \\ x^c_k \hl  y_k \\u_k} &amp; = \mat{c}{\Pi \\ \Theta \hl \Phi \\ \Gamma} \mat{c}{-\beta^* \\ \nabla f(\beta^*)}.
+\end{align*}\end{split}\]</div>
+<p>Figure <a class="reference internal" href="#sym-track"><span class="xref myst">2</span></a> plots the tracking of these signals over time</p>
+<figure class="align-center" id="sym-track">
+<img alt="../../_images/sim_channel_sym_track_dark.png" class="only-dark" src="../../_images/sim_channel_sym_track_dark.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 2:</em> Tracking error</span><a class="headerlink" href="#sym-track" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id2">
+<img alt="../../_images/sim_channel_sym_track_light.png" class="only-light" src="../../_images/sim_channel_sym_track_light.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 2:</em> Tracking error</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Figure <a class="reference internal" href="#sym-trace-sq"><span class="xref myst">3</span></a> plots the squared norm of the tracking error</p>
+<figure class="align-center" id="sym-track-sq">
+<img alt="../../_images/sim_channel_sym_track_sq_dark.png" class="only-dark" src="../../_images/sim_channel_sym_track_sq_dark.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 3:</em> Tracking residuals</span><a class="headerlink" href="#sym-track-sq" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id3">
+<img alt="../../_images/sim_channel_sym_track_sq_light.png" class="only-light" src="../../_images/sim_channel_sym_track_sq_light.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 3:</em> Tracking residuals</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Code to generate this simulation is</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nb">rng</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;twister&#39;</span><span class="p">);</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="n">d</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">200</span><span class="p">;</span><span class="w"> </span><span class="c">%dimension of variable beta</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="c">%% describe the operators</span>
+<span class="linenos"> 6</span><span class="c">%define the quadratic</span>
+<span class="linenos"> 7</span><span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="linenos"> 8</span><span class="n">Q</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">rand_quad</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">);</span>
+<span class="linenos"> 9</span><span class="n">zstar</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">rand</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">10</span><span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sim_quad</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span><span class="w"> </span><span class="n">zstar</span><span class="p">);</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="c">%define the L1 ball</span>
+<span class="linenos">13</span><span class="n">tau</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+<span class="linenos">14</span><span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sim_l1_hard</span><span class="p">(</span><span class="n">tau</span><span class="p">);</span>
+<span class="linenos">15</span><span class="n">ops</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">};</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="nb">gamma</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">0.4</span><span class="p">;</span>
+<span class="linenos">18</span><span class="n">lambda</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">0.2</span><span class="p">;</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span><span class="c">%% describe the network</span>
+<span class="linenos">21</span><span class="c">%use a transfer function representation </span>
+<span class="linenos">22</span><span class="c">%to model the channel memory</span>
+<span class="linenos">23</span><span class="n">z</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">tf</span><span class="p">(</span><span class="s">&#39;z&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">24</span><span class="nb">alpha</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">0.4</span><span class="p">;</span><span class="w"> </span><span class="c">%channel memory effect</span>
+<span class="linenos">25</span><span class="n">ascale</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="nb">alpha</span><span class="o">+</span><span class="mi">1</span><span class="p">));</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="n">P</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="o">/</span><span class="p">(</span><span class="n">z</span><span class="o">+</span><span class="nb">alpha</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">28</span><span class="w">    </span><span class="n">0</span><span class="w"> </span><span class="s">,</span><span class="w"> </span><span class="s">0,</span><span class="w"> </span><span class="s">0,</span><span class="w"> </span><span class="s">1</span><span class="p">;</span>
+<span class="linenos">29</span><span class="w">    </span><span class="n">z</span><span class="o">/</span><span class="p">(</span><span class="n">z</span><span class="o">+</span><span class="nb">alpha</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">30</span><span class="w">    </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span><span class="c">%partition the input and output channels</span>
+<span class="linenos">33</span><span class="n">network</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">genplant</span><span class="p">(</span><span class="n">P</span><span class="p">);</span>
+<span class="linenos">34</span><span class="n">network</span><span class="p">.</span><span class="n">nw</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="n">network</span><span class="p">.</span><span class="n">nu</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="linenos">35</span><span class="n">network</span><span class="p">.</span><span class="n">nz</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="n">network</span><span class="p">.</span><span class="n">ny</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="linenos">36</span>
+<span class="linenos">37</span><span class="c">%% describe the controller</span>
+<span class="linenos">38</span><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="nb">gamma</span><span class="o">*</span><span class="n">lambda</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="o">*</span><span class="n">lambda</span><span class="o">/</span><span class="p">(</span><span class="nb">alpha</span><span class="o">+</span><span class="mi">1</span><span class="p">)],</span><span class="w"> </span><span class="k">...</span>
+<span class="linenos">39</span><span class="w">    </span><span class="p">[</span><span class="mi">1</span><span class="o">+</span><span class="nb">alpha</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="o">/</span><span class="p">(</span><span class="nb">alpha</span><span class="o">+</span><span class="mi">1</span><span class="p">)],</span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">40</span>
+<span class="linenos">41</span>
+<span class="linenos">42</span><span class="c">%% form the system</span>
+<span class="linenos">43</span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">network</span><span class="p">,</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
+<span class="linenos">44</span>
+<span class="linenos">45</span>
+<span class="linenos">46</span><span class="c">%% simulate and plot</span>
+<span class="linenos">47</span><span class="n">sim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_sim</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
+<span class="linenos">48</span><span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+<span class="linenos">49</span><span class="n">sim_out</span><span class="p">=</span><span class="w"> </span><span class="n">sim</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+<span class="linenos">50</span><span class="n">plt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">sim_out</span><span class="p">);</span>
+<span class="linenos">51</span><span class="n">plt</span><span class="p">.</span><span class="n">plot_6</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">52</span>
+<span class="linenos">53</span>
+<span class="linenos">54</span><span class="c">%% plot tracking error</span>
+<span class="linenos">55</span>
+<span class="linenos">56</span><span class="c">%get a more accurate solution to judge tracking error</span>
+<span class="linenos">57</span><span class="n">sim_out_long</span><span class="p">=</span><span class="w"> </span><span class="n">sim</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">T</span><span class="p">);</span><span class="w"> </span>
+<span class="linenos">58</span>
+<span class="linenos">59</span><span class="c">%compute the tracked reference </span>
+<span class="linenos">60</span><span class="n">betastar</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sim_out_long</span><span class="p">.</span><span class="n">z</span><span class="p">(</span><span class="k">end</span><span class="p">,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="k">end</span><span class="p">);</span>
+<span class="linenos">61</span><span class="n">wend</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sim_out_long</span><span class="p">.</span><span class="n">w</span><span class="p">(:,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="k">end</span><span class="p">);</span>
+<span class="linenos">62</span><span class="n">dstar</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="n">betastar</span><span class="p">;</span><span class="w"> </span><span class="n">wend</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p">:,</span><span class="w"> </span><span class="k">end</span><span class="p">)];</span><span class="w"> </span>
+<span class="linenos">63</span>
+<span class="linenos">64</span>
+<span class="linenos">65</span><span class="c">%compute the regulator equation solution</span>
+<span class="linenos">66</span><span class="n">reg</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">regulator_lti</span><span class="p">(</span><span class="n">sys</span><span class="p">);</span><span class="w">      </span><span class="c">%solution to open-loop regulator equations</span>
+<span class="linenos">67</span><span class="n">regcl</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">reg</span><span class="p">.</span><span class="n">check_regulator</span><span class="p">();</span><span class="w"> </span><span class="c">%solution to closed-loop regulator equations</span>
+<span class="linenos">68</span>
+<span class="linenos">69</span><span class="n">plt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">plt</span><span class="p">.</span><span class="n">add_opt_sig</span><span class="p">(</span><span class="n">regcl</span><span class="p">,</span><span class="w"> </span><span class="n">dstar</span><span class="p">);</span><span class="w"> </span><span class="c">%compute the error signals</span>
+<span class="linenos">70</span><span class="n">plt</span><span class="p">.</span><span class="n">plot_4_err</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span><span class="w">    </span><span class="c">%plot the tracking error</span>
+<span class="linenos">71</span><span class="n">plt</span><span class="p">.</span><span class="n">plot_4_sq_err</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span><span class="w"> </span><span class="c">%plot the squared norm of the tracking error</span>
+</pre></div>
+</div>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="sim_dr.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Noisy Douglas Rachford</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="sim_bind.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Repeated Evaluations</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By opt-syn team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, opt-syn team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
