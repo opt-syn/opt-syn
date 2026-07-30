@@ -225,7 +225,8 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_dr.html">Douglas Rachford with Noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -540,7 +541,7 @@ initial condition <span class="math notranslate nohighlight">\(x_0\)</span> ther
 <p>Linear convergence holds if <span class="math notranslate nohighlight">\(\rho &lt; 1\)</span>.</p>
 <p>This is the most common specification and needs no performance channel (by default <code class="docutils literal notranslate"><span class="pre">iwp=[],</span> <span class="pre">izp=[]</span></code>).</p>
 <p>It is specified with</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_stability</span><span class="p">(</span><span class="n">rho</span><span class="p">);</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_stability</span><span class="p">(</span><span class="n">rho</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -574,8 +575,8 @@ initial condition <span class="math notranslate nohighlight">\(x_0\)</span> ther
   \mat{c}{w_{p,k} \\ z_{p,k}} \; +  \; \epsilon \rho^{-2k} \norm{w_{p, k}}_2^2 \leq 0.
 \end{align*}\end{split}\]</div>
 <p>Quadratic performance specifications are imposed by</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">M</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="n">Q</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="p">;</span><span class="w"> </span><span class="n">S</span><span class="o">&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="p">];</span>
-<span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_quad</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">M</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="n">Q</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="p">;</span><span class="w"> </span><span class="n">S</span><span class="o">&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="p">];</span>
+<span class="linenos">2</span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_quad</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The Synthesis procedure requires that <span class="math notranslate nohighlight">\(Q = Q^\top\)</span> and <span class="math notranslate nohighlight">\(R \prec 0\)</span>.</p>
@@ -602,7 +603,7 @@ disturbance vanishes (<span class="math notranslate nohighlight">\(w_p= 0\)</spa
 <p>Use this when you need the iterates to stay
 bounded and convergent under noise but do not need a specific gain; for a gain bound, use
 <span class="math notranslate nohighlight">\(\ell_2\)</span> Gain instead.</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_l2</span><span class="p">(</span><span class="n">iwp</span><span class="p">);</span><span class="w">        </span><span class="c">% no performance output; optional bound: spec_l2(iwp, MU)</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_l2</span><span class="p">(</span><span class="n">iwp</span><span class="p">);</span><span class="w">        </span><span class="c">% no performance output; optional bound: spec_l2(iwp, MU)</span>
 </pre></div>
 </div>
 <p>Infinite-horizon  ℓ2 stability is</p>
@@ -627,10 +628,10 @@ input to the performance output,</p>
 <p>Use it to quantify how strongly a
 disturbance at <span class="math notranslate nohighlight">\(w_p\)</span> (for example, noise in the gradient evaluations) is amplified at a
 tracked output <span class="math notranslate nohighlight">\(z_p\)</span>.</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_e2e</span><span class="p">(</span><span class="n">GAIN</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span><span class="w">   </span><span class="c">% GAIN is the initial bound</span>
-<span class="n">perf</span><span class="p">.</span><span class="n">target</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="c">%enforce the gain bound</span>
-
-<span class="n">perf</span><span class="p">.</span><span class="n">target</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="c">%minimize the gain </span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_e2e</span><span class="p">(</span><span class="n">GAIN</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span><span class="w">   </span><span class="c">% GAIN is the initial bound</span>
+<span class="linenos">2</span><span class="n">perf</span><span class="p">.</span><span class="n">target</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="c">%enforce the gain bound</span>
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="n">perf</span><span class="p">.</span><span class="n">target</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="c">%minimize the gain </span>
 </pre></div>
 </div>
 </section>
@@ -648,8 +649,8 @@ input passivity index <span class="math notranslate nohighlight">\(\nu_w\)</span
 <p>Setting both indices to zero requests standard passivity; positive indices request the
 correspondingly stronger input- or output-strict passivity properties. The performance input and
 output channels must have the same length.</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">% ind_w = nu_w, ind_z = nu_z</span>
-<span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_passivity</span><span class="p">(</span><span class="n">ind_w</span><span class="p">,</span><span class="w"> </span><span class="n">ind_z</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span><span class="w">   </span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="c">% ind_w = nu_w, ind_z = nu_z</span>
+<span class="linenos">2</span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_passivity</span><span class="p">(</span><span class="n">ind_w</span><span class="p">,</span><span class="w"> </span><span class="n">ind_z</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span><span class="w">   </span>
 </pre></div>
 </div>
 </section>
@@ -665,8 +666,8 @@ output channels must have the same length.</p>
 <p>The bracketed quantity is a duality gap, and is equal to 0 at optimality.
 This  formulation of ergodic convergence in duality gap originates from  <a class="footnote-reference brackets" href="#footcite-upadhyaya2025automated" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> (Section 4.1.2).</p>
 <p>Ergodic convergence requires the introduction of new performance channels for the <span class="math notranslate nohighlight">\((w^*_i)^\top z^*_i\)</span> term. It is implemented as</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">perf_erg</span><span class="p">,</span><span class="w"> </span><span class="n">sys</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_ergodic</span><span class="p">(</span><span class="n">sys</span><span class="p">);</span>
-<span class="n">specs</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">perf_erg</span><span class="p">};</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">[</span><span class="n">perf_erg</span><span class="p">,</span><span class="w"> </span><span class="n">sys</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_ergodic</span><span class="p">(</span><span class="n">sys</span><span class="p">);</span>
+<span class="linenos">2</span><span class="n">specs</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">perf_erg</span><span class="p">};</span>
 </pre></div>
 </div>
 <p>Ergodic convergence is weaker than linear convergence. It can certify properties of convex optimization algorithms, whereas establishment of global linear convergence requires strong convexity. Ergodic convergence should only be used if all performance specifications have <span class="math notranslate nohighlight">\(\rho=1\)</span>.</p>

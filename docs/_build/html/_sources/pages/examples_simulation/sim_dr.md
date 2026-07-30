@@ -1,4 +1,4 @@
-# Douglas Rachford with Noise
+# Noisy Douglas Rachford
 
 
 The Douglas-Rachford algorithm is a procedure for solving a two-operator inclusion problem {footcite}`douglas1956numerical`.

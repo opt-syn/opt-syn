@@ -225,7 +225,8 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_dr.html">Douglas Rachford with Noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -450,7 +451,7 @@
   <section class="tex2jax_ignore mathjax_ignore" id="configuration">
 <h1>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h1>
 <p>The configuration options are called by</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">config</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_config</span><span class="p">();</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">config</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_config</span><span class="p">();</span>
 </pre></div>
 </div>
 <p>Configuration options include numerical tolerances and  recovery prereferences. These are detailed in <a class="reference internal" href="../../documentation/doc_config.html"><span class="doc">Configuration</span></a>.</p>
@@ -458,23 +459,23 @@
 <h2>Restricting  Information Structures<a class="headerlink" href="#restricting-information-structures" title="Link to this heading">#</a></h2>
 <p>The sparsity pattern of the controller <span class="math notranslate nohighlight">\(D_K\)</span> in Synthesis can be imposed in the configuration options. This sparsity pattern can be used to enforce an <a class="reference internal" href="../../how_it_works/alg_properties.html"><span class="doc">Information Structure</span></a> on the generated algorithm.</p>
 <p>As an example, a two-operator splitting algorithm with <span class="math notranslate nohighlight">\(\Dcl_{11}=0\)</span> (explicit evaluation of <span class="math notranslate nohighlight">\(F_1\)</span>) and <span class="math notranslate nohighlight">\(\Dcl_{22}\neq 0\)</span> (implicit evaluation of <span class="math notranslate nohighlight">\(F_2\)</span>) can be synthesized using the configuration options</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%F2 can use information from F1</span>
-<span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span>
-<span class="w">                     </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"> </span>
-
-<span class="c">%F2 cannot use information from F1</span>
-<span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span>
-<span class="w">                     </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"> </span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="c">%F2 can use information from F1</span>
+<span class="linenos">2</span><span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span>
+<span class="linenos">3</span><span class="w">                     </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"> </span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="c">%F2 cannot use information from F1</span>
+<span class="linenos">6</span><span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span>
+<span class="linenos">7</span><span class="w">                     </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"> </span>
 </pre></div>
 </div>
 <p>Algorithms with both explicit evaluations (<span class="math notranslate nohighlight">\(\Dcl_{11}, \Dcl_{22} =  0\)</span>) can be synthesized using</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%F2 can use information from F1</span>
-<span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span>
-<span class="w">                     </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
-
-<span class="c">%F2 cannot use information from F1 </span>
-<span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span>
-<span class="w">                     </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span><span class="w"> </span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="c">%F2 can use information from F1</span>
+<span class="linenos">2</span><span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span>
+<span class="linenos">3</span><span class="w">                     </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="c">%F2 cannot use information from F1 </span>
+<span class="linenos">6</span><span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span>
+<span class="linenos">7</span><span class="w">                     </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span><span class="w"> </span>
 </pre></div>
 </div>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">config.syn.D_mask</span></code> will be an lower-triangular matrix with all ones.</p>

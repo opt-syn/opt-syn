@@ -225,7 +225,8 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="examples_simulation/sim_dr.html">Douglas Rachford with Noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -517,39 +518,39 @@
 <h2>Simulation<a class="headerlink" href="#simulation" title="Link to this heading">#</a></h2>
 <p>We use PGD to solve an optimization problem with <span class="math notranslate nohighlight">\(d=400\)</span> dimensions, an <span class="math notranslate nohighlight">\(L_1\)</span> norm constraint of <span class="math notranslate nohighlight">\(\tau=200\)</span>, and a quadratic <span class="math notranslate nohighlight">\(f(\beta) = 0.5 (\beta-b_0)'Q (\beta-b_0)\)</span> with <span class="math notranslate nohighlight">\(m=1\)</span> and <span class="math notranslate nohighlight">\(L = 1000\)</span>.
 The code to execute PGD on this problem for <span class="math notranslate nohighlight">\(T=15\)</span> time steps is</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">400</span><span class="p">;</span><span class="w"> </span><span class="c">%dimension of variable beta</span>
-
-<span class="c">%define the quadratic (f, randomly generated) </span>
-<span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
-<span class="n">Q</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">rand_quad</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">);</span>
-<span class="n">b0</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">rand</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-<span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sim_quad</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span><span class="w"> </span><span class="n">b0</span><span class="p">);</span><span class="w"> </span>
-
-
-<span class="c">%define the indicator function for the L1 ball (Z)</span>
-<span class="n">tau</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">200</span><span class="p">;</span>
-<span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sim_l1_hard</span><span class="p">(</span><span class="n">tau</span><span class="p">);</span>
-
-<span class="n">ops</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">};</span><span class="w"> </span><span class="c">%all operators of the problem</span>
-
-
-<span class="c">%PGD algorithm</span>
-<span class="nb">gamma</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">L</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
-<span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">],</span><span class="mi">1</span><span class="p">);</span>
-
-<span class="c">%form the system</span>
-<span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
-
-<span class="c">%simulate T time steps</span>
-<span class="n">sim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_sim</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
-<span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span>
-<span class="n">sim</span><span class="p">.</span><span class="n">sampler</span><span class="p">.</span><span class="n">x0</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">200</span><span class="o">*</span><span class="nb">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span><span class="w"> </span><span class="c">%random initial condition</span>
-<span class="n">sim_out</span><span class="p">=</span><span class="w"> </span><span class="n">sim</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">d</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">400</span><span class="p">;</span><span class="w"> </span><span class="c">%dimension of variable beta</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="c">%define the quadratic (f, randomly generated) </span>
+<span class="linenos"> 4</span><span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
+<span class="linenos"> 5</span><span class="n">Q</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">rand_quad</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">);</span>
+<span class="linenos"> 6</span><span class="n">b0</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">rand</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos"> 7</span><span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sim_quad</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span><span class="w"> </span><span class="n">b0</span><span class="p">);</span><span class="w"> </span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="c">%define the indicator function for the L1 ball (Z)</span>
+<span class="linenos">11</span><span class="n">tau</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">200</span><span class="p">;</span>
+<span class="linenos">12</span><span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sim_l1_hard</span><span class="p">(</span><span class="n">tau</span><span class="p">);</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="n">ops</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">};</span><span class="w"> </span><span class="c">%all operators of the problem</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="c">%PGD algorithm</span>
+<span class="linenos">18</span><span class="nb">gamma</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">L</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
+<span class="linenos">19</span><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">],</span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span><span class="c">%form the system</span>
+<span class="linenos">22</span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span><span class="c">%simulate T time steps</span>
+<span class="linenos">25</span><span class="n">sim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_sim</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
+<span class="linenos">26</span><span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span>
+<span class="linenos">27</span><span class="n">sim</span><span class="p">.</span><span class="n">sampler</span><span class="p">.</span><span class="n">x0</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">200</span><span class="o">*</span><span class="nb">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span><span class="w"> </span><span class="c">%random initial condition</span>
+<span class="linenos">28</span><span class="n">sim_out</span><span class="p">=</span><span class="w"> </span><span class="n">sim</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>We then plot the output</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">sim_out</span><span class="p">);</span>
-<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">({</span><span class="s">&#39;w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;z&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_z&#39;</span><span class="p">},</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">plt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">sim_out</span><span class="p">);</span>
+<span class="linenos">2</span><span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">({</span><span class="s">&#39;w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;z&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_z&#39;</span><span class="p">},</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 <figure class="align-center">
@@ -575,45 +576,45 @@ The code to execute PGD on this problem for <span class="math notranslate nohigh
 <h2>Analysis<a class="headerlink" href="#analysis" title="Link to this heading">#</a></h2>
 <p>The goal of Analysis is to numerically find the least <span class="math notranslate nohighlight">\(\rho\)</span> valid for all <span class="math notranslate nohighlight">\((f, \mathcal{Z})\)</span>. We aim to match the worst-case rate <span class="math notranslate nohighlight">\(\rho = \frac{L-m}{L+m}\)</span>.</p>
 <p>The analysis code for parameters <span class="math notranslate nohighlight">\(m = 1, L = 10\)</span> is:</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%describe the operators </span>
-<span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
-<span class="n">rho_theory</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">(</span><span class="n">L</span><span class="o">-</span><span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">L</span><span class="o">+</span><span class="n">m</span><span class="p">);</span><span class="w"> </span><span class="c">% 0.8182</span>
-
-<span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sml</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">);</span><span class="w"> </span><span class="c">%\partial f1</span>
-<span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_pcc</span><span class="p">();</span><span class="w">     </span><span class="c">%\partial f2</span>
-
-<span class="c">%The PGD algorithm using the linear system description</span>
-<span class="nb">gamma</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">L</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
-<span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">],</span><span class="mi">1</span><span class="p">);</span>
-
-<span class="c">%form the algorithm interconnection</span>
-<span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">({</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">},</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
-
-
-<span class="c">%run the analysis routine, use bisection to minimize the convergence rate</span>
-<span class="n">man</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_analysis</span><span class="p">(</span><span class="n">sys</span><span class="p">);</span><span class="w"> </span>
-<span class="n">order</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">};</span><span class="w"> </span><span class="c">% order of the analysis program</span>
-<span class="n">sol</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man</span><span class="p">.</span><span class="n">bisect</span><span class="p">(</span><span class="n">order</span><span class="p">);</span>
-<span class="n">rho</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol</span><span class="p">.</span><span class="n">rho</span><span class="w"> </span><span class="c">% 0.8182, matches PGD theory within 4 digits.</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c">%describe the operators </span>
+<span class="linenos"> 2</span><span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+<span class="linenos"> 3</span><span class="n">rho_theory</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">(</span><span class="n">L</span><span class="o">-</span><span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">L</span><span class="o">+</span><span class="n">m</span><span class="p">);</span><span class="w"> </span><span class="c">% 0.8182</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sml</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">);</span><span class="w"> </span><span class="c">%\partial f1</span>
+<span class="linenos"> 6</span><span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_pcc</span><span class="p">();</span><span class="w">     </span><span class="c">%\partial f2</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="c">%The PGD algorithm using the linear system description</span>
+<span class="linenos"> 9</span><span class="nb">gamma</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">L</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
+<span class="linenos">10</span><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">],</span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="c">%form the algorithm interconnection</span>
+<span class="linenos">13</span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">({</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">},</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="c">%run the analysis routine, use bisection to minimize the convergence rate</span>
+<span class="linenos">17</span><span class="n">man</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_analysis</span><span class="p">(</span><span class="n">sys</span><span class="p">);</span><span class="w"> </span>
+<span class="linenos">18</span><span class="n">order</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">};</span><span class="w"> </span><span class="c">% order of the analysis program</span>
+<span class="linenos">19</span><span class="n">sol</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man</span><span class="p">.</span><span class="n">bisect</span><span class="p">(</span><span class="n">order</span><span class="p">);</span>
+<span class="linenos">20</span><span class="n">rho</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol</span><span class="p">.</span><span class="n">rho</span><span class="w"> </span><span class="c">% 0.8182, matches PGD theory within 4 digits.</span>
 </pre></div>
 </div>
 </section>
 <section id="synthesis">
 <h2>Synthesis<a class="headerlink" href="#synthesis" title="Link to this heading">#</a></h2>
 <p>In synthesis, we aim to design an algorithm with minimal convergence rate. The synthesis code for the case of <span class="math notranslate nohighlight">\(m=1, L=10\)</span> is</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%describe the operators </span>
-<span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
-<span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sml</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">);</span><span class="w"> </span><span class="c">%\partial f1</span>
-<span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_pcc</span><span class="p">();</span><span class="w">     </span><span class="c">%\partial f2</span>
-
-<span class="c">%form the algorithm interconnection</span>
-<span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">({</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">});</span>
-
-
-<span class="c">%run the synthesis routine, use bisection to minimize the convergence rate</span>
-<span class="n">man</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_synthesis</span><span class="p">(</span><span class="n">sys</span><span class="p">);</span><span class="w"> </span>
-<span class="n">sol</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man</span><span class="p">.</span><span class="n">bisect</span><span class="p">();</span>
-<span class="n">rho</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol</span><span class="p">.</span><span class="n">rho</span><span class="w"> </span><span class="c">% 0.7209</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c">%describe the operators </span>
+<span class="linenos"> 2</span><span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+<span class="linenos"> 3</span><span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sml</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">);</span><span class="w"> </span><span class="c">%\partial f1</span>
+<span class="linenos"> 4</span><span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_pcc</span><span class="p">();</span><span class="w">     </span><span class="c">%\partial f2</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="c">%form the algorithm interconnection</span>
+<span class="linenos"> 7</span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">({</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">});</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="c">%run the synthesis routine, use bisection to minimize the convergence rate</span>
+<span class="linenos">11</span><span class="n">man</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_synthesis</span><span class="p">(</span><span class="n">sys</span><span class="p">);</span><span class="w"> </span>
+<span class="linenos">12</span><span class="n">sol</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man</span><span class="p">.</span><span class="n">bisect</span><span class="p">();</span>
+<span class="linenos">13</span><span class="n">rho</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol</span><span class="p">.</span><span class="n">rho</span><span class="w"> </span><span class="c">% 0.7209</span>
 </pre></div>
 </div>
 <p>The Synthesized optimization algorithm with rate <span class="math notranslate nohighlight">\(\rho \leq 0.7209\)</span>  is</p>
@@ -626,9 +627,9 @@ The code to execute PGD on this problem for <span class="math notranslate nohigh
  I &amp; -0.133 I &amp; -0.449 I &amp; -0.316 I }   \mat{c}{x_{k+1}^1 \\ x_{k+1}^2 \hl w_k^1 \\ w_k^2}, &amp; \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\partial f(z_k^1) \\ \partial \mathbb{I}_{\mathcal{Z}}(z_k^2)}
 \end{align*}.\end{split}\]</div>
 <p>We then perform three rounds of Synthesis-Analysis alternation to acquire an algorithm with certified convergence rate <span class="math notranslate nohighlight">\(0.5723 &lt; 0.7209 &lt; 0.8121\)</span>.</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">Niter</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
-<span class="p">[</span><span class="n">sol_alt</span><span class="p">,</span><span class="w"> </span><span class="n">v_r</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man</span><span class="p">.</span><span class="n">alternate</span><span class="p">(</span><span class="n">Niter</span><span class="p">,</span><span class="w">  </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">});</span><span class="w"> </span><span class="c">%order {1, 1} Analysis problems</span>
-<span class="n">rho_alt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol_alt</span><span class="p">{</span><span class="k">end</span><span class="p">,</span><span class="w"> </span><span class="k">end</span><span class="p">}.</span><span class="n">rho</span><span class="w"> </span><span class="c">% 0.5723</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">Niter</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="linenos">2</span><span class="p">[</span><span class="n">sol_alt</span><span class="p">,</span><span class="w"> </span><span class="n">v_r</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man</span><span class="p">.</span><span class="n">alternate</span><span class="p">(</span><span class="n">Niter</span><span class="p">,</span><span class="w">  </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">});</span><span class="w"> </span><span class="c">%order {1, 1} Analysis problems</span>
+<span class="linenos">3</span><span class="n">rho_alt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol_alt</span><span class="p">{</span><span class="k">end</span><span class="p">,</span><span class="w"> </span><span class="k">end</span><span class="p">}.</span><span class="n">rho</span><span class="w"> </span><span class="c">% 0.5723</span>
 </pre></div>
 </div>
 <!-- 
@@ -657,24 +658,24 @@ to obtain the $\rho \leq 0.8322$ algorithm
 <h2>Synthesis with Network Dynamics<a class="headerlink" href="#synthesis-with-network-dynamics" title="Link to this heading">#</a></h2>
 <p>The  oracle <span class="math notranslate nohighlight">\(\partial f\)</span> is no longer directly accessible by the algorithm, but instead takes a nonzero number of steps to interface.
 Algorithm design for a 2-step delay on <span class="math notranslate nohighlight">\(\partial f\)</span> is accomplished by executing</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%describe the operators </span>
-<span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
-<span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sml</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">);</span><span class="w"> </span><span class="c">%\partial f1</span>
-<span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_pcc</span><span class="p">();</span><span class="w">     </span><span class="c">%\partial f2</span>
-
-<span class="c">%add a round-trip time delay to \partial f1 evaluation</span>
-<span class="n">DELAY</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span><span class="w"> </span><span class="c">%2-step delay for f1, 0-step (no) delay for f2</span>
-<span class="n">network_delay</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">bridge_channel_delay</span><span class="p">(</span><span class="n">DELAY</span><span class="p">,</span><span class="w"> </span><span class="n">DELAY</span><span class="p">);</span><span class="w"> </span><span class="c">%symmetric delay to and from oracles</span>
-
-
-<span class="c">%form the algorithm interconnection</span>
-<span class="n">sys_delay</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">({</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">},</span><span class="w"> </span><span class="n">network_delay</span><span class="p">);</span>
-
-
-<span class="c">%run synthesis, use bisection to minimize the convergence rate</span>
-<span class="n">man_delay</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_synthesis</span><span class="p">(</span><span class="n">sys_delay</span><span class="p">);</span><span class="w"> </span>
-<span class="n">sol</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_delay</span><span class="p">.</span><span class="n">bisect</span><span class="p">();</span>
-<span class="n">rho</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol</span><span class="p">.</span><span class="n">rho</span><span class="w"> </span><span class="c">% 0.9553</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c">%describe the operators </span>
+<span class="linenos"> 2</span><span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+<span class="linenos"> 3</span><span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sml</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">);</span><span class="w"> </span><span class="c">%\partial f1</span>
+<span class="linenos"> 4</span><span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_pcc</span><span class="p">();</span><span class="w">     </span><span class="c">%\partial f2</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="c">%add a round-trip time delay to \partial f1 evaluation</span>
+<span class="linenos"> 7</span><span class="n">DELAY</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span><span class="w"> </span><span class="c">%2-step delay for f1, 0-step (no) delay for f2</span>
+<span class="linenos"> 8</span><span class="n">network_delay</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">bridge_channel_delay</span><span class="p">(</span><span class="n">DELAY</span><span class="p">,</span><span class="w"> </span><span class="n">DELAY</span><span class="p">);</span><span class="w"> </span><span class="c">%symmetric delay to and from oracles</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="c">%form the algorithm interconnection</span>
+<span class="linenos">12</span><span class="n">sys_delay</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">({</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">},</span><span class="w"> </span><span class="n">network_delay</span><span class="p">);</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span><span class="c">%run synthesis, use bisection to minimize the convergence rate</span>
+<span class="linenos">16</span><span class="n">man_delay</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_synthesis</span><span class="p">(</span><span class="n">sys_delay</span><span class="p">);</span><span class="w"> </span>
+<span class="linenos">17</span><span class="n">sol</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_delay</span><span class="p">.</span><span class="n">bisect</span><span class="p">();</span>
+<span class="linenos">18</span><span class="n">rho</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol</span><span class="p">.</span><span class="n">rho</span><span class="w"> </span><span class="c">% 0.9553</span>
 </pre></div>
 </div>
 <!-- ## Plotting

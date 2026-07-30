@@ -225,7 +225,8 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../examples_simulation/sim_dr.html">Douglas Rachford with Noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -466,14 +467,14 @@ The <code class="xref mat mat-class docutils literal notranslate"><span class="p
  \mat{c|c}{\Acl_k &amp; \Bcl_k \hl \Ccl_k &amp; \Dcl_k }  = \mat{c|c}{\Acl_{k+h} &amp; \Bcl_{k+h} \hl \Ccl_{k+h} &amp; \Dcl_{k+h} } &amp; &amp; \forall k \in \N.
  \end{align*}\]</div>
 <p>Systems with periodic networks and controllers can be specified using the command</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">sys_per</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system_periodic</span><span class="p">(</span><span class="n">Operator_Class</span><span class="p">,</span><span class="w"> </span><span class="n">Network</span><span class="p">,</span><span class="w"> </span><span class="n">Controller</span><span class="p">);</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">sys_per</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system_periodic</span><span class="p">(</span><span class="n">Operator_Class</span><span class="p">,</span><span class="w"> </span><span class="n">Network</span><span class="p">,</span><span class="w"> </span><span class="n">Controller</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>An <span class="math notranslate nohighlight">\(h\)</span>-periodic network is stored as an <span class="math notranslate nohighlight">\(h\)</span>-length cell of <code class="xref mat mat-class docutils literal notranslate"><span class="pre">genplant</span></code> objects, or as a <code class="xref mat mat-class docutils literal notranslate"><span class="pre">genplant_poly</span></code> object.</p>
 <p>If the network is <span class="math notranslate nohighlight">\(h\)</span>-periodic, then the controller can either be LTI (a single <code class="docutils literal notranslate"><span class="pre">ss</span></code>) or <span class="math notranslate nohighlight">\(h\)</span>-periodic (an <span class="math notranslate nohighlight">\(h\)</span>-length cell of <code class="docutils literal notranslate"><span class="pre">ss</span></code> objects).
 If the network is LTI, then the controller can be an <span class="math notranslate nohighlight">\(h\)</span>-length cell of <code class="docutils literal notranslate"><span class="pre">ss</span></code> objects.</p>
 <p>A periodic system can be lifted into an LTI system by</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">sys_lti</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sys_per</span><span class="p">.</span><span class="n">periodic_lift</span><span class="p">();</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">sys_lti</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sys_per</span><span class="p">.</span><span class="n">periodic_lift</span><span class="p">();</span>
 </pre></div>
 </div>
 </section>
@@ -487,12 +488,12 @@ in which there exists matrices  <span class="math notranslate nohighlight">\((M_
 <p>Cyclic Coordinate-Descent algorithms are instances of periodic-orbit algorithms satisfying this simplified structure.</p>
 <p>The <span style="color:#5D93BF">opt</span>-syn implementation of periodic-orbit systems is simplified. The matrix <span class="math notranslate nohighlight">\(M \in \R^{c \times c}\)</span> must satisfy <span class="math notranslate nohighlight">\(M = M^\top, M^h = M\)</span>, where <span class="math notranslate nohighlight">\(c\)</span> is the coordinate dimension of the Kronecker Structure. All other matrices follow from <span class="math notranslate nohighlight">\(M\)</span> by Kronecker structure (e.g. <span class="math notranslate nohighlight">\(M_x = I_{n_x/c} \otimes M\)</span>).</p>
 <p>Systems with periodic-orbit  networks and controllers can be specified using the command</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">sys_orbit</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system_periodic_orbit</span><span class="p">(</span><span class="n">Operator_Class</span><span class="p">,</span><span class="w"> </span><span class="n">Network</span><span class="p">,</span><span class="w"> </span><span class="n">Controller</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">);</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">sys_orbit</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system_periodic_orbit</span><span class="p">(</span><span class="n">Operator_Class</span><span class="p">,</span><span class="w"> </span><span class="n">Network</span><span class="p">,</span><span class="w"> </span><span class="n">Controller</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Periodic-orbit systems can be enumerated into periodic systems and  lifted into LTI systems:</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">sys_per</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sys_orbit</span><span class="p">.</span><span class="n">export_periodic</span><span class="p">();</span>
-<span class="n">sys_lti</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sys_orbit</span><span class="p">.</span><span class="n">periodic_lift</span><span class="p">();</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">sys_per</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sys_orbit</span><span class="p">.</span><span class="n">export_periodic</span><span class="p">();</span>
+<span class="linenos">2</span><span class="n">sys_lti</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sys_orbit</span><span class="p">.</span><span class="n">periodic_lift</span><span class="p">();</span>
 </pre></div>
 </div>
 </section>
@@ -509,7 +510,7 @@ in which there exists matrices  <span class="math notranslate nohighlight">\((M_
 \end{align*}\end{split}\]</div>
 <p>Switched systems can model network phenomena such as time-varying delays and communication drops. Periodic and periodic-orbit systems are specific instances of switched systems.</p>
 <p>A system with switched system  networks and controllers can be specified using the command</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">sys_per</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system_switched</span><span class="p">(</span><span class="n">Operator_Class</span><span class="p">,</span><span class="w"> </span><span class="n">Network</span><span class="p">,</span><span class="w"> </span><span class="n">Controller</span><span class="p">,</span><span class="w"> </span><span class="n">G</span><span class="p">);</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">sys_per</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system_switched</span><span class="p">(</span><span class="n">Operator_Class</span><span class="p">,</span><span class="w"> </span><span class="n">Network</span><span class="p">,</span><span class="w"> </span><span class="n">Controller</span><span class="p">,</span><span class="w"> </span><span class="n">G</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">G</span></code> is the <span class="math notranslate nohighlight">\(\{0, 1\}\)</span> adjacency matrix for the graph <span class="math notranslate nohighlight">\(\mathcal{G}\)</span>.</p>

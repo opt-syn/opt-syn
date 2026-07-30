@@ -1,4 +1,4 @@
-# Douglas Rachford with Noise
+# Noisy Douglas Rachford
 
 
 The Douglas-Rachford algorithm is a procedure for solving a two-operator inclusion problem {footcite}`douglas1956numerical`.
@@ -17,8 +17,10 @@ We  use Douglas-Rachford to solve a composite optimization problem
 \beta^* \in \argmin_{\norm{\beta}_\infty \leq 10} f(\beta)
 ```
 
-We describe the necessary optimality condition for this problem using the operators $F_1 = \partial f$, and $F_2 = \partial \mathbb{I}_{\norm{\cdot}_\infty \leq 10}.$ 
-
+We describe the necessary optimality condition for this problem using the operators $F_1 = \partial f$, and $F_2 = \partial \mathbb{I}_{\norm{\cdot}_\infty \leq 10}$ 
+```{math}
+0 \in \partial  f(\beta^*) + \partial \mathbb{I}_{\norm{\cdot}_\infty(\beta^*).
+```
 
 ## No Noise
 We execute the Douglas-Rachford scheme with parameters $\gamma = 0.4, \lambda = 1$ for a problem where $f_1$ is a convex quadratic (eigenvalue bounds $m = 1, L = 10$). Figure [1](#dr-clean) plots a trajectory of Douglas-Rachford starting from $x_0 = 0$ is
