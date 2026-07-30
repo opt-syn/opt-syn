@@ -52,7 +52,7 @@ classdef opt_analysis < opt_manager_interface
             %check if any are noncausal
             ANY_NONCAUSAL = false;
             for i = 1:length(obj.sys.op)
-                if (isa(obj.sys.op{i}, 'op_gen') && (order(i)>0)) || (length(order(i))==2 && (order(2) > 0))
+                if (isa(obj.sys.op{i}, 'op_gen') && (order{i}>0)) || (length(order(i))==2 && (order(2) > 0))
                     ANY_NONCAUSAL = true;
                 end
             end

@@ -49,7 +49,7 @@ html_context = {
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
+myst_number_code_blocks = ['matlab']
 
 # matlab source code
 matlab_src_dir = '../src'

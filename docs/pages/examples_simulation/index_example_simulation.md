@@ -10,15 +10,14 @@ tocdepth: 2
 
 # Simulation of Algorithms
 
+Simulation examples include 
 
 ```{toctree}
 :maxdepth: 1
-Douglas Rachford with Noise <sim_dr>
+Noisy Douglas Rachford <sim_dr>
+Repeated Evaluations <sim_bind>
 ```
 
-:::{caution} 
-Under Construction
-:::
 
 
-
+These examples explore aspects of setting up a System, and running the algorithm.
