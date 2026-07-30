@@ -25,9 +25,9 @@ The degenerate case of $\alpha=0$ is no network dynamics.
 
 The controller structure with parameters $(\gamma, \lambda) \geq 0$ used to solve the two-operator inclusion problem is
 ```{math}
- \text{Network}: \qquad  \mat{c}{x_{k+1}^c \hl u_k^1 \\ u_k^2} =  \mat{c|cc}{I & -\gamma \lambda & -\gamma \lambda \frac{1}{\alpha+1} \\
+ \text{Network}: \qquad  \mat{c}{x_{k+1}^c \hl u_k^1 \\ u_k^2} =  \mat{c|cc}{I & -\gamma \lambda & \frac{ -\gamma \lambda}{\alpha+1} \hl
  (1+\alpha) I & 0 & 0 \\
- I & -\gamma I & -\gamma\frac{1}{\alpha+1} I }  \mat{c}{x_{k}^c \hl y_k^1 \\ y_k^2}.
+ I & -\gamma I & -\frac{ -\gamma }{\alpha+1} I }  \mat{c}{x_{k}^c \hl y_k^1 \\ y_k^2}.
 ```
 
 This controller structure is parameterized by $\alpha$. If $\alpha = 0$ and $\lambda = 1$, then this controller is the same as Projected Gradient Descent.
@@ -55,14 +55,12 @@ Figure [1](#sym-trace) plots a trace of algorithm execution starting from $x_0 =
 *Figure 1:* Trace of execution and convergence
 :::
 
-We now establish tracking properties using the Regulator Equations. 
-
-The solution to the Regulator Equations for this network and controller are
+We now establish tracking properties of solution trajectories using the Regulator Equations. The solution to the Regulator Equations for this network and controller are
 ```{math}
 \begin{align*}
-\Pi &= \mat{cc}{0 & \frac{1}{2(\alpha+1)}I \\ -\frac{1}{2} I & 0 }, \Gamma &= \mat{cc}{-(\alpha+1) I & 0 \\
+\Pi &= \mat{cc}{0 & \frac{1}{2(\alpha+1)}I \\ -\frac{1}{2} I & 0 }, &  \Gamma &= \mat{cc}{-(\alpha+1) I & 0 \\
 -I & 0 }, \\
-\Phi &= \mat{cc}{0 & \frac{1}{2(\alpha+1)}I \\ 0  & -I }, \Theta &= \mat{c}{-I & 0}.
+\Phi &= \mat{cc}{0 & \frac{1}{2(\alpha+1)}I \\ 0  & -I }, &  \Theta &= \mat{c}{-I & 0}.
 \end{align*}
 ```
 
@@ -82,14 +80,14 @@ Figure [2](#sym-track) plots the tracking of these signals over time
 :align: center
 :class: only-dark
 :name: sym-track
-*Figure 2:* Tracking error
+*Figure 2:* Tracking errors
 :::
 
 :::{figure} _static/sim_channel_sym_track_light.png
 :align: center
 :class: only-light
 :name: sym-track
-*Figure 2:* Tracking error
+*Figure 2:* Tracking errors
 :::
 
 Figure [3](#sym-trace-sq) plots the squared norm of the tracking error

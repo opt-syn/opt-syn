@@ -91,7 +91,7 @@ The {class}`opt_manager` classes will check these conditions, and will override 
 (#bisection)=
 ### Bisection
 
-The routine {meth}`bisect` performs bisection on a single specification. Parameters of bisection are set using the `bisect_opts` configuration, see `operator class's <../documentation/doc_config>` for more details. The index of the specification in the `spec` to minimize using bisection is set via `bisect_opts.spec_ind`, with a default of index of 1.
+The routine {meth}`bisect` performs bisection on a single specification. Parameters of bisection are set using the `bisect_opts` {doc}`configuration <../documentation/doc_config>`. The index of the specification in the `spec` to minimize using bisection is set via `bisect_opts.spec_ind`, with a default of index of 1.
 
 The outputs of  {meth}`bisect` are the {class}`opt_solution` structure and the two-element array `v_range`. The entries of `v_range` are the lower and upper bounds of the bisected parameter.
 

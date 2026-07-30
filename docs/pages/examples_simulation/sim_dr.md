@@ -17,30 +17,32 @@ We  use Douglas-Rachford to solve a composite optimization problem
 \beta^* \in \argmin_{\norm{\beta}_\infty \leq 10} f(\beta)
 ```
 
-We describe the necessary optimality condition for this problem using the operators $F_1 = \partial f$, and $F_2 = \partial \mathbb{I}_{\norm{\cdot}_\infty \leq 10}$ 
+The necessary optimality condition for this problem is posed using the operators $F_1 = \partial f$, and $F_2 = \partial \mathbb{I}_{\norm{\cdot}_\infty \leq 10}$ 
 ```{math}
 0 \in \partial  f(\beta^*) + \partial \mathbb{I}_{\norm{\cdot}_\infty}(\beta^*).
 ```
 
 ## No Noise
-We execute the Douglas-Rachford scheme with parameters $\gamma = 0.4, \lambda = 1$ for a problem where $f_1$ is a convex quadratic (eigenvalue bounds $m = 1, L = 10$). Figure [1](#dr-clean) plots a trajectory of Douglas-Rachford starting from $x_0 = 0$ is
+We execute the Douglas-Rachford scheme with parameters $\gamma = 0.4, \lambda = 1$ for a problem where $f$ is a convex quadratic (eigenvalue bounds $m = 1, L = 10$). Figure [1](#dr-clean) plots a trajectory of Douglas-Rachford starting from $x_0 = 0$.
 
 :::{figure} _static/dr_clean_dark.png
 :align: center
 :class: only-dark
 :name: dr-clean
+*Figure 1:* Convergence without noise
 :::
 
 :::{figure} _static/dr_clean_light.png
 :align: center
 :class: only-light
 :name: dr-clean
+*Figure 1:* Convergence without noise
 :::
 
 
 ## With Noise
-We then add noise to the Douglas-Rachford scheme. The performance input $w_p$ is additive noise
-at the output of the subgradient evaluations. The performance output $z_p$ is the consensus error $\frac{1}{2}(z_1 - z_2)$ at each channel. 
+We then add noise to the Douglas-Rachford scheme. The performance input $w_p$ introduces additive noise
+at the output of the subgradient evaluations. The performance output $z_p$ is the consensus error $\pm \frac{1}{2}(z_1 - z_2)$. 
 The {doc}`System <../usage/problem_formulation/system/index_system>` representing Douglas-Rachford with this noise structure is
 ```{math}
 \begin{align*}
@@ -56,19 +58,19 @@ The {doc}`System <../usage/problem_formulation/system/index_system>` representin
 \end{align*}
 ```
 
-Figure [2](#dr-noisy) plots a trace of a trajectory starting at $x_0$, in which the performance input $w_p$ is randomly sampled subject to the bound $\norm{w_{p,k}}_2 \leq 10, \forall k \in \N$.
+Figure [2](#dr-noisy) plots a trace of a trajectory starting at $x_0=0$, in which the performance input $w_p$ is randomly sampled subject to the bound $\norm{w_{p,k}}_2 \leq 10, \forall k \in \N$.
 :::{figure} _static/dr_noisy_dark.png
 :align: center
 :class: only-dark
 :name: dr-noisy
-Response under bounded noise
+*Figure 2:* Response under bounded noise
 :::
 
 :::{figure} _static/dr_noisy_light.png
 :align: center
 :class: only-light
 :name: dr-noisy
-Response under bounded noise
+*Figure 2:*Response under bounded noise
 :::
 
 
@@ -96,15 +98,11 @@ ops = {op1, op2};
 
 %douglas-rachford
 gamma = 0.4;  lambda = 1;   %stepsizes
-K = ss(1, [-gamma*lambda, -gamma*lambda], [1; 1], [-gamma, 0; -2*gamma, -gamma],1);
-
-
+K = ss(1, [-gamma*lambda, -gamma*lambda], ...
+    [1; 1], [-gamma, 0; -2*gamma, -gamma],1);
 
 %system with no noise
 sys_clean = opt_system(ops, [], K);
-
-
-
 
 %now create the network for the system with noise
 network = bridge_pass_through(s);
