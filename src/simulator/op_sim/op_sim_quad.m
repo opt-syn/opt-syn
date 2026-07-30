@@ -8,27 +8,29 @@ classdef op_sim_quad < op_sim_interface
     
     properties
         M;     %quadratic matrix
-        zstar; %critical point to the unconstrained quadratic minimization problem
+        bstar; %critical point to the unconstrained quadratic minimization problem
     end
 
     methods
-        function obj = op_sim_quad(M, zstar)
+        function obj = op_sim_quad(M, bstar)
             %OP_SIM_QUAD Constructor form a quadratic function
             %
             % Args: 
             %   M: a symmetric matrix defining the quadratic form
-            %   zstar: critical point to the unconstrained quadratic minimization problem
+            %   bstar: critical point to the unconstrained quadratic minimization problem
             %           is a function  of k.
             
             obj = obj@op_sim_interface();
             obj.M = M;
 
             if nargin < 2
-                zstar = zeros(size(obj.M, 1), 1);
+                bstar = zeros(size(obj.M, 1), 1);
             end
 
-            if isnumeric(zstar)
-                obj.zstar = @(k) zstar;
+            if isnumeric(bstar)
+                obj.bstar = @(k) bstar;
+            else
+                obj.bstar = bstar;
             end
                     
     
@@ -47,7 +49,7 @@ classdef op_sim_quad < op_sim_interface
             %Returns:
             %   w:       the w such that w = F(z)
 
-            w = obj.M* (z-obj.zstar(k));
+            w = obj.M* (z-obj.bstar(k));
         end
 
         function z = bw(obj, k, D, v, param)
@@ -65,7 +67,7 @@ classdef op_sim_quad < op_sim_interface
 
             dl = obj.blocksize(v);
             z = (obj.M + kron(eye(dl), inv(D))) \ ...
-                (obj.M*obj.zstar(k) + kron(eye(size(obj.M, 1)/size(D, 1)), D) \ v);
+                (obj.M*obj.bstar(k) + kron(eye(size(obj.M, 1)/size(D, 1)), D) \ v);
         end
 
         function f_out = f(obj, k, z, param)
@@ -80,7 +82,7 @@ classdef op_sim_quad < op_sim_interface
             %Returns:
             %   f_out:   f_out = f(z) if F = \partial f.
 
-            f_out = 0.5*(z-obj.zstar(k))'*obj.M*(z-obj.zstar(k)); 
+            f_out = 0.5*(z-obj.bstar(k))'*obj.M*(z-obj.bstar(k)); 
         end
         
 
