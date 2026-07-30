@@ -80,8 +80,8 @@ favicons = [
  
 html_theme_options = {
    "logo": {
-      "image_light": "./opt_syn_logo_light.svg",
-      "image_dark": "./opt_syn_logo_dark.svg",
+      "image_light": "opt_syn_light.svg",
+      "image_dark": "opt_syn_dark.svg",
    },
    "repository_url": "https://github.com/jarmill/opt-syn",
                          "use_repository_button": True
