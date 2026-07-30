@@ -9,6 +9,7 @@ can be expressed as the algorithmic interconnection
 \mat{c}{x_{k+1} \hl z^1_k \\ z^2_k} &= \mat{c|cc}{I & 0 & -\gamma I \hl I & 0 & 0 \\ I & -\gamma I & 0 } \mat{c}{x_k \hl w^1_k \\ w^2_k}, & \mat{c}{w^1_k \\ w^2_k} &= \mat{c}{\nabla f(z^1_k) \\ \nabla f(z^2_k)}.
 ```
 
+In the terminology of {footcite}`morin2024frugal`, operator splitting problems with repeated evaluations are 'nonfrugal'. In contrast, an algorithm that evaluated each operator only once per time step is referred to as 'frugal'.
  
 The  {attr}`bind` attribute of {class}`opt_system` stores the indexing of repeated operator evaluations.
  For the Extragradient method, this is `bind=[1, 1]`.
@@ -44,5 +45,3 @@ sys.bind = bind;
 :::{seealso}
 The {doc}`Repeated Evaluations <../../../examples_simulation/sim_bind>` example executes this algorithm with provided code.
 :::
-
-In the terminology of {footcite}`morin2024frugal`, operator splitting problems with repeated evaluations are 'nonfrugal'.

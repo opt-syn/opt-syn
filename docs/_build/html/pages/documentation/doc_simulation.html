@@ -227,6 +227,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1339,13 +1340,13 @@ proximal evaluation with preconditioner D</p>
 <dl>
 <dt>Constructor Summary</dt><dd><dl class="mat method">
 <dt class="sig sig-object mat" id="simulator.op_sim.op_sim_quad.op_sim_quad">
-<span class="sig-name descname"><span class="pre">op_sim_quad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">M</span></em>, <em class="sig-param"><span class="pre">zstar</span></em><span class="sig-paren">)</span><a class="headerlink" href="#simulator.op_sim.op_sim_quad.op_sim_quad" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">op_sim_quad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">M</span></em>, <em class="sig-param"><span class="pre">bstar</span></em><span class="sig-paren">)</span><a class="headerlink" href="#simulator.op_sim.op_sim_quad.op_sim_quad" title="Link to this definition">#</a></dt>
 <dd><p>OP_SIM_QUAD Constructor form a quadratic function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> – a symmetric matrix defining the quadratic form</p></li>
-<li><p><strong>zstar</strong> – critical point to the unconstrained quadratic minimization problem
+<li><p><strong>bstar</strong> – critical point to the unconstrained quadratic minimization problem
 is a function  of k.</p></li>
 </ul>
 </dd>
@@ -1360,8 +1361,8 @@ is a function  of k.</p></li>
 </dd></dl>
 
 <dl class="mat attribute">
-<dt class="sig sig-object mat" id="simulator.op_sim.op_sim_quad.zstar">
-<span class="sig-name descname"><span class="pre">zstar</span></span><a class="headerlink" href="#simulator.op_sim.op_sim_quad.zstar" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object mat" id="simulator.op_sim.op_sim_quad.bstar">
+<span class="sig-name descname"><span class="pre">bstar</span></span><a class="headerlink" href="#simulator.op_sim.op_sim_quad.bstar" title="Link to this definition">#</a></dt>
 <dd><p>critical point to the unconstrained quadratic minimization problem</p>
 </dd></dl>
 

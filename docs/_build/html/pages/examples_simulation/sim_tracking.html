@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
-    <title>Repeated Evaluations &#8212; opt-syn</title>
+    <title>Tracking an Oscillator &#8212; opt-syn</title>
   
   
   
@@ -45,12 +45,10 @@
     <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/examples_simulation/sim_bind';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/examples_simulation/sim_tracking';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Analysis of Algorithms" href="../examples_analysis/index_example_analysis.html" />
-    <link rel="prev" title="Noisy Douglas Rachford" href="sim_dr.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -148,6 +146,8 @@
       
       
       
+        
+      
       <dialog id="pst-primary-sidebar-modal"></dialog>
       <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
@@ -192,7 +192,7 @@
 </button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <ul class="current nav bd-sidenav">
+        <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../get_started.html">Get Started</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../how_it_works/index_how_it_works.html">How it Works</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -219,10 +219,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../usage/solve.html">Solve and Validate</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../examples.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="index_example_simulation.html">Simulation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="sim_dr.html">Noisy Douglas Rachford</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_bind.html">Repeated Evaluations</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -339,7 +339,7 @@
       
       
       
-      <li><a href="../../_sources/pages/examples_simulation/sim_bind.md" target="_blank"
+      <li><a href="../../_sources/pages/examples_simulation/sim_tracking.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -420,7 +420,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Repeated Evaluations</h1>
+    <h1>Tracking an Oscillator</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -434,81 +434,98 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="repeated-evaluations">
-<h1>Repeated Evaluations<a class="headerlink" href="#repeated-evaluations" title="Link to this heading">#</a></h1>
-<p>We implement the algorithm described in the <a class="reference internal" href="../usage/problem_formulation/system/bind.html"><span class="doc">Bind</span></a> page, with description</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="tracking-an-oscillator">
+<h1>Tracking an Oscillator<a class="headerlink" href="#tracking-an-oscillator" title="Link to this heading">#</a></h1>
+<p>This example involves a time-varying optimization algorithm (from <a class="reference internal" href="../usage/problem_formulation/system/tracking.html"><span class="doc">Tracking</span></a>). The optimal solution <span class="math notranslate nohighlight">\(\{\beta^*_k\}\)</span> orbits about a constant point <span class="math notranslate nohighlight">\(\beta^*_{\text{center}}\)</span> with a frequency of <span class="math notranslate nohighlight">\(\omega = \frac{\pi}{8}\)</span> radians per time step.</p>
+<p>The path of the optimal solution obeys known linear dynamics: there exists a state <span class="math notranslate nohighlight">\(\eta\)</span> such that</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}\mat{c}{x_{k+1} \hl z^1_k \\ z^2_k \\ z^3_k \\ z^4_k} &amp;= 
-\mat{c|cccc}{I &amp; -2\gamma \lambda I &amp; -\gamma \lambda I&amp; -2\gamma \lambda I  &amp; -\gamma  \lambda I \hl 
-I &amp; -\lambda I &amp; 0 &amp; 0 &amp; 0 \\
-I &amp; -\lambda I &amp; 0 &amp; 0 &amp; 0 \\
-I &amp; -2\lambda I &amp; -\lambda I &amp; -\lambda I &amp; 0 \\
-I &amp; -2 \lambda I &amp; -\lambda I &amp; - \lambda I &amp; 0} \mat{c}{x_k \hl w^1_k \\ w^2_k \\ w^3_k \\ w^4_k}, \quad &amp; \mat{c}{w^1_k \\ w^2_k \\ w^3_k \\ w^4_k} &amp;= \mat{c}{F_1 (z^1_k) \\ F_2 (z^2_k)\\ F_3 (z^3_k) \\ F_2(z^4_k)}\end{split}\]</div>
-<p>In this simulation, the operators <span class="math notranslate nohighlight">\(F_1\)</span> and <span class="math notranslate nohighlight">\(F_2\)</span> are gradients of quadratics, and <span class="math notranslate nohighlight">\(F_3\)</span> is the subdifferential of an <span class="math notranslate nohighlight">\(L_\infty\)</span> norm indicator function.</p>
-<p>Figure <a class="reference internal" href="#binder"><span class="xref myst">1</span></a> plots an algorithm execution with <span class="math notranslate nohighlight">\(\gamma = 0.4, \lambda = 0.25\)</span> starting from a random initial state <span class="math notranslate nohighlight">\(x_0\)</span>, for a problem with variable  <span class="math notranslate nohighlight">\(\beta \in \R^{200}\)</span>.</p>
-<figure class="align-center" id="binder">
-<img alt="../../_images/bind_clean_dark.png" class="only-dark" src="../../_images/bind_clean_dark.png" />
+\[\begin{split}\mat{c}{\eta_{k+1} \hl \beta^*_k} = \mat{ccc}{I &amp; 0 &amp; 0 \\
+0 &amp; \cos(\omega) I &amp; -\sin(\omega) I \\
+0 &amp; \sin(\omega) I &amp; \cos(\omega) I  \hl
+I &amp; I &amp; 0} \mat{c}{\eta_k}\end{split}\]</div>
+<p>The optimization problem is to minimize the sum of four quadratics. Each quadratic <span class="math notranslate nohighlight">\(f_{ik}\)</span> shares a the same oscillatory shift:  <span class="math notranslate nohighlight">\(f_{ik}(\beta) = f_{i0}(\beta - \eta^2_k)\)</span> for all <span class="math notranslate nohighlight">\(k \in \N\)</span>.</p>
+<p>The algorithm is defined in terms of parameters <span class="math notranslate nohighlight">\(b_0 \in \R^3, b_1 \in \R, b_2 \in \R\)</span>. An execution of this algorithm with  <span class="math notranslate nohighlight">\(\beta \in \R^{4}\)</span> is plotted in Figure <a class="reference internal" href="#tracker"><span class="xref myst">1</span></a>.</p>
+<figure class="align-center" id="tracker">
+<img alt="../../_images/track_clean_6_dark.png" class="only-dark" src="../../_images/track_clean_6_dark.png" />
 <figcaption>
-<p><span class="caption-text"><em>Figure 1:</em> Algorithm with bind <span class="math notranslate nohighlight">\([1, 2, 3, 2]\)</span></span><a class="headerlink" href="#binder" title="Link to this image">#</a></p>
+<p><span class="caption-text"><em>Figure 1:</em> Algorithm with oscillating target</span><a class="headerlink" href="#tracker" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <figure class="align-center" id="id1">
-<img alt="../../_images/bind_clean_light.png" class="only-light" src="../../_images/bind_clean_light.png" />
+<img alt="../../_images/track_clean_6_light.png" class="only-light" src="../../_images/track_clean_6_light.png" />
 <figcaption>
-<p><span class="caption-text"><em>Figure 1:</em> Algorithm with bind <span class="math notranslate nohighlight">\([1, 2, 3, 2]\)</span></span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+<p><span class="caption-text"><em>Figure 1:</em> Algorithm with oscillating target</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
-<p>The code to generate this example is</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nb">rng</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;twister&#39;</span><span class="p">);</span>
-<span class="linenos"> 2</span><span class="n">d</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">200</span><span class="p">;</span><span class="w"> </span><span class="c">%dimension of problem</span>
-<span class="linenos"> 3</span>
-<span class="linenos"> 4</span>
-<span class="linenos"> 5</span><span class="c">%% create a multi-step controller that satisfies the regulator equation</span>
-<span class="linenos"> 6</span><span class="nb">gamma</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">0.4</span><span class="p">;</span><span class="w">    </span><span class="c">%stepsizes</span>
-<span class="linenos"> 7</span><span class="n">lambda</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">0.25</span><span class="p">;</span>
-<span class="linenos"> 8</span>
-<span class="linenos"> 9</span>
-<span class="linenos">10</span><span class="n">A</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-<span class="linenos">11</span><span class="n">B</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="o">*</span><span class="n">lambda</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
-<span class="linenos">12</span><span class="n">C</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">ones</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-<span class="linenos">13</span><span class="n">D</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="n">lambda</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="linenos">14</span><span class="w">               </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="linenos">15</span><span class="w">               </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="linenos">16</span><span class="w">               </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
-<span class="linenos">17</span>
-<span class="linenos">18</span>
-<span class="linenos">19</span><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-<span class="linenos">20</span>
-<span class="linenos">21</span>
-<span class="linenos">22</span><span class="c">%% form the operators</span>
-<span class="linenos">23</span>
+<p>The <span class="math notranslate nohighlight">\(w\)</span> vectors approach constantcy at convergence. The iterates <span class="math notranslate nohighlight">\(z\)</span> oscillate according to the moving optimal solution.</p>
+<p>Code to generate this example is</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c">%tracking of optimal solution</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
+<span class="linenos"> 4</span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">];</span>
+<span class="linenos"> 5</span><span class="n">s</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">length</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="n">theta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">pi</span><span class="o">/</span><span class="mi">8</span><span class="p">;</span>
+<span class="linenos"> 9</span><span class="n">Sbeta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">blkdiag</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">givens</span><span class="p">(</span><span class="nb">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span><span class="w"> </span><span class="nb">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)));</span>
+<span class="linenos">10</span><span class="n">Rbeta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="n">d</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="c">%dimensionality of the problem</span>
+<span class="linenos">14</span><span class="c">%low for illustration</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="c">%tracking of the solution</span>
+<span class="linenos">18</span><span class="n">SA</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">kron</span><span class="p">(</span><span class="n">Sbeta</span><span class="p">,</span><span class="w"> </span><span class="nb">eye</span><span class="p">(</span><span class="n">d</span><span class="p">));</span>
+<span class="linenos">19</span><span class="n">SAy</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">kron</span><span class="p">(</span><span class="n">Rbeta</span><span class="p">,</span><span class="w"> </span><span class="nb">eye</span><span class="p">(</span><span class="n">d</span><span class="p">));</span>
+<span class="linenos">20</span><span class="n">eta0</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="nb">randi</span><span class="p">(</span><span class="mi">201</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span><span class="w"> </span>
+<span class="linenos">21</span><span class="w">    </span><span class="p">(</span><span class="nb">randi</span><span class="p">(</span><span class="mi">31</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">60</span><span class="p">)</span><span class="o">.*</span><span class="nb">sign</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">rand</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)];</span>
+<span class="linenos">22</span>
+<span class="linenos">23</span><span class="n">shift</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="n">SAy</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">SA</span><span class="o">^</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">eta0</span><span class="p">;</span>
 <span class="linenos">24</span>
-<span class="linenos">25</span><span class="c">%randomly generate the quadratics</span>
-<span class="linenos">26</span><span class="n">m1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">m2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="linenos">27</span><span class="n">L1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">L2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span>
-<span class="linenos">28</span><span class="n">Q1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">rand_quad</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">m1</span><span class="p">,</span><span class="w"> </span><span class="n">L1</span><span class="p">);</span><span class="w"> </span><span class="n">bstar1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">randn</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
-<span class="linenos">29</span><span class="n">Q2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">rand_quad</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">m3</span><span class="p">,</span><span class="w"> </span><span class="n">L3</span><span class="p">);</span><span class="w"> </span><span class="n">bstar2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">randn</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
+<span class="linenos">25</span><span class="c">%% assign the quadratics</span>
+<span class="linenos">26</span><span class="n">M</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">27</span><span class="n">bstar_center</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">28</span><span class="n">bstar</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">29</span><span class="n">op_list</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
 <span class="linenos">30</span>
-<span class="linenos">31</span><span class="n">BOX</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">30</span><span class="p">;</span><span class="w"> </span><span class="c">%L infinity norm constraint</span>
-<span class="linenos">32</span>
-<span class="linenos">33</span><span class="c">%create the operators</span>
-<span class="linenos">34</span><span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sim_quad</span><span class="p">(</span><span class="n">Q1</span><span class="p">,</span><span class="w"> </span><span class="n">bstar1</span><span class="p">);</span>
-<span class="linenos">35</span><span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sim_quad</span><span class="p">(</span><span class="n">Q2</span><span class="p">,</span><span class="w"> </span><span class="n">bstar2</span><span class="p">);</span>
-<span class="linenos">36</span><span class="n">op3</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sim_box</span><span class="p">(</span><span class="n">BOX</span><span class="p">);</span>
-<span class="linenos">37</span><span class="n">ops</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">,</span><span class="w"> </span><span class="n">op3</span><span class="p">};</span>
-<span class="linenos">38</span>
-<span class="linenos">39</span><span class="c">%put the system together</span>
-<span class="linenos">40</span><span class="n">bind</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="c">%assign the ordering of operators</span>
-<span class="linenos">41</span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">,</span><span class="w"> </span><span class="n">bind</span><span class="p">);</span>
-<span class="linenos">42</span>
-<span class="linenos">43</span><span class="c">%% simulate and plot</span>
-<span class="linenos">44</span><span class="n">sim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_sim</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
-<span class="linenos">45</span><span class="c">% T = 200;</span>
-<span class="linenos">46</span><span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
-<span class="linenos">47</span><span class="n">sim</span><span class="p">.</span><span class="n">sampler</span><span class="p">.</span><span class="n">x0</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">200</span><span class="o">*</span><span class="nb">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
-<span class="linenos">48</span><span class="n">sim_out</span><span class="p">=</span><span class="w"> </span><span class="n">sim</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
-<span class="linenos">49</span><span class="n">plt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">sim_out</span><span class="p">);</span>
-<span class="linenos">50</span><span class="n">fig1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">plt</span><span class="p">.</span><span class="n">plot_4</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span><span class="k">for</span><span class="w"> </span><span class="nb">i</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">s</span>
+<span class="linenos">33</span><span class="w">    </span><span class="n">M</span><span class="p">{</span><span class="nb">i</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">rand_quad</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">(</span><span class="nb">i</span><span class="p">),</span><span class="w"> </span><span class="n">L</span><span class="p">(</span><span class="nb">i</span><span class="p">));</span>
+<span class="linenos">34</span><span class="w">    </span><span class="n">bstar_center</span><span class="p">{</span><span class="nb">i</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">randi</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w">    </span>
+<span class="linenos">35</span><span class="w">    </span><span class="n">bstar</span><span class="p">{</span><span class="nb">i</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="n">bstar_center</span><span class="p">{</span><span class="nb">i</span><span class="p">}</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">shift</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+<span class="linenos">36</span>
+<span class="linenos">37</span><span class="w">    </span><span class="n">op_list</span><span class="p">{</span><span class="nb">i</span><span class="p">}=</span><span class="w"> </span><span class="n">op_sim_quad</span><span class="p">(</span><span class="n">M</span><span class="p">{</span><span class="nb">i</span><span class="p">},</span><span class="w"> </span><span class="n">bstar</span><span class="p">{</span><span class="nb">i</span><span class="p">});</span><span class="w">   </span>
+<span class="linenos">38</span><span class="k">end</span>
+<span class="linenos">39</span>
+<span class="linenos">40</span><span class="c">%static parameters</span>
+<span class="linenos">41</span><span class="n">b0</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="mf">0.05</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="mf">0.1</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="mf">0.05</span><span class="p">];</span>
+<span class="linenos">42</span><span class="n">b1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="mf">0.05</span><span class="p">;</span>
+<span class="linenos">43</span><span class="n">b2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="mf">0.1</span><span class="p">;</span>
+<span class="linenos">44</span>
+<span class="linenos">45</span><span class="n">AK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Sbeta</span><span class="p">;</span>
+<span class="linenos">46</span><span class="n">BK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">b0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">);</span>
+<span class="linenos">47</span><span class="n">CK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">ones</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Rbeta</span><span class="p">;</span>
+<span class="linenos">48</span>
+<span class="linenos">49</span><span class="n">DK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">zeros</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="linenos">50</span><span class="n">DK</span><span class="p">(</span><span class="k">end</span><span class="p">,</span><span class="w"> </span><span class="p">:)=</span><span class="w"> </span><span class="n">DK</span><span class="p">(</span><span class="k">end</span><span class="p">,</span><span class="w"> </span><span class="p">:)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b1</span><span class="p">;</span>
+<span class="linenos">51</span><span class="n">DK</span><span class="p">(:,</span><span class="w"> </span><span class="mi">1</span><span class="p">)=</span><span class="w"> </span><span class="n">DK</span><span class="p">(:,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b2</span><span class="p">;</span>
+<span class="linenos">52</span>
+<span class="linenos">53</span>
+<span class="linenos">54</span><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="n">AK</span><span class="p">,</span><span class="w"> </span><span class="n">BK</span><span class="p">,</span><span class="w"> </span><span class="n">CK</span><span class="p">,</span><span class="w"> </span><span class="n">DK</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">55</span>
+<span class="linenos">56</span>
+<span class="linenos">57</span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">op_list</span><span class="p">,</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
+<span class="linenos">58</span>
+<span class="linenos">59</span><span class="c">%% execute the algorithm</span>
+<span class="linenos">60</span>
+<span class="linenos">61</span><span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<span class="linenos">62</span><span class="n">sim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_sim</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
+<span class="linenos">63</span><span class="n">ssim</span><span class="p">=</span><span class="w"> </span><span class="n">sim</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+<span class="linenos">64</span>
+<span class="linenos">65</span><span class="c">%% plot the outputs</span>
+<span class="linenos">66</span><span class="n">plt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">ssim</span><span class="p">);</span>
+<span class="linenos">67</span><span class="n">plt</span><span class="p">.</span><span class="n">plot_4</span><span class="p">();</span>
 </pre></div>
 </div>
 </section>
@@ -524,24 +541,6 @@ I &amp; -2 \lambda I &amp; -\lambda I &amp; - \lambda I &amp; 0} \mat{c}{x_k \hl
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
-    <a class="left-prev"
-       href="sim_dr.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Noisy Douglas Rachford</p>
-      </div>
-    </a>
-    <a class="right-next"
-       href="../examples_analysis/index_example_analysis.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Analysis of Algorithms</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div>
                 </footer>
               

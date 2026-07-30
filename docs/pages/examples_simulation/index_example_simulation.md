@@ -16,6 +16,7 @@ Simulation examples include
 :maxdepth: 1
 Noisy Douglas Rachford <sim_dr>
 Repeated Evaluations <sim_bind>
+Tracking an Oscillator <sim_tracking>
 ```
 
 

@@ -442,6 +442,7 @@
 <p>can be expressed as the algorithmic interconnection</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\mat{c}{x_{k+1} \hl z^1_k \\ z^2_k} &amp;= \mat{c|cc}{I &amp; 0 &amp; -\gamma I \hl I &amp; 0 &amp; 0 \\ I &amp; -\gamma I &amp; 0 } \mat{c}{x_k \hl w^1_k \\ w^2_k}, &amp; \mat{c}{w^1_k \\ w^2_k} &amp;= \mat{c}{\nabla f(z^1_k) \\ \nabla f(z^2_k)}.\end{split}\]</div>
+<p>In the terminology of <a class="footnote-reference brackets" href="#footcite-morin2024frugal" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, operator splitting problems with repeated evaluations are ‘nonfrugal’. In contrast, an algorithm that evaluated each operator only once per time step is referred to as ‘frugal’.</p>
 <p>The  <code class="xref mat mat-attr docutils literal notranslate"><span class="pre">bind</span></code> attribute of <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_system</span></code> stores the indexing of repeated operator evaluations.
 For the Extragradient method, this is <code class="docutils literal notranslate"><span class="pre">bind=[1,</span> <span class="pre">1]</span></code>.</p>
 <p>For an example with <span class="math notranslate nohighlight">\(s=3\)</span> operators, the algorithm  with parameters <span class="math notranslate nohighlight">\(\gamma, \lambda &gt; 0\)</span> described by</p>
@@ -474,7 +475,6 @@ I &amp; -2 \lambda I &amp; -\lambda I &amp; - \lambda I &amp; 0} \mat{c}{x_k \hl
 <p class="admonition-title">See also</p>
 <p>The <a class="reference internal" href="../../../examples_simulation/sim_bind.html"><span class="doc">Repeated Evaluations</span></a> example executes this algorithm with provided code.</p>
 </div>
-<p>In the terminology of <a class="footnote-reference brackets" href="#footcite-morin2024frugal" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, operator splitting problems with repeated evaluations are ‘nonfrugal’.</p>
 </section>
 <hr class="footnotes docutils" />
 <aside class="footnote-list brackets">

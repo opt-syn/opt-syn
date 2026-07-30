@@ -11,9 +11,9 @@ I & -2\lambda I & -\lambda I & -\lambda I & 0 \\
 I & -2 \lambda I & -\lambda I & - \lambda I & 0} \mat{c}{x_k \hl w^1_k \\ w^2_k \\ w^3_k \\ w^4_k}, \quad & \mat{c}{w^1_k \\ w^2_k \\ w^3_k \\ w^4_k} &= \mat{c}{F_1 (z^1_k) \\ F_2 (z^2_k)\\ F_3 (z^3_k) \\ F_2(z^4_k)}
 ```
 
-In this simulation, the operators $F_1$ and $F_2$ are gradients of quadratics, and $F_3$ is the subdifferential of an indicator function. 
+In this simulation, the operators $F_1$ and $F_2$ are gradients of quadratics, and $F_3$ is the subdifferential of an $L_\infty$ norm indicator function. 
 
-Figure [1](#binder) plots an algorithm execution starting from a random initial state $x_0$ for a problem with $\beta \in \R^{200}$.
+Figure [1](#binder) plots an algorithm execution with $\gamma = 0.4, \lambda = 0.25$ starting from a random initial state $x_0$, for a problem with variable  $\beta \in \R^{200}$.
 
 :::{figure} _static/bind_clean_dark.png
 :align: center
