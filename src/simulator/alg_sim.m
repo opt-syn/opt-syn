@@ -7,7 +7,7 @@ classdef alg_sim
         sys; %system to simulate
         d;   %number of dimensions (kronecker lift)        
         c=1;  %number of partitions of dimension
-        sampler = op_sim_sampler(); %random sample routines
+        sampler = alg_sim_sampler(); %random sample routines
         EQUALITY = 0; %Is an op_sim_equality object present? True if so.
     end
     
