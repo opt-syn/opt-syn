@@ -197,6 +197,8 @@ classdef alg_plotter
                 sig_curr = getfield(obj.sim_out, sig);
             elseif strcmp(sig, 'x')
                 sig_curr = [obj.sim_out.xn; obj.sim_out.xc];
+            elseif strcmp(sig, 'payoff')
+                sig_curr = [obj.sim_out.f];
             elseif strcmp(sig, 'xerr')
                 sig_curr = [obj.sim_out.xnerr; obj.sim_out.xcerr];
             elseif strcmp(sig, 'sq_xerr')
@@ -267,6 +269,8 @@ classdef alg_plotter
                     name = 'State (Network)';
                 case 'eq'
                     name = 'Primal Feasibility';
+                case 'payoff'
+                    name = 'Payoff';
                 case 'xerr'
                     name = 'State Error';
                 case 'xcerr'
@@ -323,6 +327,8 @@ classdef alg_plotter
                 name_mid = 'mode';
             elseif strcmp(sig, 'delay')
                 name_mid = 'delay';
+            elseif strcmp(sig, 'payoff')
+                name_mid = '$f$';
 
             %tracking    
             elseif strcmp(sig, 'xcerr')

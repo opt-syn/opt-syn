@@ -193,7 +193,7 @@ classdef op_sim_LQ_game< op_sim_interface
         function L = coco(obj)
             %cocoercivity property of the game
             iQ = inv(obj.Q_all);
-            L = 1/min(eig( iQ + iQ'));
+            L = min(eig( iQ + iQ'));
         end
     end
 end
