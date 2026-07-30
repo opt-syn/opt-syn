@@ -29,7 +29,7 @@ for i = 1:N
 
     Q_other = Q_curr(ind_curr, ind_other);
 
-    b_curr = 50*randn(d, 1);
+    b_curr = 200*randn(d, 1);
 
     b_self = b_curr(ind_curr);
 
