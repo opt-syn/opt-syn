@@ -930,10 +930,10 @@ classdef genplant
             %    output indices.
             % :rtype: genplant, double
 
-            if nargin == 1
+            if nargin < 2
                 c = 1;
             end
-            if nargin == 2
+            if nargin < 3
                 iz = 1:obj.nz;
             end
 

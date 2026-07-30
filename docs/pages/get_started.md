@@ -209,16 +209,15 @@ The Synthesized optimization algorithm with rate $\rho \leq 0.7209$  is
  0 & 0.001327 I &  0.0008995 I & 0.9996 I \hl
   
   I  &  -0.3161 I & -0.3161  I & 0 \\
- I & -0.133 I & -0.449 I & -0.316 I }   \mat{c}{x_{k+1}^1 \\ x_{k+1}^2 \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\partial f(z_k^1) \\ \partial \partial \mathbb{I}_{\mathcal{Z}}(z_k^2)}
+ I & -0.133 I & -0.449 I & -0.316 I }   \mat{c}{x_{k+1}^1 \\ x_{k+1}^2 \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\partial f(z_k^1) \\ \partial \mathbb{I}_{\mathcal{Z}}(z_k^2)}
 \end{align*}.
 ```
 
 
 We then perform three rounds of Synthesis-Analysis alternation to acquire an algorithm with certified convergence rate $0.5723 < 0.7209 < 0.8121$.
 ``` matlab
-b_opts = bisect_opts;
-b_opts.Niter = 3;
-sol_alt = man.alternate([], {1, 1}, [], b_opts); %order {1, 1} Analysis problems
+Niter = 3;
+[sol_alt, v_r] = man.alternate(Niter,  {1, 1}); %order {1, 1} Analysis problems
 rho_alt = sol_alt{end, end}.rho % 0.5723
 ```
 
@@ -257,7 +256,7 @@ op1 = op_sml(m, L); %\partial f1
 op2 = op_pcc();     %\partial f2
 
 %add a round-trip time delay to \partial f1 evaluation
-DELAY = [2, 0]; $2-step delay for f1, 0-step (no) delay for f2
+DELAY = [2, 0]; %2-step delay for f1, 0-step (no) delay for f2
 network_delay = bridge_channel_delay(DELAY, DELAY); %symmetric delay to and from oracles
 
 

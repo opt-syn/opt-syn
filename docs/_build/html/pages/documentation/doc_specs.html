@@ -224,7 +224,10 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Douglas Rachford with Noise</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
 </ul>
@@ -855,8 +858,7 @@ objective contribution.</p>
 system) from the performance input to the performance output: the peak
 (over time) of the output is bounded by <span class="math notranslate nohighlight">\(\gamma\)</span> times the peak
 of the input,</p>
-<p><span class="math notranslate nohighlight">\(\sup_{k \geq 0} \norm{z_{p,k}}_2 \; \leq \; \gamma \, \sup_{k
-\geq 0} \norm{w_{p,k}}_2.\)</span></p>
+<p><span class="math notranslate nohighlight">\(\sup_{k \geq 0} \norm{z_{p,k}}_2 \; \leq \; \gamma \, \sup_{k \geq 0} \norm{w_{p,k}}_2.\)</span></p>
 <div class="members docutils container">
 <dl>
 <dt>Constructor Summary</dt><dd><dl class="mat method">

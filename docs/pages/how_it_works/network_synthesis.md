@@ -29,10 +29,10 @@ The general network $P$ and controller $K$ have the descrptions
     C_y & D_{yw} & D_{yu} }\mat{c}{
         x^N_k \hl w_k \\ u_k
     } \\ \\ 
-    \Kc : & & \mat{c}{
-        \xi_{k+1}  \hl u_k}&=\mat{c|c}{\Ac & \Bc \hl
+    K : & & \mat{c}{
+        x^c_{k+1}  \hl u_k}&=\mat{c|c}{\Ac & \Bc \hl
     \Cc & \Dc}\mat{c}{
-        \xi_k \hl y_k
+        x^c_k \hl y_k
     }.
     \end{align}
 ```
@@ -64,7 +64,7 @@ Under the Convergence and Regulator Equation conditions, convergence in all sign
 ```{math}
 \begin{align}
     \lim_{k \rightarrow \infty}
-    \mat{c}{x_k^N \\ \xi_k \hl  y_k \\u_k} & = \mat{c}{\Pi \\ \Theta \hl \Phi \\ \Gamma} \mat{c}{-\beta^* \\ \hat{w}^*}, &   \lim_{k \rightarrow \infty}
+    \mat{c}{x_k^N \\ x^c_k \hl  y_k \\u_k} & = \mat{c}{\Pi \\ \Theta \hl \Phi \\ \Gamma} \mat{c}{-\beta^* \\ \hat{w}^*}, &   \lim_{k \rightarrow \infty}
     \mat{c}{z_k \\ w_k } & =  \mat{c}{z^* \\ w^*} = \mat{c}{\1 \otimes \beta^* \\ N \hat{w}^*}.     
 \end{align}
 ```
@@ -89,10 +89,10 @@ The Regulator Equation requirement enforces structure on possible controllers. W
         v_k \hl y_k \hdl \tilde{u}_k^1 \\ \tilde{u}_k^2
     }, \\
     K_f: \mat{c}{
-        \xi^f_{k+1}  \hl \tilde{u}^1_k \\ \tilde{u}^1_k} &=\mat{c|c}{A_f & B_f \hl
+        x^c^f_{k+1}  \hl \tilde{u}^1_k \\ \tilde{u}^1_k} &=\mat{c|c}{A_f & B_f \hl
     C_{f1} & D_{f1} \\
     C_{f2} & D_{f2}}\mat{c}{
-        \xi^f_k \hl \tilde{y}_k 
+        x^c^f_k \hl \tilde{y}_k 
     }.
     \end{align*}
 ```

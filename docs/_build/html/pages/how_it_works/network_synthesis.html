@@ -224,7 +224,10 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Douglas Rachford with Noise</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
 </ul>
@@ -469,10 +472,10 @@
     C_y &amp; D_{yw} &amp; D_{yu} }\mat{c}{
         x^N_k \hl w_k \\ u_k
     } \\ \\ 
-    \Kc : &amp; &amp; \mat{c}{
-        \xi_{k+1}  \hl u_k}&amp;=\mat{c|c}{\Ac &amp; \Bc \hl
+    K : &amp; &amp; \mat{c}{
+        x^c_{k+1}  \hl u_k}&amp;=\mat{c|c}{\Ac &amp; \Bc \hl
     \Cc &amp; \Dc}\mat{c}{
-        \xi_k \hl y_k
+        x^c_k \hl y_k
     }.
     \end{align}\end{split}\]</div>
 <p>The interconnection of <span class="math notranslate nohighlight">\((P, K)\)</span> is well-posed if <span class="math notranslate nohighlight">\(I - D_{zw} \Dc\)</span> is invertible.</p>
@@ -497,7 +500,7 @@
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align}
     \lim_{k \rightarrow \infty}
-    \mat{c}{x_k^N \\ \xi_k \hl  y_k \\u_k} &amp; = \mat{c}{\Pi \\ \Theta \hl \Phi \\ \Gamma} \mat{c}{-\beta^* \\ \hat{w}^*}, &amp;   \lim_{k \rightarrow \infty}
+    \mat{c}{x_k^N \\ x^c_k \hl  y_k \\u_k} &amp; = \mat{c}{\Pi \\ \Theta \hl \Phi \\ \Gamma} \mat{c}{-\beta^* \\ \hat{w}^*}, &amp;   \lim_{k \rightarrow \infty}
     \mat{c}{z_k \\ w_k } &amp; =  \mat{c}{z^* \\ w^*} = \mat{c}{\1 \otimes \beta^* \\ N \hat{w}^*}.     
 \end{align}\end{split}\]</div>
 <p>The fixed-point matrix for the closed-loop system is</p>
@@ -519,10 +522,10 @@
         v_k \hl y_k \hdl \tilde{u}_k^1 \\ \tilde{u}_k^2
     }, \\
     K_f: \mat{c}{
-        \xi^f_{k+1}  \hl \tilde{u}^1_k \\ \tilde{u}^1_k} &amp;=\mat{c|c}{A_f &amp; B_f \hl
+        x^c^f_{k+1}  \hl \tilde{u}^1_k \\ \tilde{u}^1_k} &amp;=\mat{c|c}{A_f &amp; B_f \hl
     C_{f1} &amp; D_{f1} \\
     C_{f2} &amp; D_{f2}}\mat{c}{
-        \xi^f_k \hl \tilde{y}_k 
+        x^c^f_k \hl \tilde{y}_k 
     }.
     \end{align*}\end{split}\]</div>
 <!-- With this internal model,  -->

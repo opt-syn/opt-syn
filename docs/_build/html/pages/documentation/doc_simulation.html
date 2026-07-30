@@ -224,7 +224,10 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Douglas Rachford with Noise</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
 </ul>
@@ -1267,6 +1270,12 @@ proximal evaluation with preconditioner D</p>
 </dd></dl>
 
 <dl class="mat method">
+<dt class="sig sig-object mat" id="simulator.op_sim.op_sim_LQ_game.coco">
+<span class="sig-name descname"><span class="pre">coco</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simulator.op_sim.op_sim_LQ_game.coco" title="Link to this definition">#</a></dt>
+<dd><p>cocoercivity property of the game</p>
+</dd></dl>
+
+<dl class="mat method">
 <dt class="sig sig-object mat" id="simulator.op_sim.op_sim_LQ_game.f">
 <span class="sig-name descname"><span class="pre">f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">k</span></em>, <em class="sig-param"><span class="pre">z</span></em>, <em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#simulator.op_sim.op_sim_LQ_game.f" title="Link to this definition">#</a></dt>
 <dd><p>payoff functions of the game</p>
@@ -1300,6 +1309,18 @@ proximal evaluation with preconditioner D</p>
 <dd class="field-even"><p><strong>w</strong> – the w such that w = F(z)</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="simulator.op_sim.op_sim_LQ_game.lipschitz">
+<span class="sig-name descname"><span class="pre">lipschitz</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simulator.op_sim.op_sim_LQ_game.lipschitz" title="Link to this definition">#</a></dt>
+<dd><p>lipschitz constant  of the game</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="simulator.op_sim.op_sim_LQ_game.monotone">
+<span class="sig-name descname"><span class="pre">monotone</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simulator.op_sim.op_sim_LQ_game.monotone" title="Link to this definition">#</a></dt>
+<dd><p>montonocity constant of the game</p>
 </dd></dl>
 
 </dd>

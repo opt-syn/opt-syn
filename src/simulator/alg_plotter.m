@@ -133,6 +133,19 @@ classdef alg_plotter
             fig = obj.plot(sigs, fignum);
         end
 
+        function fig = plot_3_sq_err(obj, fignum)
+            %PLOT_3_sq_err plot the squared error signals/regulated quantities ('xerr', 'uerr', 'yerr')            
+            %Args:            
+            %   fignum: figure number to display
+            %Return:
+            %   fig:    figure environment
+            if nargin < 2
+                fignum = [];
+            end
+            sigs = {'sq_xerr','sq_uerr', 'sq_yerr'};
+            fig = obj.plot(sigs, fignum);
+        end
+
         function fig = plot_4_sq_err(obj, fignum)
             %PLOT_4_sq_err plot the squared error signals/regulated quantities ('sq_xnerr', 'sq_uerr', 'sq_xcerr', 'sq_yerr')            
             %Args:            
@@ -146,18 +159,6 @@ classdef alg_plotter
             fig = obj.plot(sigs, fignum);
         end
 
-        function fig = plot_3_sq_err(obj, fignum)
-            %PLOT_4_sq_err plot the squared error signals/regulated quantities ('sq_xerr', 'sq_uerr', 'sq_yerr')            
-            %Args:            
-            %   fignum: figure number to display
-            %Return:
-            %   fig:    figure environment
-            if nargin < 2
-                fignum = [];
-            end
-            sigs = {'sq_xerr','sq_uerr', 'sq_yerr'};
-            fig = obj.plot(sigs, fignum);
-        end
 
         function obj = add_opt_sig(obj, reg_cl, dstar)
             %ADD_OPT_SIG Use the optimal trajectory to define the error signals            
@@ -248,9 +249,9 @@ classdef alg_plotter
                     name = 'Iterate';
                 case 'w'
                     name = 'Oracle Output';
-                case 'w_p'
+                case 'wp'
                     name = 'Performance Input';
-                case 'z_p'
+                case 'zp'
                     name = 'Performance Output';
                 case 'mode'
                     name = 'Switching Mode';
