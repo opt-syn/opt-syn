@@ -27,17 +27,17 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=720ed60b" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../_static/documentation_options.js?v=e1a75a79"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
@@ -46,6 +46,7 @@
     <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'pages/usage/simulation';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Problem Setup" href="problem_formulation/index_problem_formulation.html" />
@@ -53,20 +54,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -92,7 +99,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -341,11 +392,18 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
 
 
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -373,9 +431,10 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execution">Execution</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting">Plotting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#details-of-execution">Details of  Execution</a></li>
 </ul>
             </nav>
         </div>
@@ -488,6 +547,63 @@ A plot of the signals (<span class="math notranslate nohighlight">\(w\)</span>, 
 </div>
 <p>Plottable signals derived from the fields of <code class="xref mat mat-class docutils literal notranslate"><span class="pre">alg_sim_out</span></code> include <code class="docutils literal notranslate"><span class="pre">x</span></code> (closed-loop state) and <code class="docutils literal notranslate"><span class="pre">delay</span></code> (<code class="docutils literal notranslate"><span class="pre">mode</span></code>-1, used for switched systems).</p>
 <p>Helper functions include of <code class="xref mat mat-class docutils literal notranslate"><span class="pre">alg_plotter</span></code> include</p>
+<p>See {doc}`Plotting &lt;…/documentation/doc_plotting&gt; for a full list of helper functions and more details.</p>
+</section>
+<section id="details-of-execution">
+<h2>Details of  Execution<a class="headerlink" href="#details-of-execution" title="Link to this heading">#</a></h2>
+<p>The System <code class="docutils literal notranslate"><span class="pre">sys</span></code> executed  by first interconnecting the Network and Controller, and then interconnecting the possibly nonlinear operator <span class="math notranslate nohighlight">\(F\)</span>. This is mathematically described by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\text{Operator}: &amp; &amp; w_k &amp; \in F(z_k), \\
+\text{Algorithm}: &amp; &amp; \mat{c}{x_{k+1} \hl z_k \\ z_{p k}} &amp;= \mat{c|cc}{\Acl &amp; \Bcl_z &amp; \Bcl_{z_p} \hl 
+\Ccl_z &amp; \Dcl_{zw} &amp; \Dcl_{z w_p}  \\
+\Ccl_{z_p} &amp; \Dcl_{z_p w} &amp; \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k \\ w_{p k}},
+\end{align*}\end{split}\]</div>
+<p>The closed loop state <span class="math notranslate nohighlight">\(x\)</span> is the concatenation <span class="math notranslate nohighlight">\(x = [x^N, x^c]\)</span>.</p>
+<p><code class="xref mat mat-class docutils literal notranslate"><span class="pre">alg_sim</span></code> execution using <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">sim()</span></code>  requires the <a class="reference internal" href="../how_it_works/alg_properties.html"><span class="doc">algorithm properties</span></a> of  well-posedness and a block-triangular information structures.</p>
+<p>Under these conditions, the System can be partitioned as</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+\text{Operator}: &amp; &amp; w_k &amp; \in F(z_k), \\
+\text{Algorithm}: &amp; &amp; \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2 \\ \vdots \\ z_k^s \\ z_{p k}} &amp;= \mat{c|cccc:c}{\Acl &amp; \Bcl_{z,1} &amp; \Bcl_{z,2} &amp; \cdots &amp; \Bcl_{z,s} &amp; \Bcl_{z_p} \hl 
+\Ccl_{z 1} &amp; \Dcl_{zw,11} &amp; 0 &amp; \cdots &amp; 0 &amp; \Dcl_{z w_p, 1}  \\
+\Ccl_{z 1} &amp; \Dcl_{zw,21} &amp; \Dcl_{zw,22} &amp; \cdots &amp; 0 &amp; \Dcl_{z w_p, 2}  \\
+\vdots &amp;  \vdots &amp; \vdots &amp;  \ddots &amp; \vdots &amp; \vdots  \\
+\Ccl_{z 1} &amp; \Dcl_{zw, s1} &amp; \Dcl_{zws2} &amp; \cdots &amp; \Dcl_{zw,ss} &amp; \Dcl_{z w_p s}  \\
+\Ccl_{z_p} &amp; \Dcl_{z_p w,1} &amp; \Dcl_{z_p w, 2} &amp; \cdots &amp; \Dcl_{z_p w, s} &amp; \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s \\ w_{p k}},
+\end{align*}\]</div>
+<!-- Algorithm simulation assumes that the System forms a well-posed algorithm with a block-lower triangular  -->
+<p>The iterative loop for algorithm simulation is to evaluate the equations for each <span class="math notranslate nohighlight">\(k \in \N\)</span></p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+w^i_k &amp;= (F_i^{-1} - \Dcl_{zw, ii})^{-1} (\Ccl_i x_k + \textstyle \sum_{j=1}^{i-1} \Dcl_{zw ij} w^j_k),  &amp; &amp; \forall i \in 1, \ldots, s,\\ 
+x_{k+1} &amp;= \Acl x_k + \textstyle \sum_{i=1}^s \Bcl_{wi} w^i_k + \Bcl_{w_p} w_{pk}. \\ 
+z_{p, k+1} &amp;= \Ccl_{z_p} x_k + \textstyle \sum_{i=1}^s \Dcl_{z_p w i} w^i_k + \Dcl_{z_p w_p} w_{pk}.
+\end{align}\end{split}\]</div>
+<p>The operator <span class="math notranslate nohighlight">\(H_i: = (F_i^{-1} - \Dcl_{zw, ii})^{-1}\)</span> can be evaluated using the <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_sim</span></code> methods</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Evaluation</p></th>
+<th class="head"><p>Method</p></th>
+<th class="head"><p>Condition</p></th>
+<th class="head"><p>Operation <span class="math notranslate nohighlight">\(z_i \mapsto H_i z_i\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Explicit</p></td>
+<td><p><code class="xref mat mat-meth docutils literal notranslate"><span class="pre">fw()</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\Dcl_{zw, ii} = 0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(z \mapsto F_i(z_i)\)</span>,</p></td>
+</tr>
+<tr class="row-odd"><td><p>Implicit</p></td>
+<td><p><code class="xref mat mat-meth docutils literal notranslate"><span class="pre">bw()</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\Dcl_{zw,ii}\)</span> is invertible</p></td>
+<td><p><span class="math notranslate nohighlight">\(z_i \mapsto \Dcl_{zw, ii}^{-1} [z - (I - \Dcl_{zw, ii} F_i)^{-1}(z_i)]\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- If the backward-evaluation  $(I - \Dcl_{ii} F_i)^{-1}$ is available (such as from a  resolvent/proximal operator), then this algorithm execution is tractable. -->
 </section>
 </section>
 
@@ -537,9 +653,10 @@ A plot of the signals (<span class="math notranslate nohighlight">\(w\)</span>, 
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execution">Execution</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting">Plotting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#details-of-execution">Details of  Execution</a></li>
 </ul>
   </nav></div>
 
@@ -588,8 +705,8 @@ By opt-syn team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
   </footer>

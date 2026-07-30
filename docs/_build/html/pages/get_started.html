@@ -27,17 +27,17 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=720ed60b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../_static/documentation_options.js?v=e1a75a79"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
@@ -46,6 +46,7 @@
     <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'pages/get_started';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="How it Works" href="how_it_works/index_how_it_works.html" />
@@ -53,20 +54,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -92,7 +99,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -341,11 +392,18 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
 
 
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -373,10 +431,12 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow">Workflow</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-example-setup">Optimization  Example Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#projected-gradient-descent">Projected Gradient Descent</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation">Simulation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis">Analysis</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis">Synthesis</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis-with-network-dynamics">Synthesis with Network Dynamics</a></li>
@@ -411,37 +471,106 @@
 </section>
 <section id="optimization-example-setup">
 <span id="id1"></span><h2>Optimization  Example Setup<a class="headerlink" href="#optimization-example-setup" title="Link to this heading">#</a></h2>
-<p>A first example involves Analysis and Synthesis of a composite optimization algorithm with two functions,</p>
+<p>A first example involves a constrained optimization problem</p>
 <div class="math notranslate nohighlight">
-\[\beta^* \in \argmin_{\beta \in \R^c} f_1(\beta) + f_2(\beta),\]</div>
-<p>An optimal point <span class="math notranslate nohighlight">\(\beta^*\)</span> must satisfy the necessary inclusion condition <span class="math notranslate nohighlight">\(0 \in \partial f_1(\beta) + \partial f_2(\beta)\)</span>.</p>
-<p>The class of functions we consider in this demonstration are pairs <span class="math notranslate nohighlight">\((f_1, f_2)\)</span> such that</p>
+\[\begin{align}
+\beta^* \in  \text{argmin}_{\beta \in \mathcal{Z}} f(\beta) 
+\end{align}\]</div>
+<p>The <a class="reference external" href="https://en.wikipedia.org/wiki/Lasso_(statistics)">LASSO</a> task in regression involves a convex quadratic <span class="math notranslate nohighlight">\(f\)</span>, and an  <span class="math notranslate nohighlight">\(L_1\)</span> ball for   <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>.</p>
+<p>The set <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> is closed, convex, and nonempty. The constrained optimization problem can be expressed as a composite optimization problem</p>
+<div class="math notranslate nohighlight">
+\[\begin{align}
+\beta^* \in \text{argmin}_{\beta \in \R^d} f(\beta) + \mathbf{I}_{\mathcal{Z}}(\beta),
+\end{align}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{I}_{\mathcal{Z}}\)</span> is the 0/<span class="math notranslate nohighlight">\(\infty\)</span> indicator function of a closed, convex set <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>. The point <span class="math notranslate nohighlight">\(\beta^*\)</span> satisfies a necessary optimality principle</p>
+<div class="math notranslate nohighlight">
+\[\begin{align}
+0 \in \partial f(\beta^*) + \partial \mathbf{I}_{\mathcal{Z}}(\beta^*).
+\end{align}\]</div>
+<p>We assume  there are parameters <span class="math notranslate nohighlight">\(0 &lt; m &lt; L&lt; \infty\)</span> such that</p>
 <ol class="arabic simple">
-<li><p><span class="math notranslate nohighlight">\(f_1\)</span> is  <span class="math notranslate nohighlight">\(m\)</span>-strongly convex, has <span class="math notranslate nohighlight">\(L\)</span>-Lipschitz gradients with parameters <span class="math notranslate nohighlight">\(0 &lt; m &lt; L&lt; \infty\)</span>, and is globally defined;</p></li>
-<li><p><span class="math notranslate nohighlight">\(f_2\)</span> is the <span class="math notranslate nohighlight">\(0/\infty\)</span> indicator function of a closed, nonempty, convex set <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(f(\beta) \in \R\)</span>  for all <span class="math notranslate nohighlight">\(\beta \in \R^d\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(f\)</span> is <span class="math notranslate nohighlight">\(m\)</span>-strongly convex</p></li>
+<li><p><span class="math notranslate nohighlight">\(f\)</span> is <span class="math notranslate nohighlight">\(L\)</span>-smooth (has <span class="math notranslate nohighlight">\(L\)</span>-Lipschitz gradients).</p></li>
 </ol>
-<p>As a result, <span class="math notranslate nohighlight">\(\beta^*\)</span> exists and is unique for each pair <span class="math notranslate nohighlight">\((f_1, f_2)\)</span>.</p>
-<p>An instance of this type of composite optimization problem is the <a class="reference external" href="https://en.wikipedia.org/wiki/Lasso_(statistics)">LASSO</a> task in regression</p>
-<div class="math notranslate nohighlight">
-\[\beta^* \in \argmin_{||\beta||_1 \leq \tau } f_1(\beta).\]</div>
-<p>LASSO can be expressed as a composite optimization problem using an indicator function of the set <span class="math notranslate nohighlight">\(\mathcal{Z} = \{\beta \mid \norm{\cdot}_1 \leq \tau\}\)</span></p>
-<div class="math notranslate nohighlight">
-\[\beta^* \in  f_1(\beta) + \mathbf{I}_{\mathcal{Z}}(\beta). \]</div>
+<p>Under these circumstances, the optimal point  <span class="math notranslate nohighlight">\(\beta^*\)</span> exists and is unique for each pair <span class="math notranslate nohighlight">\((f, \mathcal{Z})\)</span>.</p>
 </section>
-<section id="analysis">
-<h2>Analysis<a class="headerlink" href="#analysis" title="Link to this heading">#</a></h2>
-<p>The Projected Gradient Descent (PGD) algorithm with stepsize <span class="math notranslate nohighlight">\(\gamma &gt; 0\)</span> is the iterative procedure</p>
+<section id="projected-gradient-descent">
+<h2>Projected Gradient Descent<a class="headerlink" href="#projected-gradient-descent" title="Link to this heading">#</a></h2>
+<p>The Projected Gradient Descent algorithm with stepsize <span class="math notranslate nohighlight">\(\gamma &gt; 0\)</span> is the iterative procedure</p>
 <div class="math notranslate nohighlight">
-\[\beta_{k+1} = \text{proj}_{\mathcal{Z}}(\beta_k - \gamma \partial f_1(\beta_k)).\]</div>
-<p>PGD achieves linear convergence at rate <span class="math notranslate nohighlight">\(\rho \in (0, 1)\)</span> if there exists a constant <span class="math notranslate nohighlight">\(\gamma_0\)</span> such that <span class="math notranslate nohighlight">\(\norm{\beta_{k}-\beta^*}_2  \leq  \gamma_0 \rho^{-k} \norm{\beta_0-\beta^*}\)</span> for all initial points <span class="math notranslate nohighlight">\(\beta_0\)</span>, functions <span class="math notranslate nohighlight">\((f_1, f_2)\)</span>, and times <span class="math notranslate nohighlight">\(k \in \N\)</span>.</p>
-<p>The goal of Analysis is to numerically find the least <span class="math notranslate nohighlight">\(\rho\)</span> valid for all <span class="math notranslate nohighlight">\((f_1, f_2)\)</span>. We aim to match the theoretical PGD worst-case linear convergence rate of <span class="math notranslate nohighlight">\(\rho = \frac{L-m}{L+m}\)</span>, attained by the optimal stepsize <span class="math notranslate nohighlight">\(\gamma := \frac{2}{m+L}\)</span>.</p>
-<p>The iterative procedure for PGD may be equivalently expressed as an interconnection between a linear dynamical system and the oracles <span class="math notranslate nohighlight">\((f_1, f_2)\)</span> as</p>
+\[\beta_{k+1} = \text{proj}_{\mathcal{Z}}(\beta_k - \gamma \partial f(\beta_k)).\]</div>
+<p>The iterative procedure for PGD may be equivalently expressed as an interconnection between a linear dynamical system and the oracles <span class="math notranslate nohighlight">\((f, I_{\mathcal{Z}})\)</span> as</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
  \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &amp;= \mat{c|cc}{I &amp; -\gamma I &amp; -\gamma I \hl I &amp;0 &amp; 0 \\
- I &amp; -\gamma I &amp; -\gamma I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, &amp; \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\partial f_1(z_k^1) \\ \partial f_2(z_k^2)}
+ I &amp; -\gamma I &amp; -\gamma I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, &amp; \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\partial f(z_k^1) \\  \partial I_{\mathcal{Z}}(z_k^2)}
 \end{align*},\end{split}\]</div>
-<p>The algorithm is convergent if  <span class="math notranslate nohighlight">\(\lim_{k \rightarrow \infty} z_1 = \lim_{k \rightarrow \infty} z_2 = \beta^*\)</span> for all  <span class="math notranslate nohighlight">\((\partial f_1, \partial f_2)\)</span>.</p>
+<p>PGD achieves linear convergence at rate <span class="math notranslate nohighlight">\(\rho \in (0, 1)\)</span> if there exists a constant <span class="math notranslate nohighlight">\(\gamma_0\)</span> such that <span class="math notranslate nohighlight">\(\norm{\beta_{k}-\beta^*}_2  \leq  \gamma_0 \rho^{-k} \norm{\beta_0-\beta^*}\)</span> for all initial points <span class="math notranslate nohighlight">\(\beta_0\)</span>, pairs <span class="math notranslate nohighlight">\((f, \mathcal{Z})\)</span>, and times <span class="math notranslate nohighlight">\(k \in \N\)</span>.</p>
+<p>The algorithm is convergent if  <span class="math notranslate nohighlight">\(\lim_{k \rightarrow \infty} z_1 = \lim_{k \rightarrow \infty} z_2 = \beta^*\)</span> for all  <span class="math notranslate nohighlight">\((\partial f, \mathcal{Z})\)</span>.</p>
+<p>The theoretical PGD worst-case linear convergence rate of <span class="math notranslate nohighlight">\(\rho\)</span> is  <span class="math notranslate nohighlight">\(\rho = \frac{L-m}{L+m}\)</span>, which is attained by the optimal stepsize <span class="math notranslate nohighlight">\(\gamma := \frac{2}{m+L}\)</span>.</p>
+</section>
+<section id="simulation">
+<h2>Simulation<a class="headerlink" href="#simulation" title="Link to this heading">#</a></h2>
+<p>We use PGD to solve an optimization problem with <span class="math notranslate nohighlight">\(d=400\)</span> dimensions, an <span class="math notranslate nohighlight">\(L_1\)</span> norm constraint of <span class="math notranslate nohighlight">\(\tau=200\)</span>, and a quadratic <span class="math notranslate nohighlight">\(f(\beta) = 0.5 (\beta-b_0)'Q (\beta-b_0)\)</span> with <span class="math notranslate nohighlight">\(m=1\)</span> and <span class="math notranslate nohighlight">\(L = 1000\)</span>.
+The code to execute PGD on this problem for <span class="math notranslate nohighlight">\(T=15\)</span> time steps is</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">400</span><span class="p">;</span><span class="w"> </span><span class="c">%dimension of variable beta</span>
+
+<span class="c">%define the quadratic (f, randomly generated) </span>
+<span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
+<span class="n">Q</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">rand_quad</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">);</span>
+<span class="n">b0</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">rand</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sim_quad</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span><span class="w"> </span><span class="n">b0</span><span class="p">);</span><span class="w"> </span>
+
+
+<span class="c">%define the indicator function for the L1 ball (Z)</span>
+<span class="n">tau</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">200</span><span class="p">;</span>
+<span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sim_l1_hard</span><span class="p">(</span><span class="n">tau</span><span class="p">);</span>
+
+<span class="n">ops</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">};</span><span class="w"> </span><span class="c">%all operators of the problem</span>
+
+
+<span class="c">%PGD algorithm</span>
+<span class="nb">gamma</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">L</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
+<span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">],</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="c">%form the system</span>
+<span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
+
+<span class="c">%simulate T time steps</span>
+<span class="n">sim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_sim</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
+<span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span>
+<span class="n">sim</span><span class="p">.</span><span class="n">sampler</span><span class="p">.</span><span class="n">x0</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">200</span><span class="o">*</span><span class="nb">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span><span class="w"> </span><span class="c">%random initial condition</span>
+<span class="n">sim_out</span><span class="p">=</span><span class="w"> </span><span class="n">sim</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>We then plot the output</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">sim_out</span><span class="p">);</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">({</span><span class="s">&#39;w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;z&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_z&#39;</span><span class="p">},</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<figure class="align-center">
+<img alt="../_images/sim_pgd_dark.png" class="only-dark" src="../_images/sim_pgd_dark.png" />
+</figure>
+<figure class="align-center">
+<img alt="../_images/sim_pgd_light.png" class="only-light" src="../_images/sim_pgd_light.png" />
+</figure>
+<!-- 
+:::{figure} _static/sim_pgd_error_dark.png
+:align: center
+:class: only-dark
+:::
+
+:::{figure} _static/sim_pgd_error_light.png
+:align: center
+:class: only-light
+::: -->
+<!-- ![Error](_static/sim_pgd_error_dark.png)
+::: -->
+</section>
+<section id="analysis">
+<h2>Analysis<a class="headerlink" href="#analysis" title="Link to this heading">#</a></h2>
+<p>The goal of Analysis is to numerically find the least <span class="math notranslate nohighlight">\(\rho\)</span> valid for all <span class="math notranslate nohighlight">\((f, \mathcal{Z})\)</span>. We aim to match the worst-case rate <span class="math notranslate nohighlight">\(\rho = \frac{L-m}{L+m}\)</span>.</p>
 <p>The analysis code for parameters <span class="math notranslate nohighlight">\(m = 1, L = 10\)</span> is:</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%describe the operators </span>
 <span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
@@ -540,7 +669,7 @@ Algorithm design for a 2-step delay on <span class="math notranslate nohighlight
 <span class="n">sys_delay</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">({</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">},</span><span class="w"> </span><span class="n">network_delay</span><span class="p">);</span>
 
 
-<span class="c">%run the synthesis routine, use bisection to minimize the convergence rate</span>
+<span class="c">%run synthesis, use bisection to minimize the convergence rate</span>
 <span class="n">man_delay</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_synthesis</span><span class="p">(</span><span class="n">sys_delay</span><span class="p">);</span><span class="w"> </span>
 <span class="n">sol</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_delay</span><span class="p">.</span><span class="n">bisect</span><span class="p">();</span>
 <span class="n">rho</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol</span><span class="p">.</span><span class="n">rho</span><span class="w"> </span><span class="c">% 0.9553</span>
@@ -597,10 +726,12 @@ After these numerical checks, the  --></section>
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow">Workflow</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-example-setup">Optimization  Example Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#projected-gradient-descent">Projected Gradient Descent</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation">Simulation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis">Analysis</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis">Synthesis</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis-with-network-dynamics">Synthesis with Network Dynamics</a></li>
@@ -652,8 +783,8 @@ By opt-syn team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
   </footer>

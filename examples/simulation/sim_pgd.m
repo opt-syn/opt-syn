@@ -2,12 +2,12 @@ rng(32, 'twister');
 
 %PGD to minimize quadratic under hard l1 ball constraint
 
-d = 500; %dimension
+d = 400; %dimension of variable beta
 
 %define the quadratic
-m = 0.5; L = 1000;
+m = 1; L = 1000;
 Q = rand_quad(d, m, L);
-zstar = 1000*(2*rand(d, 1) - 1);
+zstar = 100*(2*rand(d, 1) - 1);
 op1 = op_sim_quad(Q, zstar);
 
 
@@ -25,18 +25,21 @@ sys = opt_system(ops, [], K);
 
 %simulate and plot
 sim = alg_sim(sys, d);
-T = 30;
+T = 15;
 sim.sampler.x0 = 200*randn(1, d);
 sim_out= sim.sim(T);
 plt = alg_plotter(sim_out);
-plt.plot_6f(1);
+% plt.plot_4(1);
+plt.plot({'w', 'res_w', 'z', 'res_z'}, 1);
 
 
 
 %% regulator equation tracking
 zend = sim_out.z(:, :, end);
+
+betastar = sim_out.z(end, :, end);
 wend = sim_out.w(:, :, end);
-dstar = [zend(1, :, end); wend(1:end-1, :, end)];
+dstar = [-betastar; wend(1:end-1, :, end)];
 reg = regulator_lti(sys);
 regcl = reg.check_regulator();
 plt = plt.add_opt_sig(regcl, dstar);
