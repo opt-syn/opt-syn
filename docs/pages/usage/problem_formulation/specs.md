@@ -274,11 +274,11 @@ In the current implementation, Ergodic convergence requires nonstrict feasibilit
 
 ## Performance for Time-Varying Dynamical Systems
 
+The specific performance constraints imposed by `specs` may vary for {doc}`systems with time-variations <system/dynamics>`.
 
-The formulation of the performance specifications may vary for {doc}`systems with time-variations <system/dynamics>`
 All specifications on this page are used as presented for LTI, periodic, and periodic-orbit systems. 
 
-For switched systems, the performance specifications impose a  worst-case bound over all possible switching sequences.
+For switched systems, a performance specification in `specs` imposes a  worst-case bound over all possible switching sequences.
 
 
 ## More Specifications

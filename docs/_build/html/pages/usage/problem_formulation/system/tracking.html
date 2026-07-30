@@ -138,10 +138,6 @@
   
 
   
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
-      <span class="fa-solid fa-outdent"></span>
-    </button>
-  
 </div>
 
     </header>
@@ -226,7 +222,9 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -413,9 +411,7 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</button>
+
 </div></div>
       
     </div>
@@ -431,14 +427,6 @@
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tracking-example">Tracking Example</a></li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -473,9 +461,10 @@
 \end{align}\end{split}\]</div>
 <p>Tracking of an the optimal solution is accomplished by setting the <code class="docutils literal notranslate"><span class="pre">tracking</span></code> field in <code class="docutils literal notranslate"><span class="pre">opt_system</span></code> to a struct with fields (<code class="docutils literal notranslate"><span class="pre">Sbeta</span></code>, <code class="docutils literal notranslate"><span class="pre">Rbeta</span></code>).</p>
 <p>Time-variation of <code class="docutils literal notranslate"><span class="pre">w^*</span></code> is not yet supported.</p>
-<section id="tracking-example">
-<h2>Tracking Example<a class="headerlink" href="#tracking-example" title="Link to this heading">#</a></h2>
-</section>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The <a class="reference internal" href="../../../examples_simulation/sim_tracking.html"><span class="doc">Tracking</span></a> example executes an algorithm with an oscillating optimal trajectory, with provided code.</p>
+</div>
 </section>
 <hr class="footnotes docutils" />
 <aside class="footnote-list brackets">
@@ -520,23 +509,6 @@
             </div>
             
             
-              
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item"><div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tracking-example">Tracking Example</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>

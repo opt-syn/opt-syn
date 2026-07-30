@@ -37,4 +37,6 @@ Tracking of an the optimal solution is accomplished by setting the `tracking` fi
 
 Time-variation of `w^*` is not yet supported.
 
-## Tracking Example
+:::{seealso}
+The {doc}`Tracking <../../../examples_simulation/sim_tracking>` example executes an algorithm with an oscillating optimal trajectory, with provided code.
+:::

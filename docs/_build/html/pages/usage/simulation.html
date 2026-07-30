@@ -459,12 +459,12 @@
 <p class="admonition-title">See also</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="../documentation/doc_simulation.html"><span class="doc">Simulation Documentation</span></a> for more details about all objects and routines.</p></li>
-<li><p><span class="xref std std-doc">Simulation Examples</span> for demonstrations.</p></li>
+<li><p><a class="reference internal" href="../examples_simulation/index_example_simulation.html"><span class="doc">Simulation Examples</span></a> for demonstrations.</p></li>
 </ul>
 </div>
 <section id="execution">
 <h2>Execution<a class="headerlink" href="#execution" title="Link to this heading">#</a></h2>
-<p>Simulation of an inclusion problem <span class="math notranslate nohighlight">\(0 \in \sum_{i=1}^s F_i(\beta^*)\)</span> with <span class="math notranslate nohighlight">\(\beta \in \R^d\)</span> is conducted by the <code class="xref mat mat-class docutils literal notranslate"><span class="pre">alg_sim</span></code> object.</p>
+<p>Simulation of an inclusion problem <span class="math notranslate nohighlight">\(0 \in \sum_{i=1}^s F_i(\beta^*)\)</span> with <span class="math notranslate nohighlight">\(\beta^* \in \R^d\)</span> is conducted by the <code class="xref mat mat-class docutils literal notranslate"><span class="pre">alg_sim</span></code> object.</p>
 <p>The arguments to <code class="docutils literal notranslate"><span class="pre">alg_sim</span></code> are the system (<code class="docutils literal notranslate"><span class="pre">sys</span></code>), and  the dimensionality of <span class="math notranslate nohighlight">\(\beta\)</span> in simulation (<code class="docutils literal notranslate"><span class="pre">d</span></code>). The output of an algorithm execution for <span class="math notranslate nohighlight">\(T\)</span> time steps is obtained through the <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">sim()</span></code> command,</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">simulator</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_sim</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
 <span class="linenos">2</span><span class="n">sim_result</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">simulator</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
@@ -614,7 +614,7 @@ A plot of the signals (<span class="math notranslate nohighlight">\(w\)</span>, 
 <p>The iterative loop for algorithm simulation is to evaluate the equations for each <span class="math notranslate nohighlight">\(k \in \N\)</span></p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align}
-w^i_k &amp;= (F_i^{-1} - \Dcl_{zw, ii})^{-1} (\Ccl_i x_k + \textstyle \sum_{j=1}^{i-1} \Dcl_{zw ij} w^j_k),  &amp; &amp; \forall i \in 1, \ldots, s,\\ 
+w^i_k &amp;= (F_i^{-1} - \Dcl_{zw, ii})^{-1} (\Ccl_i x_k + \textstyle \sum_{j=1}^{i-1} \Dcl_{zw, ij} w^j_k),  &amp; &amp; \forall i \in 1, \ldots, s,\\ 
 x_{k+1} &amp;= \Acl x_k + \textstyle \sum_{i=1}^s \Bcl_{wi} w^i_k + \Bcl_{w_p} w_{pk}. \\ 
 z_{p, k+1} &amp;= \Ccl_{z_p} x_k + \textstyle \sum_{i=1}^s \Dcl_{z_p w i} w^i_k + \Dcl_{z_p w_p} w_{pk}.
 \end{align}\end{split}\]</div>

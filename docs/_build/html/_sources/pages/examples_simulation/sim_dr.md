@@ -29,12 +29,14 @@ We execute the Douglas-Rachford scheme with parameters $\gamma = 0.4, \lambda = 
 :align: center
 :class: only-dark
 :name: dr-clean
+*Figure 1:* Convergence without noise
 :::
 
 :::{figure} _static/dr_clean_light.png
 :align: center
 :class: only-light
 :name: dr-clean
+*Figure 1:* Convergence without noise
 :::
 
 
@@ -61,14 +63,14 @@ Figure [2](#dr-noisy) plots a trace of a trajectory starting at $x_0=0$, in whic
 :align: center
 :class: only-dark
 :name: dr-noisy
-Response under bounded noise
+*Figure 2:* Response under bounded noise
 :::
 
 :::{figure} _static/dr_noisy_light.png
 :align: center
 :class: only-light
 :name: dr-noisy
-Response under bounded noise
+*Figure 2:*Response under bounded noise
 :::
 
 
@@ -96,7 +98,8 @@ ops = {op1, op2};
 
 %douglas-rachford
 gamma = 0.4;  lambda = 1;   %stepsizes
-K = ss(1, [-gamma*lambda, -gamma*lambda], [1; 1], [-gamma, 0; -2*gamma, -gamma],1);
+K = ss(1, [-gamma*lambda, -gamma*lambda], ...
+    [1; 1], [-gamma, 0; -2*gamma, -gamma],1);
 
 %system with no noise
 sys_clean = opt_system(ops, [], K);

@@ -8,13 +8,13 @@ Simulation involves evaluating a trajectory of the system starting from an initi
 
 :::{seealso}
 - {doc}`Simulation Documentation <../documentation/doc_simulation>` for more details about all objects and routines.
-- {doc}`Simulation Examples <../examples_simulation/index_simulation>` for demonstrations.
+- {doc}`Simulation Examples <../examples_simulation/index_example_simulation>` for demonstrations.
 
 :::
 
 ## Execution
 
-Simulation of an inclusion problem $0 \in \sum_{i=1}^s F_i(\beta^*)$ with $\beta \in \R^d$ is conducted by the {class}`alg_sim` object. 
+Simulation of an inclusion problem $0 \in \sum_{i=1}^s F_i(\beta^*)$ with $\beta^* \in \R^d$ is conducted by the {class}`alg_sim` object. 
 
 The arguments to `alg_sim` are the system (`sys`), and  the dimensionality of $\beta$ in simulation (`d`). The output of an algorithm execution for $T$ time steps is obtained through the {meth}`sim` command,
 ```matlab
@@ -152,7 +152,7 @@ Under these conditions, the System can be partitioned as
 The iterative loop for algorithm simulation is to evaluate the equations for each $k \in \N$
 ```{math}
 \begin{align}
-w^i_k &= (F_i^{-1} - \Dcl_{zw, ii})^{-1} (\Ccl_i x_k + \textstyle \sum_{j=1}^{i-1} \Dcl_{zw ij} w^j_k),  & & \forall i \in 1, \ldots, s,\\ 
+w^i_k &= (F_i^{-1} - \Dcl_{zw, ii})^{-1} (\Ccl_i x_k + \textstyle \sum_{j=1}^{i-1} \Dcl_{zw, ij} w^j_k),  & & \forall i \in 1, \ldots, s,\\ 
 x_{k+1} &= \Acl x_k + \textstyle \sum_{i=1}^s \Bcl_{wi} w^i_k + \Bcl_{w_p} w_{pk}. \\ 
 z_{p, k+1} &= \Ccl_{z_p} x_k + \textstyle \sum_{i=1}^s \Dcl_{z_p w i} w^i_k + \Dcl_{z_p w_p} w_{pk}.
 \end{align}

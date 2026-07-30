@@ -472,9 +472,15 @@ It is characterized by  parameters <span class="math notranslate nohighlight">\(
 <p>We execute the Douglas-Rachford scheme with parameters <span class="math notranslate nohighlight">\(\gamma = 0.4, \lambda = 1\)</span> for a problem where <span class="math notranslate nohighlight">\(f\)</span> is a convex quadratic (eigenvalue bounds <span class="math notranslate nohighlight">\(m = 1, L = 10\)</span>). Figure <a class="reference internal" href="#dr-clean"><span class="xref myst">1</span></a> plots a trajectory of Douglas-Rachford starting from <span class="math notranslate nohighlight">\(x_0 = 0\)</span>.</p>
 <figure class="align-center" id="dr-clean">
 <img alt="../../_images/dr_clean_dark.png" class="only-dark" src="../../_images/dr_clean_dark.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 1:</em> Convergence without noise</span><a class="headerlink" href="#dr-clean" title="Link to this image">#</a></p>
+</figcaption>
 </figure>
 <figure class="align-center" id="id2">
 <img alt="../../_images/dr_clean_light.png" class="only-light" src="../../_images/dr_clean_light.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 1:</em> Convergence without noise</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
+</figcaption>
 </figure>
 </section>
 <section id="with-noise">
@@ -498,13 +504,13 @@ The <a class="reference internal" href="../usage/problem_formulation/system/inde
 <figure class="align-center" id="dr-noisy">
 <img alt="../../_images/dr_noisy_dark.png" class="only-dark" src="../../_images/dr_noisy_dark.png" />
 <figcaption>
-<p><span class="caption-text">Response under bounded noise</span><a class="headerlink" href="#dr-noisy" title="Link to this image">#</a></p>
+<p><span class="caption-text"><em>Figure 2:</em> Response under bounded noise</span><a class="headerlink" href="#dr-noisy" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <figure class="align-center" id="id3">
 <img alt="../../_images/dr_noisy_light.png" class="only-light" src="../../_images/dr_noisy_light.png" />
 <figcaption>
-<p><span class="caption-text">Response under bounded noise</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
+<p><span class="caption-text">*Figure 2:*Response under bounded noise</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </section>
@@ -531,42 +537,43 @@ The <a class="reference internal" href="../usage/problem_formulation/system/inde
 <span class="linenos">18</span>
 <span class="linenos">19</span><span class="c">%douglas-rachford</span>
 <span class="linenos">20</span><span class="nb">gamma</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">0.4</span><span class="p">;</span><span class="w">  </span><span class="n">lambda</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">   </span><span class="c">%stepsizes</span>
-<span class="linenos">21</span><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="nb">gamma</span><span class="o">*</span><span class="n">lambda</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="o">*</span><span class="n">lambda</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">],</span><span class="mi">1</span><span class="p">);</span>
-<span class="linenos">22</span>
-<span class="linenos">23</span><span class="c">%system with no noise</span>
-<span class="linenos">24</span><span class="n">sys_clean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
-<span class="linenos">25</span>
-<span class="linenos">26</span><span class="c">%now create the network for the system with noise</span>
-<span class="linenos">27</span><span class="n">network</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">bridge_pass_through</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
-<span class="linenos">28</span><span class="c">%add noise to the subgradients (outputs of oracles)</span>
-<span class="linenos">29</span><span class="n">iwp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="n">izp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[];</span>
-<span class="linenos">30</span><span class="n">network</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">network</span><span class="p">.</span><span class="n">add_oracle_input</span><span class="p">(</span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span>
-<span class="linenos">31</span>
-<span class="linenos">32</span><span class="c">%consensus error as a performance condition</span>
-<span class="linenos">33</span><span class="n">network</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="n">network</span><span class="p">.</span><span class="n">perf_output_con</span><span class="p">();</span>
-<span class="linenos">34</span>
-<span class="linenos">35</span><span class="c">%form the system with noise</span>
-<span class="linenos">36</span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">network</span><span class="p">,</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
-<span class="linenos">37</span>
-<span class="linenos">38</span><span class="c">%% simulate and plot</span>
-<span class="linenos">39</span><span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span><span class="w"> </span><span class="c">%time horizon</span>
-<span class="linenos">40</span>
-<span class="linenos">41</span><span class="c">%no noise</span>
-<span class="linenos">42</span><span class="n">sim_clean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_sim</span><span class="p">(</span><span class="n">sys_clean</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
-<span class="linenos">43</span><span class="n">sim_out_clean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sim_clean</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
-<span class="linenos">44</span><span class="n">plt_clean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">sim_out_clean</span><span class="p">);</span>
-<span class="linenos">45</span><span class="n">fig_clean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">plt_clean</span><span class="p">.</span><span class="n">plot</span><span class="p">({</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;f&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;z&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_z&#39;</span><span class="p">},</span><span class="w">  </span><span class="mi">2</span><span class="p">);</span>
-<span class="linenos">46</span>
-<span class="linenos">47</span><span class="c">%with noise</span>
-<span class="linenos">48</span><span class="n">sim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_sim</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
-<span class="linenos">49</span>
-<span class="linenos">50</span><span class="c">%perform sampling</span>
-<span class="linenos">51</span><span class="n">eps_w</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="c">%norm(w_k, 2) &lt;= eps_w at each k</span>
-<span class="linenos">52</span><span class="n">sim</span><span class="p">.</span><span class="n">sampler</span><span class="p">.</span><span class="n">wp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">param</span><span class="p">)</span><span class="w">  </span><span class="n">eps_w</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">ball_sample</span><span class="p">(</span><span class="nb">length</span><span class="p">(</span><span class="n">iwp</span><span class="p">),</span><span class="w"> </span><span class="n">d</span><span class="p">));</span>
-<span class="linenos">53</span>
-<span class="linenos">54</span><span class="n">sim_out</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sim</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
-<span class="linenos">55</span><span class="n">plt_noisy</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">sim_out</span><span class="p">);</span>
-<span class="linenos">56</span><span class="n">fig_noisy</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">plt_noisy</span><span class="p">.</span><span class="n">plot</span><span class="p">({</span><span class="s">&#39;wp&#39;</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;zp&#39;</span><span class="p">,</span><span class="s">&#39;z&#39;</span><span class="p">,</span><span class="w">  </span><span class="s">&#39;res_z&#39;</span><span class="p">},</span><span class="w">  </span><span class="mi">3</span><span class="p">);</span>
+<span class="linenos">21</span><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="nb">gamma</span><span class="o">*</span><span class="n">lambda</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="o">*</span><span class="n">lambda</span><span class="p">],</span><span class="w"> </span><span class="k">...</span>
+<span class="linenos">22</span><span class="w">    </span><span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">],</span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span><span class="c">%system with no noise</span>
+<span class="linenos">25</span><span class="n">sys_clean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="c">%now create the network for the system with noise</span>
+<span class="linenos">28</span><span class="n">network</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">bridge_pass_through</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="linenos">29</span><span class="c">%add noise to the subgradients (outputs of oracles)</span>
+<span class="linenos">30</span><span class="n">iwp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="n">izp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[];</span>
+<span class="linenos">31</span><span class="n">network</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">network</span><span class="p">.</span><span class="n">add_oracle_input</span><span class="p">(</span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span><span class="c">%consensus error as a performance condition</span>
+<span class="linenos">34</span><span class="n">network</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="n">network</span><span class="p">.</span><span class="n">perf_output_con</span><span class="p">();</span>
+<span class="linenos">35</span>
+<span class="linenos">36</span><span class="c">%form the system with noise</span>
+<span class="linenos">37</span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">network</span><span class="p">,</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
+<span class="linenos">38</span>
+<span class="linenos">39</span><span class="c">%% simulate and plot</span>
+<span class="linenos">40</span><span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span><span class="w"> </span><span class="c">%time horizon</span>
+<span class="linenos">41</span>
+<span class="linenos">42</span><span class="c">%no noise</span>
+<span class="linenos">43</span><span class="n">sim_clean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_sim</span><span class="p">(</span><span class="n">sys_clean</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
+<span class="linenos">44</span><span class="n">sim_out_clean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sim_clean</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+<span class="linenos">45</span><span class="n">plt_clean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">sim_out_clean</span><span class="p">);</span>
+<span class="linenos">46</span><span class="n">fig_clean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">plt_clean</span><span class="p">.</span><span class="n">plot</span><span class="p">({</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;f&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;z&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_z&#39;</span><span class="p">},</span><span class="w">  </span><span class="mi">2</span><span class="p">);</span>
+<span class="linenos">47</span>
+<span class="linenos">48</span><span class="c">%with noise</span>
+<span class="linenos">49</span><span class="n">sim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_sim</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
+<span class="linenos">50</span>
+<span class="linenos">51</span><span class="c">%perform sampling</span>
+<span class="linenos">52</span><span class="n">eps_w</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="c">%norm(w_k, 2) &lt;= eps_w at each k</span>
+<span class="linenos">53</span><span class="n">sim</span><span class="p">.</span><span class="n">sampler</span><span class="p">.</span><span class="n">wp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">param</span><span class="p">)</span><span class="w">  </span><span class="n">eps_w</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">ball_sample</span><span class="p">(</span><span class="nb">length</span><span class="p">(</span><span class="n">iwp</span><span class="p">),</span><span class="w"> </span><span class="n">d</span><span class="p">));</span>
+<span class="linenos">54</span>
+<span class="linenos">55</span><span class="n">sim_out</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sim</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+<span class="linenos">56</span><span class="n">plt_noisy</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">sim_out</span><span class="p">);</span>
+<span class="linenos">57</span><span class="n">fig_noisy</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">plt_noisy</span><span class="p">.</span><span class="n">plot</span><span class="p">({</span><span class="s">&#39;wp&#39;</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;zp&#39;</span><span class="p">,</span><span class="s">&#39;z&#39;</span><span class="p">,</span><span class="w">  </span><span class="s">&#39;res_z&#39;</span><span class="p">},</span><span class="w">  </span><span class="mi">3</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
