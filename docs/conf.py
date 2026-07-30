@@ -57,7 +57,7 @@ matlab_src_dir = '../src'
 primary_domain = 'mat'
 matlab_auto_link ="basic"
 
-suppress_warnings = ["myst.xref_missing"]
+suppress_warnings = ["myst.xref_missing", "docutils"]
 
 napoleon_custom_sections = [('Returns', 'params_style'), ('Return', 'params_style')]
 

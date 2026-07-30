@@ -125,16 +125,16 @@ classdef op_sim_LQ_game< op_sim_interface
                 b_self = obj.b_all(ind_curr);
         
                 %index vectors
-                v_self = x(ind_curr);
-                v_other= x(ind_other);
+                v_self = v(ind_curr);
+                v_other= v(ind_other);
         
-                prox_x_curr = obj.LQ_prox_agent(D, v_self, v_other, Q_self, Q_other, b_self);
+                prox_v_curr = obj.LQ_prox_agent(D, v_self, v_other, Q_self, Q_other, b_self);
         
-                z(ind_curr) = prox_x_curr;
+                z(ind_curr) = prox_v_curr;
             end
         end
 
-        function zi = LQ_prox_agent(D, v_self, v_other, Q_self, Q_other, b_self)
+        function zi = LQ_prox_agent(obj, D, v_self, v_other, Q_self, Q_other, b_self)
             %prox operator for the individual agent i                      
             %
             %Args: 
@@ -178,6 +178,22 @@ classdef op_sim_LQ_game< op_sim_interface
                 f_out(i) = payoff_curr;
     
             end
+        end
+
+        function mu = monotone(obj)
+            %montonocity constant of the game
+            mu = min(eig(obj.Q_all + obj.Q_all'));
+        end
+
+        function L = lipschitz(obj)
+            %lipschitz constant  of the game
+            L = max(eig(obj.Q_all + obj.Q_all'));
+        end
+
+        function L = coco(obj)
+            %cocoercivity property of the game
+            iQ = inv(obj.Q_all);
+            L = 1/min(eig( iQ + iQ'));
         end
     end
 end
