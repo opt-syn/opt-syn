@@ -458,9 +458,9 @@ The network effects are described by a transfer function matrix</p>
 <p>The degenerate case of <span class="math notranslate nohighlight">\(\alpha=0\)</span> is no network dynamics.</p>
 <p>The controller structure with parameters <span class="math notranslate nohighlight">\((\gamma, \lambda) \geq 0\)</span> used to solve the two-operator inclusion problem is</p>
 <div class="math notranslate nohighlight">
-\[\begin{split} \text{Network}: \qquad  \mat{c}{x_{k+1}^c \hl u_k^1 \\ u_k^2} =  \mat{c|cc}{I &amp; -\gamma \lambda &amp; -\gamma \lambda \frac{1}{\alpha+1} \\
+\[\begin{split} \text{Network}: \qquad  \mat{c}{x_{k+1}^c \hl u_k^1 \\ u_k^2} =  \mat{c|cc}{I &amp; -\gamma \lambda &amp; \frac{ -\gamma \lambda}{\alpha+1} \hl
  (1+\alpha) I &amp; 0 &amp; 0 \\
- I &amp; -\gamma I &amp; -\gamma\frac{1}{\alpha+1} I }  \mat{c}{x_{k}^c \hl y_k^1 \\ y_k^2}.\end{split}\]</div>
+ I &amp; -\gamma I &amp; -\frac{ -\gamma }{\alpha+1} I }  \mat{c}{x_{k}^c \hl y_k^1 \\ y_k^2}.\end{split}\]</div>
 <p>This controller structure is parameterized by <span class="math notranslate nohighlight">\(\alpha\)</span>. If <span class="math notranslate nohighlight">\(\alpha = 0\)</span> and <span class="math notranslate nohighlight">\(\lambda = 1\)</span>, then this controller is the same as Projected Gradient Descent.
 The controller structure is chosen to ensure that the <a class="reference internal" href="../how_it_works/network_synthesis.html"><span class="doc">Regulator Equation</span></a> condition for algorithm convergence is satisfied for all values <span class="math notranslate nohighlight">\((\gamma, \lambda)\)</span>. Projected Gradient Descent fails the regulator equation requirement of convergence when <span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span>.</p>
 <p>We use this algorithm to solve a composite optimization problem</p>
@@ -480,13 +480,12 @@ The controller structure is chosen to ensure that the <a class="reference intern
 <p><span class="caption-text"><em>Figure 1:</em> Trace of execution and convergence</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
-<p>We now establish tracking properties using the Regulator Equations.</p>
-<p>The solution to the Regulator Equations for this network and controller are</p>
+<p>We now establish tracking properties of solution trajectories using the Regulator Equations. The solution to the Regulator Equations for this network and controller are</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
-\Pi &amp;= \mat{cc}{0 &amp; \frac{1}{2(\alpha+1)}I \\ -\frac{1}{2} I &amp; 0 }, \Gamma &amp;= \mat{cc}{-(\alpha+1) I &amp; 0 \\
+\Pi &amp;= \mat{cc}{0 &amp; \frac{1}{2(\alpha+1)}I \\ -\frac{1}{2} I &amp; 0 }, &amp;  \Gamma &amp;= \mat{cc}{-(\alpha+1) I &amp; 0 \\
 -I &amp; 0 }, \\
-\Phi &amp;= \mat{cc}{0 &amp; \frac{1}{2(\alpha+1)}I \\ 0  &amp; -I }, \Theta &amp;= \mat{c}{-I &amp; 0}.
+\Phi &amp;= \mat{cc}{0 &amp; \frac{1}{2(\alpha+1)}I \\ 0  &amp; -I }, &amp;  \Theta &amp;= \mat{c}{-I &amp; 0}.
 \end{align*}\end{split}\]</div>
 <p>The pair <span class="math notranslate nohighlight">\((\beta^*, w^*)\)</span> solving the composite optimization problem is unique, because  <span class="math notranslate nohighlight">\(f\)</span> is strongly convex with a nonempty constraint set is nonempty, and <span class="math notranslate nohighlight">\(f\)</span> is smooth.
 Algorithm convergence implies tracking of the signals <span class="math notranslate nohighlight">\((x^N, x^c, y, u)\)</span> with</p>
@@ -499,13 +498,13 @@ Algorithm convergence implies tracking of the signals <span class="math notransl
 <figure class="align-center" id="sym-track">
 <img alt="../../_images/sim_channel_sym_track_dark.png" class="only-dark" src="../../_images/sim_channel_sym_track_dark.png" />
 <figcaption>
-<p><span class="caption-text"><em>Figure 2:</em> Tracking error</span><a class="headerlink" href="#sym-track" title="Link to this image">#</a></p>
+<p><span class="caption-text"><em>Figure 2:</em> Tracking errors</span><a class="headerlink" href="#sym-track" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <figure class="align-center" id="id2">
 <img alt="../../_images/sim_channel_sym_track_light.png" class="only-light" src="../../_images/sim_channel_sym_track_light.png" />
 <figcaption>
-<p><span class="caption-text"><em>Figure 2:</em> Tracking error</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
+<p><span class="caption-text"><em>Figure 2:</em> Tracking errors</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <p>Figure <a class="reference internal" href="#sym-trace-sq"><span class="xref myst">3</span></a> plots the squared norm of the tracking error</p>

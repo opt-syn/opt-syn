@@ -6,19 +6,24 @@
 Simulation involves evaluating a trajectory of the system starting from an initial state $x_0$. 
 
 
+:::{seealso}
+- {doc}`Simulation Documentation <../documentation/doc_simulation>` for more details about all objects and routines.
+- {doc}`Simulation Examples <../examples_simulation/index_simulation>` for demonstrations.
 
- See {doc}`Simulation <../documentation/doc_simulation>` for more details about all objects and routines.
+:::
 
 ## Execution
 
-Simulation an inclusion problem with $\beta \in \R^d$ is conducted by the {class}`alg_sim` class. The arguments to `alg_sim` are the system `sys`, the dimensionality of $\beta$ `d`. The output of an algorithm execution for $T$ time steps is obtained through the {meth}`sim` command,
+Simulation of an inclusion problem $0 \in \sum_{i=1}^s F_i(\beta^*)$ with $\beta \in \R^d$ is conducted by the {class}`alg_sim` object. 
+
+The arguments to `alg_sim` are the system (`sys`), and  the dimensionality of $\beta$ in simulation (`d`). The output of an algorithm execution for $T$ time steps is obtained through the {meth}`sim` command,
 ```matlab
 simulator = alg_sim(sys, d);
 sim_result = simulator.sim(T);
 ```
 
 
-By default, algorithm execution will occur with zero initial condition and a performance input ($x_0=0$, $w_p = 0$). The  `sampler` field of {class}`alg_sim` has allows for random generation and external signals. 
+By default, algorithm execution will occur with $x_0=0$, and $w_p = 0$. The  `sampler` field of {class}`alg_sim` has allows for random generation and external signals. 
 :::{list-table}
 :header-rows: 1
 :caption: Fields of `alg_sim.sampler`
@@ -33,6 +38,7 @@ By default, algorithm execution will occur with zero initial condition and a per
 * - `param`  
   - Subsequent value of problem-dependent parameters
 :::
+
 
 The output of `alg_sim.sim(T)` is an {class}`alg_sim_out` object. The fields of `alg_sim_out` include
 :::{list-table} 
@@ -76,7 +82,7 @@ The output of `alg_sim.sim(T)` is an {class}`alg_sim_out` object. The fields of 
 ## Plotting
 
 The {class}`alg_plotter` class accepts a result from simulation, and can then plot any signal stored in  `alg_sim_out`. 
-A plot of the signals ($w$, $z$, $x$) is accomplished by performing
+A plot of the signals ($w$, $z$, $u$, $y$) is accomplished by performing
 ```matlab
 plt = alg_plotter(sim_result);
 fig = plt.plot({"w", "z", "u", "y"});
@@ -89,10 +95,9 @@ fig1 = plt.plot({"w", "z", "res_w", "res_z"}, 100); %figure number 100
 fig2 = plt.plot({"xi", "u", "y"}, 101); %figure number 101
 ```
 
-Plottable signals derived from the fields of {class}`alg_sim_out` include `x` (closed-loop state) and `delay` (`mode`-1, used for switched systems).
 
-Helper functions include of {class}`alg_plotter` include
- :::{list-table} 
+Helper functions of {class}`alg_plotter`  include
+:::{list-table} 
  :header-rows: 1
 *   - Method
     - Description
@@ -108,8 +113,10 @@ Helper functions include of {class}`alg_plotter` include
     - (`w`, `res_w`, `z`, `res_z`)
 :::
 
-See {doc}`Plotting <../documentation/doc_plotting> for a full list of helper functions and more details.
 
+:::{seealso}
+{doc}`Plotting <../documentation/doc_plotting>` contains a  full list of helper functions and more details.
+:::
 
 ## Details of  Execution
 
