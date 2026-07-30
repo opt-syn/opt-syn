@@ -16,7 +16,19 @@ classdef alg_sim_out
       f; %function values (if applicable)
       res_w; %optimality error norm(sum(w))
       res_z; %consensus error norm(z - average(z))
-      eq; %Equality constraint error norm(Ez - b)    
+      eq; %Equality constraint error norm(Ez - b)  
+
+
+      %regulator equation tracking
+      xnerr; %error in state of network
+      xcerr; %error in state of network
+      yerr; %error in controller input
+      uerr; %error in controller output
+
+      sq_xnerr; %square of error in state of network
+      sq_xcerr; %error in state of network
+      sq_yerr; %error in controller input
+      sq_uerr; %error in controller output
     end
     
     methods

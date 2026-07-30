@@ -3,7 +3,7 @@ classdef alg_plotter
     
     
     properties
-        sim_out;  %data in the simulation
+        sim_out;  %data in the simulation        
         FS = 16;  %fontsize for axis labels
         FST = 20; %fontsize for title  
         EQUALITY = false; %is an equality constraint used? 
@@ -311,7 +311,7 @@ classdef alg_plotter
             elseif strcmp(sig, 'zp')
                 name_mid = '$z_p$';
             elseif strcmp(sig, 'xc')
-                name_mid = '$\xc$';
+                name_mid = '$x_c$';
             elseif strcmp(sig, 'xn')
                 name_mid = '$x_{N}$';
             elseif strcmp(sig, 'eq')
