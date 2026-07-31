@@ -55,14 +55,15 @@ for j=1:n
     elseif n1 == 0 && n2 > 0
         %static first system
         
+        nD12 = ssize(s1.D, 2);
         
         [~,m2]=size(s2.A);
         s.A=s2.A;
-        if nD1 == 0
+        if nD12 == 0
             s.B = s2.B;
             s.C = s2.C;
         else
-            ZB = zeros(m2, nD1);
+            ZB = zeros(m2, nD12);
             s.B = [ZB, s2.B];
     
             if isnumeric(s2.C)
