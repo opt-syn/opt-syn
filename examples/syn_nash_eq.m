@@ -61,6 +61,7 @@ config.tol.GX_max = 100;
 config.tol.GY_max = 100;
 if CONS
     config.syn.D_mask = [1, 0; 1, 1]; 
+    % config.syn.D_mask = [0, 0; 1, 1]; 
     % config.syn.D_mask = [1 0; 1, 1];
     
 else
@@ -76,7 +77,8 @@ BISECT = true;
 order = {1, 1};
 
 SOLVE_TYPE = 1;
-iqc_warm = sol_ana.cert.iqc_op; 
+% iqc_warm = sol_ana.cert.iqc_op; 
+iqc_warm = [];
 if SOLVE_TYPE == 2
     b_opts = bisect_opts;
     Niter = 2;
