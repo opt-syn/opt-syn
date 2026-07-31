@@ -49,7 +49,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Analysis of Algorithms" href="../examples_analysis/index_example_analysis.html" />
-    <link rel="prev" title="Tracking an Oscillator" href="sim_tracking.html" />
+    <link rel="prev" title="Cyclic Coordinate Descent" href="sim_coord_descent.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -179,6 +179,7 @@
 <li class="toctree-l3"><a class="reference internal" href="sim_channel_memory_symmetric.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sim_bind.html">Repeated Evaluations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_coord_descent.html">Cyclic Coordinate Descent</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Time-Varying Delays</a></li>
 </ul>
 </details></li>
@@ -390,12 +391,6 @@
 <div class="math notranslate nohighlight">
 \[\beta^* \in \argmin_{\norm{\beta}_\infty \leq 10} f(\beta),\]</div>
 <p>where <span class="math notranslate nohighlight">\(f\)</span> is a convex quadratic with eigenvalues between <span class="math notranslate nohighlight">\(m=1\)</span> and <span class="math notranslate nohighlight">\(L=1.5\)</span>.</p>
-<p>Without delays, PGD is described using a parameter <span class="math notranslate nohighlight">\(\gamma &gt; 0\)</span> by</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
- \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &amp;= \mat{c|cc}{I &amp; -\gamma I &amp; -\gamma I \hl I &amp;0 &amp; 0 \\
- I &amp; -\gamma I &amp; -\gamma I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, &amp; \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\partial f(z_k^1) \\  \partial I_{\norm{\cdot}_\infty \leq 10}(z_k^2)}
-\end{align*}.\end{split}\]</div>
 <p>A time-varying delay <span class="math notranslate nohighlight">\(h(k)\)</span> is introduced after  evaluation of <span class="math notranslate nohighlight">\(\nabla f\)</span>.
 The expression for PGD with time-delays is</p>
 <div class="math notranslate nohighlight">
@@ -425,27 +420,29 @@ The expression for PGD with time-delays is</p>
 </div>
 <p>The Snap logic is motivated by communication failures: PGD will use the same stale gradient until a successful transmission is received. Snap and Contiguous are nondeterministic switching logics, while Periodic is deterministic given <span class="math notranslate nohighlight">\(h(0)\)</span>.</p>
 <!-- We model the time-varying delays as a switched system, following the approaches in {footcite}`wen2008switched`, {footcite}`conte2020modeling`.  -->
-<p>As an example, a time-varying delay restricted to  <span class="math notranslate nohighlight">\(h(k) \in \{0, 1, 2\}\)</span> for each <span class="math notranslate nohighlight">\(k \in \N\)</span> can be described using the system matrices</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
+<!-- As an example, a time-varying delay restricted to  $h(k) \in \{0, 1, 2\}$ for each $k \in \N$ can be described using the system matrices
+```{math}
+\begin{align*}
       \left\{\left(\begin{array}{cc|c}
-        0 &amp; 0 &amp;  I \\
-        I &amp; 0 &amp;  0 \\ \hline
-        0 &amp; 0 &amp;  I
+        0 & 0 &  I \\
+        I & 0 &  0 \\ \hline
+        0 & 0 &  I
         \end{array}
         \right), \left( \begin{array}{cc|c}
-        0 &amp; 0 &amp; I \\
-        I &amp; 0 &amp; 0 \\ \hline
-        I &amp; 0 &amp; 0
+        0 & 0 & I \\
+        I & 0 & 0 \\ \hline
+        I & 0 & 0
         \end{array}
         \right), \left( \begin{array}{cc|c}
-        0 &amp; 0 &amp; I \\
-        I &amp; 0 &amp; 0  \\\hline
-        0 &amp; I  &amp; 0
+        0 & 0 & I \\
+        I & 0 & 0  \\\hline
+        0 & I  & 0
         \end{array}
         \right) \right\}. \label{eq:variable_delay_example}
-    \end{align*}\end{split}\]</div>
-<p>These delay primitives are used to add delays only on the output of <span class="math notranslate nohighlight">\(\partial f\)</span>.</p>
+    \end{align*}
+```
+
+These delay primitives are used to add delays only on the output of $\partial f$.  -->
 <p>We solve the composite optimization problem using a nominal PGD algorithm with stepsize  <span class="math notranslate nohighlight">\(\gamma = 0.05\)</span>. All executions are performed starting at <span class="math notranslate nohighlight">\(x_0=0\)</span>, and at a random initial delay <span class="math notranslate nohighlight">\(h(0)\)</span>. Figure <a class="reference internal" href="#delay-per"><span class="xref myst">1</span></a> plots the algorithm trajectory under periodic time-varying delays.</p>
 <figure class="align-center" id="delay-per">
 <img alt="../../_images/sim_time_var_delay_periodic_dark.png" class="only-dark" src="../../_images/sim_time_var_delay_periodic_dark.png" />
@@ -573,12 +570,12 @@ The expression for PGD with time-delays is</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="sim_tracking.html"
+       href="sim_coord_descent.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Tracking an Oscillator</p>
+        <p class="prev-next-title">Cyclic Coordinate Descent</p>
       </div>
     </a>
     <a class="right-next"

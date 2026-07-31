@@ -19,8 +19,8 @@ Nash Equilibrium Seeking <sim_dr_game>
 Channel Memory  <sim_channel_memory_symmetric>
 Repeated Evaluations <sim_bind>
 Tracking an Oscillator <sim_tracking>
-Time-Varying Delays <sim_switched>
 Cyclic Coordinate Descent <sim_coord_descent>
+Time-Varying Delays <sim_switched>
 ```
 
 

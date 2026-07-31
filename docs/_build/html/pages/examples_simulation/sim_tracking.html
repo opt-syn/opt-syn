@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'pages/examples_simulation/sim_tracking';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Time-Varying Delay" href="sim_switched.html" />
+    <link rel="next" title="Cyclic Coordinate Descent" href="sim_coord_descent.html" />
     <link rel="prev" title="Repeated Evaluations" href="sim_bind.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -179,6 +179,7 @@
 <li class="toctree-l3"><a class="reference internal" href="sim_channel_memory_symmetric.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sim_bind.html">Repeated Evaluations</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_coord_descent.html">Cyclic Coordinate Descent</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sim_switched.html">Time-Varying Delays</a></li>
 </ul>
 </details></li>
@@ -387,13 +388,15 @@
   <section class="tex2jax_ignore mathjax_ignore" id="tracking-an-oscillator">
 <h1>Tracking an Oscillator<a class="headerlink" href="#tracking-an-oscillator" title="Link to this heading">#</a></h1>
 <p>This example involves a time-varying optimization algorithm (from <a class="reference internal" href="../usage/problem_formulation/system/tracking.html"><span class="doc">Tracking</span></a>). The optimal solution <span class="math notranslate nohighlight">\(\{\beta^*_k\}\)</span> orbits about a constant point <span class="math notranslate nohighlight">\(\beta^*_{\text{center}}\)</span> with a frequency of <span class="math notranslate nohighlight">\(\omega = \frac{\pi}{8}\)</span> radians per time step.</p>
+<p>The optimization problem is to minimize the sum of four quadratics. Each quadratic <span class="math notranslate nohighlight">\(f_{ik}\)</span> shares the same shift,</p>
+<div class="math notranslate nohighlight">
+\[f_{ik}(\beta_k - \beta^*_k) = f_{i0}(\beta_0 - \beta_0) \qquad \qquad \forall k \in \N.\]</div>
 <p>The path of the optimal solution obeys known linear dynamics: there exists a state <span class="math notranslate nohighlight">\(\eta\)</span> such that</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}\mat{c}{\eta_{k+1} \hl \beta^*_k} = \mat{ccc}{I &amp; 0 &amp; 0 \\
+\[\begin{split}\mat{c}{\eta_{k+1} \hl \beta^*_k } = \mat{ccc}{I &amp; 0 &amp; 0 \\
 0 &amp; \cos(\omega) I &amp; -\sin(\omega) I \\
 0 &amp; \sin(\omega) I &amp; \cos(\omega) I  \hl
-I &amp; I &amp; 0} \mat{c}{\eta_k}\end{split}\]</div>
-<p>The optimization problem is to minimize the sum of four quadratics. Each quadratic <span class="math notranslate nohighlight">\(f_{ik}\)</span> shares a the same oscillatory shift:  <span class="math notranslate nohighlight">\(f_{ik}(\beta) = f_{i0}(\beta - \eta^2_k)\)</span> for all <span class="math notranslate nohighlight">\(k \in \N\)</span>.</p>
+I &amp; I &amp; 0} \eta_k.\end{split}\]</div>
 <p>The algorithm is defined in terms of parameters <span class="math notranslate nohighlight">\(b_0 \in \R^3, b_1 \in \R, b_2 \in \R\)</span>. An execution of this algorithm with  <span class="math notranslate nohighlight">\(\beta \in \R^{4}\)</span> is plotted in Figure <a class="reference internal" href="#tracker"><span class="xref myst">1</span></a>.</p>
 <figure class="align-center" id="tracker">
 <img alt="../../_images/track_clean_6_dark.png" class="only-dark" src="../../_images/track_clean_6_dark.png" />
@@ -503,11 +506,11 @@ I &amp; I &amp; 0} \mat{c}{\eta_k}\end{split}\]</div>
       </div>
     </a>
     <a class="right-next"
-       href="sim_switched.html"
+       href="sim_coord_descent.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Time-Varying Delay</p>
+        <p class="prev-next-title">Cyclic Coordinate Descent</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

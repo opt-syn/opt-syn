@@ -48,8 +48,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'pages/examples_simulation/sim_coord_descent';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Analysis of Algorithms" href="../examples_analysis/index_example_analysis.html" />
-    <link rel="prev" title="Time-Varying Delay" href="sim_switched.html" />
+    <link rel="next" title="Time-Varying Delay" href="sim_switched.html" />
+    <link rel="prev" title="Tracking an Oscillator" href="sim_tracking.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -179,8 +179,8 @@
 <li class="toctree-l3"><a class="reference internal" href="sim_channel_memory_symmetric.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sim_bind.html">Repeated Evaluations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sim_tracking.html">Tracking an Oscillator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sim_switched.html">Time-Varying Delays</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Cyclic Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_switched.html">Time-Varying Delays</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -402,13 +402,13 @@
 <p>Letting <span class="math notranslate nohighlight">\(i(k)\)</span> be the active coordinate block at iteration <span class="math notranslate nohighlight">\(k\)</span>, a coordinate descent method to minimize a function <span class="math notranslate nohighlight">\(f\)</span> is with stepsize <span class="math notranslate nohighlight">\(\gamma&gt;0\)</span> is</p>
 <div class="math notranslate nohighlight">
 \[\begin{align}
-   \beta^{i(k)}_{k+1} = \beta^{i(k)}_{k} -\gamma  [\nabla f(\beta)]^i. 
+   \beta^{i(k)}_{k+1} = \beta^{i(k)}_{k} -\gamma \   [\nabla f(\beta)]^i. 
 \end{align}\]</div>
-<p>The coordinate descent algorithm with <span class="math notranslate nohighlight">\(\gamma= 0.1\)</span> is used to solve an unconstrained optimization problem <span class="math notranslate nohighlight">\(\min_{\beta \in \R^{90}} f(\beta)\)</span>.
+<p>This coordinate descent algorithm is used to solve an unconstrained optimization problem <span class="math notranslate nohighlight">\(\min_{\beta \in \R^{90}} f(\beta)\)</span>.
 The function <span class="math notranslate nohighlight">\(f\)</span> is parameterized by scalars <span class="math notranslate nohighlight">\(0 &lt; m &lt; W &lt; L\)</span>, a constant vector <span class="math notranslate nohighlight">\(b\)</span>, and a symmetric matrix <span class="math notranslate nohighlight">\(Q\)</span> with eigenvalues between <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(W\)</span>. The non-quadratic function <span class="math notranslate nohighlight">\(f \in S_{m, L}\)</span> is</p>
 <div class="math notranslate nohighlight">
 \[f(\beta) =\frac{1}{2} \beta^\top Q \beta + b^\top \beta + (L - W)*\log(\1^\top \cosh(\beta)).\]</div>
-<p>The coordinate descent algorithm is run starting from an initial condition of  <span class="math notranslate nohighlight">\(x_0 = 0\)</span>. The <span class="math notranslate nohighlight">\(c=6\)</span> coordinate blocks are updated periodically (cyclically) in increasing order.</p>
+<p>Coordinate descent with <span class="math notranslate nohighlight">\(\gamma = 0.1\)</span> is performed starting from an initial condition <span class="math notranslate nohighlight">\(x_0 = 0\)</span>. The <span class="math notranslate nohighlight">\(c=6\)</span> coordinate blocks are updated cyclically in increasing order.</p>
 <p>Figure <a class="reference internal" href="#coord-6"><span class="xref myst">1</span></a> plots a short trajectory of cyclic coordinate descent.</p>
 <figure class="align-center" id="coord-6">
 <img alt="../../_images/sim_coord_6_short_dark.png" class="only-dark" src="../../_images/sim_coord_6_short_dark.png" />
@@ -423,7 +423,7 @@ The function <span class="math notranslate nohighlight">\(f\)</span> is paramete
 </figcaption>
 </figure>
 <!-- 
-Figure [2](#coord-6) plots a longer trajectorz, illustrating convergence in the gradient error $\norm{\nabla f(\beta)}_2$.
+Figure [2](#coord-6-long) plots a longer trajectorz, illustrating convergence in the gradient error $\norm{\nabla f(\beta)}_2$.
 :::{figure} _static/sim_coord_6_long_dark.png
 :align: center
 :class: only-dark
@@ -440,13 +440,13 @@ Figure [2](#coord-6) plots a longer trajectorz, illustrating convergence in the 
 <section id="periodic-orbit-construction">
 <h2>Periodic-Orbit Construction<a class="headerlink" href="#periodic-orbit-construction" title="Link to this heading">#</a></h2>
 <p>Cyclic coordinate descent schemes can be modeled as <a class="reference internal" href="../usage/problem_formulation/system/dynamics.html"><span class="doc">Periodic-Orbit</span></a> Systems.
-Given a block-size  <span class="math notranslate nohighlight">\(c\)</span>, and defining the permutation matrix</p>
+Given a block-size  <span class="math notranslate nohighlight">\(c\)</span>, we define the permutation matrix</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}    M = \mat{cc}{0 &amp; I_{c-1} \\ 1 &amp; 0}, \end{split}\]</div>
-<p>the <span class="math notranslate nohighlight">\(c\)</span>-block cyclic coordinate descent algorithm with <span class="math notranslate nohighlight">\(\gamma&gt;0\)</span> may be described by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-715ef5a9-7eac-402b-89b0-0fb0a709da4e">
-<span class="eqno">(1)<a class="headerlink" href="#equation-715ef5a9-7eac-402b-89b0-0fb0a709da4e" title="Permalink to this equation">#</a></span>\[\begin{align}
-\text{Operator}:  w_k &amp; &amp; = \nabla f(z_k), \\
+\[\begin{split}    M_c = \mat{cc}{0 &amp; I_{c-1} \\ 1 &amp; 0}. \end{split}\]</div>
+<p>The <span class="math notranslate nohighlight">\(c\)</span>-block cyclic coordinate descent algorithm with <span class="math notranslate nohighlight">\(\gamma&gt;0\)</span> is described by</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+\text{Operator}:  &amp; &amp;w_k  = \nabla f(z_k), \\
     \text{Network}: &amp; &amp;  \mat{c}{M^{k+1} x_{k+1}^N \hl M^k z_k \\ M^k y_k} &amp;= \left[\mat{cc|cc:cc}{
     0 &amp; I_{c-1} &amp; 0 &amp; 0_{c-1} &amp; 0 &amp; 0_{c-1} \\
     0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 \hl
@@ -455,11 +455,11 @@ Given a block-size  <span class="math notranslate nohighlight">\(c\)</span>, and
     0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 \\
     0 &amp; 0 &amp; 0 &amp; I_{c-1} &amp; 0 &amp; 0
     } \otimes I\right]\mat{c}{M^k x_k^N \hl M^k w_k \\ M^k u_k}, \\
-    \text{Gradient Descent}: &amp; &amp; \mat{c}{M^k x^c_{k+1} \\ M^k u_k} &amp;= \left[\mat{c|c}{0 &amp; I_{c-1} &amp; 0 &amp; 0_{c-1} &amp; 0 &amp; 0_{c-1} \\
-    0 &amp; 0 &amp; 0 &amp; 0 &amp; -\gamma &amp; 0 \hl
-    1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
-    0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0_{c-1} \hdl} \otimes I \right] \mat{c}{M^k x^c_k \\ M^k y_k}.
-\end{align}\]</div>
+    \text{Gradient Descent}: &amp; &amp; \mat{c}{M^{k+1} x^c_{k+1} \hl M^k u_k} &amp;= \left[\mat{cc|cc}{0 &amp; I_{c-1}  &amp; 0 &amp; 0_{c-1} \\
+    0 &amp; 0 &amp;  -\gamma &amp; 0 \hl
+    1 &amp; 0 &amp; 0  &amp; 0 \\
+    0 &amp; 0 &amp; 0  &amp; 0 } \otimes I \right] \mat{c}{M^k x^c_k \hl M^k y_k}.
+\end{align*}\]</div>
 <p>Algorithm simulation is performed by using the <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_system_periodic_orbit</span></code> object.</p>
 </section>
 </section>
@@ -476,20 +476,20 @@ Given a block-size  <span class="math notranslate nohighlight">\(c\)</span>, and
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="sim_switched.html"
+       href="sim_tracking.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Time-Varying Delay</p>
+        <p class="prev-next-title">Tracking an Oscillator</p>
       </div>
     </a>
     <a class="right-next"
-       href="../examples_analysis/index_example_analysis.html"
+       href="sim_switched.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Analysis of Algorithms</p>
+        <p class="prev-next-title">Time-Varying Delay</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
