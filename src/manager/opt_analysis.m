@@ -263,7 +263,7 @@ classdef opt_analysis < opt_manager_interface
 
                     alg_screen = cell(size(alg_psi));
                     for j = 1:length(alg_screen)
-                        alg_screen{j} = E_output* alg_psi.P{j} * E_input;
+                        alg_screen{j} = E_output* alg_psi{j}.P * E_input;
                     end
                 else
                     alg_screen = E_output * alg_psi.P * E_input;
