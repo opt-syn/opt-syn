@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
-    <title>Documentation &#8212; opt-syn</title>
+    <title>Cyclic Coordinate Descent &#8212; opt-syn</title>
   
   
   
@@ -43,11 +43,13 @@
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/documentation/index_documentation';</script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/examples_simulation/sim_coord_descent';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Manager" href="doc_manager.html" />
-    <link rel="prev" title="Synthesis of Algorithms" href="../examples_synthesis/index_example_synthesis.html" />
+    <link rel="next" title="Analysis of Algorithms" href="../examples_analysis/index_example_analysis.html" />
+    <link rel="prev" title="Time-Varying Delay" href="sim_switched.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -170,15 +172,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../usage/solve.html">Solve and Validate</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr_game.html">Nash Equilibrium Seeking</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_switched.html">Time-Varying Delays</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_coord_descent.html">Cyclic Coordinate Descent</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../examples.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index_example_simulation.html">Simulation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_dr_game.html">Nash Equilibrium Seeking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_channel_memory_symmetric.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_switched.html">Time-Varying Delays</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Cyclic Coordinate Descent</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -188,32 +190,32 @@
 <li class="toctree-l2"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Documentation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="doc_manager.html">Manager</a></li>
-<li class="toctree-l2"><a class="reference internal" href="doc_solutions.html">Solution</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="operators/doc_set_valued.html">Set-Valued Maps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="operators/doc_sml.html">Subdifferentials</a></li>
-<li class="toctree-l3"><a class="reference internal" href="operators/doc_quadratic.html">Gradients of Quadratics</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../documentation/index_documentation.html">Documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_solutions.html">Solution</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_set_valued.html">Set-Valued Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_sml.html">Subdifferentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_quadratic.html">Gradients of Quadratics</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="plants/doc_genplant.html">Generalized Plants</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plants/doc_templates.html">Plant Templates</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/plants/doc_genplant.html">Generalized Plants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/plants/doc_templates.html">Plant Templates</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="system/doc_lti.html">Linear Time Invariant</a></li>
-<li class="toctree-l3"><a class="reference internal" href="system/doc_switched.html">Switched</a></li>
-<li class="toctree-l3"><a class="reference internal" href="system/doc_periodic.html">Periodic</a></li>
-<li class="toctree-l3"><a class="reference internal" href="system/doc_periodic_orbit.html">Periodic-Orbit</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_switched.html">Switched</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_periodic.html">Periodic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_periodic_orbit.html">Periodic-Orbit</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2"><a class="reference internal" href="doc_iqc.html">Integral Quadratic Constraints</a></li>
-<li class="toctree-l2"><a class="reference internal" href="doc_specs.html">Performance Specifications</a></li>
-<li class="toctree-l2"><a class="reference internal" href="doc_config.html">Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="doc_simulation.html">Simulation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="doc_plotting.html">Plotting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_iqc.html">Integral Quadratic Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_specs.html">Performance Specifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_config.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_plotting.html">Plotting</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -295,7 +297,7 @@
       
       
       
-      <li><a href="../../_sources/pages/documentation/index_documentation.md" target="_blank"
+      <li><a href="../../_sources/pages/examples_simulation/sim_coord_descent.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -358,7 +360,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -369,11 +373,19 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Documentation</h1>
+    <h1>Cyclic Coordinate Descent</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#periodic-orbit-construction">Periodic-Orbit Construction</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -383,31 +395,74 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="documentation">
-<h1>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h1>
-<p>This page collects the documentation for each object and function in <span style="color:#5D93BF">opt</span>-syn.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="doc_manager.html">Manager</a></li>
-<li class="toctree-l1"><a class="reference internal" href="doc_solutions.html">Solution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="operators/doc_operators.html">Operator Classes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plants/doc_plants.html">Plants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="system/doc_system.html">Systems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="doc_iqc.html">Integral Quadratic Constraints</a></li>
-<li class="toctree-l1"><a class="reference internal" href="doc_specs.html">Performance Specifications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="doc_config.html">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="doc_simulation.html">Simulation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="doc_plotting.html">Plotting</a></li>
-</ul>
-</div>
+  <section class="tex2jax_ignore mathjax_ignore" id="cyclic-coordinate-descent">
+<h1>Cyclic Coordinate Descent<a class="headerlink" href="#cyclic-coordinate-descent" title="Link to this heading">#</a></h1>
+<p>A coordinate descent algorithm searches over only a subset of variables in each iteration.</p>
+<!-- {footcite}`wright2015coordinate`.  -->
+<p>Letting <span class="math notranslate nohighlight">\(i(k)\)</span> be the active coordinate block at iteration <span class="math notranslate nohighlight">\(k\)</span>, a coordinate descent method to minimize a function <span class="math notranslate nohighlight">\(f\)</span> is with stepsize <span class="math notranslate nohighlight">\(\gamma&gt;0\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[\begin{align}
+   \beta^{i(k)}_{k+1} = \beta^{i(k)}_{k} -\gamma  [\nabla f(\beta)]^i. 
+\end{align}\]</div>
+<p>The coordinate descent algorithm with <span class="math notranslate nohighlight">\(\gamma= 0.1\)</span> is used to solve an unconstrained optimization problem <span class="math notranslate nohighlight">\(\min_{\beta \in \R^{90}} f(\beta)\)</span>.
+The function <span class="math notranslate nohighlight">\(f\)</span> is parameterized by scalars <span class="math notranslate nohighlight">\(0 &lt; m &lt; W &lt; L\)</span>, a constant vector <span class="math notranslate nohighlight">\(b\)</span>, and a symmetric matrix <span class="math notranslate nohighlight">\(Q\)</span> with eigenvalues between <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(W\)</span>. The non-quadratic function <span class="math notranslate nohighlight">\(f \in S_{m, L}\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[f(\beta) =\frac{1}{2} \beta^\top Q \beta + b^\top \beta + (L - W)*\log(\1^\top \cosh(\beta)).\]</div>
+<p>The coordinate descent algorithm is run starting from an initial condition of  <span class="math notranslate nohighlight">\(x_0 = 0\)</span>. The <span class="math notranslate nohighlight">\(c=6\)</span> coordinate blocks are updated periodically (cyclically) in increasing order.</p>
+<p>Figure <a class="reference internal" href="#coord-6"><span class="xref myst">1</span></a> plots a short trajectory of cyclic coordinate descent.</p>
+<figure class="align-center" id="coord-6">
+<img alt="../../_images/sim_coord_6_short_dark.png" class="only-dark" src="../../_images/sim_coord_6_short_dark.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 1:</em> Convergence of coordinate descent algorithm (short time horizon)</span><a class="headerlink" href="#coord-6" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id1">
+<img alt="../../_images/sim_coord_6_short_light.png" class="only-light" src="../../_images/sim_coord_6_short_light.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 1:</em> Convergence of coordinate descent algorithm (short time horizon)</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
 <!-- 
+Figure [2](#coord-6) plots a longer trajectorz, illustrating convergence in the gradient error $\norm{\nabla f(\beta)}_2$.
+:::{figure} _static/sim_coord_6_long_dark.png
+:align: center
+:class: only-dark
+:name: coord-6
+*Figure 2:* Convergence of coordinate descent algorithm (short time horizon)
+:::
 
-
-```{eval-rst}
-.. mat:automodule :: simulator.op_sim
-   :members:   
-   :show-inheritance:
-``` --></section>
+:::{figure} _static/sim_coord_6_long_dark.png
+:align: center
+:class: only-light
+:name: coord-6
+*Figure 2:* Convergence of coordinate descent algorithm (short time horizon)
+::: -->
+<section id="periodic-orbit-construction">
+<h2>Periodic-Orbit Construction<a class="headerlink" href="#periodic-orbit-construction" title="Link to this heading">#</a></h2>
+<p>Cyclic coordinate descent schemes can be modeled as <a class="reference internal" href="../usage/problem_formulation/system/dynamics.html"><span class="doc">Periodic-Orbit</span></a> Systems.
+Given a block-size  <span class="math notranslate nohighlight">\(c\)</span>, and defining the permutation matrix</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}    M = \mat{cc}{0 &amp; I_{c-1} \\ 1 &amp; 0}, \end{split}\]</div>
+<p>the <span class="math notranslate nohighlight">\(c\)</span>-block cyclic coordinate descent algorithm with <span class="math notranslate nohighlight">\(\gamma&gt;0\)</span> may be described by</p>
+<div class="amsmath math notranslate nohighlight" id="equation-715ef5a9-7eac-402b-89b0-0fb0a709da4e">
+<span class="eqno">(1)<a class="headerlink" href="#equation-715ef5a9-7eac-402b-89b0-0fb0a709da4e" title="Permalink to this equation">#</a></span>\[\begin{align}
+\text{Operator}:  w_k &amp; &amp; = \nabla f(z_k), \\
+    \text{Network}: &amp; &amp;  \mat{c}{M^{k+1} x_{k+1}^N \hl M^k z_k \\ M^k y_k} &amp;= \left[\mat{cc|cc:cc}{
+    0 &amp; I_{c-1} &amp; 0 &amp; 0_{c-1} &amp; 0 &amp; 0_{c-1} \\
+    0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 \hl
+    0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 \\
+    0 &amp; I_{c-1} &amp; 0 &amp; 0 &amp; 0 &amp; 0_{c-1} \hdl
+    0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 \\
+    0 &amp; 0 &amp; 0 &amp; I_{c-1} &amp; 0 &amp; 0
+    } \otimes I\right]\mat{c}{M^k x_k^N \hl M^k w_k \\ M^k u_k}, \\
+    \text{Gradient Descent}: &amp; &amp; \mat{c}{M^k x^c_{k+1} \\ M^k u_k} &amp;= \left[\mat{c|c}{0 &amp; I_{c-1} &amp; 0 &amp; 0_{c-1} &amp; 0 &amp; 0_{c-1} \\
+    0 &amp; 0 &amp; 0 &amp; 0 &amp; -\gamma &amp; 0 \hl
+    1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+    0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0_{c-1} \hdl} \otimes I \right] \mat{c}{M^k x^c_k \\ M^k y_k}.
+\end{align}\]</div>
+<p>Algorithm simulation is performed by using the <code class="xref mat mat-class docutils literal notranslate"><span class="pre">opt_system_periodic_orbit</span></code> object.</p>
+</section>
+</section>
 
 
                 </article>
@@ -421,20 +476,20 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../examples_synthesis/index_example_synthesis.html"
+       href="sim_switched.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Synthesis of Algorithms</p>
+        <p class="prev-next-title">Time-Varying Delay</p>
       </div>
     </a>
     <a class="right-next"
-       href="doc_manager.html"
+       href="../examples_analysis/index_example_analysis.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Manager</p>
+        <p class="prev-next-title">Analysis of Algorithms</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -444,6 +499,23 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#periodic-orbit-construction">Periodic-Orbit Construction</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

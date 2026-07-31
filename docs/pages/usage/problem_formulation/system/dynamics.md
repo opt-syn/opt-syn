@@ -44,8 +44,8 @@ sys_lti = sys_per.periodic_lift();
 A periodic-orbit linear system is an $h$-periodic linear system 
 in which there exists matrices  $(M_x, M_w, M_z)$ such that 
 ```{math}
-M_x^h &= M_x, \ M_w^h = M_w, M_z^h = M_z, \\
- \mat{c|c}{\Acl_k & \Bcl_k \hl \Ccl_k & \Dcl_k }  &= \mat{c c}{M_x & 0 \\ 0 & M_y}^{-k} \mat{c|c}{\Acl_{0} & \Bcl_{0} \hl \Ccl_{0} & \Dcl_{0} } \mat{c c}{M_x & 0 \\ 0 & M_u}^k, & & \forall k \in \N.
+M_x^h &= M_x, \qquad \ M_w^h = M_w,  \qquadM_z^h = M_z, \\
+ \mat{c|c}{\Acl_k & \Bcl_k \hl \Ccl_k & \Dcl_k }  &= \mat{c c}{M_x & 0 \\ 0 & M_y}^{-k} \mat{c|c}{\Acl_{0} & \Bcl_{0} \hl \Ccl_{0} & \Dcl_{0} } \mat{c c}{M_x & 0 \\ 0 & M_u}^k, & & \qquad \forall k \in \N.
 ```
 Cyclic Coordinate-Descent algorithms are instances of periodic-orbit algorithms satisfying this simplified structure.
 
@@ -56,7 +56,7 @@ Systems with periodic-orbit  networks and controllers can be specified using the
 sys_orbit = opt_system_periodic_orbit(Operator_Class, Network, Controller, M);
 ```
 
-Periodic-orbit systems can be enumerated into periodic systems and  lifted into LTI systems:
+Periodic-orbit systems can be enumerated into periodic systems,  and can then be lifted into LTI systems:
 ```matlab
 sys_per = sys_orbit.export_periodic();
 sys_lti = sys_orbit.periodic_lift();
