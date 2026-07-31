@@ -396,7 +396,7 @@ The expression for PGD with time-delays is</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
  \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &amp;= \mat{c|cc}{I &amp; -\gamma I &amp; -\gamma I \hl I &amp;0 &amp; 0 \\
- I &amp; -\gamma I &amp; -\gamma I  }   \mat{c}{x_{k} \hl w_{k-h(k)}^1 \\ w_k^2}, &amp; \mat{c}{w_{k}^1 \\ w_k^2} \in  \mat{c}{\partial f(z_k^1) \\  \partial I_{\norm{\cdot}_\infty \leq 10}(z_k^2)}
+ I &amp; -\gamma I &amp; -\gamma I  }   \mat{c}{x_{k} \hl w_{k-h(k)}^1 \\ w_k^2}, &amp; \mat{c}{w_{k}^1 \\ w_k^2} \in  \mat{c}{\nabla f(z_k^1) \\  \partial I_{\norm{\cdot}_\infty \leq 10}(z_k^2)}
 \end{align*}.\end{split}\]</div>
 <p>The delay  <span class="math notranslate nohighlight">\(h(k)\)</span> is bounded between 0 and 3 steps at all <span class="math notranslate nohighlight">\(h(k)\)</span>. It is  temporally restricted according to the logics</p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -407,7 +407,7 @@ The expression for PGD with time-delays is</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Periodic</p></td>
-<td><p><span class="math notranslate nohighlight">\(h(k)\)</span> increases by 1, and drops to 0 if <span class="math notranslate nohighlight">\(h(k)=0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(h(k)\)</span> increases by 1, and drops to 0 if <span class="math notranslate nohighlight">\(h(k)=0\)</span>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>Snap</p></td>
 <td><p><span class="math notranslate nohighlight">\(h(k)\)</span> either increases by 1 or drops to 0, but <span class="math notranslate nohighlight">\(h(k+1)=0\)</span> always holds if <span class="math notranslate nohighlight">\(h(k)=3\)</span>.</p></td>
