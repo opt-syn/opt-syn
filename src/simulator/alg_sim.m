@@ -43,8 +43,17 @@ classdef alg_sim
             else
                 obj.sampler = struct('wp', @(param) [], 'param', @(param) [], ...
             'x0', @() [], 'param0', @() []);
-                %obj.sampler = op_sim_sampler;
+                
+                if ismember(obj.sys.type, ['switched', 'periodic', 'periodic_orbit'])
+                    %to be improved
+                    obj.sampler.param0 = struct('mode', randi([1, obj.sys.Nss], 1));
+                    obj.sampler.param = ...
+                        @(param_in)struct('mode',  obj.sys.next_mode(param_in.mode));
+                end
+                
             end
+
+            
 
             obj.EQUALITY = any(logical(cellfun(@(q) q.EQUALITY, obj.sys.op)));
         end
@@ -83,10 +92,8 @@ classdef alg_sim
                 end
             end
 
-            param0 = obj.sampler.param0;
-      
-
-            
+            param0 = obj.sampler.param0();
+                 
             
             %log the signals
             ssim = alg_sim_out();

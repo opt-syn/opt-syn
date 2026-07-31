@@ -1,16 +1,13 @@
 # Noisy Douglas Rachford
 
-
 The Douglas-Rachford algorithm is a procedure for solving a two-operator inclusion problem {footcite}`douglas1956numerical`.
-It is characterized by  parameters $\gamma, \lambda > 0$, and can be described as the interconnection
+It is characterized by parameters $\gamma, \lambda > 0$, and can be described as the interconnection
 ```{math}
 \begin{align*}
  \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &= \mat{c|cc}{I & -\gamma \lambda I & -\gamma \lambda I \hl I &-\gamma I & 0 \\
  I & -2\gamma I & -\gamma I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{F_1(z_k^1) \\  F_2(z_k^2)}.
 \end{align*}
 ```
-
-
 
 We  use Douglas-Rachford to solve a composite optimization problem
 ```{math}
@@ -74,67 +71,9 @@ Figure [2](#dr-noisy) plots a trace of a trajectory starting at $x_0=0$, in whic
 :::
 
 
-## Code
-
-The code to generate this demonstration is 
-```matlab
-%Douglas Rachford Algorithm with noise
-rng(32, 'twister');
-
-d = 100; %dimension of variable beta
-s = 2; %number of operators
-
-%% create the system
-%define the quadratic
-m = 1; L = 10;
-Q = rand_quad(d, m, L);
-zstar = 100*(2*rand(d, 1) - 1);
-op1 = op_sim_quad(Q, zstar);
-
-%define the L infinity ball
-BOX = 10;
-op2 = op_sim_box(BOX);
-ops = {op1, op2};
-
-%douglas-rachford
-gamma = 0.4;  lambda = 1;   %stepsizes
-K = ss(1, [-gamma*lambda, -gamma*lambda], ...
-    [1; 1], [-gamma, 0; -2*gamma, -gamma],1);
-
-%system with no noise
-sys_clean = opt_system(ops, [], K);
-
-%now create the network for the system with noise
-network = bridge_pass_through(s);
-%add noise to the subgradients (outputs of oracles)
-iwp = [1,2]; izp = [];
-network = network.add_oracle_input(iwp, izp);
-
-%consensus error as a performance condition
-network  = network.perf_output_con();
-
-%form the system with noise
-sys = opt_system(ops, network, K);
-
-%% simulate and plot
-T = 100; %time horizon
-
-%no noise
-sim_clean = alg_sim(sys_clean, d);
-sim_out_clean = sim_clean.sim(T);
-plt_clean = alg_plotter(sim_out_clean);
-fig_clean = plt_clean.plot({'x', 'w', 'res_w', 'f', 'z', 'res_z'},  2);
-
-%with noise
-sim = alg_sim(sys, d);
-
-%perform sampling
-eps_w = 10; %norm(w_k, 2) <= eps_w at each k
-sim.sampler.wp = @(param)  eps_w * (ball_sample(length(iwp), d));
-
-sim_out = sim.sim(T);
-plt_noisy = alg_plotter(sim_out);
-fig_noisy = plt_noisy.plot({'wp','w', 'res_w', 'zp','z',  'res_z'},  3);
+```{literalinclude} ../../../examples/simulation/dr_example/sim_dr_opt_noise.m
+:linenos: true
+:caption: Code for Douglas-Rachford with noise corruption
+:language: matlab
 ```
-
 

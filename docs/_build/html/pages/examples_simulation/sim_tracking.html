@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'pages/examples_simulation/sim_tracking';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Analysis of Algorithms" href="../examples_analysis/index_example_analysis.html" />
+    <link rel="next" title="Time-Varying Delay" href="sim_switched.html" />
     <link rel="prev" title="Repeated Evaluations" href="sim_bind.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -175,9 +175,11 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../examples.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="index_example_simulation.html">Simulation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_dr_game.html">Nash Equilibrium Seeking</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sim_channel_memory_symmetric.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sim_bind.html">Repeated Evaluations</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_switched.html">Time-Varying Delays</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -406,76 +408,6 @@ I &amp; I &amp; 0} \mat{c}{\eta_k}\end{split}\]</div>
 </figcaption>
 </figure>
 <p>The <span class="math notranslate nohighlight">\(w\)</span> vectors approach constantcy at convergence. The iterates <span class="math notranslate nohighlight">\(z\)</span> oscillate according to the moving optimal solution.</p>
-<p>Code to generate this example is</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c">%tracking of optimal solution</span>
-<span class="linenos"> 2</span>
-<span class="linenos"> 3</span><span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
-<span class="linenos"> 4</span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">];</span>
-<span class="linenos"> 5</span><span class="n">s</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">length</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
-<span class="linenos"> 6</span>
-<span class="linenos"> 7</span>
-<span class="linenos"> 8</span><span class="n">theta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">pi</span><span class="o">/</span><span class="mi">8</span><span class="p">;</span>
-<span class="linenos"> 9</span><span class="n">Sbeta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">blkdiag</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">givens</span><span class="p">(</span><span class="nb">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span><span class="w"> </span><span class="nb">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)));</span>
-<span class="linenos">10</span><span class="n">Rbeta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
-<span class="linenos">11</span>
-<span class="linenos">12</span>
-<span class="linenos">13</span><span class="n">d</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="c">%dimensionality of the problem</span>
-<span class="linenos">14</span><span class="c">%low for illustration</span>
-<span class="linenos">15</span>
-<span class="linenos">16</span>
-<span class="linenos">17</span><span class="c">%tracking of the solution</span>
-<span class="linenos">18</span><span class="n">SA</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">kron</span><span class="p">(</span><span class="n">Sbeta</span><span class="p">,</span><span class="w"> </span><span class="nb">eye</span><span class="p">(</span><span class="n">d</span><span class="p">));</span>
-<span class="linenos">19</span><span class="n">SAy</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">kron</span><span class="p">(</span><span class="n">Rbeta</span><span class="p">,</span><span class="w"> </span><span class="nb">eye</span><span class="p">(</span><span class="n">d</span><span class="p">));</span>
-<span class="linenos">20</span><span class="n">eta0</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="nb">randi</span><span class="p">(</span><span class="mi">201</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span><span class="w"> </span>
-<span class="linenos">21</span><span class="w">    </span><span class="p">(</span><span class="nb">randi</span><span class="p">(</span><span class="mi">31</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">60</span><span class="p">)</span><span class="o">.*</span><span class="nb">sign</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">rand</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)];</span>
-<span class="linenos">22</span>
-<span class="linenos">23</span><span class="n">shift</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="n">SAy</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">SA</span><span class="o">^</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">eta0</span><span class="p">;</span>
-<span class="linenos">24</span>
-<span class="linenos">25</span><span class="c">%% assign the quadratics</span>
-<span class="linenos">26</span><span class="n">M</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-<span class="linenos">27</span><span class="n">bstar_center</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-<span class="linenos">28</span><span class="n">bstar</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-<span class="linenos">29</span><span class="n">op_list</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-<span class="linenos">30</span>
-<span class="linenos">31</span>
-<span class="linenos">32</span><span class="k">for</span><span class="w"> </span><span class="nb">i</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">s</span>
-<span class="linenos">33</span><span class="w">    </span><span class="n">M</span><span class="p">{</span><span class="nb">i</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">rand_quad</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">(</span><span class="nb">i</span><span class="p">),</span><span class="w"> </span><span class="n">L</span><span class="p">(</span><span class="nb">i</span><span class="p">));</span>
-<span class="linenos">34</span><span class="w">    </span><span class="n">bstar_center</span><span class="p">{</span><span class="nb">i</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">randi</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w">    </span>
-<span class="linenos">35</span><span class="w">    </span><span class="n">bstar</span><span class="p">{</span><span class="nb">i</span><span class="p">}</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">@(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="n">bstar_center</span><span class="p">{</span><span class="nb">i</span><span class="p">}</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">shift</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
-<span class="linenos">36</span>
-<span class="linenos">37</span><span class="w">    </span><span class="n">op_list</span><span class="p">{</span><span class="nb">i</span><span class="p">}=</span><span class="w"> </span><span class="n">op_sim_quad</span><span class="p">(</span><span class="n">M</span><span class="p">{</span><span class="nb">i</span><span class="p">},</span><span class="w"> </span><span class="n">bstar</span><span class="p">{</span><span class="nb">i</span><span class="p">});</span><span class="w">   </span>
-<span class="linenos">38</span><span class="k">end</span>
-<span class="linenos">39</span>
-<span class="linenos">40</span><span class="c">%static parameters</span>
-<span class="linenos">41</span><span class="n">b0</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="mf">0.05</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="mf">0.1</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="mf">0.05</span><span class="p">];</span>
-<span class="linenos">42</span><span class="n">b1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="mf">0.05</span><span class="p">;</span>
-<span class="linenos">43</span><span class="n">b2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="mf">0.1</span><span class="p">;</span>
-<span class="linenos">44</span>
-<span class="linenos">45</span><span class="n">AK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Sbeta</span><span class="p">;</span>
-<span class="linenos">46</span><span class="n">BK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">b0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">);</span>
-<span class="linenos">47</span><span class="n">CK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">ones</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Rbeta</span><span class="p">;</span>
-<span class="linenos">48</span>
-<span class="linenos">49</span><span class="n">DK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">zeros</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
-<span class="linenos">50</span><span class="n">DK</span><span class="p">(</span><span class="k">end</span><span class="p">,</span><span class="w"> </span><span class="p">:)=</span><span class="w"> </span><span class="n">DK</span><span class="p">(</span><span class="k">end</span><span class="p">,</span><span class="w"> </span><span class="p">:)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b1</span><span class="p">;</span>
-<span class="linenos">51</span><span class="n">DK</span><span class="p">(:,</span><span class="w"> </span><span class="mi">1</span><span class="p">)=</span><span class="w"> </span><span class="n">DK</span><span class="p">(:,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b2</span><span class="p">;</span>
-<span class="linenos">52</span>
-<span class="linenos">53</span>
-<span class="linenos">54</span><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="n">AK</span><span class="p">,</span><span class="w"> </span><span class="n">BK</span><span class="p">,</span><span class="w"> </span><span class="n">CK</span><span class="p">,</span><span class="w"> </span><span class="n">DK</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-<span class="linenos">55</span>
-<span class="linenos">56</span>
-<span class="linenos">57</span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">op_list</span><span class="p">,</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
-<span class="linenos">58</span>
-<span class="linenos">59</span><span class="c">%% execute the algorithm</span>
-<span class="linenos">60</span>
-<span class="linenos">61</span><span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
-<span class="linenos">62</span><span class="n">sim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_sim</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
-<span class="linenos">63</span><span class="n">ssim</span><span class="p">=</span><span class="w"> </span><span class="n">sim</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
-<span class="linenos">64</span>
-<span class="linenos">65</span><span class="c">%% plot the outputs</span>
-<span class="linenos">66</span><span class="n">plt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">ssim</span><span class="p">);</span>
-<span class="linenos">67</span><span class="n">plt</span><span class="p">.</span><span class="n">plot_4</span><span class="p">();</span>
-</pre></div>
-</div>
 </section>
 
 
@@ -499,11 +431,11 @@ I &amp; I &amp; 0} \mat{c}{\eta_k}\end{split}\]</div>
       </div>
     </a>
     <a class="right-next"
-       href="../examples_analysis/index_example_analysis.html"
+       href="sim_switched.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Analysis of Algorithms</p>
+        <p class="prev-next-title">Time-Varying Delay</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

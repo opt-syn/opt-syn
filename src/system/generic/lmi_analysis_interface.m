@@ -1,14 +1,10 @@
 classdef lmi_analysis_interface < lmi_dispatch_interface
     %LMI_ANALYSIS_INTERFACE 
     %Linear Matrix Inequality constraints for analysis of algorithmic
-    %interconnections.
+    %interconnections.  
     %
     %
-    %this is overridden by specialized analysis routines for system types:
-    %   lti
-    %   periodic
-    %   switched robust
-    %   switched jump
+    %this is overridden by specialized analysis routines for system types.   
     
     properties
        regcl;  %closed-loop regulator equation       

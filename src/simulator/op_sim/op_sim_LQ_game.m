@@ -97,7 +97,7 @@ classdef op_sim_LQ_game< op_sim_interface
         end
 
         function z = bw(obj, k, D, v, param)
-            %backwards evaluation of an psudogradient, generalization of a 
+            %backwards evaluation of an pseudogradient, generalization of a 
             %proximal evaluation with preconditioner D                      
             %
             %Args: 
@@ -109,51 +109,13 @@ classdef op_sim_LQ_game< op_sim_interface
             %Returns:
             %   z:       the z such that z = (I - D F)^(-1)(v)
 
-            z = zeros(size(v));
-
-            %coordinate dimensions
-            N = length(obj.n);
-
-            for i = 1:N
-                ind_curr = (1:obj.n(i)) + sum(obj.n(1:i-1));
-                ind_other = setdiff(1:(sum(obj.n)), ind_curr);
             
 
-                %index payoff matrices
-                Q_self = obj.Q_all(ind_curr, ind_curr);
-                Q_other= obj.Q_all(ind_curr, ind_other);      
-                b_self = obj.b_all(ind_curr);
-        
-                %index vectors
-                v_self = v(ind_curr);
-                v_other= v(ind_other);
-        
-                prox_v_curr = obj.LQ_prox_agent(D, v_self, v_other, Q_self, Q_other, b_self);
-        
-                z(ind_curr) = prox_v_curr;
-            end
+            Dkron = kron(eye(obj.blocksize(v)), D);
+            z = (obj.Q_all + Dkron) \ ( Dkron * v - obj.b_all);
+
+
         end
-
-        function zi = LQ_prox_agent(obj, D, v_self, v_other, Q_self, Q_other, b_self)
-            %prox operator for the individual agent i                      
-            %
-            %Args: 
-            %   D:       prox parameter
-            %   v_self:  current agent input to oracle
-            %   v_other: other agents input to oracle
-            %   Q_self:  payoff matrix based on self
-            %   Q_other: payoff matrix based on others
-            %   b_self:  payoff affine based on self
-            %
-            %Returns:
-            %   zi:       the zi such that zi = (I - D J_i)^(-1)(v)
-
-            Dkron = kron(eye(obj.blocksize(v_self)), D);
-            ns = length(v_self);
-            vec_t = Dkron \ v_self - Q_other*v_other- b_self;
-            zi = (Dkron \ eye(ns) + Q_self) \ vec_t;
-        end
-
 
         function f_out = f(obj, k, z, param)
             %payoff functions of the game

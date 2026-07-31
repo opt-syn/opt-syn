@@ -175,9 +175,11 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr_game.html">Nash Equilibrium Seeking</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_switched.html">Time-Varying Delays</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1174,30 +1176,9 @@ equilibrium of the game.</p>
 
 </dd>
 <dt>Method Summary</dt><dd><dl class="mat method">
-<dt class="sig sig-object mat" id="simulator.op_sim.op_sim_LQ_game.LQ_prox_agent">
-<span class="sig-name descname"><span class="pre">LQ_prox_agent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">D</span></em>, <em class="sig-param"><span class="pre">v_self</span></em>, <em class="sig-param"><span class="pre">v_other</span></em>, <em class="sig-param"><span class="pre">Q_self</span></em>, <em class="sig-param"><span class="pre">Q_other</span></em>, <em class="sig-param"><span class="pre">b_self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#simulator.op_sim.op_sim_LQ_game.LQ_prox_agent" title="Link to this definition">#</a></dt>
-<dd><p>prox operator for the individual agent i</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>D</strong> – prox parameter</p></li>
-<li><p><strong>v_self</strong> – current agent input to oracle</p></li>
-<li><p><strong>v_other</strong> – other agents input to oracle</p></li>
-<li><p><strong>Q_self</strong> – payoff matrix based on self</p></li>
-<li><p><strong>Q_other</strong> – payoff matrix based on others</p></li>
-<li><p><strong>b_self</strong> – payoff affine based on self</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>zi</strong> – the zi such that zi = (I - D J_i)^(-1)(v)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="mat method">
 <dt class="sig sig-object mat" id="simulator.op_sim.op_sim_LQ_game.bw">
 <span class="sig-name descname"><span class="pre">bw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">k</span></em>, <em class="sig-param"><span class="pre">D</span></em>, <em class="sig-param"><span class="pre">v</span></em>, <em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#simulator.op_sim.op_sim_LQ_game.bw" title="Link to this definition">#</a></dt>
-<dd><p>backwards evaluation of an psudogradient, generalization of a
+<dd><p>backwards evaluation of an pseudogradient, generalization of a
 proximal evaluation with preconditioner D</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
