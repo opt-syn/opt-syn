@@ -13,7 +13,7 @@ The expression for PGD with time-delays is
 ```{math}
 \begin{align*}
  \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &= \mat{c|cc}{I & -\gamma I & -\gamma I \hl I &0 & 0 \\
- I & -\gamma I & -\gamma I  }   \mat{c}{x_{k} \hl w_{k-h(k)}^1 \\ w_k^2}, & \mat{c}{w_{k}^1 \\ w_k^2} \in  \mat{c}{\partial f(z_k^1) \\  \partial I_{\norm{\cdot}_\infty \leq 10}(z_k^2)}
+ I & -\gamma I & -\gamma I  }   \mat{c}{x_{k} \hl w_{k-h(k)}^1 \\ w_k^2}, & \mat{c}{w_{k}^1 \\ w_k^2} \in  \mat{c}{\nabla f(z_k^1) \\  \partial I_{\norm{\cdot}_\infty \leq 10}(z_k^2)}
 \end{align*}.
 ```
 
@@ -23,7 +23,7 @@ The delay  $h(k)$ is bounded between 0 and 3 steps at all $h(k)$. It is  tempora
 *  - Type
    - Rule
 *  -  Periodic
-   -  $h(k)$ increases by 1, and drops to 0 if $h(k)=0$
+   -  $h(k)$ increases by 1, and drops to 0 if $h(k)=0$.
 *  - Snap
    -  $h(k)$ either increases by 1 or drops to 0, but $h(k+1)=0$ always holds if $h(k)=3$.
 *  - Contiguous
