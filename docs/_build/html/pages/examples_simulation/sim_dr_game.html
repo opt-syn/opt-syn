@@ -48,8 +48,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'pages/examples_simulation/sim_dr_game';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Noisy Douglas Rachford" href="sim_dr.html" />
-    <link rel="prev" title="Simulation of Algorithms" href="index_example_simulation.html" />
+    <link rel="next" title="Channel Memory" href="sim_channel_memory_symmetric.html" />
+    <link rel="prev" title="Noisy Douglas Rachford" href="sim_dr.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -174,11 +174,12 @@
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../examples.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="index_example_simulation.html">Simulation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Nash Equilibrium Seeking</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Nash Equilibrium Seeking</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sim_channel_memory_symmetric.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sim_bind.html">Repeated Evaluations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sim_switched.html">Time-Varying Delays</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -385,13 +386,6 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="nash-equilibrium-seeking">
 <h1>Nash Equilibrium Seeking<a class="headerlink" href="#nash-equilibrium-seeking" title="Link to this heading">#</a></h1>
-<p>The Douglas-Rachford algorithm is a procedure for solving a two-operator inclusion problem <a class="footnote-reference brackets" href="#footcite-douglas1956numerical" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.
-It is characterized by parameters <span class="math notranslate nohighlight">\(\gamma, \lambda &gt; 0\)</span>, and can be described as the interconnection</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
- \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &amp;= \mat{c|cc}{I &amp; -\gamma \lambda I &amp; -\gamma \lambda I \hl I &amp;-\gamma I &amp; 0 \\
- I &amp; -2\gamma I &amp; -\gamma I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, &amp; \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{F_1(z_k^1) \\  F_2(z_k^2)}.
-\end{align*}\end{split}\]</div>
 <p>This example involves finding a variational Nash Equilibrium of a Linear-Quadratic game.
 Four agents are interacting in a noncooperative manner.
 The individual agent decisions are each described in a vector <span class="math notranslate nohighlight">\(\beta_v \in \R^{5}\)</span> for <span class="math notranslate nohighlight">\(v \in \{1, \ldots, 4\}\)</span>. These decisions  are concatenated into a vector <span class="math notranslate nohighlight">\(\beta \in \R^{20}\)</span>.</p>
@@ -406,7 +400,7 @@ f_v(\beta) &amp;= \frac{1}{2} \beta^\top Q_v \beta + b_v^\top \beta + e_v, &amp;
 F_1 &amp;= \mat{c}{\partial_{\beta_1} f_1 \\ \partial_{\beta_2} f_2 \\ \partial_{\beta_3} f_3 \\ \partial_{\beta_4} f_4}.
 \end{align*}\end{split}\]</div>
 <p>The agent strategies are restricted such that <span class="math notranslate nohighlight">\(\norm{\beta}_{\infty} \leq 10\)</span>.
-The point <span class="math notranslate nohighlight">\(\beta^*\)</span> is a variational Nash Equilibrium if it satisfies the variational inequality</p>
+The point <span class="math notranslate nohighlight">\(\beta^*\)</span> is a variational Nash Equilibrium if it satisfies the variational inequality <a class="footnote-reference brackets" href="#footcite-kinderlehrer2000introduction" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
 <div class="math notranslate nohighlight">
 \[\langle F_1(\beta^*), \beta - \beta^* \rangle \geq 0, \qquad \forall \beta \ \text{with} \norm{\beta}_{\infty} \leq 10.\]</div>
 <p>Under this condition, no agent <span class="math notranslate nohighlight">\(v\)</span> will unilaterally change their decision <span class="math notranslate nohighlight">\(\beta_v\)</span> to decrease their individual objective. The variational inequality can be converted to an inclusion problem with <span class="math notranslate nohighlight">\(F_2 = \partial \mathbb{I}_{\norm{\cdot}_\infty \leq 10}\)</span></p>
@@ -469,9 +463,9 @@ The point <span class="math notranslate nohighlight">\(\beta^*\)</span> is a var
 </section>
 <hr class="footnotes docutils" />
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="footcite-douglas1956numerical" role="doc-footnote">
+<aside class="footnote brackets" id="footcite-kinderlehrer2000introduction" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
-<p>Jim Douglas and Henry H Rachford. On the Numerical Solution of Heat Conduction Problems in Two and Three Space Variables. <em>Transactions of the American mathematical Society</em>, 82(2):421–439, 1956.</p>
+<p>David Kinderlehrer and Guido Stampacchia. <em>An Introduction to Variational Inequalities and Their Applications</em>. SIAM, 2000.</p>
 </aside>
 </aside>
 
@@ -487,20 +481,20 @@ The point <span class="math notranslate nohighlight">\(\beta^*\)</span> is a var
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index_example_simulation.html"
+       href="sim_dr.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Simulation of Algorithms</p>
+        <p class="prev-next-title">Noisy Douglas Rachford</p>
       </div>
     </a>
     <a class="right-next"
-       href="sim_dr.html"
+       href="sim_channel_memory_symmetric.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Noisy Douglas Rachford</p>
+        <p class="prev-next-title">Channel Memory</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

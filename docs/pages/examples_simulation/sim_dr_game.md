@@ -1,15 +1,5 @@
 # Nash Equilibrium Seeking
 
-The Douglas-Rachford algorithm is a procedure for solving a two-operator inclusion problem {footcite}`douglas1956numerical`.
-It is characterized by parameters $\gamma, \lambda > 0$, and can be described as the interconnection
-```{math}
-\begin{align*}
- \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &= \mat{c|cc}{I & -\gamma \lambda I & -\gamma \lambda I \hl I &-\gamma I & 0 \\
- I & -2\gamma I & -\gamma I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{F_1(z_k^1) \\  F_2(z_k^2)}.
-\end{align*}
-```
-
-
 This example involves finding a variational Nash Equilibrium of a Linear-Quadratic game. 
 Four agents are interacting in a noncooperative manner. 
 The individual agent decisions are each described in a vector $\beta_v \in \R^{5}$ for $v \in \{1, \ldots, 4\}$. These decisions  are concatenated into a vector $\beta \in \R^{20}$. 
@@ -30,7 +20,7 @@ F_1 &= \mat{c}{\partial_{\beta_1} f_1 \\ \partial_{\beta_2} f_2 \\ \partial_{\be
 ```
 
 The agent strategies are restricted such that $\norm{\beta}_{\infty} \leq 10$. 
-The point $\beta^*$ is a variational Nash Equilibrium if it satisfies the variational inequality
+The point $\beta^*$ is a variational Nash Equilibrium if it satisfies the variational inequality {footcite}`kinderlehrer2000introduction`
 ```{math}
 \langle F_1(\beta^*), \beta - \beta^* \rangle \geq 0, \qquad \forall \beta \ \text{with} \norm{\beta}_{\infty} \leq 10.
 ```
