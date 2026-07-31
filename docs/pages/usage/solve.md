@@ -122,7 +122,7 @@ The `v_history` output is a cell array with 2 rows and  Niter columns. Each entr
 
 ##  Validation
 
-The {class}`opt_solution` structure contains information about the solution of analysis/synthesis. The solution is feasible if the following conditions are met
+The {class}`opt_solution` structure contains information about the solution of analysis/synthesis. The solution is feasible if the following conditions are met:
 | Name   |  Description  | Valid Condition |
 |----| ---- | ----- | 
 | `STATUS` | Feasibility of problem | `STATUS`$=0$ if feasible, `STATUS`$\neq 0$  if infeasible |
