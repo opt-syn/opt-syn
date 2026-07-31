@@ -471,6 +471,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             [sel, cs] = max( K_mask ==0, [], 2 );
             [uf, ff] = unique(cs, 'first');
             
+            [selv, csv] = max( K_mask ==0, [], 1 );
+            sel_blank = min(selv);
+
             coords= [uf, ff];
             
             coord_first = coords(2:end, :);
@@ -483,7 +486,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
             USE_LAST = obj.reduced || all(nxi~=0) || (size(coords, 1)==1);
             
-            %store the identity indexers            
+            %store the identity indexers   
+            %to be refactored
             nc = size(coord_first, 1);
             U = cell(nc+USE_LAST, 1);
             V = cell(nc+USE_LAST, 1);            
@@ -495,7 +499,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             end
             
             if USE_LAST
-                U{nc+1} = [sparse(sz(1)-coord_last+1, coord_last - 1),  speye(sz(1) - coord_last+1)];
+                U{nc+1} = [sparse(sz(1)-coord_last+1-sel_blank, coord_last - 1+sel_blank),  speye(sz(1) - coord_last+1 - sel_blank)];
                 hi = sz(2) - sum(cellfun(@(n) size(n, 1), V(1:end-1))); %not ideal
                 V{nc+1} = sparse(1:hi, sum(h_first) + (1:hi), ones(hi, 1), hi, sz(2));
             end

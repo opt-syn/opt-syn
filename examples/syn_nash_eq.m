@@ -35,13 +35,13 @@ end
 
  
 
-% d1 = [1, 0];
-% d2 = [1, 0];
-d1 = 0;
-d2 = 0;
+d1 = [1, 0];
+d2 = [1, 0];
+% d1 = 1;
+% d2 = 0;
 network = bridge_channel_delay(d1, d2, c);
 
-sys = opt_system(ops,  [], []);
+sys = opt_system(ops,  network, []);
 
 
 % rho = 0.95;
@@ -60,8 +60,8 @@ config.syn.reduced_order = true;
 config.tol.GX_max = 100;
 config.tol.GY_max = 100;
 if CONS
-    config.syn.D_mask = [1, 0; 1, 1]; 
-    % config.syn.D_mask = [0, 0; 1, 1]; 
+    % config.syn.D_mask = [1, 0; 1, 1]; 
+    config.syn.D_mask = [0, 0; 1, 1]; 
     % config.syn.D_mask = [1 0; 1, 1];
     
 else
