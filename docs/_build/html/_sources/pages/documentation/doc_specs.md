@@ -1,9 +1,9 @@
 # Performance Specifications
 
-A performance specification encodes a desired property of the algorithm as a
+A performance specification `spec` encodes a desired property of the algorithm as a
 constraint on the performance channel $(w_p, z_p)$ of the
-{doc}`generalized plant <plants/doc_genplant>`. In Analysis the property is verified;
-in Synthesis it is the property the returned algorithm is required to meet.
+{doc}`generalized plant <plants/doc_genplant>`. In Analysis, `spec` represents the  property to be  verified.
+In Synthesis, `spec` is the property that the returned algorithm should meet.
 
 The usage-facing
 walkthrough is on the

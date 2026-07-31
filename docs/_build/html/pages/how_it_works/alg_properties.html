@@ -226,7 +226,11 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr_game.html">Nash Equilibrium Seeking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_switched.html">Time-Varying Delays</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -439,7 +443,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence">Convergence</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance">Performance</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#well-posedness">Well-Posedness</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information-structure-and-evaluation">Information Structure and Evaluation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information-structure">Information Structure</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kronecker-structure">Kronecker Structure</a></li>
 </ul>
             </nav>
@@ -506,8 +510,8 @@
 The interconnection is well-posed if  <span class="math notranslate nohighlight">\(H\)</span> is globally defined and continuous. Well-posedness implies that the sequence <span class="math notranslate nohighlight">\((x_k, w_k, z_k)_{k \in \N}\)</span> exists and is unique for every  initial state <span class="math notranslate nohighlight">\(x_0\)</span>. A well-posed algorithm therefore satisfies the explicit relation <span class="math notranslate nohighlight">\(x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)\)</span> for all <span class="math notranslate nohighlight">\(k\)</span>.</p>
 <p><span style="color:#5D93BF">opt</span>-syn only studies well-posed algorithms. Non-well-posed algorithms such as subgradient descent and Frank-Wolfe are currently out of scope.</p>
 </section>
-<section id="information-structure-and-evaluation">
-<h2>Information Structure and Evaluation<a class="headerlink" href="#information-structure-and-evaluation" title="Link to this heading">#</a></h2>
+<section id="information-structure">
+<h2>Information Structure<a class="headerlink" href="#information-structure" title="Link to this heading">#</a></h2>
 <p>The well-posed algorithmic interconnection <span class="math notranslate nohighlight">\(x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)\)</span> is a nonlinear iterative procedure. Computation of  <span class="math notranslate nohighlight">\(x_{k+1}\)</span> from <span class="math notranslate nohighlight">\(x_k\)</span> for general <span class="math notranslate nohighlight">\((F, \Dcl)\)</span> requires the solution of a nonlinear fixed-point equation, and may be computationally intractable. If <span class="math notranslate nohighlight">\(\Dcl\)</span> is block-lower-triangular, the system <span class="math notranslate nohighlight">\((\Acl, \Bcl, \Ccl, \Dcl)\)</span> can be then partitioned as</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align}
@@ -516,7 +520,7 @@ The interconnection is well-posed if  <span class="math notranslate nohighlight"
    \Ccl_1 &amp; \Dcl_{11} &amp; 0 &amp;   \hdots &amp; 0\\
    \Ccl_2 &amp; \Dcl_{21 } &amp; \Dcl_{22} &amp;   \hdots &amp; 0\\
    \vdots &amp; \vdots &amp; \vdots  &amp; \ddots &amp; \vdots\\
-   \Ccl_s &amp; \Dcl_{s1} &amp; \Dcl_{s2} &amp; \hdots &amp; \Dcl_{ss}} \mat{c}{x_{k} \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s}
+   \Ccl_s &amp; \Dcl_{s1} &amp; \Dcl_{s2} &amp; \hdots &amp; \Dcl_{ss}} \mat{c}{x_{k} \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s}.
 \end{align}\end{split}\]</div>
 <p>The information structure of the algorithm is the block-sparsity pattern of <span class="math notranslate nohighlight">\(\Dcl\)</span>.</p>
 <ul class="simple">
@@ -623,7 +627,7 @@ The interconnection is well-posed if  <span class="math notranslate nohighlight"
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence">Convergence</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance">Performance</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#well-posedness">Well-Posedness</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information-structure-and-evaluation">Information Structure and Evaluation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information-structure">Information Structure</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kronecker-structure">Kronecker Structure</a></li>
 </ul>
   </nav></div>

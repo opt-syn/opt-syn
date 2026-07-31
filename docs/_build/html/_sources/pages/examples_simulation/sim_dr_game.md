@@ -31,7 +31,7 @@ Under this condition, no agent $v$ will unilaterally change their decision $\bet
 In this example, the affine pseudogradient operator $F_1$ has strong monotonicity constant $\mu = 1.4785$ and cocoercivity constant $\beta = 0.1605$. This game therefore has a unique variational Nash Equilibrium $\beta^*$. 
 
 
-We apply the Douglas Rachford algorithm with parameters $\gamma = 1, \lambda =1$ to find $\beta^*$. Figure [1](#dr-game) plots algorithm trajectories starting from the initial condition $x_0 = 0$. The bottom-left plot displays the payoffs $\{f_v(\beta_k)\}_{v =1}^4$ of the individual agents.
+The Douglas Rachford algorithm with parameters $\gamma = 1, \lambda =1$ is used to find $\beta^*$. Figure [1](#dr-game) plots algorithm trajectories starting from the initial condition $x_0 = 0$. The bottom-left plot displays the payoffs $\{f_v(\beta_k)\}_{v =1}^4$ of the individual agents.
 
 :::{figure} _static/dr_game_dark.png
 :align: center

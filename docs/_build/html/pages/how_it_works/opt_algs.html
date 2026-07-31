@@ -226,7 +226,11 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr_game.html">Nash Equilibrium Seeking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_switched.html">Time-Varying Delays</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -498,11 +502,11 @@
  \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &amp;= \mat{c|cc}{I &amp; -\gamma \lambda I &amp; -\gamma \lambda I \hl I &amp;-\gamma I &amp; 0 \\
  I &amp; -2\gamma I &amp; -\gamma I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, &amp; \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{F_1(z_k^1) \\ F_2(z_k^2)}
 \end{align*}\end{split}\]</div>
-<p>We visualize executions of the Douglas-Rachford algorithm to solve an optimization problem <span class="math notranslate nohighlight">\(\min f_1(\beta) + \norm{\beta}_1\)</span>:</p>
-<figure class="align-default" id="id2">
-<img alt="Trajectories of Douglas-Rachford Algorithms" src="../../_images/dr_trace.webp" />
+<p>Figure <a class="reference internal" href="#fig-dr"><span class="xref myst">1</span></a> visualizes  executions of the Douglas-Rachford algorithm to solve the optimization problem <span class="math notranslate nohighlight">\(\min f_1(\beta) + \norm{\beta}_1\)</span>.</p>
+<figure class="align-default" id="fig-dr">
+<img alt="Multiple trajectories of the Douglas-Rachford Algorithm" src="../../_images/dr_trace.webp" />
 <figcaption>
-<p><span class="caption-text">The optimal solution is the black circle. The visualized curves are the outputs <span class="math notranslate nohighlight">\(\{z_k^2\}_{k \in \N}\)</span> starting from random initial conditions <span class="math notranslate nohighlight">\(x_0\)</span>.</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
+<p><span class="caption-text"><em>Figure 1:</em> The optimal solution is the black circle. The visualized curves are the outputs <span class="math notranslate nohighlight">\(\{z_k^2\}_{k \in \N}\)</span> starting from random initial conditions <span class="math notranslate nohighlight">\(x_0\)</span>.</span><a class="headerlink" href="#fig-dr" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <!-- :scale: 50 % -->
@@ -527,12 +531,11 @@
 <h3>Subdifferentials<a class="headerlink" href="#subdifferentials" title="Link to this heading">#</a></h3>
 <p>The most basic subdifferential operator class is the subdifferential of a proper, closed, convex (p.c.c.) function.
 The subdifferential class that we use are characterized by constants <span class="math notranslate nohighlight">\(-\infty &lt; m &lt; L &lt; \infty\)</span>. The class of functions <span class="math notranslate nohighlight">\(\mathcal{S}_{m, L}\)</span> is the set where <span class="math notranslate nohighlight">\(f - \frac{m}{2}\norm{\cdot}_2^2\)</span> is p.c.c, and <span class="math notranslate nohighlight">\(\frac{L}{2} \norm{\cdot} - f\)</span> is p.c.c. if <span class="math notranslate nohighlight">\(L &lt; \infty\)</span>.</p>
-<p>We support</p>
+<p><span style="color:#5D93BF">opt</span>-syn supports</p>
 <ul class="simple">
 <li><p>Subdifferentials of <span class="math notranslate nohighlight">\(\mathcal{S}_{m, L}\)</span></p></li>
 <li><p>Subdifferentials of quadratics in  <span class="math notranslate nohighlight">\(\mathcal{S}_{m, L}\)</span></p></li>
 </ul>
-<!-- - Subdifferentials of known quadratics ($z \mapsto m z - b$) -->
 </section>
 </section>
 </section>

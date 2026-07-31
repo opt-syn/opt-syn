@@ -28,53 +28,6 @@ Choosing $\rho < 1$ imposes that the property holds at an exponential rate.
 Refer to {doc}`Performance Specifications <../../documentation/doc_specs>` for information about the specifications and their interfaces. 
 
 
-
-<!-- ## Usage
-
-A performance specification for Analysis or Synthesis is built from a cell of individual specifications.
-
-```matlab
-% linear convergence at rate rho (no performance channel needed)
-rho = 0.92;
-spec1 = spec_stability(rho);
-
-% l2 gain on an existing performance channel with indices (iwp, izp):
-GAIN = 10;
-spec2 = spec_e2e(GAIN, iwp, izp);
-
-%Impose only linear convergence
-specs = {spec1};
-
-%Impose both
-specs = {spec1, spec2};
-
-% l2 gain at 
-spec2_rho = spec_e2e(GAIN, iwp, izp);
-spec2.rho = rho;
-specs = 
-``` -->
-
-<!-- A specification is built, optionally flagged as the optimization `target`, and passed to -->
-<!-- an Analysis or Synthesis {doc}`manager <../../documentation/doc_manager>` together with the -->
-<!-- IQC `order`:
-
-```matlab
-rho = 0.92;
-
-% linear convergence at rate rho (no performance channel needed)
-perf1 = spec_stability(rho);
-
-% ...or an l2 gain on an existing performance channel with indices (iwp, izp):
-perf2 = spec_e2e(GAIN, iwp, izp);
-perf2.target = true;             % minimize the gain during the solve
-
-% solve once,
-sol = man_ana.solve_single(order, perf);
-
-%or bisect for the best rate/gain
-[sol_best, v_range] = man_ana.bisect(order, perf, bisect_opts());
-``` -->
-
 ## Linear Convergence
 
 This imposes exponential stability of the iterates at rate $\rho$. For every
@@ -159,8 +112,6 @@ state.
 ```
 
 If $\rho \in (0, 1)$, then &#8467;2 stability implies an Input-to-State Stability property {footcite}`sontag1989smooth`, {footcite}`schwenkel2026multi` 
-<!-- This  which constitutes an input-to-state stability condition. There is no performance -->
-<!-- output; only a bounded penalty on $w_p$ is imposed, giving -->
 ```{math}
 \begin{align*}
 \norm{x_k - x^*(x_0)}_2^2 \leq \gamma\, \rho^{2k} \norm{x_0 - x^*(x_0)}_2^2
@@ -175,7 +126,7 @@ disturbance vanishes ($w_p= 0$).
 
 Use this when you need the iterates to stay
 bounded and convergent under noise but do not need a specific gain; for a gain bound, use
-$\ell_2$ Gain instead.
+$\ell_2$ gain instead.
 
 ```matlab
 perf = spec_l2(iwp);        % no performance output; optional bound: spec_l2(iwp, MU)
@@ -263,13 +214,8 @@ specs = {perf_erg};
 
 Ergodic convergence is weaker than linear convergence. It can certify properties of convex optimization algorithms, whereas establishment of global linear convergence requires strong convexity. Ergodic convergence should only be used if all performance specifications have $\rho=1$. 
 
-
-
-
-
-
 :::{warning}
-In the current implementation, Ergodic convergence requires nonstrict feasibility of linear matrix inequalities. In numerical experiments, the minimal eigenvalue of a positive-definite-constrained block is $\approx (-10^{-12})$, which is not greater than or equal to  $0$. Future developments will hopefully patch this feasibility issue, in the meantime use with caution.
+In the current implementation, Ergodic convergence requires nonstrict feasibility of linear matrix inequalities. In numerical experiments, the maximal eigenvalue of a negative-semidefinite-constrained block is $\approx 10^{-12}$, which is not less than or equal to  $0$. Future developments will try to patch this feasibility issue, in the meantime use with caution.
 :::
 
 ## Performance for Time-Varying Dynamical Systems

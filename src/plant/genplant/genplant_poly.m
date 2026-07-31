@@ -8,7 +8,7 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
     % end
 
     methods (Access=public)
-        function obj = genplant_poly(P_orig)
+        function obj = genplant_poly(P_orig, n)
             %Constructor
             %
             %Args:
@@ -30,7 +30,7 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
                         P{i} = P_orig{i};
                     end            
                 end
-                n = P{1}.dump_dim();
+                n = P{1}.dump_dim();                
             end
 
             obj@genplant(P, n);

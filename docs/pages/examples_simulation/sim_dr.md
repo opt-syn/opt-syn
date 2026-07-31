@@ -9,7 +9,7 @@ It is characterized by parameters $\gamma, \lambda > 0$, and can be described as
 \end{align*}
 ```
 
-We  use Douglas-Rachford to solve a composite optimization problem
+The Douglas-Rachford algorithm is used in this example to solve a composite optimization problem
 ```{math}
 \beta^* \in \argmin_{\norm{\beta}_\infty \leq 10} f(\beta)
 ```
@@ -20,7 +20,7 @@ The necessary optimality condition for this problem is posed using the operators
 ```
 
 ## No Noise
-We execute the Douglas-Rachford scheme with parameters $\gamma = 0.4, \lambda = 1$ for a problem where $f$ is a convex quadratic (eigenvalue bounds $m = 1, L = 10$). Figure [1](#dr-clean) plots a trajectory of Douglas-Rachford starting from $x_0 = 0$.
+The Douglas-Rachford scheme with parameters $\gamma = 0.4, \lambda = 1$ is executed for a problem where $f$ is a convex quadratic (eigenvalue bounds $m = 1, L = 10$). Figure [1](#dr-clean) plots a trajectory of Douglas-Rachford starting from $x_0 = 0$.
 
 :::{figure} _static/dr_clean_dark.png
 :align: center
@@ -38,7 +38,7 @@ We execute the Douglas-Rachford scheme with parameters $\gamma = 0.4, \lambda = 
 
 
 ## With Noise
-We then add noise to the Douglas-Rachford scheme. The performance input $w_p$ introduces additive noise
+Noise is then added to the Douglas-Rachford execution. The performance input $w_p$ introduces additive noise
 at the output of the subgradient evaluations. The performance output $z_p$ is the consensus error $\pm \frac{1}{2}(z_1 - z_2)$. 
 The {doc}`System <../usage/problem_formulation/system/index_system>` representing Douglas-Rachford with this noise structure is
 ```{math}

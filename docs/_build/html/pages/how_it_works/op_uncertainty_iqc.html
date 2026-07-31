@@ -222,7 +222,11 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr_game.html">Nash Equilibrium Seeking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_switched.html">Time-Varying Delays</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -504,7 +508,6 @@ M_1 &amp;:= \mat{c}{0 &amp; I \\ I &amp; 0}, \qquad X_1 = 0, \qquad \ell_1  := \
 <li><p><span class="math notranslate nohighlight">\(\lambda \in \Lambda(\rho)\)</span>.</p></li>
 </ol>
 <p>The interconnection of linear systems <span class="math notranslate nohighlight">\((\Psi(\lambda), \ell, G)\)</span> with description</p>
-<!-- Assume that each  $F \in \F$ satisfies a known family of IQCs $(\Psi(\blam), M(\blam), X(\blam))$ with respect to signal transformation matrix $\ell$: -->
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align}
 \mat{c}{\ov{x}_{k+1} \hl \ov z_k} &amp;= \mat{c|c}{\rhoi \Acl &amp; \rhoi \Bcl \hl \Ccl &amp; \Dcl}\mat{c}{\ov{x}_k \\ \ov w_k},\\
@@ -515,7 +518,6 @@ C_\psi(\lambda) &amp; D_\psi^p(\lambda) &amp; D_\psi^q(\lambda)} \mat{c}{\psi_k 
 <p>is summarized as the system</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}G(\lambda) := \mat{c}{\psi_{k+1} \\ \ov{x}_{k+1} \hl \ov r_k} &amp;= \mat{c|c}{A(\blam) &amp; B(\blam) \hl C(\blam)&amp; D(\blam)} \mat{c}{\psi_k \\ \ov{x}_k \hl \ov q_k}.\end{split}\]</div>
-<!-- Given any trajectory $(\ov x, \ov w, \ov z)$ of $(F_0, G)$, the input-output sequences $(\ov q, \ov p)$ satisfy the IQC $(\Psi(\lambda), M(\lambda), X(\lambda))$ for all $\lambda$ in a known constraint region $\Lambda(\rho).  -->
 <p>A sufficient condition for  <span class="math notranslate nohighlight">\(\ov x\)</span> to be bounded for all <span class="math notranslate nohighlight">\(F \in \F\)</span> is if there exists a symmetric matrix  <span class="math notranslate nohighlight">\(P\)</span> and coefficients <span class="math notranslate nohighlight">\(\blam\)</span> such that</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\mat{cc}{I &amp; 0 \\

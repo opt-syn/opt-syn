@@ -63,14 +63,14 @@ As an example, the  interconnection representation of the Douglas-Rachford algor
 ```
 
 
-We visualize executions of the Douglas-Rachford algorithm to solve an optimization problem $\min f_1(\beta) + \norm{\beta}_1$:
+Figure [1](#fig-dr) visualizes  executions of the Douglas-Rachford algorithm to solve the optimization problem $\min f_1(\beta) + \norm{\beta}_1$.
 
-```{figure} img/dr_trace.webp
-:alt: Trajectories of Douglas-Rachford Algorithms
-:label: fig_dr
+:::{figure} img/dr_trace.webp
+:alt: Multiple trajectories of the Douglas-Rachford Algorithm
+:name: fig_dr
 
- The optimal solution is the black circle. The visualized curves are the outputs $\{z_k^2\}_{k \in \N}$ starting from random initial conditions $x_0$.
-```
+ *Figure 1:* The optimal solution is the black circle. The visualized curves are the outputs $\{z_k^2\}_{k \in \N}$ starting from random initial conditions $x_0$.
+:::
 <!-- :scale: 50 % -->
 
 
@@ -98,8 +98,6 @@ The most basic subdifferential operator class is the subdifferential of a proper
 The subdifferential class that we use are characterized by constants $-\infty < m < L < \infty$. The class of functions $\mathcal{S}_{m, L}$ is the set where $f - \frac{m}{2}\norm{\cdot}_2^2$ is p.c.c, and $\frac{L}{2} \norm{\cdot} - f$ is p.c.c. if $L < \infty$. 
 
 
-We support 
+{{osyn}} supports
 - Subdifferentials of $\mathcal{S}_{m, L}$
 - Subdifferentials of quadratics in  $\mathcal{S}_{m, L}$
-<!-- - Subdifferentials of known quadratics ($z \mapsto m z - b$) -->
-

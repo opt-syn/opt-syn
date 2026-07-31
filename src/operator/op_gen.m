@@ -79,26 +79,25 @@ classdef op_gen  < operator_interface
 
 
             mu = obj.get_mu();
-            
-            %find a signal  transformation such that zero is a feasible
-            %input-output pair.
 
-    
+            L = inf;
+            if ~isempty(obj.cocoercive)
+                L = 1/obj.cocoercive;
+            elseif ~isempty(obj.lipschitz)
+                L = obj.Lipschitz;
+            end
 
             if isempty(mu)
-                beta = obj.cocoercive;
-                if isempty(beta)
-                    loop_out = [zeros(reps), eye(reps); 
-                                eye(reps), zeros(reps)];
-                else
-                    loop_out = [-beta*eye(reps), eye(reps); 
-                                eye(reps), zeros(reps)];
-                end
-
-            else
-                loop_out = [zeros(reps), eye(reps); 
-                            eye(reps), mu*eye(reps)];
+                mu = 0;
             end
+            sigma = 1/(L-mu);
+
+
+            %op_sml is contained in general set-valued maps
+
+            loop_out = [-sigma*eye(reps), eye(reps); 
+                        eye(reps), mu*eye(reps)];
+        
            
         end
 
@@ -121,20 +120,22 @@ classdef op_gen  < operator_interface
 
 
 
-            if isempty(mu)
-                beta = obj.cocoercive;
-                if isempty(beta)
-                    loop_orig = [eye(reps), zeros(reps); 
-                        zeros(reps), eye(reps)];
-                else
-                    loop_orig = [eye(reps), -beta*eye(reps); 
-                        zeros(reps), eye(reps)];
-                end
+            mu = obj.get_mu();
 
-            else
-                loop_orig = [eye(reps), zeros(reps); 
-                    -mu*eye(reps), eye(reps)];
+            L = inf;
+            if ~isempty(obj.cocoercive)
+                L = 1/obj.cocoercive;
+            elseif ~isempty(obj.lipschitz)
+                L = obj.Lipschitz;
             end
+
+            if isempty(mu)
+                mu = 0;
+            end
+            sigma = 1/(L-mu);
+            loop_orig = [(sigma*mu + 1)*eye(reps), -sigma*eye(reps); 
+                    -mu*eye(reps), eye(reps)];
+            
 
             loop_out = inv(loop_orig);
 

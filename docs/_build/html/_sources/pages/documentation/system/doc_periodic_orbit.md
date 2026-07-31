@@ -1,4 +1,4 @@
-# Periodic-orbit Systems
+# Periodic-Orbit Systems
 
 
 A Periodic-orbit system has a representation

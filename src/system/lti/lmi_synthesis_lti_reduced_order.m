@@ -812,10 +812,16 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             ny = length(iy);
 
 
+            if obj.config.gen.same_rho
+                rho_common = vars_rec.rho;
+            else
+                rho_common = 1;
+            end
+            rhoi = 1/rho_common;
 
             %augmented system from the regulation conditions
             [S, R] = obj.reg.exosystem();
-            Aaug = [A, B(:, id); zeros(ns, n),  S];            
+            Aaug = [A, B(:, id); zeros(ns, n),  rhoi* S];            
             Bpaug = [B(:, iw); zeros(ns, length(iw))];
             Caug = [C(iy, :), D(iy, id)];
                         
@@ -912,8 +918,11 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             Ckt = Ck + Gam*Z;
             Dkt = Dk;
 
-            LblockI = [eye(n),  [zeros(nf, ns); Pi], B(:, iu);
-                zeros(ns, n),  eye(ns), zeros(ns, nu);
+
+    
+
+            LblockI = [eye(n),  [zeros(nf, ns); rhoi* Pi], rhoi* B(:, iu);
+                zeros(ns, n),  rhoi*eye(ns), zeros(ns, nu);
                 zeros(nu, n), zeros(nu, ns), eye(nu)];
 
             Cblock = [Akt, Bkt;
