@@ -78,25 +78,70 @@ classdef op_gen  < operator_interface
 
 
 
-            % mu = obj.get_mu();
-            % loop_out = eye(2*reps);
-
-            % if isempty(mu)
-            %     beta = obj.cocoercive;
-            %     if isempty(beta)
-            %         loop_out = eye(2*reps);
-            %     else
-            %         loop_out = [eye(reps), -beta*eye(reps); zeros(reps), eye(reps)];
-            %     end
-            % 
-            % else
-            %     loop_out = [eye(reps), zeros(reps); -mu*eye(reps), eye(reps)];
-            % end
-            % 
-
-            loop_out = [zeros(reps), eye(reps); eye(reps), zeros(reps)];
+            mu = obj.get_mu();
             
+            %find a signal  transformation such that zero is a feasible
+            %input-output pair.
+
+    
+
+            if isempty(mu)
+                beta = obj.cocoercive;
+                if isempty(beta)
+                    loop_out = [zeros(reps), eye(reps); 
+                                eye(reps), zeros(reps)];
+                else
+                    loop_out = [-beta*eye(reps), eye(reps); 
+                                eye(reps), zeros(reps)];
+                end
+
+            else
+                loop_out = [zeros(reps), eye(reps); 
+                            eye(reps), mu*eye(reps)];
+            end
+           
         end
+
+        function loop_out = build_loop_mat(obj, reps)
+            %BUILD_LOOP_MAT construct the coordinate transformation matrix
+            %in the IQCs
+            %
+            %Args:
+            %   reps:    number of repetitions of the operator (from the bind)
+            %
+            %Returns:
+            %   loop_out: coordinate transformation matrix for the operator
+
+
+
+            mu = obj.get_mu();
+
+            %find a signal  transformation such that zero is a feasible
+            %input-output pair.
+
+
+
+            if isempty(mu)
+                beta = obj.cocoercive;
+                if isempty(beta)
+                    loop_orig = [eye(reps), zeros(reps); 
+                        zeros(reps), eye(reps)];
+                else
+                    loop_orig = [eye(reps), -beta*eye(reps); 
+                        zeros(reps), eye(reps)];
+                end
+
+            else
+                loop_orig = [eye(reps), zeros(reps); 
+                    -mu*eye(reps), eye(reps)];
+            end
+
+            loop_out = inv(loop_orig);
+
+        end
+
+
+
 
         function [psi1, psi2] = build_psi(obj, vars, order, reps)
             %BUILD_PSI construct the filter for the general operator                        
@@ -218,18 +263,11 @@ classdef op_gen  < operator_interface
 
             zz = zeros(sz);
             
-            loop_mat = eye(2*sz);
-            % loop_mat = inv(obj.build_loop(sz));
-            % mu = obj.get_mu();
-            % 
-            % %loop transformation for the strong monotonicity (?)
-            % %make sure that 0 is in the set of considered uncertainties
-            % if isempty(mu)
-            %     loop_mat = eye(sz*2);
-            % else
-            %     % loop_mat = kron([mu, 1; 1, 0], eye(sz));
-            %     loop_mat = kron([1, 0; mu, 1], eye(sz));                
-            % end
+            
+
+            loop_mat = obj.build_loop_mat(sz);
+
+            
 
             cost = zeros(2*sz);
             
@@ -243,7 +281,7 @@ classdef op_gen  < operator_interface
                             mu = prop{p, 2};
                             % M12 = M12 + cDBM;
                             Mcurr = [-csym * (mu), cDBM; cDBM', zz];
-                            Mloop = Mcurr;
+                            Mloop = loop_mat' * Mcurr * loop_mat;
 
 
                             % M22 = M22 - (cDBM + cDBM') * (mu); 
