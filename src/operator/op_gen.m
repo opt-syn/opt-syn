@@ -78,23 +78,23 @@ classdef op_gen  < operator_interface
 
 
 
-            mu = obj.get_mu();
+            % mu = obj.get_mu();
+            % loop_out = eye(2*reps);
 
+            % if isempty(mu)
+            %     beta = obj.cocoercive;
+            %     if isempty(beta)
+            %         loop_out = eye(2*reps);
+            %     else
+            %         loop_out = [eye(reps), -beta*eye(reps); zeros(reps), eye(reps)];
+            %     end
+            % 
+            % else
+            %     loop_out = [eye(reps), zeros(reps); -mu*eye(reps), eye(reps)];
+            % end
+            % 
 
-            if isempty(mu)
-                beta = obj.cocoercive;
-                if isempty(beta)
-                    loop_out = eye(2*reps);
-                else
-                    loop_out = [eye(reps), -beta*eye(reps); zeros(reps), eye(reps)];
-                end
-
-            else
-                loop_out = [eye(reps), zeros(reps); -mu*eye(reps), eye(reps)];
-            end
-            
-
-            % loop_out = [zeros(reps), eye(reps); eye(reps), mu*eye(reps)];
+            loop_out = [zeros(reps), eye(reps); eye(reps), zeros(reps)];
             
         end
 
@@ -218,7 +218,8 @@ classdef op_gen  < operator_interface
 
             zz = zeros(sz);
             
-            loop_mat = inv(obj.build_loop(sz));
+            loop_mat = eye(2*sz);
+            % loop_mat = inv(obj.build_loop(sz));
             % mu = obj.get_mu();
             % 
             % %loop transformation for the strong monotonicity (?)
@@ -239,9 +240,9 @@ classdef op_gen  < operator_interface
                 csym = (cDBM+cDBM');
                     switch prop{p, 1}
                         case 'monotone'
-                            % mu = prop{p, 2};
+                            mu = prop{p, 2};
                             % M12 = M12 + cDBM;
-                            Mcurr = [zz, cDBM; cDBM', zz];
+                            Mcurr = [-csym * (mu), cDBM; cDBM', zz];
                             Mloop = Mcurr;
 
 
