@@ -11,10 +11,10 @@ Q_list = cell(N, 1);
 b_list = cell(N, 1);
 c_list = cell(N, 1);
 
-qscale = 1;
+qscale = 0.5;
 
 for i = 1:N
-    Q_curr = -qscale* rand(d, d);    
+    Q_curr = -qscale* randn(d, d);    
 
     Q_curr = Q_curr + Q_curr';
     
