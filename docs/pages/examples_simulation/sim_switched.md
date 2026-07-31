@@ -16,7 +16,7 @@ Without delays, PGD is described using a parameter $\gamma > 0$ by
 \end{align*}.
 ```
 
-We introduce a time-varying delay $h(k)$ after  evaluation of $\nabla f$. 
+A time-varying delay $h(k)$ is introduced after  evaluation of $\nabla f$. 
 The expression for PGD with time-delays is 
 ```{math}
 \begin{align*}
@@ -114,3 +114,4 @@ Figure [3](#delay-contiguous) plots the algorithm trajectory under contiguous ti
 :language: matlab
 ```
 
+Introducing a time-varying delay before evaluation of $\partial f$ as $z_{k-h(k)}^1$ instead of $w_{k-h(k)}^1$ fails the Regulator Equation requirement for algorithm convergence.

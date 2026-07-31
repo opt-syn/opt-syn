@@ -25,13 +25,17 @@ Analysis and Synthesis follow similar workflows:
 A first example involves a constrained optimization problem
 ```{math}
 \begin{align}
-\beta^* \in  \text{argmin}_{\beta \in \mathcal{Z}} f(\beta) 
+\beta^* \in  \text{argmin}_{\beta \in \mathcal{Z}} f(\beta). 
 \end{align}
 ```
 
-The [LASSO](https://en.wikipedia.org/wiki/Lasso_(statistics)) task in regression involves a convex quadratic $f$, and an  $L_1$ ball for   $\mathcal{Z}$.
 
-The set $\mathcal{Z}$ is closed, convex, and nonempty. The constrained optimization problem can be expressed as a composite optimization problem
+
+The set $\mathcal{Z}$ is closed, convex, and nonempty. One instance of this problem is  [LASSO](https://en.wikipedia.org/wiki/Lasso_(statistics)) in regression, in which the  cost $f$ which is a convex quadratic, and the set $\mathcal{Z}$ which is a scaled  $L_1$-ball.
+
+
+
+The constrained optimization problem can be expressed as a composite optimization problem
 ```{math}
 \begin{align}
 \beta^* \in \text{argmin}_{\beta \in \R^d} f(\beta) + \mathbf{I}_{\mathcal{Z}}(\beta),
@@ -130,26 +134,6 @@ plt.plot({'w', 'res_w', 'z', 'res_z'}, 1)
 :::
 
 
-
-<!-- 
-:::{figure} _static/sim_pgd_error_dark.png
-:align: center
-:class: only-dark
-:::
-
-:::{figure} _static/sim_pgd_error_light.png
-:align: center
-:class: only-light
-::: -->
-
-
-
-<!-- ![Error](_static/sim_pgd_error_dark.png)
-::: -->
-
-
-
-
 ## Analysis 
 
 
@@ -221,29 +205,6 @@ Niter = 3;
 rho_alt = sol_alt{end, end}.rho % 0.5723
 ```
 
-<!-- 
-These algorithm require proximal evaluation of the function $f$,  due to the nonzero quantity $-0.3161$ between $w_1$ and $z_1$. If only gradient evaluations of $\partial f$ are permitted, then we use the synthesis code
-
-``` matlab
-config_grad = opt_config();
-config_grad.syn.D_mask = [0, 0; 1, 1]; %enforce only gradient evaluation of f1
-man_grad = opt_synthesis(sys, config_grad);
-sol_grad = man_grad.bisect();
-rho_grad = sol_grad.rho % 0.8322
-```
-
-to obtain the $\rho \leq 0.8322$ algorithm 
-```{math}
-\begin{align*}
- \mat{c}{x_{k+1}^1 \\ x_{k+1}^2  \hl z_k^1 \\ z_k^2} &= \mat{cc|cc}{I & -0.05622 I & -0.1715 I & -0.2277 I \\
- 0 &  - 0.0008595 I & -0.00156 I & 1.007 I \hl
-  
-  I  & 0 &  0 & 0 \\
- I & 0.3658 I & -0.1153 I & -0.4811 I }   \mat{c}{x_{k+1}^1 \\ x_{k+1}^2 \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\partial f(z_k^1) \\ \partial \partial \mathbb{I}_{\mathcal{Z}}(z_k^2)}
-\end{align*}.
-``` -->
-
-
 
 ## Synthesis with Network Dynamics
 
@@ -269,9 +230,3 @@ man_delay = opt_synthesis(sys_delay);
 sol = man_delay.bisect();
 rho = sol.rho % 0.9553
 ```
-
-
-
-<!-- ## Plotting
-
-After these numerical checks, the  -->

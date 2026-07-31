@@ -101,7 +101,6 @@ Let $\rho > 0$ be a convergence rate, $\Lambda(\rho)$ be a constraint set, and  
 
 
 The interconnection of linear systems $(\Psi(\lambda), \ell, G)$ with description
-<!-- Assume that each  $F \in \F$ satisfies a known family of IQCs $(\Psi(\blam), M(\blam), X(\blam))$ with respect to signal transformation matrix $\ell$: -->
 ```{math}
 \begin{align}
 \mat{c}{\ov{x}_{k+1} \hl \ov z_k} &= \mat{c|c}{\rhoi \Acl & \rhoi \Bcl \hl \Ccl & \Dcl}\mat{c}{\ov{x}_k \\ \ov w_k},\\
@@ -114,8 +113,6 @@ is summarized as the system
 ```{math}
 G(\lambda) := \mat{c}{\psi_{k+1} \\ \ov{x}_{k+1} \hl \ov r_k} &= \mat{c|c}{A(\blam) & B(\blam) \hl C(\blam)& D(\blam)} \mat{c}{\psi_k \\ \ov{x}_k \hl \ov q_k}.
 ```
-
-<!-- Given any trajectory $(\ov x, \ov w, \ov z)$ of $(F_0, G)$, the input-output sequences $(\ov q, \ov p)$ satisfy the IQC $(\Psi(\lambda), M(\lambda), X(\lambda))$ for all $\lambda$ in a known constraint region $\Lambda(\rho).  -->
 
 A sufficient condition for  $\ov x$ to be bounded for all $F \in \F$ is if there exists a symmetric matrix  $P$ and coefficients $\blam$ such that
 ```{math}

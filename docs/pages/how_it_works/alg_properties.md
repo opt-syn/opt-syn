@@ -72,7 +72,7 @@ The interconnection is well-posed if  $H$ is globally defined and continuous. We
 
 
 
-## Information Structure and Evaluation
+## Information Structure
 
 The well-posed algorithmic interconnection $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)$ is a nonlinear iterative procedure. Computation of  $x_{k+1}$ from $x_k$ for general $(F, \Dcl)$ requires the solution of a nonlinear fixed-point equation, and may be computationally intractable. If $\Dcl$ is block-lower-triangular, the system $(\Acl, \Bcl, \Ccl, \Dcl)$ can be then partitioned as 
 ```{math}
@@ -82,7 +82,7 @@ The well-posed algorithmic interconnection $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k
    \Ccl_1 & \Dcl_{11} & 0 &   \hdots & 0\\
    \Ccl_2 & \Dcl_{21 } & \Dcl_{22} &   \hdots & 0\\
    \vdots & \vdots & \vdots  & \ddots & \vdots\\
-   \Ccl_s & \Dcl_{s1} & \Dcl_{s2} & \hdots & \Dcl_{ss}} \mat{c}{x_{k} \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s}
+   \Ccl_s & \Dcl_{s1} & \Dcl_{s2} & \hdots & \Dcl_{ss}} \mat{c}{x_{k} \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s}.
 \end{align}
 ```
 

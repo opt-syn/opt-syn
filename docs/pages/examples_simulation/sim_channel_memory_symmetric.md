@@ -2,16 +2,14 @@
 
 This example involves a two-operator inclusion problem. Memory effects are present in the communication link to and from evaluation of $F_1$. 
 The intensity of the memory effects are represented by a scalar $\alpha > 0$. 
-The network effects are described by a transfer function matrix
+The network effects for all $k \in \N$ are
 ```{math}
- \mat{c}{z \hdl y} =  \mat{cc:cc}{0 & 0 & \frac{\mathbf{z}}{\mathbf{z} +\alpha} I& 0 \\
-0 & 0 & 0 & I \hdl
-\frac{\mathbf{z}}{\mathbf{z} +\alpha} I& 0 & 0 & 0 \\
-0 & I & 0 & 0}  \mat{c}{w \hdl u},
+z^1_k &= u_k^1 - \alpha z^1_{k-1},  & y_k^1 &= w_k^1 - \alpha y_{k-1}^1, \\
+z^2_k &= u_k^2, & y_k^2 &= w_k^2 
 ```
-where $\mathbf{z}$ is the unit shift operator $((\mathbf{z} x)_k :=  x_{k+1}$ for all $k \in \N$).  
 
-A state-space realization of this transfer function matrix is 
+The degenerate case of $\alpha=0$ is no network dynamics.
+A state-space realization of these memory effects is
 ```{math}
  \text{Network}: \qquad  \mat{c}{x_{k+1}^N \hl z_k \hdl y_k} =  \mat{cc|cc:cc}{-\alpha I & 0 & \frac{1}{2} I & 0 & 0 & 0 \\
  0 & -\alpha I & 0 & 0 & \frac{1}{2}I & 0  \hl
@@ -21,7 +19,7 @@ A state-space realization of this transfer function matrix is
  0 & 0 & 0 & I & 0 & 0}  \mat{c}{x_{k}^N \hl w_k \hdl u_k}.
 ```
 
-The degenerate case of $\alpha=0$ is no network dynamics.
+
 
 The controller structure with parameters $(\gamma, \lambda) \geq 0$ used to solve the two-operator inclusion problem is
 ```{math}
@@ -55,7 +53,7 @@ Figure [1](#sym-trace) plots a trace of algorithm execution starting from $x_0 =
 *Figure 1:* Trace of execution and convergence
 :::
 
-We now establish tracking properties of solution trajectories using the Regulator Equations. The solution to the Regulator Equations for this network and controller are
+The Regulator Equations are used to  establish tracking properties of solution trajectories. The solution to the Regulator Equations for this network and controller are
 ```{math}
 \begin{align*}
 \Pi &= \mat{cc}{0 & \frac{1}{2(\alpha+1)}I \\ -\frac{1}{2} I & 0 }, &  \Gamma &= \mat{cc}{-(\alpha+1) I & 0 \\

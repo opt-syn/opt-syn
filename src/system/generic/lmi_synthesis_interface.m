@@ -1002,8 +1002,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             % sys_cal = ss(G \ sys_cl.A, G \ sys_cl.B, sys_cl.C, sys_cl.D, 1);
             % obj.config.syn.elimination = elim_orig;
 
+            
 
-            [A, B, C, D] = ssdata(rhotrafo(P_trans, rho_common));
+            % [A, B, C, D] = ssdata(rhotrafo(P_trans, rho_common));
+            [A, B, C, D] = ssdata(P_trans);
 
             iz = [P_trans.index_z(), P_trans.index_zp()];
             iw = [P_trans.index_w(), P_trans.index_wp()];
@@ -1187,12 +1189,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
 
             K = lft(model, K_sub);
-            % K_full = lft(model, K_sub_full);
-
-
-            % alg_full = lft(obj.sys.P, K_full);
-
-
             K_report = K_report_info;            
             K_report.K = K;
             K_report.model = model;
