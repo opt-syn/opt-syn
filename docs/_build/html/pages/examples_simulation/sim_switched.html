@@ -458,11 +458,25 @@ The expression for PGD with time-delays is</p>
  I &amp; -\gamma I &amp; -\gamma I  }   \mat{c}{x_{k} \hl w_{k-h(k)}^1 \\ w_k^2}, &amp; \mat{c}{w_{k}^1 \\ w_k^2} \in  \mat{c}{\partial f(z_k^1) \\  \partial I_{\norm{\cdot}_\infty \leq 10}(z_k^2)}
 \end{align*}.\end{split}\]</div>
 <p>The delay  <span class="math notranslate nohighlight">\(h(k)\)</span> is bounded between 0 and 3 steps at all <span class="math notranslate nohighlight">\(h(k)\)</span>. It is  temporally restricted according to the logics</p>
-<ol class="arabic simple">
-<li><p><em>Periodic</em>:  <span class="math notranslate nohighlight">\(h(k)\)</span> increases by 1, and drops to 0 if <span class="math notranslate nohighlight">\(h(k)=0\)</span>.</p></li>
-<li><p><em>Snap:</em>  <span class="math notranslate nohighlight">\(h(k)\)</span> either increases by 1 or drops to 0, but <span class="math notranslate nohighlight">\(h(k+1)=0\)</span> always holds if <span class="math notranslate nohighlight">\(h(k)=3\)</span>.</p></li>
-<li><p><em>Contiguous:</em> <span class="math notranslate nohighlight">\(h(k)\)</span> increases by 1, stays the same, or decreases by 1,  subject to the constraint <span class="math notranslate nohighlight">\(h(k) \in [0, 3]\)</span>.</p></li>
-</ol>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Rule</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Periodic</p></td>
+<td><p><span class="math notranslate nohighlight">\(h(k)\)</span> increases by 1, and drops to 0 if <span class="math notranslate nohighlight">\(h(k)=0\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Snap</p></td>
+<td><p><span class="math notranslate nohighlight">\(h(k)\)</span> either increases by 1 or drops to 0, but <span class="math notranslate nohighlight">\(h(k+1)=0\)</span> always holds if <span class="math notranslate nohighlight">\(h(k)=3\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p>Contiguous</p></td>
+<td><p><span class="math notranslate nohighlight">\(h(k)\)</span> increases by 1, stays the same, or decreases by 1,  subject to the constraint <span class="math notranslate nohighlight">\(h(k) \in [0, 3]\)</span>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>The Snap logic is motivated by communication failures: PGD will use the same stale gradient until a successful transmission is received. Snap and Contiguous are nondeterministic switching logics, while Periodic is deterministic given <span class="math notranslate nohighlight">\(h(0)\)</span>.</p>
 <!-- We model the time-varying delays as a switched system, following the approaches in {footcite}`wen2008switched`, {footcite}`conte2020modeling`.  -->
 <p>As an example, a time-varying delay restricted to  <span class="math notranslate nohighlight">\(h(k) \in \{0, 1, 2\}\)</span> for each <span class="math notranslate nohighlight">\(k \in \N\)</span> can be described using the system matrices</p>

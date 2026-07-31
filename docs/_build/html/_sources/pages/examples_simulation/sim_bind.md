@@ -30,8 +30,6 @@ Figure [1](#binder) plots an algorithm execution with $\gamma = 0.4, \lambda = 0
 *Figure 1:* Algorithm with bind $[1, 2, 3, 2]$
 :::
 
-The code to generate this example is 
-
 ```{literalinclude} ../../../examples/simulation/sim_repeated.m
 :linenos: true
 :caption: Code for optimization with repeated operator evaluation

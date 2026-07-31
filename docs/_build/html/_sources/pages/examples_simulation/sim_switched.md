@@ -26,10 +26,17 @@ The expression for PGD with time-delays is
 ```
 
 The delay  $h(k)$ is bounded between 0 and 3 steps at all $h(k)$. It is  temporally restricted according to the logics
-1. *Periodic*:  $h(k)$ increases by 1, and drops to 0 if $h(k)=0$.
-2.  *Snap:*  $h(k)$ either increases by 1 or drops to 0, but $h(k+1)=0$ always holds if $h(k)=3$.
-3. *Contiguous:* $h(k)$ increases by 1, stays the same, or decreases by 1,  subject to the constraint $h(k) \in [0, 3]$.
-
+:::{list-table}
+:header-rows: 1
+*  - Type
+   - Rule
+*  -  Periodic
+   -  $h(k)$ increases by 1, and drops to 0 if $h(k)=0$
+*  - Snap
+   -  $h(k)$ either increases by 1 or drops to 0, but $h(k+1)=0$ always holds if $h(k)=3$.
+*  - Contiguous
+   -  $h(k)$ increases by 1, stays the same, or decreases by 1,  subject to the constraint $h(k) \in [0, 3]$.
+:::
 
 The Snap logic is motivated by communication failures: PGD will use the same stale gradient until a successful transmission is received. Snap and Contiguous are nondeterministic switching logics, while Periodic is deterministic given $h(0)$.
 

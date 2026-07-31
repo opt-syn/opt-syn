@@ -29,9 +29,9 @@ The algorithm is defined in terms of parameters $b_0 \in \R^3, b_1 \in \R, b_2 \
 *Figure 1:* Algorithm with oscillating target
 :::
 
-The $w$ vectors approach constantcy at convergence. The iterates $z$ oscillate according to the moving optimal solution.
+The subdifferentials $w$ vectors approach at constant value. The iterates $z$ oscillate according to the moving optimal solution.
 
-```{literalinclude} ../../../examples/simulation/dr_example/sim_tracking.m
+```{literalinclude} ../../../examples/simulation/sim_track.m
 :linenos: true
 :caption: Code for tracking an oscillating target
 :language: matlab
