@@ -23,10 +23,9 @@ sim_result = simulator.sim(T);
 ```
 
 
-By default, algorithm execution will occur with $x_0=0$, and $w_p = 0$. The  `sampler` field of {class}`alg_sim` has allows for random generation and external signals. 
+By default, algorithm execution will occur with $x_0=0$, and $w_p = 0$. The  `sampler` field of {class}`alg_sim` allows for random generation and external signals. The attributes of `sampler` are:
 :::{list-table}
 :header-rows: 1
-:caption: Fields of `alg_sim.sampler`
 * - Field
   - Description
 * - `x0`
