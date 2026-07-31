@@ -158,7 +158,7 @@ classdef  opt_system_interface
     
                 if strcmp(iqc_data.task, 'analysis')
                     %form the system
-                    I = ss(eye(size(alg_loop.D, 2)));
+                    I = ss(eye(ssize(alg_loop.D, 2)));
                     GI = [alg_loop; I];
     
     
@@ -171,9 +171,9 @@ classdef  opt_system_interface
                     
         
                     alg_psi = genplant(psi * GI); 
-                    alg_psi.nz = ssize(psi.D, 1);
+                    alg_psi.nz = ssize(psi.D, 1) - obj.P.nzp - obj.P.nwp;
                     alg_psi.nw = obj.P.nw;
-                    alg_psi.nzp = obj.P.nzp;
+                    alg_psi.nzp = obj.P.nzp + obj.P.nwp;
                     alg_psi.nwp = obj.P.nwp;
                 else
 

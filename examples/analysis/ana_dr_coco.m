@@ -19,7 +19,6 @@ K = ss([1],    [-lambda*gamma, -lambda*gamma], ...
 
 %form the system
 sys = opt_system({op1, op2}, [], K);
-sys_subdiff= opt_system({op1_subdiff, op2_subdiff}, [], K);
 
 %solve the problem
 order = {1, 1};
@@ -39,6 +38,7 @@ for i = 1:Nbeta
     %find the true rate
     rho_best_dr(i) = best_dr_rate(mu, beta_sweep(i));     
 end
+
 
 
 %% plot the output
