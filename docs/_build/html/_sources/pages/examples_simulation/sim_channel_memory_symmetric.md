@@ -1,11 +1,13 @@
 #  Channel Memory
 
 This example involves a two-operator inclusion problem. Memory effects are present in the communication link to and from evaluation of $F_1$. 
-The intensity of the memory effects are represented by a scalar $\alpha > 0$. 
+The intensity of the memory effects are represented by a scalar forgetting factor $\alpha > 0$. 
 The network effects for all $k \in \N$ are
 ```{math}
+\begin{align*}
 z^1_k &= u_k^1 - \alpha z^1_{k-1},  & y_k^1 &= w_k^1 - \alpha y_{k-1}^1, \\
-z^2_k &= u_k^2, & y_k^2 &= w_k^2 
+z^2_k &= u_k^2, & y_k^2 &= w_k^2. 
+\end{align*}
 ```
 
 The degenerate case of $\alpha=0$ is no network dynamics.
@@ -23,7 +25,7 @@ A state-space realization of these memory effects is
 
 The controller structure with parameters $(\gamma, \lambda) \geq 0$ used to solve the two-operator inclusion problem is
 ```{math}
- \text{Network}: \qquad  \mat{c}{x_{k+1}^c \hl u_k^1 \\ u_k^2} =  \mat{c|cc}{I & -\gamma \lambda & \frac{ -\gamma \lambda}{\alpha+1} \hl
+ \mat{c}{x_{k+1}^c \hl u_k^1 \\ u_k^2} =  \mat{c|cc}{I & -\gamma \lambda & \frac{ -\gamma \lambda}{\alpha+1} \hl
  (1+\alpha) I & 0 & 0 \\
  I & -\gamma I & -\frac{ -\gamma }{\alpha+1} I }  \mat{c}{x_{k}^c \hl y_k^1 \\ y_k^2}.
 ```
@@ -111,3 +113,6 @@ Figure [3](#sym-trace-sq) plots the squared norm of the tracking error
 :language: matlab
 ```
 
+:::{seealso}
+{doc}`Analysis <../examples_analysis/ana_channel_memory>` of the channel-memory  algorithm.
+:::

@@ -184,7 +184,9 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
@@ -470,10 +472,10 @@
         v_k \hl y_k \hdl \tilde{u}_k^1 \\ \tilde{u}_k^2
     }, \\
     K_f: \mat{c}{
-        x^c^f_{k+1}  \hl \tilde{u}^1_k \\ \tilde{u}^1_k} &amp;=\mat{c|c}{A_f &amp; B_f \hl
+        x^{\text{sub}}_{k+1}  \hl \tilde{u}^1_k \\ \tilde{u}^1_k} &amp;=\mat{c|c}{A_f &amp; B_f \hl
     C_{f1} &amp; D_{f1} \\
     C_{f2} &amp; D_{f2}}\mat{c}{
-        x^c^f_k \hl \tilde{y}_k 
+        x^{\text{sub}}_k \hl \tilde{y}_k 
     }.
     \end{align*}\end{split}\]</div>
 <!-- With this internal model,  -->

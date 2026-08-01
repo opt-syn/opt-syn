@@ -184,6 +184,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples_analysis/ana_channel_memory.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
 </ul>
@@ -386,7 +387,11 @@
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#operators">Operators</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#operators-for-simulation">Operators for Simulation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#operators-classes">Operators Classes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#operators-classes">Operators Classes</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#set-valued-maps">Set-Valued Maps</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#subdifferentials">Subdifferentials</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#network-and-controller">Network and Controller</a></li>
@@ -414,7 +419,7 @@ The System is mathematically described by</p>
 C_z &amp; D_{zd} &amp; D_{z w_p} &amp;  D_{zu} \\
 C_{z_p} &amp; D_{z_p d} &amp; D_{z_p w_p} &amp;  D_{z_p u} \\
 C_y &amp; D_{yd} &amp; D_{y w_p} &amp; D_{yu}} \mat{c}{x_k^N \hl w_k \\ w_{pk} \\ u_k}, \\
-\text{Controller}: &amp; &amp; \mat{c}{x^c_{k+1} \\ u_k} &amp;= \mat{c|c}{\Ac &amp; \Bc \hl \Cc &amp; \Dc } \mat{c}{x^c_k \\ y_k},
+\text{Controller}: &amp; &amp; \mat{c}{x^c_{k+1} \hl u_k} &amp;= \mat{c|c}{\Ac &amp; \Bc \hl \Cc &amp; \Dc } \mat{c}{x^c_k \hl y_k},
 \end{align*}\end{split}\]</div>
 <p>where the specific signals are</p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -469,7 +474,7 @@ C_y &amp; D_{yd} &amp; D_{y w_p} &amp; D_{yu}} \mat{c}{x_k^N \hl w_k \\ w_{pk} \
 <p>The <code class="docutils literal notranslate"><span class="pre">Operators</span></code>  argument in the System is an <span class="math notranslate nohighlight">\(s\)</span>-length cell array <code class="docutils literal notranslate"><span class="pre">{op1,</span> <span class="pre">op2,</span> <span class="pre">op3,</span> <span class="pre">...}</span></code>.</p>
 <section id="operators-for-simulation">
 <h3>Operators for Simulation<a class="headerlink" href="#operators-for-simulation" title="Link to this heading">#</a></h3>
-<p>In Simulation, <code class="docutils literal notranslate"><span class="pre">Operators{i}</span></code> is the specific <a class="reference internal" href="../../../documentation/doc_simulation.html"><span class="doc">operator</span></a> <span class="math notranslate nohighlight">\(F_i\)</span> used in the inclusion problem. An operator may implements the following methods:</p>
+<p>In Simulation, <code class="docutils literal notranslate"><span class="pre">Operators{i}</span></code> is the specific <a class="reference internal" href="../../../documentation/doc_simulation.html"><span class="doc">operator</span></a> <span class="math notranslate nohighlight">\(F_i\)</span> used in the inclusion problem. An operator may implement the following methods:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Evaluation</p></th>
@@ -493,7 +498,7 @@ C_y &amp; D_{yd} &amp; D_{y w_p} &amp; D_{yu}} \mat{c}{x_k^N \hl w_k \\ w_{pk} \
 </tbody>
 </table>
 </div>
-<p>The <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">fw()</span></code> operation must be defined if <span class="math notranslate nohighlight">\(\Dcl_{ii}=0\)</span>, and the <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">bw()</span></code> operation must be defined if <span class="math notranslate nohighlight">\(\Dcl_{ii} \neq 0\)</span>.</p>
+<p>The <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">fw()</span></code> operation must be defined if <span class="math notranslate nohighlight">\(\Dcl_{ii}=0\)</span>, and the <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">bw()</span></code> operation must be defined if <span class="math notranslate nohighlight">\(\Dcl_{ii} \neq 0\)</span>. The <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">f()</span></code> operation is optional.</p>
 <p>Supported operators for simulation include</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -516,12 +521,12 @@ C_y &amp; D_{yd} &amp; D_{y w_p} &amp; D_{yu}} \mat{c}{x_k^N \hl w_k \\ w_{pk} \
 <td><p>indicator function of  <span class="math notranslate nohighlight">\(L_\infty\)</span> ball</p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(L_1\)</span> (hard)</p></td>
-<td><p><code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_sim_box</span></code></p></td>
+<td><p><code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_sim_l1_hard</span></code></p></td>
 <td><p>indicator function of  <span class="math notranslate nohighlight">\(L_1\)</span> ball</p></td>
 </tr>
 <tr class="row-even"><td><p>Linear Quadratic Game</p></td>
 <td><p><code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_sim_lq_game</span></code></p></td>
-<td><p>Pseudogradient of game, agent payoffs  <span class="math notranslate nohighlight">\(\frac{1}{2} x^\top Q_j x + b^\top x_j + e_j\)</span></p></td>
+<td><p>Pseudogradient of game, with agent payoffs  <span class="math notranslate nohighlight">\(f_j = \frac{1}{2} x^\top Q_j x + b^\top x_j + e_j\)</span></p></td>
 </tr>
 </tbody>
 </table>
@@ -531,33 +536,87 @@ C_y &amp; D_{yd} &amp; D_{y w_p} &amp; D_{yu}} \mat{c}{x_k^N \hl w_k \\ w_{pk} \
 <h3>Operators Classes<a class="headerlink" href="#operators-classes" title="Link to this heading">#</a></h3>
 <p>In Analysis and Synthesis, <code class="docutils literal notranslate"><span class="pre">Operators{i}</span></code> is the <a class="reference internal" href="../../../documentation/operators/doc_operators.html"><span class="doc">operator class</span></a> for which operator <span class="math notranslate nohighlight">\(F_i\)</span> is a member.</p>
 <p>The two categories of operator classes are general Set-Valued Maps and Subdifferentials.</p>
+<section id="set-valued-maps">
+<h4>Set-Valued Maps<a class="headerlink" href="#set-valued-maps" title="Link to this heading">#</a></h4>
+<p>A general set-valued map is specified by <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_gen</span></code>. Fields of <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_gen</span></code> define constraints satisfied by all   <span class="math notranslate nohighlight">\(w_1 \in F_i (z_1), w_2 \in F_i(z_2)\)</span>.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head"><p>Operator Class</p></th>
-<th class="head"><p>Class Name</p></th>
+<tr class="row-odd"><th class="head"><p>Field name</p></th>
+<th class="head"><p>Parameter</p></th>
 <th class="head"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Set-Valued Maps</p></td>
-<td><p><code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_gen</span></code></p></td>
-<td><p>monotonicity, cocoercivity, Lipschitzness, Inverse Lipschitzness</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">monotone</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mu \in \R\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\langle w_1 - w_2, z_1 - z_2 \rangle \geq \mu \norm{z_1 - z_2}^2_2\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><p>Subdifferentials</p></td>
-<td><p><code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_sml</span></code></p></td>
-<td><p>Subdifferentials of <span class="math notranslate nohighlight">\(S_{m, L}\)</span> with <span class="math notranslate nohighlight">\(-\infty &lt; m \leq L \leq \infty\)</span></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cocoercive</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\beta &gt; 0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\langle w_1 - w_2, z_1 - z_2 \rangle \geq \beta \norm{w_1 - w_2}^2_2\)</span></p></td>
 </tr>
-<tr class="row-even"><td><p>Proper, Closed, Convex</p></td>
-<td><p><code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_pcc</span></code></p></td>
-<td><p>subdifferentials of <span class="math notranslate nohighlight">\(S_{0, \infty}\)</span> (e.g. indicator functions)</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lipschitz</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(L &gt; 0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\norm{w_1 - w_2}_2 \leq  L \norm{z_1 - z_2}_2\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><p>Quadratics</p></td>
-<td><p><code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_quad</span></code></p></td>
-<td><p>Gradients of quadratics  in <span class="math notranslate nohighlight">\(S_{m, L}\)</span></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inverse_lipschitz</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(R &gt; 0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\norm{z_1 - z_2}_2 \leq  R \norm{w_1 - w_2}_2\)</span></p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<p>Setting the <code class="docutils literal notranslate"><span class="pre">monotone</span></code> field to  <span class="math notranslate nohighlight">\(\mu \in \R\)</span> is a description that <span class="math notranslate nohighlight">\(F_i - \mu \ \text{Id}\)</span> is maximal monotone. Strong monotonicity is described by  <span class="math notranslate nohighlight">\(\mu&gt;0\)</span>, and hypo (weak) monotonicity is described by <span class="math notranslate nohighlight">\(\mu &lt; 0\)</span>.</p>
+</section>
+<section id="subdifferentials">
+<h4>Subdifferentials<a class="headerlink" href="#subdifferentials" title="Link to this heading">#</a></h4>
+<p>The supported subdifferentials are based on properties of proper, closed, convex (p.c.c.) functions. A p.c.c. function <span class="math notranslate nohighlight">\(f\)</span> satisfies the properties</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p>Proper</p></td>
+<td><p><span class="math notranslate nohighlight">\(f(x) &gt; -\infty\)</span> everywhere</p></td>
+</tr>
+<tr class="row-even"><td><p>Closed</p></td>
+<td><p>The set <span class="math notranslate nohighlight">\(\{x \mid f(x) \leq \gamma\}\)</span> is closed for all <span class="math notranslate nohighlight">\(\gamma \in \R\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Convex</p></td>
+<td><p><span class="math notranslate nohighlight">\(f( \alpha x + (1-\alpha)y) \leq \alpha f(x) + (1-\alpha) f(y)\)</span> for all <span class="math notranslate nohighlight">\(\alpha \in [0, 1]\)</span> and <span class="math notranslate nohighlight">\((x, y)\)</span>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The subdifferential <span class="math notranslate nohighlight">\(\partial f(x)\)</span> of a p.c.c. function <span class="math notranslate nohighlight">\(f\)</span> is the set of all vectors <span class="math notranslate nohighlight">\(g\)</span> such that <span class="math notranslate nohighlight">\(f(x) - f(y) \geq \langle g, x-y \rangle\)</span> holds for all pairs <span class="math notranslate nohighlight">\((x, y)\)</span>. Indicator functions of closed, nonempty,  convex sets are p.c.c.</p>
+<p>Given constants <span class="math notranslate nohighlight">\(-\infty &lt; m &lt; L \leq \infty\)</span>, the set <span class="math notranslate nohighlight">\(S_{m, L}\)</span> is the set of functions such that</p>
+<ol class="arabic simple">
+<li><p><span class="math notranslate nohighlight">\(f - \frac{m}{2}\norm{\cdot}_2^2\)</span> is p.c.c</p></li>
+<li><p><span class="math notranslate nohighlight">\(\frac{L}{2} \norm{\cdot} - f\)</span> is p.c.c. if <span class="math notranslate nohighlight">\(L &lt; \infty\)</span>.</p></li>
+</ol>
+<p><span class="math notranslate nohighlight">\(S_{0, \infty}\)</span> is the set of p.c.c. functions. If <span class="math notranslate nohighlight">\(m &gt; 0\)</span>, then every <span class="math notranslate nohighlight">\(f \in S_{m, \infty}\)</span> is strongly convex. If <span class="math notranslate nohighlight">\(0 &lt; m &lt; L &lt; \infty\)</span>, then every <span class="math notranslate nohighlight">\(f \in S_{m, L}\)</span> is has <span class="math notranslate nohighlight">\(L\)</span>-Lipschitz gradients (is <span class="math notranslate nohighlight">\(L\)</span>-smooth).</p>
+<p>The subdifferential of p.c.c. functions is extended to subdifferentials of functions <span class="math notranslate nohighlight">\(f \in S_{m, L}\)</span> by</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+\partial f(x) := \partial \left(f - \frac{m}{2}\norm{x}_2^2\right) + m x.
+\end{align*}\]</div>
+<p>Operators arising from subdifferentials are described using the classes</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_pcc</span></code></p></td>
+<td><p>Subdifferentials of p.c.c. functions</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_sml(m,</span> <span class="pre">L)</span></code></p></td>
+<td><p>Subdifferentials of <span class="math notranslate nohighlight">\(S_{m, L}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_quad(m,</span> <span class="pre">L)</span></code></p></td>
+<td><p>Gradients of quadratics in <span class="math notranslate nohighlight">\(S_{m, L}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><code class="docutils literal notranslate"><span class="pre">op_pcc</span></code> is an alias for <code class="docutils literal notranslate"><span class="pre">op_sml(0,</span> <span class="pre">inf)</span></code>.</p>
+</div>
+</section>
 </section>
 </section>
 <section id="network-and-controller">
@@ -565,9 +624,20 @@ C_y &amp; D_{yd} &amp; D_{y w_p} &amp; D_{yu}} \mat{c}{x_k^N \hl w_k \\ w_{pk} \
 <p>In Simulation and Analysis, the <code class="docutils literal notranslate"><span class="pre">Controller</span></code> is a discrete-time state space system of type <code class="docutils literal notranslate"><span class="pre">ss</span></code>.<br />
 The <code class="docutils literal notranslate"><span class="pre">Controller</span></code> field is ignored in Synthesis, and can therefore be set to <code class="docutils literal notranslate"><span class="pre">Controller</span> <span class="pre">=</span> <span class="pre">[]</span></code>.</p>
 <p>The declaration <code class="docutils literal notranslate"><span class="pre">Network</span> <span class="pre">=</span> <span class="pre">[]</span></code> is used if there are no network dynamics.
-If network dynamics are present, then the  <code class="docutils literal notranslate"><span class="pre">Network</span></code> is described by a <code class="xref mat mat-class docutils literal notranslate"><span class="pre">genplant</span></code> object. The attribute <code class="xref mat mat-attr docutils literal notranslate"><span class="pre">P</span></code> of a genplant
-is a discrete-time state space system of type <a class="reference external" href="https://www.mathworks.com/help/control/ref/ss.html">ss</a> with sample time <span class="math notranslate nohighlight">\(T=1\)</span>.</p>
+If network dynamics are present, then the  <code class="docutils literal notranslate"><span class="pre">Network</span></code> is described by a <code class="xref mat mat-class docutils literal notranslate"><span class="pre">genplant</span></code> object (see <a class="reference internal" href="../../../documentation/plants/doc_genplant.html"><span class="doc">genplant documentation</span></a> for more details). The attribute <code class="xref mat mat-attr docutils literal notranslate"><span class="pre">P</span></code> of a <code class="xref mat mat-class docutils literal notranslate"><span class="pre">genplant</span></code>
+is a discrete-time state space system of type <a class="reference external" href="https://www.mathworks.com/help/control/ref/ss.html">ss</a>.</p>
 <p>The <code class="xref mat mat-class docutils literal notranslate"><span class="pre">genplant</span></code> attributes (<code class="docutils literal notranslate"><span class="pre">nz</span></code>, <code class="docutils literal notranslate"><span class="pre">nzp</span></code>, <code class="docutils literal notranslate"><span class="pre">ny</span></code>, <code class="docutils literal notranslate"><span class="pre">nw</span></code>, <code class="docutils literal notranslate"><span class="pre">nwp</span></code>, <code class="docutils literal notranslate"><span class="pre">nu</span></code>) count dimensions of the respective input and output partitions.</p>
+<p>An example <code class="docutils literal notranslate"><span class="pre">genplant</span></code> declaration for a two-operator problem with one performance input and output channel is</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">D</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">2</span><span class="w">     </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="linenos">3</span><span class="w">     </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">4</span><span class="w">     </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">5</span><span class="w">     </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
+<span class="linenos">6</span><span class="n">p</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">genplant</span><span class="p">(</span><span class="n">ss</span><span class="p">(</span><span class="n">D</span><span class="p">));</span>
+<span class="linenos">7</span><span class="n">p</span><span class="p">.</span><span class="n">nz</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">nzp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">nw</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="linenos">8</span><span class="n">p</span><span class="p">.</span><span class="n">nw</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">nwp</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">nu</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+</pre></div>
+</div>
 <p>The <a class="reference internal" href="../../../documentation/plants/doc_templates.html"><span class="doc">Templates</span></a> page documents commands to generates common network structures. One such network structure is  <code class="xref mat mat-class docutils literal notranslate"><span class="pre">bridge_channel_delay</span></code>, which adds time delays before and after each operator <span class="math notranslate nohighlight">\(\{F_i\}_{i =1}^s\)</span>.</p>
 </section>
 <section id="two-operator-example">
@@ -671,7 +741,11 @@ is a discrete-time state space system of type <a class="reference external" href
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#operators">Operators</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#operators-for-simulation">Operators for Simulation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#operators-classes">Operators Classes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#operators-classes">Operators Classes</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#set-valued-maps">Set-Valued Maps</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#subdifferentials">Subdifferentials</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#network-and-controller">Network and Controller</a></li>

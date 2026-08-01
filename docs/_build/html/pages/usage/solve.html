@@ -184,7 +184,9 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
@@ -449,6 +451,7 @@
 <span class="linenos">4</span><span class="n">order</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]};</span>
 </pre></div>
 </div>
+<p>The two-input order routines default to zero if only one input is passed. As an example for <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_sml</span></code>, order <code class="docutils literal notranslate"><span class="pre">2</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">0]</span></code>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">specs</span></code> is a cell array of <a class="reference internal" href="problem_formulation/specs.html"><span class="doc">specifications</span></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

@@ -51,6 +51,7 @@ op3 = op_quad([arguments]);
 order = {1, [2, 0], [1, 1]};
 ```
 
+The two-input order routines default to zero if only one input is passed. As an example for {class}`op_sml`, order `2` is equivalent to `[2, 0]`.
 
 The `specs` is a cell array of {doc}`specifications <problem_formulation/specs>`. 
 

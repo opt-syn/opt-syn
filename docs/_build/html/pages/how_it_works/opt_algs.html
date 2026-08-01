@@ -184,7 +184,9 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
@@ -385,11 +387,6 @@
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-inclusion-problems">Optimization/Inclusion Problems</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Optimization Algorithms</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#operator-classes">Operator Classes</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-valued-maps">Set-Valued Maps</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#subdifferentials">Subdifferentials</a></li>
-</ul>
-</li>
 </ul>
             </nav>
         </div>
@@ -453,33 +450,8 @@
 </figcaption>
 </figure>
 <!-- :scale: 50 % -->
-</section>
-<section id="operator-classes">
-<h2>Operator Classes<a class="headerlink" href="#operator-classes" title="Link to this heading">#</a></h2>
+<!-- ## Operator Classes -->
 <p>The individual operators <span class="math notranslate nohighlight">\(F_i\)</span> in the inclusion problem may be contained in known operator classes. The linear system <span class="math notranslate nohighlight">\(G\)</span> should ensure that the algorithm <span class="math notranslate nohighlight">\((F, G)\)</span> satisfies the previous properties for all <span class="math notranslate nohighlight">\(F\)</span> in a desired class of operators  <span class="math notranslate nohighlight">\(\F\)</span>.</p>
-<p>The two major classes of supported operators are set-valued maps and subdifferentials of functions.</p>
-<section id="set-valued-maps">
-<h3>Set-Valued Maps<a class="headerlink" href="#set-valued-maps" title="Link to this heading">#</a></h3>
-<p>The set-valued maps may optionally possess the properties of</p>
-<ul class="simple">
-<li><p>maximal monotonicity,</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mu\)</span>-strong-monotonicity <span class="math notranslate nohighlight">\(\mu &gt; 0\)</span>,</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mu\)</span>-hypo-monotonicity with <span class="math notranslate nohighlight">\(\mu &gt; 0\)</span>,</p></li>
-<li><p><span class="math notranslate nohighlight">\(\beta\)</span>-cocoercivity with <span class="math notranslate nohighlight">\(\beta&gt;0\)</span>,</p></li>
-<li><p><span class="math notranslate nohighlight">\(L\)</span>-Lipschitzness with <span class="math notranslate nohighlight">\(L &gt; 0\)</span>,</p></li>
-<li><p><span class="math notranslate nohighlight">\(R\)</span>-Inverse-Lipschitzness with <span class="math notranslate nohighlight">\(R &gt; 0\)</span>.</p></li>
-</ul>
-</section>
-<section id="subdifferentials">
-<h3>Subdifferentials<a class="headerlink" href="#subdifferentials" title="Link to this heading">#</a></h3>
-<p>The most basic subdifferential operator class is the subdifferential of a proper, closed, convex (p.c.c.) function.
-The subdifferential class that we use are characterized by constants <span class="math notranslate nohighlight">\(-\infty &lt; m &lt; L &lt; \infty\)</span>. The class of functions <span class="math notranslate nohighlight">\(\mathcal{S}_{m, L}\)</span> is the set where <span class="math notranslate nohighlight">\(f - \frac{m}{2}\norm{\cdot}_2^2\)</span> is p.c.c, and <span class="math notranslate nohighlight">\(\frac{L}{2} \norm{\cdot} - f\)</span> is p.c.c. if <span class="math notranslate nohighlight">\(L &lt; \infty\)</span>.</p>
-<p><span style="color:#5D93BF">opt</span>-syn supports</p>
-<ul class="simple">
-<li><p>Subdifferentials of <span class="math notranslate nohighlight">\(\mathcal{S}_{m, L}\)</span></p></li>
-<li><p>Subdifferentials of quadratics in  <span class="math notranslate nohighlight">\(\mathcal{S}_{m, L}\)</span></p></li>
-</ul>
-</section>
 </section>
 </section>
 
@@ -532,11 +504,6 @@ The subdifferential class that we use are characterized by constants <span class
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-inclusion-problems">Optimization/Inclusion Problems</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Optimization Algorithms</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#operator-classes">Operator Classes</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-valued-maps">Set-Valued Maps</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#subdifferentials">Subdifferentials</a></li>
-</ul>
-</li>
 </ul>
   </nav></div>
 

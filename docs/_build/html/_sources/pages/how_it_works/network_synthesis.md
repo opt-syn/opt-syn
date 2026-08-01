@@ -89,10 +89,10 @@ The Regulator Equation requirement enforces structure on possible controllers. W
         v_k \hl y_k \hdl \tilde{u}_k^1 \\ \tilde{u}_k^2
     }, \\
     K_f: \mat{c}{
-        x^c^f_{k+1}  \hl \tilde{u}^1_k \\ \tilde{u}^1_k} &=\mat{c|c}{A_f & B_f \hl
+        x^{\text{sub}}_{k+1}  \hl \tilde{u}^1_k \\ \tilde{u}^1_k} &=\mat{c|c}{A_f & B_f \hl
     C_{f1} & D_{f1} \\
     C_{f2} & D_{f2}}\mat{c}{
-        x^c^f_k \hl \tilde{y}_k 
+        x^{\text{sub}}_k \hl \tilde{y}_k 
     }.
     \end{align*}
 ```

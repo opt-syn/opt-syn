@@ -184,6 +184,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_channel_memory.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
 </ul>
@@ -389,11 +390,13 @@
   <section class="tex2jax_ignore mathjax_ignore" id="channel-memory">
 <h1>Channel Memory<a class="headerlink" href="#channel-memory" title="Link to this heading">#</a></h1>
 <p>This example involves a two-operator inclusion problem. Memory effects are present in the communication link to and from evaluation of <span class="math notranslate nohighlight">\(F_1\)</span>.
-The intensity of the memory effects are represented by a scalar <span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span>.
+The intensity of the memory effects are represented by a scalar forgetting factor <span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span>.
 The network effects for all <span class="math notranslate nohighlight">\(k \in \N\)</span> are</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}z^1_k &amp;= u_k^1 - \alpha z^1_{k-1},  &amp; y_k^1 &amp;= w_k^1 - \alpha y_{k-1}^1, \\
-z^2_k &amp;= u_k^2, &amp; y_k^2 &amp;= w_k^2 \end{split}\]</div>
+\[\begin{split}\begin{align*}
+z^1_k &amp;= u_k^1 - \alpha z^1_{k-1},  &amp; y_k^1 &amp;= w_k^1 - \alpha y_{k-1}^1, \\
+z^2_k &amp;= u_k^2, &amp; y_k^2 &amp;= w_k^2. 
+\end{align*}\end{split}\]</div>
 <p>The degenerate case of <span class="math notranslate nohighlight">\(\alpha=0\)</span> is no network dynamics.
 A state-space realization of these memory effects is</p>
 <div class="math notranslate nohighlight">
@@ -405,7 +408,7 @@ A state-space realization of these memory effects is</p>
  0 &amp; 0 &amp; 0 &amp; I &amp; 0 &amp; 0}  \mat{c}{x_{k}^N \hl w_k \hdl u_k}.\end{split}\]</div>
 <p>The controller structure with parameters <span class="math notranslate nohighlight">\((\gamma, \lambda) \geq 0\)</span> used to solve the two-operator inclusion problem is</p>
 <div class="math notranslate nohighlight">
-\[\begin{split} \text{Network}: \qquad  \mat{c}{x_{k+1}^c \hl u_k^1 \\ u_k^2} =  \mat{c|cc}{I &amp; -\gamma \lambda &amp; \frac{ -\gamma \lambda}{\alpha+1} \hl
+\[\begin{split} \mat{c}{x_{k+1}^c \hl u_k^1 \\ u_k^2} =  \mat{c|cc}{I &amp; -\gamma \lambda &amp; \frac{ -\gamma \lambda}{\alpha+1} \hl
  (1+\alpha) I &amp; 0 &amp; 0 \\
  I &amp; -\gamma I &amp; -\frac{ -\gamma }{\alpha+1} I }  \mat{c}{x_{k}^c \hl y_k^1 \\ y_k^2}.\end{split}\]</div>
 <p>This controller structure is parameterized by <span class="math notranslate nohighlight">\(\alpha\)</span>. If <span class="math notranslate nohighlight">\(\alpha = 0\)</span> and <span class="math notranslate nohighlight">\(\lambda = 1\)</span>, then this controller is the same as Projected Gradient Descent.
@@ -467,6 +470,10 @@ Algorithm convergence implies tracking of the signals <span class="math notransl
 <p><span class="caption-text"><em>Figure 3:</em> Tracking residuals</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../examples_analysis/ana_channel_memory.html"><span class="doc">Analysis</span></a> of the channel-memory  algorithm.</p>
+</div>
 </section>
 
 
