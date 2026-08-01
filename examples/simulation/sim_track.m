@@ -5,8 +5,8 @@ L = [2, 4, 6, 8];
 s = length(m);
 
 
-theta = pi/8;
-Sbeta = blkdiag(1, givens(cos(theta), sin(theta)));
+omega = pi/8;
+Sbeta = blkdiag(1, givens(cos(omega), sin(omega)));
 Rbeta = [1, 1, 0];
 
 

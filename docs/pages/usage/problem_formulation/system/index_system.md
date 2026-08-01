@@ -9,7 +9,7 @@ The System is mathematically described by
 C_z & D_{zd} & D_{z w_p} &  D_{zu} \\
 C_{z_p} & D_{z_p d} & D_{z_p w_p} &  D_{z_p u} \\
 C_y & D_{yd} & D_{y w_p} & D_{yu}} \mat{c}{x_k^N \hl w_k \\ w_{pk} \\ u_k}, \\
-\text{Controller}: & & \mat{c}{x^c_{k+1} \\ u_k} &= \mat{c|c}{\Ac & \Bc \hl \Cc & \Dc } \mat{c}{x^c_k \\ y_k},
+\text{Controller}: & & \mat{c}{x^c_{k+1} \hl u_k} &= \mat{c|c}{\Ac & \Bc \hl \Cc & \Dc } \mat{c}{x^c_k \hl y_k},
 \end{align*}
 ```
 
@@ -59,7 +59,7 @@ The `Operators`  argument in the System is an $s$-length cell array `{op1, op2, 
 
 ### Operators for Simulation
 
-In Simulation, `Operators{i}` is the specific {doc}`operator <../../../documentation/doc_simulation>` $F_i$ used in the inclusion problem. An operator may implements the following methods:
+In Simulation, `Operators{i}` is the specific {doc}`operator <../../../documentation/doc_simulation>` $F_i$ used in the inclusion problem. An operator may implement the following methods:
 ```{list-table}
 :header-rows: 1
 
@@ -76,7 +76,7 @@ In Simulation, `Operators{i}` is the specific {doc}`operator <../../../documenta
   - {meth}`f` 
   - $z \mapsto f_i(z)$
 ```
-The {meth}`fw` operation must be defined if $\Dcl_{ii}=0$, and the {meth}`bw` operation must be defined if $\Dcl_{ii} \neq 0$. 
+The {meth}`fw` operation must be defined if $\Dcl_{ii}=0$, and the {meth}`bw` operation must be defined if $\Dcl_{ii} \neq 0$. The {meth}`f` operation is optional.
 
 
 Supported operators for simulation include
@@ -95,11 +95,11 @@ Supported operators for simulation include
   - {class}`op_sim_box`
   - indicator function of  $L_\infty$ ball 
 * - $L_1$ (hard) 
-  - {class}`op_sim_box`
+  - {class}`op_sim_l1_hard`
   - indicator function of  $L_1$ ball
 * - Linear Quadratic Game
   - {class}`op_sim_lq_game`
-  - Pseudogradient of game, agent payoffs  $\frac{1}{2} x^\top Q_j x + b^\top x_j + e_j$  
+  - Pseudogradient of game, with agent payoffs  $f_j = \frac{1}{2} x^\top Q_j x + b^\top x_j + e_j$  
 ```
 
 ### Operators Classes
@@ -108,25 +108,68 @@ In Analysis and Synthesis, `Operators{i}` is the {doc}`operator class <../../../
 
 The two categories of operator classes are general Set-Valued Maps and Subdifferentials.
 
-
+#### Set-Valued Maps
+A general set-valued map is specified by {class}`op_gen`. Fields of {class}`op_gen` define constraints satisfied by all   $w_1 \in F_i (z_1), w_2 \in F_i(z_2)$.
 ```{list-table}
 :header-rows: 1
-* - Operator Class   
-  - Class Name
+* - Field name   
+  - Parameter
   - Description
-* - Set-Valued Maps
-  - {class}`op_gen` 
-  - monotonicity, cocoercivity, Lipschitzness, Inverse Lipschitzness
-* - Subdifferentials
-  - {class}`op_sml`
-  - Subdifferentials of $S_{m, L}$ with $-\infty < m \leq L \leq \infty$
-* - Proper, Closed, Convex
-  - {class}`op_pcc`
-  - subdifferentials of $S_{0, \infty}$ (e.g. indicator functions)
-* - Quadratics
-  - {class}`op_quad`
-  - Gradients of quadratics  in $S_{m, L}$
+* - `monotone`
+  - $\mu \in \R$
+  - $\langle w_1 - w_2, z_1 - z_2 \rangle \geq \mu \norm{z_1 - z_2}^2_2$
+* - `cocoercive`
+  - $\beta > 0$
+  - $\langle w_1 - w_2, z_1 - z_2 \rangle \geq \beta \norm{w_1 - w_2}^2_2$
+* - `lipschitz`
+  - $L > 0$
+  - $\norm{w_1 - w_2}_2 \leq  L \norm{z_1 - z_2}_2$
+* - `inverse_lipschitz`
+  - $R > 0$
+  - $\norm{z_1 - z_2}_2 \leq  R \norm{w_1 - w_2}_2$
 ```
+
+Setting the `monotone` field to  $\mu \in \R$ is a description that $F_i - \mu \ \text{Id}$ is maximal monotone. Strong monotonicity is described by  $\mu>0$, and hypo (weak) monotonicity is described by $\mu < 0$.
+
+#### Subdifferentials
+
+The supported subdifferentials are based on properties of proper, closed, convex (p.c.c.) functions. A p.c.c. function $f$ satisfies the properties
+```{list-table}
+* - Proper
+  - $f(x) > -\infty$ everywhere
+* - Closed
+  - The set $\{x \mid f(x) \leq \gamma\}$ is closed for all $\gamma \in \R$
+* - Convex
+  - $f( \alpha x + (1-\alpha)y) \leq \alpha f(x) + (1-\alpha) f(y)$ for all $\alpha \in [0, 1]$ and $(x, y)$.
+```
+The subdifferential $\partial f(x)$ of a p.c.c. function $f$ is the set of all vectors $g$ such that $f(x) - f(y) \geq \langle g, x-y \rangle$ holds for all pairs $(x, y)$. Indicator functions of closed, nonempty,  convex sets are p.c.c.
+
+
+Given constants $-\infty < m < L \leq \infty$, the set $S_{m, L}$ is the set of functions such that 
+1. $f - \frac{m}{2}\norm{\cdot}_2^2$ is p.c.c
+2. $\frac{L}{2} \norm{\cdot} - f$ is p.c.c. if $L < \infty$.
+
+$S_{0, \infty}$ is the set of p.c.c. functions. If $m > 0$, then every $f \in S_{m, \infty}$ is strongly convex. If $0 < m < L < \infty$, then every $f \in S_{m, L}$ is has $L$-Lipschitz gradients (is $L$-smooth).
+
+The subdifferential of p.c.c. functions is extended to subdifferentials of functions $f \in S_{m, L}$ by 
+\begin{align*}
+\partial f(x) := \partial \left(f - \frac{m}{2}\norm{x}_2^2\right) + m x.
+\end{align*}
+
+
+Operators arising from subdifferentials are described using the classes
+```{list-table}
+* - {class}`op_pcc`
+  - Subdifferentials of p.c.c. functions
+* - {class}`op_sml(m, L)`
+  - Subdifferentials of $S_{m, L}$
+* - {class}`op_quad(m, L)`
+  - Gradients of quadratics in $S_{m, L}$
+```
+
+:::{tip}
+`op_pcc` is an alias for `op_sml(0, inf)`. 
+:::
 
 ## Network and Controller
 
@@ -135,10 +178,25 @@ The `Controller` field is ignored in Synthesis, and can therefore be set to `Con
 
 
 The declaration `Network = []` is used if there are no network dynamics.
-If network dynamics are present, then the  `Network` is described by a {class}`genplant` object. The attribute {attr}`P` of a genplant 
- is a discrete-time state space system of type [ss](https://www.mathworks.com/help/control/ref/ss.html) with sample time $T=1$. 
+If network dynamics are present, then the  `Network` is described by a {class}`genplant` object (see {doc}`genplant documentation <../../../documentation/plants/doc_genplant>` for more details). The attribute {attr}`P` of a {class}`genplant` 
+ is a discrete-time state space system of type [ss](https://www.mathworks.com/help/control/ref/ss.html). 
  
  The {class}`genplant` attributes (`nz`, `nzp`, `ny`, `nw`, `nwp`, `nu`) count dimensions of the respective input and output partitions. 
+
+An example `genplant` declaration for a two-operator problem with one performance input and output channel is
+```matlab
+D = [0, 0, 1, 1, 0;
+     0, 0, 1, 0, 1;
+     1, 1, 0, 0, 0;
+     1, 0, 0, 0, 0;
+     0, 1, 0, 0, 0];
+p = genplant(ss(D));
+p.nz = 2; p.nzp = 1; p.nw = 2;
+p.nw = 2; p.nwp = 1; p.nu = 2;
+```
+
+
+
 
 The {doc}`Templates <../../../documentation/plants/doc_templates>` page documents commands to generates common network structures. One such network structure is  {class}`bridge_channel_delay`, which adds time delays before and after each operator $\{F_i\}_{i =1}^s$. 
 
