@@ -1,10 +1,7 @@
 # Build the System
 
 Algorithms to solve inclusion problems $0 \in \sum_{i=1}^s F(\beta^*)$ are modeled using a {doc}`Generalized Plant <../../../documentation/plants/doc_genplant>` framework. The System (algorithmic interconnection) is specified by the operators $F$, the network, and the controller. 
-
-
-
-It is mathematically described as
+The System is mathematically described by
 ```{math}
 \begin{align*}
 \text{Operator}: & & w_k & \in F(z_k), \\
@@ -62,7 +59,7 @@ The `Operators`  argument in the System is an $s$-length cell array `{op1, op2, 
 
 ### Operators for Simulation
 
-In Simulation, `Operators{i}` is the specific {doc}`operator <../../../documentation/doc_simulation>` $F_i$ used in the inclusion problem. An operator 
+In Simulation, `Operators{i}` is the specific {doc}`operator <../../../documentation/doc_simulation>` $F_i$ used in the inclusion problem. An operator may implements the following methods:
 ```{list-table}
 :header-rows: 1
 
@@ -107,7 +104,9 @@ Supported operators for simulation include
 
 ### Operators Classes
 
-In Analysis and Synthesis, `Operators{i}` is the {doc}`operator class <../../../documentation/operators/doc_operators>` for which operator $F_i$ is a member.
+In Analysis and Synthesis, `Operators{i}` is the {doc}`operator class <../../../documentation/operators/doc_operators>` for which operator $F_i$ is a member. 
+
+The two categories of operator classes are general Set-Valued Maps and Subdifferentials.
 
 
 ```{list-table}

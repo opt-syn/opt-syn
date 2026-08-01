@@ -17,9 +17,9 @@ Under Construction
 
 ```{toctree}
 :maxdepth: 1
-:hidden:
 
-Douglas-Rachford <dr_analysis>
+Cocoercive plus Strongly Monotone <ana_dr_coco_plus_mono>
+Tracking an Oscillator <ana_tracking>
 ```
 
 

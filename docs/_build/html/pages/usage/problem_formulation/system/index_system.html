@@ -184,7 +184,8 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
@@ -404,8 +405,8 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="build-the-system">
 <h1>Build the System<a class="headerlink" href="#build-the-system" title="Link to this heading">#</a></h1>
-<p>Algorithms to solve inclusion problems <span class="math notranslate nohighlight">\(0 \in \sum_{i=1}^s F(\beta^*)\)</span> are modeled using a <a class="reference internal" href="../../../documentation/plants/doc_genplant.html"><span class="doc">Generalized Plant</span></a> framework. The System (algorithmic interconnection) is specified by the operators <span class="math notranslate nohighlight">\(F\)</span>, the network, and the controller.</p>
-<p>It is mathematically described as</p>
+<p>Algorithms to solve inclusion problems <span class="math notranslate nohighlight">\(0 \in \sum_{i=1}^s F(\beta^*)\)</span> are modeled using a <a class="reference internal" href="../../../documentation/plants/doc_genplant.html"><span class="doc">Generalized Plant</span></a> framework. The System (algorithmic interconnection) is specified by the operators <span class="math notranslate nohighlight">\(F\)</span>, the network, and the controller.
+The System is mathematically described by</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
 \text{Operator}: &amp; &amp; w_k &amp; \in F(z_k), \\
@@ -468,7 +469,7 @@ C_y &amp; D_{yd} &amp; D_{y w_p} &amp; D_{yu}} \mat{c}{x_k^N \hl w_k \\ w_{pk} \
 <p>The <code class="docutils literal notranslate"><span class="pre">Operators</span></code>  argument in the System is an <span class="math notranslate nohighlight">\(s\)</span>-length cell array <code class="docutils literal notranslate"><span class="pre">{op1,</span> <span class="pre">op2,</span> <span class="pre">op3,</span> <span class="pre">...}</span></code>.</p>
 <section id="operators-for-simulation">
 <h3>Operators for Simulation<a class="headerlink" href="#operators-for-simulation" title="Link to this heading">#</a></h3>
-<p>In Simulation, <code class="docutils literal notranslate"><span class="pre">Operators{i}</span></code> is the specific <a class="reference internal" href="../../../documentation/doc_simulation.html"><span class="doc">operator</span></a> <span class="math notranslate nohighlight">\(F_i\)</span> used in the inclusion problem. An operator</p>
+<p>In Simulation, <code class="docutils literal notranslate"><span class="pre">Operators{i}</span></code> is the specific <a class="reference internal" href="../../../documentation/doc_simulation.html"><span class="doc">operator</span></a> <span class="math notranslate nohighlight">\(F_i\)</span> used in the inclusion problem. An operator may implements the following methods:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Evaluation</p></th>
@@ -529,6 +530,7 @@ C_y &amp; D_{yd} &amp; D_{y w_p} &amp; D_{yu}} \mat{c}{x_k^N \hl w_k \\ w_{pk} \
 <section id="operators-classes">
 <h3>Operators Classes<a class="headerlink" href="#operators-classes" title="Link to this heading">#</a></h3>
 <p>In Analysis and Synthesis, <code class="docutils literal notranslate"><span class="pre">Operators{i}</span></code> is the <a class="reference internal" href="../../../documentation/operators/doc_operators.html"><span class="doc">operator class</span></a> for which operator <span class="math notranslate nohighlight">\(F_i\)</span> is a member.</p>
+<p>The two categories of operator classes are general Set-Valued Maps and Subdifferentials.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Operator Class</p></th>

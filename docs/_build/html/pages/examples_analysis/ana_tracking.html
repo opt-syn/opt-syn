@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
-    <title>Channel Memory &#8212; opt-syn</title>
+    <title>Tracking an Oscillator &#8212; opt-syn</title>
   
   
   
@@ -45,11 +45,11 @@
     <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/examples_simulation/sim_channel_memory_symmetric';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/examples_analysis/ana_tracking';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Repeated Evaluations" href="sim_bind.html" />
-    <link rel="prev" title="Nash Equilibrium Seeking" href="sim_dr_game.html" />
+    <link rel="next" title="Synthesis of Algorithms" href="../examples_synthesis/index_example_synthesis.html" />
+    <link rel="prev" title="Cocoercive plus Strongly Monotone" href="ana_dr_coco_plus_mono.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -173,19 +173,19 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../examples.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="index_example_simulation.html">Simulation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="sim_dr.html">Noisy Douglas Rachford</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sim_dr_game.html">Nash Equilibrium Seeking</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Channel Memory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sim_bind.html">Repeated Evaluations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sim_tracking.html">Tracking an Oscillator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sim_coord_descent.html">Cyclic Coordinate Descent</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sim_switched.html">Time-Varying Delays</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr_game.html">Nash Equilibrium Seeking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_coord_descent.html">Cyclic Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_switched.html">Time-Varying Delays</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index_example_analysis.html">Analysis</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Tracking an Oscillator</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
@@ -298,7 +298,7 @@
       
       
       
-      <li><a href="../../_sources/pages/examples_simulation/sim_channel_memory_symmetric.md" target="_blank"
+      <li><a href="../../_sources/pages/examples_analysis/ana_tracking.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -372,7 +372,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Channel Memory</h1>
+    <h1>Tracking an Oscillator</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -386,87 +386,80 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="channel-memory">
-<h1>Channel Memory<a class="headerlink" href="#channel-memory" title="Link to this heading">#</a></h1>
-<p>This example involves a two-operator inclusion problem. Memory effects are present in the communication link to and from evaluation of <span class="math notranslate nohighlight">\(F_1\)</span>.
-The intensity of the memory effects are represented by a scalar <span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span>.
-The network effects for all <span class="math notranslate nohighlight">\(k \in \N\)</span> are</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}z^1_k &amp;= u_k^1 - \alpha z^1_{k-1},  &amp; y_k^1 &amp;= w_k^1 - \alpha y_{k-1}^1, \\
-z^2_k &amp;= u_k^2, &amp; y_k^2 &amp;= w_k^2 \end{split}\]</div>
-<p>The degenerate case of <span class="math notranslate nohighlight">\(\alpha=0\)</span> is no network dynamics.
-A state-space realization of these memory effects is</p>
-<div class="math notranslate nohighlight">
-\[\begin{split} \text{Network}: \qquad  \mat{c}{x_{k+1}^N \hl z_k \hdl y_k} =  \mat{cc|cc:cc}{-\alpha I &amp; 0 &amp; \frac{1}{2} I &amp; 0 &amp; 0 &amp; 0 \\
- 0 &amp; -\alpha I &amp; 0 &amp; 0 &amp; \frac{1}{2}I &amp; 0  \hl
- 0 &amp; -2\alpha I &amp; 0 &amp; 0 &amp; I &amp; 0  \\
- 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; I  \hdl
- -2 \alpha I &amp; 0 &amp; I &amp; 0 &amp; 0 &amp; 0 \\
- 0 &amp; 0 &amp; 0 &amp; I &amp; 0 &amp; 0}  \mat{c}{x_{k}^N \hl w_k \hdl u_k}.\end{split}\]</div>
-<p>The controller structure with parameters <span class="math notranslate nohighlight">\((\gamma, \lambda) \geq 0\)</span> used to solve the two-operator inclusion problem is</p>
-<div class="math notranslate nohighlight">
-\[\begin{split} \text{Network}: \qquad  \mat{c}{x_{k+1}^c \hl u_k^1 \\ u_k^2} =  \mat{c|cc}{I &amp; -\gamma \lambda &amp; \frac{ -\gamma \lambda}{\alpha+1} \hl
- (1+\alpha) I &amp; 0 &amp; 0 \\
- I &amp; -\gamma I &amp; -\frac{ -\gamma }{\alpha+1} I }  \mat{c}{x_{k}^c \hl y_k^1 \\ y_k^2}.\end{split}\]</div>
-<p>This controller structure is parameterized by <span class="math notranslate nohighlight">\(\alpha\)</span>. If <span class="math notranslate nohighlight">\(\alpha = 0\)</span> and <span class="math notranslate nohighlight">\(\lambda = 1\)</span>, then this controller is the same as Projected Gradient Descent.
-The controller structure is chosen to ensure that the <a class="reference internal" href="../how_it_works/network_synthesis.html"><span class="doc">Regulator Equation</span></a> condition for algorithm convergence is satisfied for all values <span class="math notranslate nohighlight">\((\gamma, \lambda)\)</span>. Projected Gradient Descent fails the regulator equation requirement of convergence when <span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span>.</p>
-<p>We use this algorithm to solve a composite optimization problem</p>
-<div class="math notranslate nohighlight">
-\[\beta^* \in \argmin_{\norm{\beta}_1 \leq 100 } f(\beta)\]</div>
-<p>where <span class="math notranslate nohighlight">\(f\)</span> is a convex quadratic with <span class="math notranslate nohighlight">\(m=1\)</span>, <span class="math notranslate nohighlight">\(L=5\)</span>.</p>
-<p>Figure <a class="reference internal" href="#sym-trace"><span class="xref myst">1</span></a> plots a trace of algorithm execution starting from <span class="math notranslate nohighlight">\(x_0 = 0\)</span>, highlighting the states of the network and controller.</p>
-<figure class="align-center" id="sym-trace">
-<img alt="../../_images/sim_channel_sym_dark.png" class="only-dark" src="../../_images/sim_channel_sym_dark.png" />
+  <section class="tex2jax_ignore mathjax_ignore" id="tracking-an-oscillator">
+<h1>Tracking an Oscillator<a class="headerlink" href="#tracking-an-oscillator" title="Link to this heading">#</a></h1>
+<p>Figure <a class="reference internal" href="#track-ana"><span class="xref myst">1</span></a> plots bounds on the convergence rate <span class="math notranslate nohighlight">\(\rho\)</span> as <span class="math notranslate nohighlight">\(\omega\)</span> is swept in the range <span class="math notranslate nohighlight">\([-\pi, pi]\)</span>. Each Analysis run has the same orders for all operator classes. The <span class="math notranslate nohighlight">\(\rho=1\)</span> stability boundary is shown by the gray dashed line, convergence is certified if <span class="math notranslate nohighlight">\(\rho &lt;1\)</span>.</p>
+<figure class="align-center" id="track-ana">
+<a class="only-dark reference internal image-reference" href="../../_images/track_circle_2_0_sml_dark.png"><img alt="../../_images/track_circle_2_0_sml_dark.png" class="only-dark" height="322" src="../../_images/track_circle_2_0_sml_dark.png" width="827" />
+</a>
 <figcaption>
-<p><span class="caption-text"><em>Figure 1:</em> Trace of execution and convergence</span><a class="headerlink" href="#sym-trace" title="Link to this image">#</a></p>
+<p><span class="caption-text"><em>Figure 1:</em> Convergence rate bound v.s. <span class="math notranslate nohighlight">\(\omega\)</span></span><a class="headerlink" href="#track-ana" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <figure class="align-center" id="id1">
-<img alt="../../_images/sim_channel_sym_light.png" class="only-light" src="../../_images/sim_channel_sym_light.png" />
+<a class="only-light reference internal image-reference" href="../../_images/track_circle_2_0_sml_light.png"><img alt="../../_images/track_circle_2_0_sml_light.png" class="only-light" height="322" src="../../_images/track_circle_2_0_sml_light.png" width="827" />
+</a>
 <figcaption>
-<p><span class="caption-text"><em>Figure 1:</em> Trace of execution and convergence</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+<p><span class="caption-text"><em>Figure 1:</em> Convergence rate bound v.s. <span class="math notranslate nohighlight">\(\omega\)</span></span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
-<p>The Regulator Equations are used to  establish tracking properties of solution trajectories. The solution to the Regulator Equations for this network and controller are</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-\Pi &amp;= \mat{cc}{0 &amp; \frac{1}{2(\alpha+1)}I \\ -\frac{1}{2} I &amp; 0 }, &amp;  \Gamma &amp;= \mat{cc}{-(\alpha+1) I &amp; 0 \\
--I &amp; 0 }, \\
-\Phi &amp;= \mat{cc}{0 &amp; \frac{1}{2(\alpha+1)}I \\ 0  &amp; -I }, &amp;  \Theta &amp;= \mat{c}{-I &amp; 0}.
-\end{align*}\end{split}\]</div>
-<p>The pair <span class="math notranslate nohighlight">\((\beta^*, w^*)\)</span> solving the composite optimization problem is unique, because  <span class="math notranslate nohighlight">\(f\)</span> is strongly convex with a nonempty constraint set is nonempty, and <span class="math notranslate nohighlight">\(f\)</span> is smooth.
-Algorithm convergence implies tracking of the signals <span class="math notranslate nohighlight">\((x^N, x^c, y, u)\)</span> with</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
-    \lim_{k \rightarrow \infty}
-    \mat{c}{x_k^N \\ x^c_k \hl  y_k \\u_k} &amp; = \mat{c}{\Pi \\ \Theta \hl \Phi \\ \Gamma} \mat{c}{-\beta^* \\ \nabla f(\beta^*)}.
-\end{align*}\end{split}\]</div>
-<p>Figure <a class="reference internal" href="#sym-track"><span class="xref myst">2</span></a> plots the tracking of these signals over time</p>
-<figure class="align-center" id="sym-track">
-<img alt="../../_images/sim_channel_sym_track_dark.png" class="only-dark" src="../../_images/sim_channel_sym_track_dark.png" />
-<figcaption>
-<p><span class="caption-text"><em>Figure 2:</em> Tracking errors</span><a class="headerlink" href="#sym-track" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<figure class="align-center" id="id2">
-<img alt="../../_images/sim_channel_sym_track_light.png" class="only-light" src="../../_images/sim_channel_sym_track_light.png" />
-<figcaption>
-<p><span class="caption-text"><em>Figure 2:</em> Tracking errors</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<p>Figure <a class="reference internal" href="#sym-trace-sq"><span class="xref myst">3</span></a> plots the squared norm of the tracking error</p>
-<figure class="align-center" id="sym-track-sq">
-<img alt="../../_images/sim_channel_sym_track_sq_dark.png" class="only-dark" src="../../_images/sim_channel_sym_track_sq_dark.png" />
-<figcaption>
-<p><span class="caption-text"><em>Figure 3:</em> Tracking residuals</span><a class="headerlink" href="#sym-track-sq" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<figure class="align-center" id="id3">
-<img alt="../../_images/sim_channel_sym_track_sq_light.png" class="only-light" src="../../_images/sim_channel_sym_track_sq_light.png" />
-<figcaption>
-<p><span class="caption-text"><em>Figure 3:</em> Tracking residuals</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Code for Oscillator Tracker Analysis, sweeping <span class="math notranslate nohighlight">\(\omega\)</span></span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c">%define the operators</span>
+<span class="linenos"> 2</span><span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
+<span class="linenos"> 3</span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">];</span>
+<span class="linenos"> 4</span><span class="n">s</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">length</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="n">op_list</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">cell</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos"> 7</span><span class="k">for</span><span class="w"> </span><span class="nb">i</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">s</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="n">op_list</span><span class="p">{</span><span class="nb">i</span><span class="p">}=</span><span class="w"> </span><span class="n">op_sml</span><span class="p">(</span><span class="n">m</span><span class="p">(</span><span class="nb">i</span><span class="p">),</span><span class="w"> </span><span class="n">L</span><span class="p">(</span><span class="nb">i</span><span class="p">));</span><span class="w">       </span>
+<span class="linenos"> 9</span><span class="k">end</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="c">%parameters of the controller, independent of omega</span>
+<span class="linenos">12</span><span class="n">b0</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="mf">0.05</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="mf">0.1</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="mf">0.05</span><span class="p">];</span>
+<span class="linenos">13</span><span class="n">b1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="mf">0.05</span><span class="p">;</span>
+<span class="linenos">14</span><span class="n">b2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">-</span><span class="mf">0.1</span><span class="p">;</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="n">BK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">b0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">);</span>
+<span class="linenos">17</span><span class="n">CK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">ones</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Rbeta</span><span class="p">;</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span><span class="n">DK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">zeros</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="linenos">20</span><span class="n">DK</span><span class="p">(</span><span class="k">end</span><span class="p">,</span><span class="w"> </span><span class="p">:)=</span><span class="w"> </span><span class="n">DK</span><span class="p">(</span><span class="k">end</span><span class="p">,</span><span class="w"> </span><span class="p">:)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b1</span><span class="p">;</span>
+<span class="linenos">21</span><span class="n">DK</span><span class="p">(:,</span><span class="w"> </span><span class="mi">1</span><span class="p">)=</span><span class="w"> </span><span class="n">DK</span><span class="p">(:,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b2</span><span class="p">;</span>
+<span class="linenos">22</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span><span class="c">%sweep over the angle</span>
+<span class="linenos">25</span><span class="n">Nomega</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">320</span><span class="p">;</span>
+<span class="linenos">26</span><span class="n">omegalist</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">pi</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">Nomega</span><span class="p">);</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span><span class="n">rholist</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">Nomega</span><span class="p">);</span>
+<span class="linenos">29</span>
+<span class="linenos">30</span><span class="n">order</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">};</span>
+<span class="linenos">31</span><span class="k">parfor</span><span class="w"> </span><span class="nb">i</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="nb">length</span><span class="p">(</span><span class="n">omegalist</span><span class="p">)</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span><span class="w">    </span><span class="c">%define the path of the optimal solution</span>
+<span class="linenos">34</span><span class="w">    </span><span class="n">theta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">omegalist</span><span class="p">(</span><span class="nb">i</span><span class="p">);</span>
+<span class="linenos">35</span><span class="w">    </span><span class="n">Sbeta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">blkdiag</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">givens</span><span class="p">(</span><span class="nb">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span><span class="w"> </span><span class="nb">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)));</span>
+<span class="linenos">36</span><span class="w">    </span><span class="n">Rbeta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
+<span class="linenos">37</span>
+<span class="linenos">38</span><span class="w">    </span>
+<span class="linenos">39</span><span class="w">    </span><span class="c">%create the controller    </span>
+<span class="linenos">40</span><span class="w">    </span><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">(</span><span class="n">Sbeta</span><span class="p">,</span><span class="w"> </span><span class="n">BK</span><span class="p">,</span><span class="w"> </span><span class="n">CK</span><span class="p">,</span><span class="w"> </span><span class="n">DK</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">41</span><span class="w">    </span>
+<span class="linenos">42</span><span class="w">    </span>
+<span class="linenos">43</span><span class="w">    </span><span class="c">%form the system</span>
+<span class="linenos">44</span><span class="w">    </span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">op_list</span><span class="p">,</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
+<span class="linenos">45</span><span class="w">    </span>
+<span class="linenos">46</span><span class="w">    </span>
+<span class="linenos">47</span><span class="w">    </span><span class="c">%run Analysis and store result</span>
+<span class="linenos">48</span><span class="w">    </span><span class="n">man</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_analysis</span><span class="p">(</span><span class="n">sys</span><span class="p">);</span><span class="w">  </span>
+<span class="linenos">49</span><span class="w">    </span><span class="n">sol</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man</span><span class="p">.</span><span class="n">bisect</span><span class="p">(</span><span class="n">order</span><span class="p">);</span>
+<span class="linenos">50</span>
+<span class="linenos">51</span><span class="w">    </span><span class="n">rholist</span><span class="p">(</span><span class="nb">i</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol</span><span class="p">.</span><span class="n">rho</span><span class="p">;</span><span class="w">    </span>
+<span class="linenos">52</span><span class="k">end</span>
+</pre></div>
+</div>
+</div>
 </section>
 
 
@@ -481,20 +474,20 @@ Algorithm convergence implies tracking of the signals <span class="math notransl
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="sim_dr_game.html"
+       href="ana_dr_coco_plus_mono.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Nash Equilibrium Seeking</p>
+        <p class="prev-next-title">Cocoercive plus Strongly Monotone</p>
       </div>
     </a>
     <a class="right-next"
-       href="sim_bind.html"
+       href="../examples_synthesis/index_example_synthesis.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Repeated Evaluations</p>
+        <p class="prev-next-title">Synthesis of Algorithms</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
