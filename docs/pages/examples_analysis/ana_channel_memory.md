@@ -20,7 +20,7 @@ An $\alpha$-dependent controller
 is used to solve the problem  with values of $\gamma = 0.4, \lambda = 0.2$.
 The operator $F_1$ is the subdifferential of a function in $S_{1, 5}$. The operator $F_2$ is the subdifferential of a function in  $S_{0, \infty}$. 
 
-Figure [1](#alpha-sweep) plots Analysis-computed upper-bounds on $\rho$ as the forgetting factor $\alpha$ increases. The same order is used for each operator.  In this example, the convergence rate bound is monotonically increasing in $\alpha$. 
+Figure [1](#alpha-sweep) plots Analysis-computed upper-bounds on $\rho$ as the forgetting factor $\alpha$ increases. The same order is used for each operator.   $\rho=2$ is used as an upper bound in bisection: a rate of $\rho<2$ is certified as a worst-case bound.
 
 :::{figure} _static/channel_memory_alpha_dark.png
 :align: center
