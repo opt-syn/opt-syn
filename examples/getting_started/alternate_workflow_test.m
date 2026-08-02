@@ -1,6 +1,6 @@
 % The set of considered oracles
 m = 1;
-L = 10;
+L = 100;
 op1 = op_sml(m, L);
 op2 = op_pcc();
 ops = {op1, op2};

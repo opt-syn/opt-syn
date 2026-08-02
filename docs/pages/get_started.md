@@ -22,67 +22,49 @@ Analysis and Synthesis follow similar workflows:
 ## Optimization  Example Setup
 
 
-A first example involves a constrained optimization problem
+A constrained optimization problem of minimizing a function $f$ subject to a sparse $L_1$ norm constraint is
 ```{math}
 \begin{align}
-\beta^* \in  \text{argmin}_{\beta \in \mathcal{Z}} f(\beta). 
+\beta^* \in \text{argmin}_{\norm{\beta}_1 \leq 100} f(\beta), & & & \beta^* \in \text{argmin}_{\beta \in \R^d} f(\beta) + \mathbf{I}_{\norm{\cdot}_1 \leq 100}(\beta),
 \end{align}
 ```
+
+The function $f$ is known to be real-valued, $1$-strongly convex, and $50$-smooth (Lipschitz gradients).
+
+
+$f$ only accessible by the optimizer using a network, which may possess time delays or other dynamics.  The goal is to Synthesize  certifiably convergent algorithms that will solve the optimization problem in this remote environment. 
+
+
+
+
+## Synthesis
+
+When the function $f$ is directly connected to the optimizer (no network dynamics), the code to perform synthesis is
+```{literalinclude} ../examples/getting_started/synthesis_workflow_test.m
+:caption: Synthesis without Network Effects
+:language: matlab
+:linenos:  1-13
+```
+
+Convergence is confirmed, because the algorithm has a worst-case linear convergence rate of $0.8676 < 1$.
+
+
+
+```{literalinclude} ../examples/getting_started/synthesis_workflow_test.m
+:caption: Synthesis with a 1-step time-delay
+:language: matlab
+:linenos:  1-13
+```
+
+
+
+
 
 :::{danger}
 This PGD content must be replaced with something else.
 :::
 
 
-The set $\mathcal{Z}$ is closed, convex, and nonempty. One instance of this problem is  [LASSO](https://en.wikipedia.org/wiki/Lasso_(statistics)) in regression, in which the  cost $f$ which is a convex quadratic, and the set $\mathcal{Z}$ which is a scaled  $L_1$-ball.
-
-
-
-The constrained optimization problem can be expressed as a composite optimization problem
-```{math}
-\begin{align}
-\beta^* \in \text{argmin}_{\beta \in \R^d} f(\beta) + \mathbf{I}_{\mathcal{Z}}(\beta),
-\end{align}
-```
-where $\mathbf{I}_{\mathcal{Z}}$ is the 0/$\infty$ indicator function of a closed, convex set $\mathcal{Z}$. The point $\beta^*$ satisfies a necessary optimality principle
-```{math}
-\begin{align}
-0 \in \partial f(\beta^*) + \partial \mathbf{I}_{\mathcal{Z}}(\beta^*).
-\end{align}
-```
-
-We assume  there are parameters $0 < m < L< \infty$ such that 
-1. $f(\beta) \in \R$  for all $\beta \in \R^d$
-3. $f$ is $m$-strongly convex 
-4. $f$ is $L$-smooth (has $L$-Lipschitz gradients). 
-
-
-Under these circumstances, the optimal point  $\beta^*$ exists and is unique for each pair $(f, \mathcal{Z})$.
-
-
-## Projected Gradient Descent
-
-
-The Projected Gradient Descent algorithm with stepsize $\gamma > 0$ is the iterative procedure
-
-```{math}
-\beta_{k+1} = \text{proj}_{\mathcal{Z}}(\beta_k - \gamma \partial f(\beta_k)).
-```
-
-The iterative procedure for PGD may be equivalently expressed as an interconnection between a linear dynamical system and the oracles $(f, I_{\mathcal{Z}})$ as
-```{math}
-\begin{align*}
- \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &= \mat{c|cc}{I & -\gamma I & -\gamma I \hl I &0 & 0 \\
- I & -\gamma I & -\gamma I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\partial f(z_k^1) \\  \partial I_{\mathcal{Z}}(z_k^2)}
-\end{align*},
-```
-
-PGD achieves linear convergence at rate $\rho \in (0, 1)$ if there exists a constant $\gamma_0$ such that $\norm{\beta_{k}-\beta^*}_2  \leq  \gamma_0 \rho^{-k} \norm{\beta_0-\beta^*}$ for all initial points $\beta_0$, pairs $(f, \mathcal{Z})$, and times $k \in \N$.
-
-The algorithm is convergent if  $\lim_{k \rightarrow \infty} z_1 = \lim_{k \rightarrow \infty} z_2 = \beta^*$ for all  $(\partial f, \mathcal{Z})$. 
-
-
-The theoretical PGD worst-case linear convergence rate of $\rho$ is  $\rho = \frac{L-m}{L+m}$, which is attained by the optimal stepsize $\gamma := \frac{2}{m+L}$. 
 
 
 ## Simulation
@@ -170,23 +152,7 @@ rho = sol.rho % 0.8182, matches PGD theory within 4 digits.
 
 ## Synthesis 
 
-In synthesis, we aim to design an algorithm with minimal convergence rate. The synthesis code for the case of $m=1, L=10$ is 
 
-``` matlab
-%describe the operators 
-m = 1; L = 10;
-op1 = op_sml(m, L); %\partial f1
-op2 = op_pcc();     %\partial f2
-
-%form the algorithm interconnection
-sys = opt_system({op1, op2});
-
-
-%run the synthesis routine, use bisection to minimize the convergence rate
-man = opt_synthesis(sys); 
-sol = man.bisect();
-rho = sol.rho % 0.7209
-```
 
 The Synthesized optimization algorithm with rate $\rho \leq 0.7209$  is 
 
