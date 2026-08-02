@@ -35,11 +35,11 @@ Three rounds of Synthesis/Analysis alternation are performed using `order = {1, 
 :::
 
 
-In contrast, the algorithm from {doc}`channel memory simulation <../examples_simulation/syn_channel_symmetric>` is certified as convergent with $\rho < 0.9448$ under the same `order={1, 1}` Analysis method.
+In contrast, the algorithm from {doc}`channel memory simulation <../examples_simulation/sim_channel_memory_example>` is certified as convergent with $\rho < 0.9448$ under the same `order={1, 1}` Analysis method.
 
 
-```{literalinclude} ../../../examples/synthesis/syn_repeated_evaluation.m
+```{literalinclude} ../../../examples/synthesis/syn_channel_symmetric.m
 :caption: Code for Repeated Synthesis
 :language: matlab
-:linenos:  1-37
+:lines:  1-37
 ```

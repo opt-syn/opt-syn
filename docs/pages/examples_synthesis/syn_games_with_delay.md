@@ -17,14 +17,14 @@ All three are certifiably  convergent, but Algorithm 1 has the least worst-case 
 Each Synthesis is accompanied by an algorithm Simulation starting from an initial condition $x_0=0$, empirically demonstrating this speed of convergence
 
 Figure  [1](#game-bw) plots a trajectory of the backward evaluation algorithm.
-:::{figure} _static/game_sim_fw_dark.png
+:::{figure} _static/game_sim_bw_dark.png
 :align: center
 :class: only-dark
 :name: game-bw
 *Figure 1:* Algorithm with both backward evaluations
 :::
 
-:::{figure} _static/game_sim_fw_dark.png
+:::{figure} _static/game_sim_bw_dark.png
 :align: center
 :class: only-light
 :name: game-bw
@@ -47,14 +47,14 @@ Figure  [2](#game-fw) plots a trajectory of the forward and backward evaluation 
 :::
 
 Figure  [3](#game-delay) plots a trajectory of the algorithm with time delay.
-:::{figure} _static/game_sim_fw_dark.png
+:::{figure} _static/game_sim_delay_dark.png
 :align: center
 :class: only-dark
 :name: game-delay
 *Figure 3:* Algorithm with delay on $F_1$
 :::
 
-:::{figure} _static/game_sim_fw_dark.png
+:::{figure} _static/game_sim_delay_dark.png
 :align: center
 :class: only-light
 :name: game-delay

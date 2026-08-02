@@ -1,38 +1,40 @@
-% lasso in the overparameterized setting
-
 %% describe the operators
-%define the quadratic
 rng(430, 'twister');
 
-% d = 10; %dimensionality
 d = 100;
-tau = 100; %l1 ball constraint
-A_data = rand(2*d, d);
-b_data = rand(2*d, 1);
+A_data = randn(1.3*d, d);
+b_data = 10*rand(1.3*d, 1) + 4*randn(1.3*d, 1);
 
 eK = svd(A_data);
 m = min(eK)^2;
 L = max(eK)^2;
 
 op1 = op_sml(m, L);
-% op2 = op_pcc();
-op2 = op_sml(m, L);
+op2 = op_pcc();
+
 ops = {op1, op2};
-
-
 
 %% form the system
 sys = opt_system(ops);
 
 %% solve the problem
 config =opt_config();
-% config.syn.D_mask = [0, 0; 1, 1]; %gradient evaluation of lsq
-config.syn.D_mask = [1, 0; 1, 1];   %prox evaluation of lsq
+
+%relax stringency of numerical tolerances to encourage a solution
+
+%lowered from default
+config.tol.spread = 1e-4;
+config.tol.input_diss = 1e-5;
+config.tol.M = 1e-9;
+
+%raised from default
+config.tol.GX_max = 300;   
+config.tol.GY_max = 300;
+
+config.syn.D_mask = [0, 0; 1, 1]; %gradient evaluation of lsq
 man = opt_synthesis(sys, config);
 
-
-spec = spec_stability(0.98);
-sol = man.solve_single({}, spec);
+sol = man.bisect();
 
 %% simulate and plot
 
@@ -43,13 +45,15 @@ rng(32, 'twister');
 op1_sim = op_sim_lsq(A_data, b_data);
 
 %define the L1 ball
+tau = 50; %l1 ball constraint
 op2_sim = op_sim_l1_hard(tau);
 
 ops_sim = {op1_sim, op2_sim};
 
 sys_sim = sol.sys.export_sim(ops_sim);
 sim = alg_sim(sys_sim, d);
-T = 1000;
+sim.sampler.x0 = 7*(2*rand(sys_sim.n, d)-1);
+T = 60;
 sim_out= sim.sim(T);
 plt = alg_plotter(sim_out);
 plt.plot_6f(1);
@@ -61,3 +65,4 @@ betastar = sim_out.z(end, :, end);
 slift = ss_kron_eye(sol.sys.get_alg(), d);
 spartial = lft(A_data'* A_data, slift);
 pass_partial = -getPassiveIndex(-spartial, 'input');
+szero = lft(zeros(d), spartial);

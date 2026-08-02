@@ -1,6 +1,7 @@
-function [Plist] = coordinate_descent_primitives(c)
-%COORDINATE_DESCENT_SYSTEM 
+function [Plist] = coordinate_descent_limited(c)
+%COORDINATE_DESCENT_LIMITED
 % block coordinate descent with c blocks
+% but information is only transmitted through for the active block
 
 Plist = cell(c, 1);
 
@@ -11,15 +12,11 @@ B_base = zeros(c, 2*c);
 % B(1, c+1) = 1;
 % C = [A; zeros(c)];
 C_base = [eye(c); zeros(c)];
-D_base = [zeros(c), zeros(c); eye(c), zeros(c)];
-% D(1, c+1) = 1;
-
-% delay_curr = ss(A, B, C, D, 1);
+D_base = [zeros(c), zeros(c); zeros(c), zeros(c)];
 
 n = struct('nz', c, 'nu', c, 'nw', c, 'ny', c, 's', 1);
 
- 
-for i = 1:c
+for i = 1:1
     A_curr = A_base;
     A_curr(i, i) = 0;
     B_curr = B_base;
@@ -28,13 +25,11 @@ for i = 1:c
     C_curr(i, i) = 0;
     D_curr = D_base;
     D_curr(i, i+c) = 1;
+    D_curr(i+c, i) = 1;
 
     P_curr = ss(A_curr, B_curr, C_curr, D_curr, 1);
 
-    % P_curr = ss(A_curr, B_curr, [C_curr; C_base], [D_curr; D_base], 1);
-    
-    Plist{i} = genplant(P_curr, n);
-
+    Plist = genplant(P_curr, n);
 end
 
 end

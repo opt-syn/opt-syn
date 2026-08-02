@@ -18,7 +18,7 @@ Three solution modes are available:
 3. [Alternation](#alternation)
 
 (#single-solution)=
-### Single Solution
+## Single Solution
 
 
 The  {meth}`solve_single` routine performs Analysis or Synthesis at given  specifications. The output of {meth}`solve_single` is a {doc}`solution <../documentation/doc_solutions>` structure {class}`opt_solution`. The fields of the solution structure are explained further  below in [Validation](#validation).

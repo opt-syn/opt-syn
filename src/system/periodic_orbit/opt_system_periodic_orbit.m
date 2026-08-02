@@ -60,7 +60,7 @@ classdef  opt_system_periodic_orbit < opt_system
             Rc = M;
             order = 0;
             order_max = 1000;
-            while (norm(Rc - eye(size(M))) > 1e-9) && (order < order_max)
+            while (norm(Rc - M) > 1e-9) && (order < order_max)
                 order = order + 1;
                 Rc = Rc * M;
             end

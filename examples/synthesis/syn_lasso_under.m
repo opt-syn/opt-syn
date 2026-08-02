@@ -1,14 +1,11 @@
 % lasso in the underparameterized setting
 
 %% describe the operators
-%define the quadratic
+%define the data matrix
 rng(430, 'twister');
-
-% d = 10; %dimensionality
-d = 300;
-tau = 50; %l1 ball constraint
-A_data = rand(d/2, d);
-b_data = rand(d/2, 1);
+d = 200;
+A_data = 0.5*randn(d/2, d);
+b_data = 10*randn(d/2, 1) + 2*rand(d/2, 1);
 
 eK = svd(A_data);
 m = 0;
@@ -26,18 +23,13 @@ spec_erg = spec_ergodic();
 
 %% solve the problem
 config =opt_config();
-% config.syn.D_mask = [0, 0; 1, 1]; %gradient evaluation of lsq
-config.syn.D_mask = [1, 0; 1, 1];   %prox evaluation of lsq
-
+config.syn.D_mask = [0, 0; 1, 1]; %gradient evaluation of lsq
 
 %for sublinear convergence, set lower bounds to the dissipation terms to
 %zero (nonstrict dissipation)
 config.tol.input_diss = 0;
 config.tol.M = 0;
-% config.tol.spread = 1e-3;
 man = opt_synthesis(sys, config);
-% man = opt_synthesis(sys, config);
-
 
 sol = man.solve_single({}, spec_erg);
 
@@ -48,19 +40,19 @@ sol = man.solve_single({}, spec_erg);
 op1_sim = op_sim_lsq(A_data, b_data);
 
 %define the L1 ball
-
+tau = 50; %l1 ball constraint
 op2_sim = op_sim_l1_hard(tau);
 
 ops_sim = {op1_sim, op2_sim};
 
 sys_sim = sol.sys.export_sim(ops_sim);
 sim = alg_sim(sys_sim, d);
-T = 1000;
+sim.sampler.x0 = 7*(2*rand(sys_sim.n, d)-1);
+T = 10000;
 sim_out= sim.sim(T);
 plt = alg_plotter(sim_out);
 plt.plot_6f(1);
 
 betastar = sim_out.z(end, :, end);
 
-
-
+betaols = A_data \ b_data;

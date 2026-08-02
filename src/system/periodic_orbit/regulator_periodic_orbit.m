@@ -32,7 +32,7 @@ classdef regulator_periodic_orbit < regulator_lti
             %go to the rotating coordinate frame
             c = size(obj.sys.M, 1);
             n = size(A, 1);
-            Rkron = kron(eye(n/c), obj.sys.M);
+            Rkron = kron(eye(n/c), obj.sys.M');
 
             A = Rkron * A;
             B1 = Rkron * B1;
@@ -48,7 +48,7 @@ classdef regulator_periodic_orbit < regulator_lti
 
             c = size(obj.sys.M, 1);
             d = size(S, 1);
-            Rkron = kron(eye(d/c), obj.sys.M);
+            Rkron = kron(eye(d/c), obj.sys.M');
 
             %go to the rotating coordinate frame
             S = Rkron * S;
@@ -65,10 +65,10 @@ classdef regulator_periodic_orbit < regulator_lti
             %go to the rotating coordinate frame
             c = size(obj.sys.M, 1);
             n = size(Kcurr.A, 1);
-            Rkron = kron(eye(n/c), obj.sys.M);
+            Rkron = kron(eye(n/c), obj.sys.M');
 
-            Kcurr.A = Rkron * Kcurr.A;
-            Kcurr.B = Rkron * Kcurr.B;
+            % Kcurr.A = Rkron * Kcurr.A;
+            % Kcurr.B = Rkron * Kcurr.B;
 
         end
 
