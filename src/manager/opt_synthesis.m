@@ -120,39 +120,8 @@ classdef opt_synthesis < opt_manager_interface
                 
                       
                 sp = sperf{i};
-                iwp_iqc = (1:(iqc_op.nw))';
-                ir_iqc_first = (1:(iqc_op.np))';
 
-
-                count_iqc_in = (iqc_op.nw);
-                count_iqc_out = (iqc_op.np);
-
-                %any performance outputs?
-                if isempty(sp.izp)
-                    ir_iqc_first_r =[];
-                    
-                else
-                    ir_iqc_first_r = count_iqc_out  + (sp.izp);
-                    count_iqc_out = count_iqc_out + length(sp.izp);
-                end
-                
-                %any performance inputs?
-                if isempty(sp.iwp)
-                    iw_iqc_first_r = [];
-                else
-                    iw_iqc_first_r = count_iqc_in + (sp.iwp);
-                    count_iqc_in = count_iqc_in + length(sp.iwp);                    
-                end
-
-                iwp_iqc = [iwp_iqc; iw_iqc_first_r];
-
-                ir_iqc0 = [ir_iqc_first; ir_iqc_first_r];
-               
-                sp_ind_w = iwp_iqc;
-                sp_ind_r = ir_iqc0;
-                
-                if iscell(alg_psi)
-                    %TODO: change to genplant_poly type?
+                if iscell(alg_psi)                    
                     nz = alg_psi{1}.nz;
                     nw = alg_psi{1}.nw;                    
                     nwp = alg_psi{1}.nwp;
@@ -181,30 +150,11 @@ classdef opt_synthesis < opt_manager_interface
                 j_input = [(1:nw), (nw + sp.iwp), nw+nwp + (1:nu)];
                 v_input = ones(length(i_input), 1);
                 E_input = full(sparse(i_input, j_input, v_input, nw+nwpa+nu, nw+nwp+nu))';
-                
-                 
-
-                % E_r = blkdiag(full(sparse(1:length(sp_ind_r), sp_ind_r, ...
-                %     ones(1, length(sp_ind_r)), length(sp_ind_r), nwr)), eye(ny));
-                % 
-                % E_w = blkdiag(full(sparse(1:length(sp_ind_w), sp_ind_w, ...
-                %     ones(1, length(sp_ind_w)), length(sp_ind_w), nww)), eye(nu));
-
-                
-
-                %enforce squareness in the performance specs?
-
-                
-
-                %nonminimal representation of the multiplier-extended plant
-
-                %TODO: write fancier index code?
-                
-
-                
+                   
 
                 if iscell(alg_psi)
 
+                    %iterate through all systems
                     n2 = alg_psi{1}.dump_dim();
                     n2.nwp = length(sp.iwp);
                     n2.nzp = length(sp.izp);
@@ -212,10 +162,10 @@ classdef opt_synthesis < opt_manager_interface
                     alg_screen = cell(size(alg_psi));
                     for j = 1:length(alg_screen)
                         alg_screen{j} = genplant(E_output * alg_psi{j}.ss * E_input, n2);
-                    end                    
-                    %TODO: write this part: cells/genplant poly
+                    end                                        
                 else
 
+                    %only the current system
                     n2 = alg_psi.dump_dim();
                     n2.nwp = length(sp.iwp);
                     n2.nzp = length(sp.izp);
@@ -227,8 +177,6 @@ classdef opt_synthesis < opt_manager_interface
                     
                 end
 
-                % iqc_data_rump = rmfield(iqc_data, 'iqc_op');
-                
                 diss{i} = diss_data;
                 diss{i}.iqc_rob = iqc_op;
                 diss{i}.rho = sp.rho;
@@ -239,7 +187,8 @@ classdef opt_synthesis < opt_manager_interface
                 diss{i}.ndiss = length(specs);
 
                 %TODO: this may run into trouble if one entry has an X.
-                %performance with dynamic multipliers?
+                %convex performance with dynamic multipliers and nontrivial 
+                % X remains an open problem.
             end
 
         end
@@ -260,10 +209,17 @@ classdef opt_synthesis < opt_manager_interface
             sol.cert.iqc_op_all = obj.iqc_op_all;
             sol.vars.rho = sol.rho;
 
+            if isempty(sol.rho)
+                sol.rho = 1; %if we are at the recovery stage, 
+                % then some kind of certified convergence/divergence 
+                % has been achieved. rho is empty only for ERGODIC or
+                % regret types.
+            end
+
 
             [sol] = obj.lmi.process_recovery(sol, lmi_out, alg_psi, diss);            
 
-            sol.sys = obj.sys;
+            sol.sys = obj.sys_orig;
             sol.sys.K = sol.cert.K;
 
             %check regulator equation

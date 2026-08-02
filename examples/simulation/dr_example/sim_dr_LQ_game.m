@@ -1,6 +1,6 @@
 rng(33, 'twister');
 
-%define the noncooperative game
+%define the  game
 %each agent minimizes a quadratic cost
 N_agent = 4; %number of agents
 n = 5*ones(N_agent, 1); %strategy space of each agent
@@ -13,6 +13,7 @@ op1 = op_sim_LQ_game(Q_list, b_list, c_list, n);
 %individual constraints for agents
 BOX = 10;
 op2 = op_sim_box(BOX);
+% op2 = op_sim_l1_hard(BOX);
 ops = {op1, op2};
 
 %douglas-rachford

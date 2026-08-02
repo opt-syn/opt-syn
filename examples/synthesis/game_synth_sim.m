@@ -30,7 +30,7 @@ sys_delay = opt_system(ops, network, []);
 
 %set the information structure
 config = opt_config();
-config.syn.elimination = false;
+% config.syn.elimination = false;
 
 %backward evaluation of pseudogradient
 config.syn.D_mask = [1, 0; 1, 1]; 

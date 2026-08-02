@@ -3,9 +3,7 @@ function [Gss] = ss(G)
 
 if isa(G, 'sdpss')
     [A, B, C, D] = ssdata(G);
-    Gss = sdpss(A, B, C, D, 1);
-else
-    G
+    Gss = ss(A, B, C, D, 1);
 end
 
 

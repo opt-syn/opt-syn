@@ -774,8 +774,8 @@ classdef genplant
             if ~isempty(Nw)
                 [nzp_erg, nwp_erg] = size(Nw);
 
-                iwp = obj.nwp + (1:nwp_erg)';
-                izp = obj.nzp + (1:nzp_erg)';
+                iwp = obj.nwp + (1:nwp_erg);
+                izp = obj.nzp + (1:nzp_erg);
 
                 B = obj.B;
                 C = obj.C;
