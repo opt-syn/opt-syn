@@ -2,15 +2,20 @@
 rng(50, 'twister');
 
 d = 90; %number of dimensions
-c=6; %blocksize 
+% c=6; %blocksize 
+c = 3;
 
 %symmetry generator/permutation matrix
 M = circshift(eye(c), 1); 
 
 %gradient descent rule
 gamma = 0.1;
-K = ss(eye(c), blkdiag(-gamma , zeros(c-1)), ...
-    blkdiag(1, zeros(c-1)), zeros(c), 1);
+% K = ss(eye(c), blkdiag(-gamma , zeros(c-1)), ...
+%     blkdiag(1, zeros(c-1)), zeros(c), 1);
+
+K = ss(eye(c), -gamma*eye(c), ...
+    eye(c), zeros(c), 1);
+
 
 % K = ss(eye(c), blkdiag(-gamma , zeros(c-1)), ...
 %     blkdiag(1, zeros(c-1)), zeros(c), 1);
@@ -30,13 +35,12 @@ op1.c = c; %enforce coordinate dimension
 
 %define the network
 %implements coordinate descent
-[Pprim] = coordinate_descent_primitives(c);
-network = Pprim{1};
+network = coordinate_descent_limited(c);
 
 %form the system
 sys = opt_system_periodic_orbit(op1, network, K, M);
-
-
+reg = regulator_periodic_orbit(sys);
+rcl = reg.check_regulator();
 
 %% simulate coordinate descent
 sim = alg_sim(sys, d);

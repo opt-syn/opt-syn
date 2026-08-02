@@ -12,20 +12,19 @@ man_syn = opt_synthesis(sys, config);
 ```
 
 
-## Solve
-
 Three solution modes are available: 
 1. [Single Solution](#single-solution)
 2. [Bisection](#bisection)
 3. [Alternation](#alternation)
 
 (#single-solution)=
-### Single Solution
+## Single Solution
 
 
 The  {meth}`solve_single` routine performs Analysis or Synthesis at given  specifications. The output of {meth}`solve_single` is a {doc}`solution <../documentation/doc_solutions>` structure {class}`opt_solution`. The fields of the solution structure are explained further  below in [Validation](#validation).
 
-Analysis is called by 
+### Analysis 
+The Analysis single solution routine is 
 ```matlab
 sol_ana_single = man_ana.solve_single(order, specs);
 ```
@@ -121,7 +120,7 @@ Niter = 3;
 The `v_history` output is a cell array with 2 rows and  Niter columns. Each entroy of the cell array stores the  lower and upper parameter bounds from bisection. The top row are the Synthesis bounds, and the bottom row are the Analysis bounds.
 
 
-##  Validation
+##  Validate
 
 The {class}`opt_solution` structure contains information about the solution of analysis/synthesis. The solution is feasible if the following conditions are met:
 | Name   |  Description  | Valid Condition |

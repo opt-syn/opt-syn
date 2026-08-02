@@ -164,6 +164,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="pages/examples_synthesis/index_example_synthesis.html">Synthesis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="pages/examples_synthesis/syn_lasso.html">LASSO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pages/examples_synthesis/syn_channel_memory.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pages/examples_synthesis/syn_games_with_delay.html">Games with Delay</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pages/examples_synthesis/syn_repeated.html">Repeated Operators</a></li>
@@ -396,8 +397,6 @@
       </ul></li>
       <li><a href="pages/documentation/plants/doc_genplant.html#plant.genplant.genplant.add_oracle_shift">add_oracle_shift() (plant.genplant.genplant method)</a>
 </li>
-      <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.add_specifications">add_specifications() (manager.opt_manager_interface method)</a>
-</li>
       <li><a href="pages/documentation/system/doc_switched.html#system.switched.opt_system_switched.adj">adj (system.switched.opt_system_switched attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_solutions.html#manager.containers.cert_synthesis.alg">alg (manager.containers.cert_synthesis attribute)</a>
@@ -431,6 +430,8 @@
       <li><a href="pages/documentation/doc_manager.html#manager.opt_synthesis.alternate">alternate() (manager.opt_synthesis method)</a>
 </li>
       <li><a href="pages/documentation/doc_config.html#config.opt_config.ana">ana (config.opt_config attribute)</a>
+</li>
+      <li><a href="pages/documentation/doc_specs.html#spec.spec_ergodic.augment_ergodic">augment_ergodic() (spec.spec_ergodic method)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.augment_vars">augment_vars() (system.generic.lmi_synthesis_interface method)</a>
 
@@ -649,17 +650,15 @@
       <ul>
         <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.con_spread">(system.generic.lmi_synthesis_interface method)</a>
 </li>
+        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.con_spread">(system.lti.lmi_synthesis_lti_reduced_order method)</a>
+</li>
         <li><a href="pages/documentation/system/doc_periodic.html#system.periodic.lmi_synthesis_periodic.con_spread">(system.periodic.lmi_synthesis_periodic method)</a>
 </li>
         <li><a href="pages/documentation/system/doc_switched.html#system.switched.lmi_synthesis_switched.con_spread">(system.switched.lmi_synthesis_switched method)</a>
 </li>
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_synthesis_interface.con_spread_single">con_spread_single() (system.generic.lmi_synthesis_interface method)</a>
-
-      <ul>
-        <li><a href="pages/documentation/system/doc_lti.html#system.lti.lmi_synthesis_lti_reduced_order.con_spread_single">(system.lti.lmi_synthesis_lti_reduced_order method)</a>
 </li>
-      </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_analysis_interface.con_terminal">con_terminal() (system.generic.lmi_analysis_interface method)</a>
 
       <ul>
@@ -2074,6 +2073,8 @@
 </li>
       <li><a href="pages/documentation/doc_simulation.html#simulator.alg_sim.sampler">sampler (simulator.alg_sim attribute)</a>
 </li>
+      <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.scan_specifications">scan_specifications() (manager.opt_manager_interface method)</a>
+</li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_analysis.schedule">schedule (manager.opt_analysis attribute)</a>
 </li>
       <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.select_lmi">select_lmi() (manager.opt_manager_interface method)</a>
@@ -2233,6 +2234,8 @@
 </li>
       </ul></li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.lmi_dispatch_interface.sys_block">sys_block() (system.generic.lmi_dispatch_interface method)</a>
+</li>
+      <li><a href="pages/documentation/doc_manager.html#manager.opt_manager_interface.sys_orig">sys_orig (manager.opt_manager_interface attribute)</a>
 </li>
       <li><a href="pages/documentation/system/doc_system.html#system.generic.regulator_interface.sys_regulated_aug">sys_regulated_aug() (system.generic.regulator_interface method)</a>
 

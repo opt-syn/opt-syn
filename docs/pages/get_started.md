@@ -12,7 +12,7 @@ It is tested for MATLAB versions  $\geq$ 2024a.
 ## Workflow
 
 Analysis and Synthesis follow similar workflows:
-1. Define the class of {doc}`operators <usage/problem_formulation/system/operators>` in the optimization/inclusion problem.
+1. Define the class of functions/operators in the optimization/inclusion problem.
 2. Specify the algorithm (analysis), or the network interfacing the operators (synthesis)
 3. Choose the order of the certification (higher order: better bounds, more expensive)
 4. Solve the profiling problem

@@ -17,12 +17,19 @@ Analysis and Synthesis of First-Order Algorithms (MATLAB)
 ## Overview
 
 
-{{osyn}}  analyzes and synthesizes first-order algorithms by using methods from robust control theory. The target performance criteria for Analysis includes worst-case linear convergence rates, and gain bounds for the amplification of errors. The Synthesis process tries to design an optimization algorithm satisfying these desired constraints. 
 
-The Analysis and Synthesis problems are posed as convex problems with  Linear Matrix Inequality constraints, and are solved using [LMILab](https://www.mathworks.com/help/robust/ug/introduction.html).  
 
-These  
+
+{{osyn}}  analyzes and synthesizes first-order algorithms by using methods from robust control theory. 
+
+
+
+Target performance criteria for Analysis includes worst-case convergence rates and gain bounds for the amplification of errors. Synthesis process tries to design an optimization algorithm satisfying these desired constraints. 
+These 
 Analysis and Synthesis tasks may be performed for algorithms arising in dynamic environments,  including cases  with constant or time-varying delays, channel memory, and cross-talk.
+
+
+Both the Analysis and Synthesis problems are posed as convex problems with  Linear Matrix Inequality constraints, and are solved using [LMILab](https://www.mathworks.com/help/robust/ug/introduction.html).  
 
 
 
@@ -39,7 +46,7 @@ For installation and  examples of algorithm  analysis and synthesis workflows, s
 - [Andrea Iannelli](https://www.ist.uni-stuttgart.de/institute/team/Iannelli/): Creator
 
 
-Contact [Jared Miller](https://jarmill.github.io/) for questions, issues, comments, and suggestions.
+Contact [Jared Miller](https://jarmill.github.io/) for questions, issues, feedback, and suggestions.
 
 ```{toctree}
 :maxdepth: 2

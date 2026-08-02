@@ -46,6 +46,7 @@ where the specific signals are
 
 The System is programatically described by an {class}`opt_system` object:
 ```matlab
+:number-lines: false
 sys = opt_system(Operators, Network, Controller)
 ```
 
@@ -69,14 +70,13 @@ In Simulation, `Operators{i}` is the specific {doc}`operator <../../../documenta
 * - Forward
   - {meth}`fw`
   - $z \mapsto F_i(z)$,
-* - Backward (with parameter $\Dcl_{ii}$)
+* - Backward (with parameter $\mathcal{W} \succ 0$)
   - {meth}`bw`
-  - $z \mapsto (I - \Dcl_{ii} F_i)^{-1} (z)$
+  - $z \mapsto (I - \mathcal{W} F_i)^{-1} (z)$
 * - Function 
   - {meth}`f` 
   - $z \mapsto f_i(z)$
 ```
-The {meth}`fw` operation must be defined if $\Dcl_{ii}=0$, and the {meth}`bw` operation must be defined if $\Dcl_{ii} \neq 0$. The {meth}`f` operation is optional.
 
 
 Supported operators for simulation include
@@ -90,7 +90,10 @@ Supported operators for simulation include
   - implemented by [anonymous functions](https://www.mathworks.com/help/matlab/matlab_prog/anonymous-functions.html)
 * - Quadratic
   - {class}`op_sim_quad`
-  - Quadratic function $\frac{1}{2} x^\top Q x + b^\top x + e$
+  - Quadratic function $\frac{1}{2} (x - x^*)^\top M (x - x^*)$
+  * - Least Squares
+  - {class}`op_sim_lsq`
+  - Quadratic function $\frac{1}{2} \norm{Ax - b}^2_2$
 * - $L_\infty$ (hard) 
   - {class}`op_sim_box`
   - indicator function of  $L_\infty$ ball 

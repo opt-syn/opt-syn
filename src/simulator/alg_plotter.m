@@ -205,6 +205,8 @@ classdef alg_plotter
                 sig_curr = obj.sim_out.sq_xnerr +  obj.sim_out.sq_xcerr;
             elseif strcmp(sig, 'delay')
                 sig_curr = obj.sim_out.mode - 1;
+            elseif strcmp(sig, 'coord')
+                sig_curr = obj.sim_out.mode;
             end
                
 
@@ -230,7 +232,7 @@ classdef alg_plotter
                 end
                 xlim([k(1), k(end)])
                 
-                if strcmp(sig, 'delay') || strcmp(sig, 'mode') 
+                if strcmp(sig, 'delay') || strcmp(sig, 'mode') || strcmp(sig, 'coord')
                     yticks(1:max(sig_plot));                    
                 end
             
@@ -259,6 +261,8 @@ classdef alg_plotter
                     name = 'Switching Mode';
                 case 'delay'
                     name = 'Time Delay';
+                case 'coord'
+                    name = 'Coordinate Block';
                 case 'res_w'
                     name = 'Optimality Error';
                 case 'res_z'
@@ -327,6 +331,8 @@ classdef alg_plotter
                 name_mid = 'mode';
             elseif strcmp(sig, 'delay')
                 name_mid = 'delay';
+            elseif strcmp(sig, 'coord')
+                name_mid = 'coord.';
             elseif strcmp(sig, 'payoff')
                 name_mid = '$f$';
 

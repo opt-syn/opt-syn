@@ -167,6 +167,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="index_example_synthesis.html">Synthesis</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="syn_lasso.html">LASSO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="syn_channel_memory.html">Channel Memory</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Games with Delay</a></li>
 <li class="toctree-l3"><a class="reference internal" href="syn_repeated.html">Repeated Operators</a></li>
@@ -410,13 +411,13 @@
 Each Synthesis is accompanied by an algorithm Simulation starting from an initial condition <span class="math notranslate nohighlight">\(x_0=0\)</span>, empirically demonstrating this speed of convergence</p>
 <p>Figure  <a class="reference internal" href="#game-bw"><span class="xref myst">1</span></a> plots a trajectory of the backward evaluation algorithm.</p>
 <figure class="align-center" id="game-bw">
-<img alt="../../_images/game_sim_fw_dark.png" class="only-dark" src="../../_images/game_sim_fw_dark.png" />
+<img alt="../../_images/game_sim_bw_dark.png" class="only-dark" src="../../_images/game_sim_bw_dark.png" />
 <figcaption>
 <p><span class="caption-text"><em>Figure 1:</em> Algorithm with both backward evaluations</span><a class="headerlink" href="#game-bw" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <figure class="align-center" id="id1">
-<img alt="../../_images/game_sim_fw_dark.png" class="only-light" src="../../_images/game_sim_fw_dark.png" />
+<img alt="../../_images/game_sim_bw_dark.png" class="only-light" src="../../_images/game_sim_bw_dark.png" />
 <figcaption>
 <p><span class="caption-text"><em>Figure 1:</em> Algorithm with both backward evaluations</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
 </figcaption>
@@ -436,13 +437,13 @@ Each Synthesis is accompanied by an algorithm Simulation starting from an initia
 </figure>
 <p>Figure  <a class="reference internal" href="#game-delay"><span class="xref myst">3</span></a> plots a trajectory of the algorithm with time delay.</p>
 <figure class="align-center" id="game-delay">
-<img alt="../../_images/game_sim_fw_dark.png" class="only-dark" src="../../_images/game_sim_fw_dark.png" />
+<img alt="../../_images/game_sim_delay_dark.png" class="only-dark" src="../../_images/game_sim_delay_dark.png" />
 <figcaption>
 <p><span class="caption-text"><em>Figure 3:</em> Algorithm with delay on <span class="math notranslate nohighlight">\(F_1\)</span></span><a class="headerlink" href="#game-delay" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <figure class="align-center" id="id3">
-<img alt="../../_images/game_sim_fw_dark.png" class="only-light" src="../../_images/game_sim_fw_dark.png" />
+<img alt="../../_images/game_sim_delay_dark.png" class="only-light" src="../../_images/game_sim_delay_dark.png" />
 <figcaption>
 <p><span class="caption-text"><em>Figure 3:</em> Algorithm with delay on <span class="math notranslate nohighlight">\(F_1\)</span></span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
 </figcaption>
@@ -481,7 +482,7 @@ Each Synthesis is accompanied by an algorithm Simulation starting from an initia
 <span class="linenos">30</span>
 <span class="linenos">31</span><span class="c">%set the information structure</span>
 <span class="linenos">32</span><span class="n">config</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_config</span><span class="p">();</span>
-<span class="linenos">33</span><span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">elimination</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="linenos">33</span><span class="c">% config.syn.elimination = false;</span>
 <span class="linenos">34</span>
 <span class="linenos">35</span><span class="c">%backward evaluation of pseudogradient</span>
 <span class="linenos">36</span><span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"> </span>

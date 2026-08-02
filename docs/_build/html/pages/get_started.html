@@ -167,6 +167,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="examples_synthesis/index_example_synthesis.html">Synthesis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples_synthesis/syn_lasso.html">LASSO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="examples_synthesis/syn_channel_memory.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="examples_synthesis/syn_games_with_delay.html">Games with Delay</a></li>
 <li class="toctree-l3"><a class="reference internal" href="examples_synthesis/syn_repeated.html">Repeated Operators</a></li>
@@ -396,10 +397,10 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow">Workflow</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-example-setup">Optimization  Example Setup</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#projected-gradient-descent">Projected Gradient Descent</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis">Synthesis</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation">Simulation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis">Analysis</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis">Synthesis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Synthesis</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis-with-network-dynamics">Synthesis with Network Dynamics</a></li>
 </ul>
             </nav>
@@ -423,7 +424,7 @@
 <h2>Workflow<a class="headerlink" href="#workflow" title="Link to this heading">#</a></h2>
 <p>Analysis and Synthesis follow similar workflows:</p>
 <ol class="arabic simple">
-<li><p>Define the class of <span class="xref std std-doc">operators</span> in the optimization/inclusion problem.</p></li>
+<li><p>Define the class of functions/operators in the optimization/inclusion problem.</p></li>
 <li><p>Specify the algorithm (analysis), or the network interfacing the operators (synthesis)</p></li>
 <li><p>Choose the order of the certification (higher order: better bounds, more expensive)</p></li>
 <li><p>Solve the profiling problem</p></li>
@@ -432,48 +433,22 @@
 </section>
 <section id="optimization-example-setup">
 <span id="id1"></span><h2>Optimization  Example Setup<a class="headerlink" href="#optimization-example-setup" title="Link to this heading">#</a></h2>
-<p>A first example involves a constrained optimization problem</p>
+<p>A constrained optimization problem of minimizing a function <span class="math notranslate nohighlight">\(f\)</span> subject to a sparse <span class="math notranslate nohighlight">\(L_1\)</span> norm constraint is</p>
 <div class="math notranslate nohighlight">
 \[\begin{align}
-\beta^* \in  \text{argmin}_{\beta \in \mathcal{Z}} f(\beta). 
+\beta^* \in \text{argmin}_{\norm{\beta}_1 \leq 100} f(\beta), &amp; &amp; &amp; \beta^* \in \text{argmin}_{\beta \in \R^d} f(\beta) + \mathbf{I}_{\norm{\cdot}_1 \leq 100}(\beta),
 \end{align}\]</div>
+<p>The function <span class="math notranslate nohighlight">\(f\)</span> is known to be real-valued, <span class="math notranslate nohighlight">\(1\)</span>-strongly convex, and <span class="math notranslate nohighlight">\(50\)</span>-smooth (Lipschitz gradients).</p>
+<p><span class="math notranslate nohighlight">\(f\)</span> only accessible by the optimizer using a network, which may possess time delays or other dynamics.  The goal is to Synthesize  certifiably convergent algorithms that will solve the optimization problem in this remote environment.</p>
+</section>
+<section id="synthesis">
+<h2>Synthesis<a class="headerlink" href="#synthesis" title="Link to this heading">#</a></h2>
+<p>When the function <span class="math notranslate nohighlight">\(f\)</span> is directly connected to the optimizer (no network dynamics), the code to perform synthesis is</p>
+<p>Convergence is confirmed, because the algorithm has a worst-case linear convergence rate of <span class="math notranslate nohighlight">\(0.8676 &lt; 1\)</span>.</p>
 <div class="admonition danger">
 <p class="admonition-title">Danger</p>
 <p>This PGD content must be replaced with something else.</p>
 </div>
-<p>The set <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> is closed, convex, and nonempty. One instance of this problem is  <a class="reference external" href="https://en.wikipedia.org/wiki/Lasso_(statistics)">LASSO</a> in regression, in which the  cost <span class="math notranslate nohighlight">\(f\)</span> which is a convex quadratic, and the set <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> which is a scaled  <span class="math notranslate nohighlight">\(L_1\)</span>-ball.</p>
-<p>The constrained optimization problem can be expressed as a composite optimization problem</p>
-<div class="math notranslate nohighlight">
-\[\begin{align}
-\beta^* \in \text{argmin}_{\beta \in \R^d} f(\beta) + \mathbf{I}_{\mathcal{Z}}(\beta),
-\end{align}\]</div>
-<p>where <span class="math notranslate nohighlight">\(\mathbf{I}_{\mathcal{Z}}\)</span> is the 0/<span class="math notranslate nohighlight">\(\infty\)</span> indicator function of a closed, convex set <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>. The point <span class="math notranslate nohighlight">\(\beta^*\)</span> satisfies a necessary optimality principle</p>
-<div class="math notranslate nohighlight">
-\[\begin{align}
-0 \in \partial f(\beta^*) + \partial \mathbf{I}_{\mathcal{Z}}(\beta^*).
-\end{align}\]</div>
-<p>We assume  there are parameters <span class="math notranslate nohighlight">\(0 &lt; m &lt; L&lt; \infty\)</span> such that</p>
-<ol class="arabic simple">
-<li><p><span class="math notranslate nohighlight">\(f(\beta) \in \R\)</span>  for all <span class="math notranslate nohighlight">\(\beta \in \R^d\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(f\)</span> is <span class="math notranslate nohighlight">\(m\)</span>-strongly convex</p></li>
-<li><p><span class="math notranslate nohighlight">\(f\)</span> is <span class="math notranslate nohighlight">\(L\)</span>-smooth (has <span class="math notranslate nohighlight">\(L\)</span>-Lipschitz gradients).</p></li>
-</ol>
-<p>Under these circumstances, the optimal point  <span class="math notranslate nohighlight">\(\beta^*\)</span> exists and is unique for each pair <span class="math notranslate nohighlight">\((f, \mathcal{Z})\)</span>.</p>
-</section>
-<section id="projected-gradient-descent">
-<h2>Projected Gradient Descent<a class="headerlink" href="#projected-gradient-descent" title="Link to this heading">#</a></h2>
-<p>The Projected Gradient Descent algorithm with stepsize <span class="math notranslate nohighlight">\(\gamma &gt; 0\)</span> is the iterative procedure</p>
-<div class="math notranslate nohighlight">
-\[\beta_{k+1} = \text{proj}_{\mathcal{Z}}(\beta_k - \gamma \partial f(\beta_k)).\]</div>
-<p>The iterative procedure for PGD may be equivalently expressed as an interconnection between a linear dynamical system and the oracles <span class="math notranslate nohighlight">\((f, I_{\mathcal{Z}})\)</span> as</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{align*}
- \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &amp;= \mat{c|cc}{I &amp; -\gamma I &amp; -\gamma I \hl I &amp;0 &amp; 0 \\
- I &amp; -\gamma I &amp; -\gamma I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, &amp; \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{\partial f(z_k^1) \\  \partial I_{\mathcal{Z}}(z_k^2)}
-\end{align*},\end{split}\]</div>
-<p>PGD achieves linear convergence at rate <span class="math notranslate nohighlight">\(\rho \in (0, 1)\)</span> if there exists a constant <span class="math notranslate nohighlight">\(\gamma_0\)</span> such that <span class="math notranslate nohighlight">\(\norm{\beta_{k}-\beta^*}_2  \leq  \gamma_0 \rho^{-k} \norm{\beta_0-\beta^*}\)</span> for all initial points <span class="math notranslate nohighlight">\(\beta_0\)</span>, pairs <span class="math notranslate nohighlight">\((f, \mathcal{Z})\)</span>, and times <span class="math notranslate nohighlight">\(k \in \N\)</span>.</p>
-<p>The algorithm is convergent if  <span class="math notranslate nohighlight">\(\lim_{k \rightarrow \infty} z_1 = \lim_{k \rightarrow \infty} z_2 = \beta^*\)</span> for all  <span class="math notranslate nohighlight">\((\partial f, \mathcal{Z})\)</span>.</p>
-<p>The theoretical PGD worst-case linear convergence rate of <span class="math notranslate nohighlight">\(\rho\)</span> is  <span class="math notranslate nohighlight">\(\rho = \frac{L-m}{L+m}\)</span>, which is attained by the optimal stepsize <span class="math notranslate nohighlight">\(\gamma := \frac{2}{m+L}\)</span>.</p>
 </section>
 <section id="simulation">
 <h2>Simulation<a class="headerlink" href="#simulation" title="Link to this heading">#</a></h2>
@@ -548,24 +523,8 @@ The code to execute PGD on this problem for <span class="math notranslate nohigh
 </pre></div>
 </div>
 </section>
-<section id="synthesis">
-<h2>Synthesis<a class="headerlink" href="#synthesis" title="Link to this heading">#</a></h2>
-<p>In synthesis, we aim to design an algorithm with minimal convergence rate. The synthesis code for the case of <span class="math notranslate nohighlight">\(m=1, L=10\)</span> is</p>
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c">%describe the operators </span>
-<span class="linenos"> 2</span><span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
-<span class="linenos"> 3</span><span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sml</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">);</span><span class="w"> </span><span class="c">%\partial f1</span>
-<span class="linenos"> 4</span><span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_pcc</span><span class="p">();</span><span class="w">     </span><span class="c">%\partial f2</span>
-<span class="linenos"> 5</span>
-<span class="linenos"> 6</span><span class="c">%form the algorithm interconnection</span>
-<span class="linenos"> 7</span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">({</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">});</span>
-<span class="linenos"> 8</span>
-<span class="linenos"> 9</span>
-<span class="linenos">10</span><span class="c">%run the synthesis routine, use bisection to minimize the convergence rate</span>
-<span class="linenos">11</span><span class="n">man</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_synthesis</span><span class="p">(</span><span class="n">sys</span><span class="p">);</span><span class="w"> </span>
-<span class="linenos">12</span><span class="n">sol</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man</span><span class="p">.</span><span class="n">bisect</span><span class="p">();</span>
-<span class="linenos">13</span><span class="n">rho</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol</span><span class="p">.</span><span class="n">rho</span><span class="w"> </span><span class="c">% 0.7209</span>
-</pre></div>
-</div>
+<section id="id2">
+<h2>Synthesis<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <p>The Synthesized optimization algorithm with rate <span class="math notranslate nohighlight">\(\rho \leq 0.7209\)</span>  is</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
@@ -659,10 +618,10 @@ Algorithm design for a 2-step delay on <span class="math notranslate nohighlight
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow">Workflow</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-example-setup">Optimization  Example Setup</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#projected-gradient-descent">Projected Gradient Descent</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis">Synthesis</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation">Simulation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis">Analysis</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis">Synthesis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Synthesis</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesis-with-network-dynamics">Synthesis with Network Dynamics</a></li>
 </ul>
   </nav></div>

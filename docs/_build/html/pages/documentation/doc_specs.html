@@ -167,6 +167,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_lasso.html">LASSO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_channel_memory.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_games_with_delay.html">Games with Delay</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_repeated.html">Repeated Operators</a></li>
@@ -1108,24 +1109,8 @@ alternating methods used to certify ergodic convergence.</p>
 <dl>
 <dt>Constructor Summary</dt><dd><dl class="mat method">
 <dt class="sig sig-object mat" id="spec.spec_ergodic.spec_ergodic">
-<span class="sig-name descname"><span class="pre">spec_ergodic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_ergodic.spec_ergodic" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">spec_ergodic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_ergodic.spec_ergodic" title="Link to this definition">#</a></dt>
 <dd><p>SPEC_ERGODIC Construct an ergodic convergence specification.</p>
-<p>Reads the consensus structure from the system, appends the
-ergodic performance channel to the plant via
-<a class="reference internal" href="plants/doc_genplant.html#plant.genplant.genplant.perf_ergodic" title="plant.genplant.genplant.perf_ergodic"><code class="xref mat mat-meth docutils literal notranslate"><span class="pre">plant.genplant.genplant.perf_ergodic()</span></code></a>, and returns
-both the specification and the augmented system.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>sys</strong> – The optimization-algorithm system.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[obj,</span> <span class="pre">sys_erg]</span></code> — the ergodic specification and the
-system with the ergodic performance channel added.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>spec_ergodic, (system)</p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd>
@@ -1143,6 +1128,31 @@ system with the ergodic performance channel added.</p>
 
 </dd>
 <dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_ergodic.augment_ergodic">
+<span class="sig-name descname"><span class="pre">augment_ergodic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_ergodic.augment_ergodic" title="Link to this definition">#</a></dt>
+<dd><p>AUGMENT_ERGODIC add new input and output channels to the
+system to allow for ergodic performance specifications to be
+met (duality gap). Reads the consensus structure from the system, appends the</p>
+<blockquote>
+<div><p>ergodic performance channel to the plant via
+<a class="reference internal" href="plants/doc_genplant.html#plant.genplant.genplant.perf_ergodic" title="plant.genplant.genplant.perf_ergodic"><code class="xref mat mat-meth docutils literal notranslate"><span class="pre">plant.genplant.genplant.perf_ergodic()</span></code></a>, and returns
+both the specification and the augmented system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param sys<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The optimization-algorithm system.</p>
+</dd>
+<dt class="field-even">returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[sys_erg]</span></code> — the ergodic specification and the
+system with the ergodic performance channel added.</p>
+</dd>
+<dt class="field-odd">rtype<span class="colon">:</span></dt>
+<dd class="field-odd"><p>spec_ergodic, (system)</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="mat method">
 <dt class="sig sig-object mat" id="spec.spec_ergodic.create_vars">
 <span class="sig-name descname"><span class="pre">create_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">name</span></em>, <em class="sig-param"><span class="pre">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_ergodic.create_vars" title="Link to this definition">#</a></dt>
 <dd><p>CREATE_VARS Create the strict-passivity margin variable.</p>

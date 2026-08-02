@@ -167,6 +167,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_lasso.html">LASSO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_channel_memory.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_games_with_delay.html">Games with Delay</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_repeated.html">Repeated Operators</a></li>
@@ -704,7 +705,7 @@ optimization/inclusion algorithms</p>
 <dl class="mat attribute">
 <dt class="sig sig-object mat" id="manager.opt_manager_interface.lmi">
 <span class="sig-name descname"><span class="pre">lmi</span></span><a class="headerlink" href="#manager.opt_manager_interface.lmi" title="Link to this definition">#</a></dt>
-<dd><p>the lmi handler (object)</p>
+<dd><p>(lmi_dispatch) the lmi handler</p>
 </dd></dl>
 
 <dl class="mat attribute">
@@ -717,6 +718,12 @@ optimization/inclusion algorithms</p>
 <dt class="sig sig-object mat" id="manager.opt_manager_interface.sys">
 <span class="sig-name descname"><span class="pre">sys</span></span><a class="headerlink" href="#manager.opt_manager_interface.sys" title="Link to this definition">#</a></dt>
 <dd><p>system (opt_system type)</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="manager.opt_manager_interface.sys_orig">
+<span class="sig-name descname"><span class="pre">sys_orig</span></span><a class="headerlink" href="#manager.opt_manager_interface.sys_orig" title="Link to this definition">#</a></dt>
+<dd><p>(opt_system) original system, before any performance-based modifications</p>
 </dd></dl>
 
 <dl class="mat attribute">
@@ -737,13 +744,6 @@ optimization/inclusion algorithms</p>
 <span class="sig-name descname"><span class="pre">LMILAB</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#manager.opt_manager_interface.LMILAB" title="Link to this definition">#</a></dt>
 <dd><p>is LMILAB used?
 :Returns: <strong>verdict</strong> (<em>bool</em>)</p>
-</dd></dl>
-
-<dl class="mat method">
-<dt class="sig sig-object mat" id="manager.opt_manager_interface.add_specifications">
-<span class="sig-name descname"><span class="pre">add_specifications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">varargin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#manager.opt_manager_interface.add_specifications" title="Link to this definition">#</a></dt>
-<dd><p>concatenate the new performance specifications
-:param varargin: new specifications to add</p>
 </dd></dl>
 
 <dl class="mat method">
@@ -893,6 +893,13 @@ multipliers</p>
 <dt>Returns</dt><dd><p>sol: solution structure</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="manager.opt_manager_interface.scan_specifications">
+<span class="sig-name descname"><span class="pre">scan_specifications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">varargin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#manager.opt_manager_interface.scan_specifications" title="Link to this definition">#</a></dt>
+<dd><p>concatenate the new performance specifications
+:param varargin: new specifications to add</p>
 </dd></dl>
 
 <dl class="mat method">

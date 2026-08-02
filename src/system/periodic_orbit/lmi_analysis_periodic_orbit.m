@@ -24,7 +24,7 @@ classdef lmi_analysis_periodic_orbit < lmi_analysis_lti
 
 
     properties
-        R; %periodicity in the state in dynamics
+        M; %periodicity in the state in dynamics
 
     end
 

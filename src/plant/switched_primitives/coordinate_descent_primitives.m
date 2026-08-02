@@ -18,9 +18,7 @@ D_base = [zeros(c), zeros(c); eye(c), zeros(c)];
 
 n = struct('nz', c, 'nu', c, 'nw', c, 'ny', c, 's', 1);
 
-
-% ind_odd = 2*(0:c-1)+1;
-% ind_even = ind_odd+1;
+ 
 for i = 1:c
     A_curr = A_base;
     A_curr(i, i) = 0;

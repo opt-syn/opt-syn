@@ -167,6 +167,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="index_example_synthesis.html">Synthesis</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="syn_lasso.html">LASSO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="syn_channel_memory.html">Channel Memory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="syn_games_with_delay.html">Games with Delay</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Repeated Operators</a></li>
@@ -397,22 +398,22 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="repeated-operators">
 <h1>Repeated Operators<a class="headerlink" href="#repeated-operators" title="Link to this heading">#</a></h1>
-<p>This example considers composite optimization problems with two operators</p>
+<p>This example considers composite optimization problems with two functions</p>
 <div class="amsmath math notranslate nohighlight">
 \[\begin{align*}
 \beta^* \in \argmin f(\beta) + g(\beta).
 \end{align*}\]</div>
-<p>Gradients  <span class="math notranslate nohighlight">\(\nabla f\)</span> are ‘easy’ to evaluate, while subgradients <span class="math notranslate nohighlight">\(\partial g\)</span> are computationally expensive and ‘hard’. This requirement is formulated using information structures and  repeated operator evaluation. The easy operation <span class="math notranslate nohighlight">\(\nabla f\)</span> can be computed <span class="math notranslate nohighlight">\(h\)</span> times at every iteration <span class="math notranslate nohighlight">\(k\)</span>. The hard operation <span class="math notranslate nohighlight">\(\partial g\)</span> is computed only once per iteration <span class="math notranslate nohighlight">\(k\)</span>, and <span class="math notranslate nohighlight">\(\partial g\)</span> does not use information from <span class="math notranslate nohighlight">\(\nabla f_1\)</span>.</p>
-<p>An algorithm allowing for <span class="math notranslate nohighlight">\(h=3\)</span> evaluations of <span class="math notranslate nohighlight">\(\nabla f_1\)</span> per time index <span class="math notranslate nohighlight">\(k\)</span> therefore has the inclusion and information structure</p>
+<p>Gradients  <span class="math notranslate nohighlight">\(\nabla f\)</span> are ‘easy’ to evaluate, while subgradients <span class="math notranslate nohighlight">\(\partial g\)</span> are computationally expensive and ‘hard’. The easy operation <span class="math notranslate nohighlight">\(\nabla f\)</span> can be computed <span class="math notranslate nohighlight">\(h\)</span> times at every iteration <span class="math notranslate nohighlight">\(k\)</span>. The hard operation <span class="math notranslate nohighlight">\(\partial g\)</span> is computed only once per iteration <span class="math notranslate nohighlight">\(k\)</span>, and <span class="math notranslate nohighlight">\(\partial g\)</span> does not use information from <span class="math notranslate nohighlight">\(\nabla f_1\)</span>.</p>
+<p>These requirement are formulated using <a class="reference internal" href="../how_it_works/alg_properties.html"><span class="doc">information structures</span></a> and  <a class="reference internal" href="../usage/problem_formulation/system/bind.html"><span class="doc">repeated operator evaluation</span></a>. The associated inclusions and  information structure at <span class="math notranslate nohighlight">\(h=3\)</span> is</p>
 <div class="amsmath math notranslate nohighlight">
 \[\begin{align*}
-\mat{c}{w^1_k \\ w^2_k \\ w^3_k \\ w^4_k }  &amp;\in \mat{c}{\nabla f(w^1_k) \\ \nabla f(w^2_k) \\ \nabla f(w^3_k) \\ \partial g(w^4_k)}, &amp; \text{Sparsity}(\Dcl): &amp; \mat{cccc}{0 &amp; 0 &amp; 0 &amp; 0 \\ 
+\mat{c}{w^1_k \\ w^2_k \\ w^3_k \\ w^4_k }  &amp;\in \mat{c}{\nabla f(w^1_k) \\ \nabla f(w^2_k) \\ \nabla f(w^3_k) \\ \partial g(w^4_k)}, &amp; \text{Sparsity}(\Dcl): &amp; \mat{ccc:c}{0 &amp; 0 &amp; 0 &amp; 0 \\ 
 \bullet &amp; 0 &amp; 0 &amp; 0 \\
-\bullet &amp; \bullet &amp; 0 &amp; 0 \\
+\bullet &amp; \bullet &amp; 0 &amp; 0 \hdl
 0 &amp; 0 &amp; 0 &amp; \bullet
 }.
 \end{align*}\]</div>
-<p>Synthesis is used to find an algorithm satisfying this repetition and information structure requirement. This algorithm must converge for all <span class="math notranslate nohighlight">\(f \in S_{1, 8}\)</span> and <span class="math notranslate nohighlight">\(g \in S_{0,\infty}\)</span>. Two rounds of Synthesis/Analysis alternation are performed using <code class="docutils literal notranslate"><span class="pre">order</span> <span class="pre">=</span> <span class="pre">{1,</span> <span class="pre">1}</span></code>. Table</p>
+<p>Synthesis is used to find a algorithm that is convergent for all <span class="math notranslate nohighlight">\(f \in S_{1, 8}\)</span> and <span class="math notranslate nohighlight">\(g \in S_{0,\infty}\)</span>, that also satisfies the information structure and repetition requirement. Two rounds of Synthesis/Analysis alternation are performed using <code class="docutils literal notranslate"><span class="pre">order</span> <span class="pre">=</span> <span class="pre">{1,</span> <span class="pre">1}</span></code>. The Analysis-certified convergence rates for Repeated Evaluations are</p>
 <p>Figure  <a class="reference internal" href="#rep"><span class="xref myst">1</span></a> compares convergence behavior of trajectories solving a constrained optimization problem, each starting at <span class="math notranslate nohighlight">\(x_0 = 0\)</span>.</p>
 <figure class="align-center" id="rep">
 <img alt="../../_images/repeated_compare_dark.png" class="only-dark" src="../../_images/repeated_compare_dark.png" />
@@ -426,6 +427,50 @@
 <p><span class="caption-text"><em>Figure 1:</em> Convergence conditions for 1-step and 3-step algorithms</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Code for Repeated Synthesis</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="nb">rng</span><span class="p">(</span><span class="mi">33</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;twister&#39;</span><span class="p">);</span>
+
+<span class="n">m</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="n">L</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span>
+<span class="n">Nrep</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+
+<span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sml</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">);</span>
+<span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_pcc</span><span class="p">();</span>
+<span class="n">ops</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">};</span>
+
+<span class="n">config</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_config</span><span class="p">();</span>
+<span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">elimination</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+
+<span class="c">%form the system</span>
+<span class="n">bind</span><span class="w"> </span><span class="p">=[</span><span class="nb">ones</span><span class="p">(</span><span class="n">Nrep</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="mi">2</span><span class="p">];</span>
+<span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">bind</span><span class="p">);</span>
+
+
+<span class="c">%set the information structure</span>
+
+<span class="n">info_1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">tril</span><span class="p">(</span><span class="nb">ones</span><span class="p">(</span><span class="n">Nrep</span><span class="p">),</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">blkdiag</span><span class="p">(</span><span class="n">info_1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"> </span>
+<span class="n">man</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_synthesis</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">);</span>
+
+<span class="n">Niter</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="n">order</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">};</span>
+<span class="p">[</span><span class="n">sol_rep</span><span class="p">,</span><span class="w"> </span><span class="n">history_rep</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man</span><span class="p">.</span><span class="n">alternate</span><span class="p">(</span><span class="n">Niter</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">);</span>
+
+
+<span class="c">%% compare against an algorithm without repeated evaluation</span>
+<span class="n">sys_simple</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">ops</span><span class="p">,[],</span><span class="w"> </span><span class="p">[]);</span>
+<span class="n">config_simple</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_config</span><span class="p">;</span>
+<span class="n">config_simple</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">elimination</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="n">config_simple</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
+
+<span class="n">man_simple</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_synthesis</span><span class="p">(</span><span class="n">sys_simple</span><span class="p">,</span><span class="w"> </span><span class="n">config_simple</span><span class="p">);</span>
+<span class="p">[</span><span class="n">sol_simple</span><span class="p">,</span><span class="w"> </span><span class="n">history_simple</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_simple</span><span class="p">.</span><span class="n">alternate</span><span class="p">(</span><span class="n">Niter</span><span class="p">,</span><span class="w"> </span><span class="n">order</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
 </section>
 
 
