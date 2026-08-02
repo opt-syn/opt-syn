@@ -1266,6 +1266,104 @@ proximal evaluation with preconditioner D</p>
 </dd></dl>
 
 <dl class="mat class">
+<dt class="sig sig-object mat" id="simulator.op_sim.op_sim_lsq">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">simulator.op_sim.</span></span><span class="sig-name descname"><span class="pre">op_sim_lsq</span></span><a class="headerlink" href="#simulator.op_sim.op_sim_lsq" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simulator.op_sim.op_sim_interface" title="simulator.op_sim.op_sim_interface"><code class="xref mat mat-class docutils literal notranslate"><span class="pre">simulator.op_sim.op_sim_interface</span></code></a></p>
+<p>OP_SIM_LSQ a least squares cost for algorithm simulation</p>
+<p><span class="math notranslate nohighlight">\(f = (1/2) ||A z - b||_2^2\)</span></p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="simulator.op_sim.op_sim_lsq.op_sim_lsq">
+<span class="sig-name descname"><span class="pre">op_sim_lsq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">A</span></em>, <em class="sig-param"><span class="pre">b</span></em><span class="sig-paren">)</span><a class="headerlink" href="#simulator.op_sim.op_sim_lsq.op_sim_lsq" title="Link to this definition">#</a></dt>
+<dd><p>OP_SIM_LSQ Constructor form a quadratic function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> – a rectangular matrix</p></li>
+<li><p><strong>b</strong> – the reference vector</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="simulator.op_sim.op_sim_lsq.A">
+<span class="sig-name descname"><span class="pre">A</span></span><a class="headerlink" href="#simulator.op_sim.op_sim_lsq.A" title="Link to this definition">#</a></dt>
+<dd><p>matrix in least squares</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="simulator.op_sim.op_sim_lsq.b">
+<span class="sig-name descname"><span class="pre">b</span></span><a class="headerlink" href="#simulator.op_sim.op_sim_lsq.b" title="Link to this definition">#</a></dt>
+<dd><p>vector in least squares</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="simulator.op_sim.op_sim_lsq.bw">
+<span class="sig-name descname"><span class="pre">bw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">k</span></em>, <em class="sig-param"><span class="pre">D</span></em>, <em class="sig-param"><span class="pre">v</span></em>, <em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#simulator.op_sim.op_sim_lsq.bw" title="Link to this definition">#</a></dt>
+<dd><p>backwards evaluation of an oracle, generalization of a
+proximal evaluation with preconditioner D</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">int</span></code></span>) – time index</p></li>
+<li><p><strong>D</strong> – prox parameter</p></li>
+<li><p><strong>v</strong> – input to proximal oracle</p></li>
+<li><p><strong>param</strong> – parameter structure for the operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>z</strong> – the z such that z = (I - D F)^(-1)(v)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="simulator.op_sim.op_sim_lsq.f">
+<span class="sig-name descname"><span class="pre">f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">k</span></em>, <em class="sig-param"><span class="pre">z</span></em>, <em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#simulator.op_sim.op_sim_lsq.f" title="Link to this definition">#</a></dt>
+<dd><p>function value evaluation, if the operator has a potential
+could also be a vector of function evaluations in a game.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">int</span></code></span>) – time index</p></li>
+<li><p><strong>z</strong> – input to oracle</p></li>
+<li><p><strong>param</strong> – parameter structure for the operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>f_out</strong> – f_out = f(z) if F = partial f.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="simulator.op_sim.op_sim_lsq.fw">
+<span class="sig-name descname"><span class="pre">fw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">k</span></em>, <em class="sig-param"><span class="pre">z</span></em>, <em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#simulator.op_sim.op_sim_lsq.fw" title="Link to this definition">#</a></dt>
+<dd><p>forward evaluation of an oracle w = F(z)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">int</span></code></span>) – time index</p></li>
+<li><p><strong>z</strong> – input to oracle</p></li>
+<li><p><strong>param</strong> – parameter structure for the operator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>w</strong> – the w such that w = F(z)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="mat class">
 <dt class="sig sig-object mat" id="simulator.op_sim.op_sim_quad">
 <span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">simulator.op_sim.</span></span><span class="sig-name descname"><span class="pre">op_sim_quad</span></span><a class="headerlink" href="#simulator.op_sim.op_sim_quad" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#simulator.op_sim.op_sim_interface" title="simulator.op_sim.op_sim_interface"><code class="xref mat mat-class docutils literal notranslate"><span class="pre">simulator.op_sim.op_sim_interface</span></code></a></p>

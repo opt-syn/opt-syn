@@ -4,6 +4,7 @@ m = 1; L = 5;
 
 op1 = op_sml(m, L);
 op2 = op_pcc();
+ops = {op1, op2};
 
 %% describe the network
 %use a transfer function representation 
@@ -34,7 +35,9 @@ order = {1, 1};
 %three rounds of alternation
 Niter = 3; 
 [sol_h, v_h] = man.alternate(Niter, order);
-sol = sol_h{1, end};
+sol = sol_h{end, end};
+
+
 
 %% simulate and plot
 
@@ -72,7 +75,7 @@ wend = sim_out_long.w(:, :, end);
 dstar = [-betastar; wend(1:end-1, :, end)]; %the tracked reference
 
 
-%find trackign error
+%find tracking error
 plt = plt.add_opt_sig(sol.regcl, dstar);
 plt.plot_4_err(2);    %plot the tracking error
 plt.plot_4_sq_err(3); %plot the  squared norm of the tracking error

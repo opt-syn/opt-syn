@@ -1,6 +1,13 @@
 # Properties of Algorithms
 
-Desirable properties of optimization algorithms are convergence, performance,  well-posedness, and information structures. In Analysis, we aim to verify that an algorithm achieves these properties. In Synthesis, we try to generate an algorithm meeting these properties. 
+Desirable properties of optimization algorithms are convergence, performance,  well-posedness, and information structures. 
+
+
+In Analysis, we aim to verify that an algorithm always achieves these properties. In Synthesis, we try to generate an algorithm meeting these properties. 
+
+The individual operators $F_i$ in the inclusion problem may be contained in known operator classes. Instances of these operator classes include maximally monotone set-valued maps, subgradients of strongly convex functions, gradients of smooth functions, and classes arising from intersections of these properties. 
+
+
 
 
 

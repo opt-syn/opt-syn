@@ -410,58 +410,49 @@
 <h1>Optimization Algorithms<a class="headerlink" href="#optimization-algorithms" title="Link to this heading">#</a></h1>
 <section id="optimization-inclusion-problems">
 <h2>Optimization/Inclusion Problems<a class="headerlink" href="#optimization-inclusion-problems" title="Link to this heading">#</a></h2>
-<p>Several problems in optimization, engineering, and economics can be phrased as finding a zero in a sum of <span class="math notranslate nohighlight">\(s\)</span> operators</p>
+<!-- Several problems in optimization, engineering, and economics can be phrased as finding a zero in a sum of $s$ operators -->
+<p>A zero-inclusion problem tries to find a point <span class="math notranslate nohighlight">\(\beta^*\)</span> in the zero in the sum of operators.</p>
 <div class="math notranslate nohighlight">
 \[\begin{align*}
  0 \in \sum_{i=1}^s F_i(\beta^*).
 \end{align*}\]</div>
-<p>Zero-inclusion problems include solution concepts such as optimal points and variational inequalities. If each <span class="math notranslate nohighlight">\(F_i\)</span> is the subdifferential of a proper function <span class="math notranslate nohighlight">\(f_i\)</span>, then</p>
+<p>Zero-inclusion problems include solution concepts such as optimization problems and variational inequalities. If each <span class="math notranslate nohighlight">\(F_i\)</span> is the subdifferential of a proper function <span class="math notranslate nohighlight">\(f_i\)</span>, then</p>
 <div class="math notranslate nohighlight">
 \[\begin{align*}
- \beta^* &amp; \in \argmin_\beta \sum_{i=1}^s f_i(\beta) &amp;  \text{implies} &amp;  0 &amp; \in \sum_{i=1}^s  F_i(\beta^*).
+ \beta^* &amp; \in \argmin_\beta \sum_{i=1}^s f_i(\beta) &amp;  \text{implies} &amp; &amp; 0 &amp; \in \sum_{i=1}^s  F_i(\beta^*).
 \end{align*}\]</div>
-<p>The zero inclusion problem in <span class="math notranslate nohighlight">\(\partial f\)</span> is an optimality principle for the optimization problem in <span class="math notranslate nohighlight">\(f\)</span>.</p>
+<p>The zero inclusion problem in <span class="math notranslate nohighlight">\(\partial f\)</span> is an optimality principle for the optimization problem.</p>
 <p>An iterate <span class="math notranslate nohighlight">\((w^*, z^*)\)</span> solves the zero-inclusion problem if it satisfies</p>
 <ol class="arabic simple">
 <li><p>Consensus: <span class="math notranslate nohighlight">\(z^*_1 = z^*_2 = \ldots = z^*_s\)</span>,</p></li>
 <li><p>Zeroness: <span class="math notranslate nohighlight">\(\textstyle \sum_{i=1}^s w^*_i = 0\)</span>,</p></li>
 <li><p>Consistency: <span class="math notranslate nohighlight">\(w^*_i \in F_i(z^*_i)\)</span> for all <span class="math notranslate nohighlight">\(i \in 1, \ldots, s\)</span>.</p></li>
 </ol>
-<p>The solution <span class="math notranslate nohighlight">\(\beta^*\)</span> can then be read a valid <span class="math notranslate nohighlight">\(z^*\)</span> as <span class="math notranslate nohighlight">\(\beta^* = z^*_1\)</span>.</p>
+<p>The solution <span class="math notranslate nohighlight">\(\beta^*\)</span> can then be read from a valid <span class="math notranslate nohighlight">\(z^*\)</span> as <span class="math notranslate nohighlight">\(\beta^* = z^*_1\)</span>.</p>
 </section>
 <section id="id1">
 <h2>Optimization Algorithms<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <p>An optimization algorithm is a procedure that generates a sequence of iterates <span class="math notranslate nohighlight">\((w_k, z_k)_{k \in \N}.\)</span></p>
 <!-- Optimization algorithms can be understood as a dynamical is a sequence $(x_k, w_k, z_k)$ -->
 <!-- , and include an internal state $x$ -->
-<p>Many common optimization algorithms can be expressed as the interconnection of operators and a linear system.</p>
-<p>As an example, the  interconnection representation of the Douglas-Rachford algorithm <a class="footnote-reference brackets" href="#footcite-douglas1956numerical" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>   with parameters <span class="math notranslate nohighlight">\(\gamma, \lambda \geq 0\)</span> is</p>
+<p>Many common optimization algorithms can be expressed as the interconnection of operators and a linear system. As an example, the gradient descent/forward-step method with stepsize <span class="math notranslate nohighlight">\(\gamma &gt; 0\)</span> may be represented by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+ \mat{c}{x_{k+1} \hl z_k} &amp;= \mat{c|cc}{I &amp; -\gamma \lambda I \hl I &amp; 0 }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, &amp; \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{F_1(z_k^1)},
+\end{align*}\end{split}\]</div>
+<p>and the   Douglas-Rachford algorithm <a class="footnote-reference brackets" href="#footcite-douglas1956numerical" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>   with parameters <span class="math notranslate nohighlight">\(\gamma, \lambda \geq 0\)</span> may be represented by</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
  \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &amp;= \mat{c|cc}{I &amp; -\gamma \lambda I &amp; -\gamma \lambda I \hl I &amp;-\gamma I &amp; 0 \\
  I &amp; -2\gamma I &amp; -\gamma I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, &amp; \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{F_1(z_k^1) \\ F_2(z_k^2)}
 \end{align*}\end{split}\]</div>
-<p>Figure <a class="reference internal" href="#fig-dr"><span class="xref myst">1</span></a> visualizes  executions of the Douglas-Rachford algorithm to solve the optimization problem <span class="math notranslate nohighlight">\(\min f_1(\beta) + \norm{\beta}_1\)</span>.</p>
+<p>Figure <a class="reference internal" href="#fig-dr"><span class="xref myst">1</span></a> visualizes  executions of the Douglas-Rachford algorithm to solve the optimization problem <span class="math notranslate nohighlight">\(\min f(\beta) + \norm{\beta}_1\)</span> for a quadratic <span class="math notranslate nohighlight">\(f\)</span>.</p>
 <figure class="align-default" id="fig-dr">
 <img alt="Multiple trajectories of the Douglas-Rachford Algorithm" src="../../_images/dr_trace.webp" />
 <figcaption>
 <p><span class="caption-text"><em>Figure 1:</em> The optimal solution is the black circle. The visualized curves are the outputs <span class="math notranslate nohighlight">\(\{z_k^2\}_{k \in \N}\)</span> starting from random initial conditions <span class="math notranslate nohighlight">\(x_0\)</span>.</span><a class="headerlink" href="#fig-dr" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
-<!-- :scale: 50 % -->
-<!-- ## Operator Classes -->
-<p>The individual operators <span class="math notranslate nohighlight">\(F_i\)</span> in the inclusion problem may be contained in known operator classes.
-The linear system  should ensure that the algorithm satisfies specified  properties for all <span class="math notranslate nohighlight">\(F\)</span> in a desired class of operators  <span class="math notranslate nohighlight">\(\F\)</span>. Instances of these operator classes include maximally monotone set-valued maps, subgradients of strongly convex functions, gradients of smooth functions, and classes arising from intersections of these properties.</p>
-<p>The operators <span class="math notranslate nohighlight">\(\{F_i\}_{i=1}^s\)</span>  will be assembled into a single operator <span class="math notranslate nohighlight">\(F\)</span>, defined as</p>
-<div class="math notranslate nohighlight">
-\[\begin{align*}
- \text{graph}(F) &amp;= \{(w_i, z_i)_{i=1}^s \mid w_i \in F_i(z_i)\}, &amp; \text{with} &amp;  &amp; w^* &amp;\in F(z^*). 
-\end{align*}\]</div>
-<p>The interconnection of the operator <span class="math notranslate nohighlight">\(F\)</span> with a linear time invariant system <span class="math notranslate nohighlight">\(G\)</span> is</p>
-<div class="math notranslate nohighlight">
-\[\begin{align*}
- (F, G): &amp; &amp; \mat{c}{x_{k+1} \hl z_k} &amp;= \mat{c|c}{\Acl &amp; \Bcl \hl \Ccl &amp; \Dcl}   \mat{c}{x_{k} \hl w_k}, &amp; w_k \in  F(z_k).
-\end{align*}\]</div>
 </section>
 </section>
 <hr class="footnotes docutils" />

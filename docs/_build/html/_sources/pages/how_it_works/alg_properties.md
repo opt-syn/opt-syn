@@ -1,10 +1,33 @@
 # Properties of Algorithms
 
-Desirable properties of optimization algorithms are convergence, performance,  well-posedness, and information structures. In Analysis, we aim to verify that an algorithm achieves these properties. In Synthesis, we try to generate an algorithm meeting these properties. 
+Desirable properties of optimization algorithms are convergence, performance,  well-posedness, and information structures. 
+
+
+In Analysis, we aim to verify that an algorithm always achieves these properties. In Synthesis, we try to generate an algorithm meeting these properties. 
+
+The individual operators $F_i$ in the inclusion problem may be contained in known operator classes. Instances of these operator classes include maximally monotone set-valued maps, subgradients of strongly convex functions, gradients of smooth functions, and classes arising from intersections of these properties. 
+
+
 
 
 
  ## Convergence
+
+The operators $\{F_i\}_{i=1}^s$  in the inclusion problem will be assembled into a single operator $F$, defined as  
+```{math}
+\begin{align*}
+ \text{graph}(F) &= \{(w_i, z_i)_{i=1}^s \mid w_i \in F_i(z_i)\}, & \text{with} &  & w^* &\in F(z^*). 
+\end{align*}
+```
+
+The interconnection of the operator $F$ with a linear time invariant system $G$ is 
+```{math}
+\begin{align*}
+ (F, G): & & \mat{c}{x_{k+1} \hl z_k} &= \mat{c|c}{\Acl & \Bcl \hl \Ccl & \Dcl}   \mat{c}{x_{k} \hl w_k}, & w_k \in  F(z_k).
+\end{align*}
+``` 
+
+
 A fixed-point of the algorithm $(F, G)$ is a tuple $(x^*, w^*, z^*)$ satisfying 
 ```{math}
 \begin{align*}

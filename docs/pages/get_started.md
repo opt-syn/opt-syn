@@ -29,6 +29,9 @@ A first example involves a constrained optimization problem
 \end{align}
 ```
 
+:::{danger}
+This PGD content must be replaced with something else.
+:::
 
 
 The set $\mathcal{Z}$ is closed, convex, and nonempty. One instance of this problem is  [LASSO](https://en.wikipedia.org/wiki/Lasso_(statistics)) in regression, in which the  cost $f$ which is a convex quadratic, and the set $\mathcal{Z}$ which is a scaled  $L_1$-ball.
