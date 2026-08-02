@@ -11,6 +11,7 @@ These examples perform Synthesis of inclusion algorithms.
 
 ```{toctree}
 :maxdepth: 1
+LASSO <syn_lasso>
 Channel Memory <syn_channel_memory>
 Games with Delay <syn_games_with_delay>
 Repeated Operators <syn_repeated>

@@ -1,38 +1,27 @@
-% The set of considered oracles
-m = 1;
-L = 10;
-% L = 3;
-op1 = op_sml(m, L);
-op2 = op_pcc();
-ops = {op1, op2};
+%describe the operators 
+m = 1; L = 50;
+op1 = op_sml(m, L); %gradient of f
+op2 = op_pcc();     %indicator function of L1 ball
 
-%form the system and the analysis manager
-sys = opt_system(ops, [], []);
-config = opt_config();
-config.syn.reduced_order = true;
-config.syn.elimination = true;
-% config.syn.reduced_order = ;
-% config.syn.elimination = false;
-man = opt_synthesis(sys, config);
-sol_best = man.bisect();
 
-% spec = spec_stability(0.5);
-% sol_single = man.solve_single([], spec)
-% 
-% %% gradient
-% config_grad = opt_config();
-% config_grad.syn.D_mask = [0, 0; 1, 1];
-% man_grad = opt_synthesis(sys, config_grad);
-% sol_grad = man_grad.bisect();
-% 
-% %% alternation
-% man_alt = man;
-% Niter =3;
-% sol_alt = man_alt.alternate(3, {1, 1});
+%run the synthesis routine, use bisection to minimize the convergence rate
+sys = opt_system({op1, op2});
+
+man = opt_synthesis(sys); 
+sol = man.bisect();
+
+rho = sol.rho; % 0.9050
+
+
+%% with time-delay dynamics
+delay = [1, 0];
+network = bridge_channel_delay(delay, delay);
+sys = opt_system({op1, op2}, network);
+man = opt_synthesis(sys);
+sol = man.bisect();
+
 
 %% simulate as a test
-sol = sol_best;
-
 d = 50;
 BOX = 30;
 M = rand_quad(d, m, L);
