@@ -90,6 +90,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             P_trans =  obj.connect_model(diss{1});
             
 
+
+
             %evaluate the variables
             [sol] = obj.recover_subcontroller(alg_psi, P_trans, sol);
                       
@@ -111,8 +113,11 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %   K_sub: the subcontroller
             
             vars_rec = sol.vars;
-            rho = sol.rho;
 
+
+            
+
+            
             if obj.config.gen.same_rho
                 rho_common = sol.rho;
                 P_aug = rhotrafo(P_aug, rho_common);
@@ -344,23 +349,32 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
 
 
-        function cons = con_spread_single(obj, cons, GX, GY)
-            %CON_SPREAD_SINGLE increase numerical conditioning by separating the 
-            %primal and dual blocks
+        function cons = con_spread(obj, cons, vars)
+            %CON_SPREAD increase numerical conditioning by separating the 
+            %primal and dual blocks. modified for reduced order control.
+            %
             %Args:                   
             %   cons:   accumulated constraints
-            %   GX:   primal storage matrix
-            %   GY:   dualstorage matrix
+            %   vars:   variables of the problem   
             %
             %Returns:            
             %   cons:   accumulated constraints
 
 
-            % np = ssize(GX, 1);
-            % spr = obj.config.tol.spread+1;           
-            % cons_PH = [GX, (spr)*eye(np); (spr)*eye(np), GY];
-            % cons = append_lmi(cons, cons_PH, obj.LMILAB);
+            spr = obj.config.tol.spread+1;      
 
+            GX = vars.diss.GX;
+            GY = vars.diss.GY;
+            if ssize(GY, 1) 
+                
+    
+                Pibar = obj.Pibar(vars.diss, vars.reg);
+    
+                %spread Pibar, not spread I
+                cons_PH = [GY, (spr) * Pibar; (spr) * Pibar', GX];  
+                
+                cons = append_lmi(cons, cons_PH, obj.LMILAB);
+            end
             % cons = [];
         end
 
@@ -468,15 +482,12 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 nw = length(iw);
                 ny = length(iy);
                 
-                %check dimensions here
 
-                %before permutation (D on bottom)
-                % U_cl_base = [zeros(nxn, nxiU), B(:, iu);
-                %     eye(nxiU), zeros(nxiU, nu);
-                %     zeros(nz, nxiU), D(iz, iu)]';
-    
+                %rhoi hits the identity here.
+                %this is ok, because there is only one performance
+                %specification. Recovery will catch the controller.                
                 U_cl_base = [B(:, iu), zeros(nxn, nxiU);
-                 zeros(nxiU, nu), eye(nxiU),;
+                 zeros(nxiU, nu), rhoi*eye(nxiU),;
                  D(iz, iu),  zeros(nz, nxiU)]';
 
                 nxiV = n;
@@ -747,49 +758,57 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             cl_error = Ycal' * Xhatcal * Ycal - Gcl;
 
 
-            % elim_orig = obj.elimination;
-            % obj.config.syn.elimination = false;
+            %do a check on  the closed-loop system
+            elim_orig = obj.elimination;
+            obj.config.syn.elimination = false; %semi-global option
             
-            % vrec_K = struct('A', Ak, 'B', Bk,  'C', Ck,  'D', Dk);
-            % 
-            % sys_cl = obj.system_closed_loop(P_trans, vars_rec.diss, vars_rec.reg, vrec_K);
-            % obj.config.syn.elimination = elim_orig;
-            % 
-            % XAcl = Ycalinv' * sys_cl.A * Ycalinv;
-            % XBcl = Ycalinv' * sys_cl.B;
-            % Ccl = sys_cl.C * Ycalinv;
-            % Dcl = sys_cl.D;
-            % 
-            % Acl = Xhatcalinv * XAcl;
-            % Bcl = Xhatcalinv * XBcl;
-            % 
-            % 
-            % 
-            % %manual check of antipassivity
-            % [nz, nw] = size(Dcl);
-            % 
-            % Ablock = [Acl, Bcl; eye(size(Acl)), zeros(2*n+ns, nw)];
-            % Sblock = kron([0, 1; 1, 0], eye(nw));
-            % Xblock = blkdiag(Xhatcal, -Xhatcal);
-            % Cblock = [Ccl, Dcl; zeros(nw, 2*n+ns), eye(nw)];
-            % if nz == nw
-            %     ANTI = Ablock'*Xblock*Ablock + Cblock'*Sblock*Cblock;
-            % 
-            % 
-            % 
-            % 
-            %     %this is the closed-loop response (after loop transformations
-            %     % and multiplier augmentation), should satisfy the desired
-            %     %performance specifications.
-            %     sys_cl_rec = ss(Acl, Bcl, Ccl, Dcl, 1);
-            % 
-            %     A_rec = Acl(end-n+1 : end, end-n+1 : end); %this is the controller A matrix,             
-            %     % should match with later recovery.
-            % 
-            %     %the performance of the recovered controller should match the
-            %     %closed-loop quantity
-            %     pass_rec = -getPassiveIndex(-sys_cl_rec, 'input');
-            % end
+            vrec_K = struct('A', Ak, 'B', Bk,  'C', Ck,  'D', Dk);          
+
+           
+            if isempty(vars_rec.rho)
+                rho_use = 1; %sublinear convergence via ERGODIC
+            else
+                rho_use = vars_rec.rho; %other convergence (or divergence)
+            end
+            sys_cl = obj.system_closed_loop(P_trans, vars_rec.diss, vars_rec.reg, vrec_K, rho_use);
+            obj.config.syn.elimination = elim_orig;
+
+            %recover the closed-loop
+            XAcl = Ycalinv' * sys_cl.A * Ycalinv;
+            XBcl = Ycalinv' * sys_cl.B;
+            Ccl = sys_cl.C * Ycalinv;
+            Dcl = sys_cl.D;
+
+            Acl = Xhatcalinv * XAcl;
+            Bcl = Xhatcalinv * XBcl;
+
+
+
+            %manual check of antipassivity
+            [nz, nw] = size(Dcl);
+
+            Ablock = [Acl, Bcl; eye(size(Acl)), zeros(2*n+ns, nw)];
+            Sblock = kron([0, 1; 1, 0], eye(nw));
+            Xblock = blkdiag(Xhatcal, -Xhatcal);
+            Cblock = [Ccl, Dcl; zeros(nw, 2*n+ns), eye(nw)];
+            if nz == nw
+                ANTI = Ablock'*Xblock*Ablock + Cblock'*Sblock*Cblock;
+
+
+
+
+                %this is the closed-loop response (after loop transformations
+                % and multiplier augmentation), should satisfy the desired
+                %performance specifications.
+                sys_cl_rec = ss(Acl, Bcl, Ccl, Dcl, 1);
+
+                A_rec = Acl(end-n+1 : end, end-n+1 : end); %this is the controller A matrix,             
+                % should match with later recovery.
+
+                %the performance of the recovered controller should match the
+                %closed-loop quantity
+                pass_rec = -getPassiveIndex(-sys_cl_rec, 'input');
+            end
             %now reconstruct a controller
 
             %recovery by transformation (preferred) or by solving a second

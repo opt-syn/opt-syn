@@ -172,7 +172,7 @@ classdef alg_sim
                     Dzw_curr = Dzw(i_ind, i_ind);
                     op_curr = obj.sys.get_op(i);
                     if any(Dzw_curr,"all")
-                        %use backward evaluation
+                        %use backward evaluation (I+ (-D) F)^-1
                         vi_vec = reshape(vi, [], 1);
                         zi_vec = op_curr.bw(k,  -Dzw_curr, vi_vec, param);
                         zi = reshape(zi_vec, [], dl);
@@ -211,7 +211,7 @@ classdef alg_sim
                 end
 
                 %extract internal signals
-                %TODO: enable this (and debug it)
+                
                 [y, u] = obj.sys.get_internal_signals(param, x, [w; wp]);
 
                 %log the signals

@@ -8,18 +8,18 @@ classdef (Abstract) opt_manager_interface < handle
     % opt_synthesis < opt_manager_interface 
     
     properties
-        sys;  %system (opt_system type)
+        sys;  %system (opt_system type)        
         cons = []; %accumualted constraints
         vars = {}; %variables of the problem.
         iqc_op = {}; %iqcs for the operators
         specs = {};  %performance specifications
-
         
         config = []; %configuration options (opt_config)
 
-        lmi = []; %the lmi handler (object)
+        lmi = []; % (lmi_dispatch) the lmi handler 
         %other options
-        task = 'generic'; %analysis or synthesis?
+        task = 'generic'; %analysis or synthesis? This is an override
+        sys_orig; %(opt_system) original system, before any performance-based modifications 
     end
 
     
@@ -35,6 +35,7 @@ classdef (Abstract) opt_manager_interface < handle
             end
 
             obj.sys = sys;
+            obj.sys_orig = sys;
             nop = length(obj.sys.op);
             obj.iqc_op = cell(nop, 1);
             obj.vars = struct('op', []);
@@ -254,7 +255,7 @@ classdef (Abstract) opt_manager_interface < handle
             obj.specs = {};
         end
         
-        function obj = add_specifications(obj, varargin)
+        function obj = scan_specifications(obj, varargin)
             %concatenate the new performance specifications
             %Args:
             %   varargin: new specifications to add
@@ -266,11 +267,26 @@ classdef (Abstract) opt_manager_interface < handle
                 obj.specs = [obj.specs, {varargin{1}}];
             end
 
+            
             %assign indices to the specifications
             for i = 1:numel(obj.specs)
                 obj.specs{i}.id = i;
+
+                %add extra performance channels for warranted
+                %specifications (e.g. ergodic)
+                if isa(obj.specs{i}, 'spec_ergodic')
+                    %requires duality gap condition, add it here.
+
+                    
+                    %propagate through the updates
+                    [obj.specs{i}, obj.sys] = obj.specs{i}.augment_ergodic(obj.sys);
+                    obj.lmi.sys = obj.sys;
+                    obj.lmi.reg.sys = obj.sys;
+                end
+
             end
         end
+
 
         function rho = get_common_rho(obj, specs)
             %GET_COMMON_RHO get the common rho in the case of the same rho in all
@@ -339,9 +355,12 @@ classdef (Abstract) opt_manager_interface < handle
             if nargin < 3 || isempty(specs)
                 specs = {spec_stability(1)};
             end
+            if ~iscell(specs)
+                specs = {specs};
+            end
             obj.specs = {};
             obj = obj.process_argument(arg);            
-            obj = obj.add_specifications(specs);
+            obj = obj.scan_specifications(specs);
             
             [vars, cons, objective, alg_psi, diss] = obj.build_program(); 
 
@@ -414,7 +433,7 @@ classdef (Abstract) opt_manager_interface < handle
             obj = obj.process_argument(arg);
             
             obj.specs = [];
-            obj = obj.add_specifications(specs);
+            obj = obj.scan_specifications(specs);
 
             cons = obj.cons;
             specs = obj.specs;

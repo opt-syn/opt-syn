@@ -18,40 +18,58 @@ classdef spec_ergodic < spec_interface
     end
     
     methods
-        function [obj, sys_erg]= spec_ergodic(sys)
+        function [obj]= spec_ergodic()
             % SPEC_ERGODIC Construct an ergodic convergence specification.
             %
-            % Reads the consensus structure from the system, appends the
+           
+
+            
+
+
+
+            
+
+
+  
+            obj@spec_interface([], []);
+            
+            
+            obj.type = 'ergodic';        
+            
+        end
+
+        function [obj, sys_erg] = augment_ergodic(obj, sys)
+            %AUGMENT_ERGODIC add new input and output channels to the
+            %system to allow for ergodic performance specifications to be
+            %met (duality gap). Reads the consensus structure from the system, appends the
             % ergodic performance channel to the plant via
             % :mat:meth:`plant.genplant.genplant.perf_ergodic`, and returns
             % both the specification and the augmented system.
             %
             % :param sys: The optimization-algorithm system.
-            % :returns: ``[obj, sys_erg]`` — the ergodic specification and the
+            % :returns: ``[sys_erg]`` — the ergodic specification and the
             %    system with the ergodic performance channel added.
             % :rtype: spec_ergodic, (system)
 
-            
+            %apply the IQC for function values for all op_sml type members            
+            sys_erg = sys;
+            for i = 1:length(sys_erg.op)
+                if ~isa(sys_erg.op{i}, 'op_gen') 
+                    sys_erg.op{i}.ERGODIC = true;
+                end
+            end
 
-            c = sys.op{1}.c;
-            s = length(sys.op);
+            c = sys_erg.op{1}.c;
 
-            Nw0 = sys.get_consensus_weighted();
+            Nw0 = sys_erg.get_consensus_weighted();
             Nw = kron(Nw0, eye(c));
 
-
-            sys_erg = sys;
-
-            [P_erg, iwp, izp] = sys.P.perf_ergodic(Nw);
+            %iwp, izp, new performance channels for ergodic certification
+            [P_erg, obj.iwp, obj.izp] = sys.P.perf_ergodic(Nw);
 
             sys_erg.P = P_erg;
-            
-
-            obj@spec_interface(iwp, izp);
-            
             obj.Nw = Nw;
-            obj.type = 'ergodic';        
-            
+
         end
 
         function [quad, objective] = supply_quad(obj, vars_spec)

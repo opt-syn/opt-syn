@@ -287,7 +287,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %
             %Returns:            
             %   cons:   accumulated constraints
-                cons = obj.con_spread_single(cons, vars.diss.GX, vars.diss.GY);
+          
+            cons = obj.con_spread_single(cons, vars.diss.GX, vars.diss.GY);
             
         end
 
@@ -943,7 +944,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             K_report = obj.K_alg_report(P_trans, K_nofeed, model);
             
             sol.cert.alg_trans = K_report.alg_trans;
-            sol.cert.alg = lft(obj.sys.P, K_report.K);
+            sol.cert.alg = lft(obj.sys_orig.P, K_report.K);
             sol.cert.model = K_report.model;           
             sol.cert.K= K_report.K;
             sol.cert.K_sub = K_report.K_sub;
