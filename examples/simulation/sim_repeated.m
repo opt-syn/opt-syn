@@ -28,7 +28,7 @@ K = ss(A, B, C, D, 1);
 m1 = 1; m2 = 0;
 L1 = 3; L2 = 6;
 Q1 = rand_quad(d, m1, L1); bstar1 = randn(d, 1)*100 - 20;
-Q2 = rand_quad(d, m3, L3); bstar2 = randn(d, 1)*100 + 20;
+Q2 = rand_quad(d, m2, L2); bstar2 = randn(d, 1)*100 + 20;
 
 BOX = 30; %L infinity norm constraint
 

@@ -51,7 +51,7 @@ classdef op_sim_l1_hard < op_sim_interface
             %   param:   parameter structure for the operator
             %
             %Returns:
-            %   z:       the z such that z = (I - D F)^(-1)(v)
+            %   z:       the z such that z = (I + D F)^(-1)(v)
 
 
             %coordinate dimensions
@@ -61,7 +61,7 @@ classdef op_sim_l1_hard < op_sim_interface
             Dskron = kron(eye(dl), sqrt(D));
             %skew the box in the projection
             z_weighted = weighted_l1_proj(Dskron \ v, obj.tau, diag(Dskron));
-            z = kron(eye(dl), sqrt(D)) * z_weighted;                        
+            z = Dskron * z_weighted;                        
         end
 
 

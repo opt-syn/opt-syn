@@ -1,6 +1,22 @@
 # Convergence Conditions (Analysis)
 
-Our computational linear convergence results are based on a subset of zero-inclusion problems with unique solutions.
+
+
+The individual operators $F_i$ in the inclusion problem may be contained in known operator classes. Instances of these operator classes include maximally monotone set-valued maps, subgradients of strongly convex functions, gradients of smooth functions, and classes arising from intersections of these properties. These operator classes specify families of optimization problems.
+
+
+The algorithm $(F,G)$ must achieve the desired convergence properties for all $F$ arising from these operator classes.
+
+
+
+
+Our linear convergence conditions are presented for a set of operators $\F$ satisfying
+1. There is a known linear map $\Delta$ with $\Delta \in \F$,
+2. Each $F \in \F$ has a unique pair $(\beta^*, w^*)$ solving the inclusion problem.
+
+
+Uniqueness requires that the map $z \mapsto 0 $ is not in $\F$. Convergence must hold for all $(F, G)$ with $F \in \F.$
+
 
 ## Parameterization
 
@@ -26,18 +42,16 @@ z^* &= \1 \otimes \beta^*, & w^* &= N\hat{w}^*, &  F(\1 \otimes \beta^*) &= N \h
 
 ## Conditions
 
-Our convergence conditions are based on the  operator class $\F$ satisfying
-1. There is a known linear map $\Delta$ with $\Delta \in \F$,
-2. Each $F \in \F$ has a unique pair $(\beta^*, \hat{w}^*)$ such that $F(\1 \otimes \beta^*) = N \hat{w}^*$.
 
-Uniqueness requires that the map $z \mapsto 0 $ is not in $\F$. 
+
+
 
 
 Sufficient conditions for a well-posed algorithm $(F, G)$ to be linearly convergent at rate $\rho \in (0, 1)$  for all $F \in \F$ are if
-1. *Robust Stability:* For all $\ov x_0$ and $F \in \F$ with $0 \in F(0)$, we have $\lim_{k\rightarrow \infty} \ov x_k \rightarrow 0$ for the system
+1. *Robust Stability:* For all $x_0$ and $F \in \F$ with $0 \in F(0)$, we have $\lim_{k\rightarrow \infty}  \rho^{-2k} \norm{x_k}_2^2 \rightarrow 0$ for the system
 ```{math}
 \begin{align}
-\mat{c}{\ov x_{k+1} \hl \ov{z}_k} &= \mat{c|c}{\rhoi \Acl & \rhoi \Bcl \hl \Ccl & \Dcl} \mat{c}{\ov x_{k} \hl \ov{w}_k}, & \ov{w}_k \in \rho^{-k} F(\rho^k \ov{z_k}),
+\mat{c}{ x_{k+1} \hl {z}_k} &= \mat{c|c}{ \Acl &  \Bcl \hl \Ccl & \Dcl} \mat{c}{ x_{k} \hl {w}_k}, & {w}_k \in  F( {z_k}),
 \end{align}
 ```
 2. Solvability of *Regulator Equation:*  There is a solution $\mathbf{X}^*$ to the linear system of equations
@@ -47,6 +61,8 @@ Sufficient conditions for a well-posed algorithm $(F, G)$ to be linearly converg
 \Ccl & \1 \otimes I & \Dcl N} \mat{c}{\mathbf{X}^* \\ I}.
 \end{align}
 ```
+
+## Interpretation
 
 The Regulation Equation requirement implies the existence of an $x^*$ for any valid $(w^*, z^*)$ satisfying the fixed point relation 
 ```{math}

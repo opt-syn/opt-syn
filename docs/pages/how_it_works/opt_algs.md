@@ -2,20 +2,23 @@
 
 ## Optimization/Inclusion Problems
 
-Several problems in optimization, engineering, and economics can be phrased as finding a zero in a sum of $s$ operators
+<!-- Several problems in optimization, engineering, and economics can be phrased as finding a zero in a sum of $s$ operators -->
+
+
+A zero-inclusion problem tries to find a point $\beta^*$ in the zero in the sum of operators.
 ```{math}
 \begin{align*}
  0 \in \sum_{i=1}^s F_i(\beta^*).
 \end{align*}
 ```
 
-Zero-inclusion problems include solution concepts such as optimal points and variational inequalities. If each $F_i$ is the subdifferential of a proper function $f_i$, then 
+Zero-inclusion problems include solution concepts such as optimization problems and variational inequalities. If each $F_i$ is the subdifferential of a proper function $f_i$, then 
 ```{math}
 \begin{align*}
- \beta^* & \in \argmin_\beta \sum_{i=1}^s f_i(\beta) &  \text{implies} &  0 & \in \sum_{i=1}^s  F_i(\beta^*).
+ \beta^* & \in \argmin_\beta \sum_{i=1}^s f_i(\beta) &  \text{implies} & & 0 & \in \sum_{i=1}^s  F_i(\beta^*).
 \end{align*}
 ```
-The zero inclusion problem in $\partial f$ is an optimality principle for the optimization problem in $f$.
+The zero inclusion problem in $\partial f$ is an optimality principle for the optimization problem.
 
 
 An iterate $(w^*, z^*)$ solves the zero-inclusion problem if it satisfies 
@@ -23,7 +26,7 @@ An iterate $(w^*, z^*)$ solves the zero-inclusion problem if it satisfies
 2. Zeroness: $\textstyle \sum_{i=1}^s w^*_i = 0$,
 3. Consistency: $w^*_i \in F_i(z^*_i)$ for all $i \in 1, \ldots, s$.
 
-The solution $\beta^*$ can then be read a valid $z^*$ as $\beta^* = z^*_1$.
+The solution $\beta^*$ can then be read from a valid $z^*$ as $\beta^* = z^*_1$.
 
 
 
@@ -41,9 +44,13 @@ An optimization algorithm is a procedure that generates a sequence of iterates $
 <!-- , and include an internal state $x$ -->
 
 
- Many common optimization algorithms can be expressed as the interconnection of operators and a linear system.
-
-As an example, the  interconnection representation of the Douglas-Rachford algorithm {footcite}`douglas1956numerical`   with parameters $\gamma, \lambda \geq 0$ is 
+ Many common optimization algorithms can be expressed as the interconnection of operators and a linear system. As an example, the gradient descent/forward-step method with stepsize $\gamma > 0$ may be represented by 
+```{math}
+\begin{align*}
+ \mat{c}{x_{k+1} \hl z_k} &= \mat{c|cc}{I & -\gamma \lambda I \hl I & 0 }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{F_1(z_k^1)},
+\end{align*}
+```
+ and the   Douglas-Rachford algorithm {footcite}`douglas1956numerical`   with parameters $\gamma, \lambda \geq 0$ may be represented by 
 ```{math}
 \begin{align*}
  \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &= \mat{c|cc}{I & -\gamma \lambda I & -\gamma \lambda I \hl I &-\gamma I & 0 \\
@@ -52,7 +59,7 @@ As an example, the  interconnection representation of the Douglas-Rachford algor
 ```
 
 
-Figure [1](#fig-dr) visualizes  executions of the Douglas-Rachford algorithm to solve the optimization problem $\min f_1(\beta) + \norm{\beta}_1$.
+Figure [1](#fig-dr) visualizes  executions of the Douglas-Rachford algorithm to solve the optimization problem $\min f(\beta) + \norm{\beta}_1$ for a quadratic $f$.
 
 :::{figure} img/dr_trace.webp
 :alt: Multiple trajectories of the Douglas-Rachford Algorithm
@@ -60,24 +67,3 @@ Figure [1](#fig-dr) visualizes  executions of the Douglas-Rachford algorithm to 
 
  *Figure 1:* The optimal solution is the black circle. The visualized curves are the outputs $\{z_k^2\}_{k \in \N}$ starting from random initial conditions $x_0$.
 :::
-<!-- :scale: 50 % -->
-
-
-<!-- ## Operator Classes -->
-
-The individual operators $F_i$ in the inclusion problem may be contained in known operator classes. 
-The linear system  should ensure that the algorithm satisfies specified  properties for all $F$ in a desired class of operators  $\F$. Instances of these operator classes include maximally monotone set-valued maps, subgradients of strongly convex functions, gradients of smooth functions, and classes arising from intersections of these properties.
-
-
-The operators $\{F_i\}_{i=1}^s$  will be assembled into a single operator $F$, defined as  
-```{math}
-\begin{align*}
- \text{graph}(F) &= \{(w_i, z_i)_{i=1}^s \mid w_i \in F_i(z_i)\}, & \text{with} &  & w^* &\in F(z^*). 
-\end{align*}
-```
-The interconnection of the operator $F$ with a linear time invariant system $G$ is 
-```{math}
-\begin{align*}
- (F, G): & & \mat{c}{x_{k+1} \hl z_k} &= \mat{c|c}{\Acl & \Bcl \hl \Ccl & \Dcl}   \mat{c}{x_{k} \hl w_k}, & w_k \in  F(z_k).
-\end{align*}
-``` 

@@ -53,7 +53,8 @@ sol_delay = man_delay.bisect(); %rho = 0.9430
 %define the L infinity ball
 %individual constraints for agents
 BOX = 10;
-op2_sim = op_sim_box(BOX);
+% op2_sim = op_sim_box(BOX);
+op2_sim = op_sim_l1_hard(100);
 ops_sim = {op1_sim, op2_sim};
 
 sys_sim_fw = sol_fw.sys.export_sim(ops_sim);

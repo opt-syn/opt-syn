@@ -12,7 +12,8 @@ ops = {op1, op2};
 % K = ss(1, [-gamma*lambda, -gamma*lambda], [1; 1], [-gamma, 0; -2*gamma, -gamma],1);
 
 %PGD
-gamma = 2/(L + m);
+% gamma = 2/(L + m);
+gamma = 1/L;
 K = ss(1, [-gamma, -gamma], [1; 1], [0, 0; -gamma, -gamma],1);
 
 

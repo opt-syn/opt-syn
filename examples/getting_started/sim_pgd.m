@@ -17,7 +17,8 @@ op2 = op_sim_l1_hard(tau);
 ops = {op1, op2};
 
 %PGD algorithm
-gamma = 2/(L + m);
+% gamma = 2/(L + m);
+gamma = 1/L;
 K = ss(1, [-gamma, -gamma], [1; 1], [0, 0; -gamma, -gamma],1);
 
 %form the system
@@ -26,7 +27,7 @@ sys = opt_system(ops, [], K);
 %simulate and plot
 sim = alg_sim(sys, d);
 T = 15;
-sim.sampler.x0 = 200*randn(1, d);
+sim.sampler.x0 = 10*randn(1, d);
 sim_out= sim.sim(T);
 plt = alg_plotter(sim_out);
 % plt.plot_4(1);

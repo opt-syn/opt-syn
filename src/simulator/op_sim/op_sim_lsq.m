@@ -1,36 +1,35 @@
-classdef op_sim_quad < op_sim_interface
-    %OP_SIM_QUAD a quadratic function for algorithm simulation
+classdef op_sim_lsq < op_sim_interface
+    %OP_SIM_LSQ a least squares cost for algorithm simulation
     %
     %
-    %:math:`f = (1/2) (z-z^*)' M (z-z^*)`
+    %:math:`f = (1/2) ||A z - b||_2^2`
 
 
     
     properties
-        M;     %quadratic matrix
-        bstar; %critical point to the unconstrained quadratic minimization problem
+        A; %matrix in least squares
+        b; %vector in least squares
     end
 
     methods
-        function obj = op_sim_quad(M, bstar)
-            %OP_SIM_QUAD Constructor form a quadratic function
+        function obj = op_sim_lsq(A, b)
+            %OP_SIM_LSQ Constructor form a quadratic function
             %
             % Args: 
-            %   M: a symmetric matrix defining the quadratic form
-            %   bstar: critical point to the unconstrained quadratic minimization problem
-            %           is a function  of k.
+            %   A: a rectangular matrix 
+            %   b: the reference vector
             
             obj = obj@op_sim_interface();
-            obj.M = M;
+            obj.A = A;
 
             if nargin < 2
-                bstar = zeros(size(obj.M, 1), 1);
+                b = zeros(size(obj.A, 1), 1);
             end
 
-            if isnumeric(bstar)
-                obj.bstar = @(k) bstar;
+            if isnumeric(b)
+                obj.b = @(k) b;
             else
-                obj.bstar = bstar;
+                obj.b = b;
             end
                     
     
@@ -49,7 +48,8 @@ classdef op_sim_quad < op_sim_interface
             %Returns:
             %   w:       the w such that w = F(z)
 
-            w = obj.M* (z-obj.bstar(k));
+            res = obj.A*z- obj.b(k);
+            w = obj.A' * (res);
         end
 
         function z = bw(obj, k, D, v, param)
@@ -65,9 +65,12 @@ classdef op_sim_quad < op_sim_interface
             %Returns:
             %   z:       the z such that z = (I + D F)^(-1)(v)
 
-            dl = obj.blocksize(v);
-            z = (obj.M + kron(eye(dl), inv(D))) \ ...
-                (obj.M*obj.bstar(k) + kron(eye(dl), D) \ v);
+            dl = obj.blocksize(v);           
+            Dkron = kron(eye(dl), (D));
+
+            %basic unoptimized implementation
+            ansvec = obj.A' * obj.b(k) + Dkron \ v;
+            z = (obj.A' * obj.A + kron(eye(dl), inv(D))) \ ansvec;            
         end
 
         function f_out = f(obj, k, z, param)
@@ -82,7 +85,8 @@ classdef op_sim_quad < op_sim_interface
             %Returns:
             %   f_out:   f_out = f(z) if F = \partial f.
 
-            f_out = 0.5*(z-obj.bstar(k))'*obj.M*(z-obj.bstar(k)); 
+            res =  obj.A * z - obj.b(k);
+            f_out = 0.5*norm(res, 2)^2;
         end
         
 

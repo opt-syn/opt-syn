@@ -107,7 +107,7 @@ classdef op_sim_LQ_game< op_sim_interface
             %   param:   parameter structure for the operator
             %
             %Returns:
-            %   z:       the z such that z = (I - D F)^(-1)(v)
+            %   z:       the z such that z = (I + D F)^(-1)(v)
 
             
 
