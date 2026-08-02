@@ -336,6 +336,9 @@ classdef (Abstract) opt_manager_interface < handle
 
 
             % warning('all', 'off')
+            if nargin < 3 || isempty(specs)
+                specs = {spec_stability(1)};
+            end
             obj.specs = {};
             obj = obj.process_argument(arg);            
             obj = obj.add_specifications(specs);
