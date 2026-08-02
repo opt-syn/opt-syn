@@ -5,6 +5,22 @@ Desirable properties of optimization algorithms are convergence, performance,  w
 
 
  ## Convergence
+
+The operators $\{F_i\}_{i=1}^s$  in the inclusion problem will be assembled into a single operator $F$, defined as  
+```{math}
+\begin{align*}
+ \text{graph}(F) &= \{(w_i, z_i)_{i=1}^s \mid w_i \in F_i(z_i)\}, & \text{with} &  & w^* &\in F(z^*). 
+\end{align*}
+```
+
+The interconnection of the operator $F$ with a linear time invariant system $G$ is 
+```{math}
+\begin{align*}
+ (F, G): & & \mat{c}{x_{k+1} \hl z_k} &= \mat{c|c}{\Acl & \Bcl \hl \Ccl & \Dcl}   \mat{c}{x_{k} \hl w_k}, & w_k \in  F(z_k).
+\end{align*}
+``` 
+
+
 A fixed-point of the algorithm $(F, G)$ is a tuple $(x^*, w^*, z^*)$ satisfying 
 ```{math}
 \begin{align*}

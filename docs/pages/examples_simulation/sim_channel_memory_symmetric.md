@@ -107,7 +107,7 @@ Figure [3](#sym-trace-sq) plots the squared norm of the tracking error
 *Figure 3:* Tracking residuals
 :::
 
-```{literalinclude} ../../../examples/simulation/dr_example/sim_channel_asymmetric.m
+```{literalinclude} ../../../examples/simulation/dr_example/sim_channel_symmetric.m
 :linenos: true
 :caption: Code for optimization with symmetric channel memory effects
 :language: matlab

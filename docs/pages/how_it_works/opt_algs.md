@@ -12,7 +12,7 @@ Several problems in optimization, engineering, and economics can be phrased as f
 Zero-inclusion problems include solution concepts such as optimal points and variational inequalities. If each $F_i$ is the subdifferential of a proper function $f_i$, then 
 ```{math}
 \begin{align*}
- \beta^* & \in \argmin_\beta \sum_{i=1}^s f_i(\beta) &  \text{implies} &  \sum_{i=1}^s 0 & \in F_i(\beta^*).
+ \beta^* & \in \argmin_\beta \sum_{i=1}^s f_i(\beta) &  \text{implies} &  0 & \in \sum_{i=1}^s  F_i(\beta^*).
 \end{align*}
 ```
 The zero inclusion problem in $\partial f$ is an optimality principle for the optimization problem in $f$.
@@ -41,20 +41,9 @@ An optimization algorithm is a procedure that generates a sequence of iterates $
 <!-- , and include an internal state $x$ -->
 
 
- Many common optimization algorithms can be expressed as the interconnection of operators and a linear system. The operators $\{F_i\}_{i=1}^s$  will be assembled into a single operator $F$, defined as  
-```{math}
-\begin{align*}
- \text{graph}(F) &= \{(w_i, z_i)_{i=1}^s \mid w_i \in F_i(z_i)\}, & \text{with} &  & w^* &\in F(z^*). 
-\end{align*}
-```
-The interconnection of the operator $F$ with a linear time invariant system $G$ is 
-```{math}
-\begin{align*}
- (F, G): & & \mat{c}{x_{k+1} \hl z_k} &= \mat{c|c}{\Acl & \Bcl \hl \Ccl & \Dcl}   \mat{c}{x_{k} \hl w_k}, & w_k \in  F(z_k).
-\end{align*}
-``` 
+ Many common optimization algorithms can be expressed as the interconnection of operators and a linear system.
 
-As an example, the  interconnection representation of the Douglas-Rachford algorithm with parameters $\gamma, \lambda \geq 0$ is 
+As an example, the  interconnection representation of the Douglas-Rachford algorithm {footcite}`douglas1956numerical`   with parameters $\gamma, \lambda \geq 0$ is 
 ```{math}
 \begin{align*}
  \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &= \mat{c|cc}{I & -\gamma \lambda I & -\gamma \lambda I \hl I &-\gamma I & 0 \\
@@ -76,6 +65,19 @@ Figure [1](#fig-dr) visualizes  executions of the Douglas-Rachford algorithm to 
 
 <!-- ## Operator Classes -->
 
-The individual operators $F_i$ in the inclusion problem may be contained in known operator classes. The linear system $G$ should ensure that the algorithm $(F, G)$ satisfies the previous properties for all $F$ in a desired class of operators  $\F$. 
+The individual operators $F_i$ in the inclusion problem may be contained in known operator classes. 
+The linear system  should ensure that the algorithm satisfies specified  properties for all $F$ in a desired class of operators  $\F$. Instances of these operator classes include maximally monotone set-valued maps, subgradients of strongly convex functions, gradients of smooth functions, and classes arising from intersections of these properties.
 
 
+The operators $\{F_i\}_{i=1}^s$  will be assembled into a single operator $F$, defined as  
+```{math}
+\begin{align*}
+ \text{graph}(F) &= \{(w_i, z_i)_{i=1}^s \mid w_i \in F_i(z_i)\}, & \text{with} &  & w^* &\in F(z^*). 
+\end{align*}
+```
+The interconnection of the operator $F$ with a linear time invariant system $G$ is 
+```{math}
+\begin{align*}
+ (F, G): & & \mat{c}{x_{k+1} \hl z_k} &= \mat{c|c}{\Acl & \Bcl \hl \Ccl & \Dcl}   \mat{c}{x_{k} \hl w_k}, & w_k \in  F(z_k).
+\end{align*}
+``` 
