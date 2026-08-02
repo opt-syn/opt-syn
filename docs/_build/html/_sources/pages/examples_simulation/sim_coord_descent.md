@@ -32,21 +32,6 @@ Figure [1](#coord-6) plots a short trajectory of cyclic coordinate descent.
 *Figure 1:* Convergence of coordinate descent algorithm (short time horizon)
 :::
 
-<!-- 
-Figure [2](#coord-6-long) plots a longer trajectorz, illustrating convergence in the gradient error $\norm{\nabla f(\beta)}_2$.
-:::{figure} _static/sim_coord_6_long_dark.png
-:align: center
-:class: only-dark
-:name: coord-6
-*Figure 2:* Convergence of coordinate descent algorithm (short time horizon)
-:::
-
-:::{figure} _static/sim_coord_6_long_dark.png
-:align: center
-:class: only-light
-:name: coord-6
-*Figure 2:* Convergence of coordinate descent algorithm (short time horizon)
-::: -->
 
 
 ## Periodic-Orbit Construction

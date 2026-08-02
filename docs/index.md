@@ -47,9 +47,9 @@ Contact [Jared Miller](https://jarmill.github.io/) for questions, issues, commen
 
 Home <self>
 Get Started <pages/get_started>
+Examples <pages/examples>
 How it Works <pages/how_it_works/index_how_it_works>
 Usage <pages/usage/index_usage>
-Examples <pages/examples>
 Documentation <pages/documentation/index_documentation>
 Changelog <pages/changelog/changelog>
 Resources <pages/resources>

@@ -26,6 +26,6 @@ The managers and specifications are subsequently used to {doc}`Solve <../solve>`
 
 ```{toctree}
 :maxdepth: 1
-Configuration <config>
 Performance Specifications <specs>
+Configuration <config>
 ```

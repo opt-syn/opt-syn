@@ -1,0 +1,616 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
+    <title>Games with Delay &#8212; opt-syn</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=720ed60b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=e1a75a79"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/examples_synthesis/syn_games_with_delay';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Repeated Operators" href="syn_repeated.html" />
+    <link rel="prev" title="Channel Memory" href="syn_channel_memory.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/opt_syn_light.svg" class="logo__image only-light" alt="opt-syn - Home"/>
+    <img src="../../_static/opt_syn_dark.svg" class="logo__image only-dark pst-js-only" alt="opt-syn - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started.html">Get Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../how_it_works/index_how_it_works.html">How it Works</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/opt_algs.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/alg_properties.html">Properties of Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/convergence_conditions.html">Convergence Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/op_uncertainty_iqc.html">IQC Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/network_synthesis.html">Synthesis and Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/system/index_system.html">Build the System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/simulation.html">Simulate</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/config.html">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/specs.html">Performance Specifications</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/solve.html">Solve and Validate</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../examples.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr_game.html">Nash Equilibrium Seeking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_coord_descent.html">Cyclic Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_switched.html">Time-Varying Delays</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_dy_delay.html">Davis-Yin with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index_example_synthesis.html">Synthesis</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="syn_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Games with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="syn_repeated.html">Repeated Operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="syn_coord_descent.html">Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="syn_switched_system.html">Switched Systems</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../documentation/index_documentation.html">Documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_solutions.html">Solution</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_set_valued.html">Set-Valued Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_sml.html">Subdifferentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_quadratic.html">Gradients of Quadratics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/plants/doc_genplant.html">Generalized Plants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/plants/doc_templates.html">Plant Templates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_switched.html">Switched</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_periodic.html">Periodic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_periodic_orbit.html">Periodic-Orbit</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_iqc.html">Integral Quadratic Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_specs.html">Performance Specifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_config.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog/0.1.0.html">What’s new in 0.1.0</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/jarmill/opt-syn" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/pages/examples_synthesis/syn_games_with_delay.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Games with Delay</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="games-with-delay">
+<h1>Games with Delay<a class="headerlink" href="#games-with-delay" title="Link to this heading">#</a></h1>
+<p>This example continues the Douglas-Rachford Game <a class="reference internal" href="../examples_simulation/sim_dr_game.html"><span class="doc">simulation</span></a> demonstration.</p>
+<p>In this two-operator example, the pseudogradient <span class="math notranslate nohighlight">\(F_1\)</span> is <span class="math notranslate nohighlight">\(1.4785\)</span>-monotone and <span class="math notranslate nohighlight">\(0.1605\)</span>-cocoercive, and the normal cone <span class="math notranslate nohighlight">\(F_2 = \partial \mathbb{I}_{\norm{\cdot}_{\infty} \leq 10}\)</span> is the subdifferential of a p.c.c. function. The operators are therefore described by <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_gen</span></code> and <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_pcc</span></code> respectively.</p>
+<p>Three algorithms to solve this inclusion problem are synthesized.</p>
+<ol class="arabic simple">
+<li><p>Backward evaluation of both <span class="math notranslate nohighlight">\(F_1\)</span> and <span class="math notranslate nohighlight">\(F_2\)</span>,</p></li>
+<li><p>Forward evaluation of <span class="math notranslate nohighlight">\(F_1\)</span>, backward evaluation of <span class="math notranslate nohighlight">\(F_2\)</span>,</p></li>
+<li><p>A delay of one time step before and after evaluation of <span class="math notranslate nohighlight">\(F_1\)</span>.</p></li>
+</ol>
+<p>Synthesis is performed for each case without a warm start (<code class="docutils literal notranslate"><span class="pre">iqc=[]</span></code>). The certified convergence rates are <span class="math notranslate nohighlight">\(\rho &lt; 0.7163\)</span> for Algorithm 1, <span class="math notranslate nohighlight">\(\rho &lt; 0.8734\)</span> for Algorithm 2, and <span class="math notranslate nohighlight">\(\rho &lt; 0.9430\)</span> for Algorithm 3.</p>
+<p>All three are certifiably  convergent, but Algorithm 1 has the least worst-case convergence rate.
+Each Synthesis is accompanied by an algorithm Simulation starting from an initial condition <span class="math notranslate nohighlight">\(x_0=0\)</span>, empirically demonstrating this speed of convergence</p>
+<p>Figure  <a class="reference internal" href="#game-bw"><span class="xref myst">1</span></a> plots a trajectory of the backward evaluation algorithm.</p>
+<figure class="align-center" id="game-bw">
+<img alt="../../_images/game_sim_fw_dark.png" class="only-dark" src="../../_images/game_sim_fw_dark.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 1:</em> Algorithm with both backward evaluations</span><a class="headerlink" href="#game-bw" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id1">
+<img alt="../../_images/game_sim_fw_dark.png" class="only-light" src="../../_images/game_sim_fw_dark.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 1:</em> Algorithm with both backward evaluations</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Figure  <a class="reference internal" href="#game-fw"><span class="xref myst">2</span></a> plots a trajectory of the forward and backward evaluation algorithm.</p>
+<figure class="align-center" id="game-fw">
+<img alt="../../_images/game_sim_fw_dark.png" class="only-dark" src="../../_images/game_sim_fw_dark.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 2:</em> Algorithm with one forward and one  backward evaluation</span><a class="headerlink" href="#game-fw" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id2">
+<img alt="../../_images/game_sim_fw_dark.png" class="only-light" src="../../_images/game_sim_fw_dark.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 2:</em> Algorithm with one forward and one  backward evaluation</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Figure  <a class="reference internal" href="#game-delay"><span class="xref myst">3</span></a> plots a trajectory of the algorithm with time delay.</p>
+<figure class="align-center" id="game-delay">
+<img alt="../../_images/game_sim_fw_dark.png" class="only-dark" src="../../_images/game_sim_fw_dark.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 3:</em> Algorithm with delay on <span class="math notranslate nohighlight">\(F_1\)</span></span><a class="headerlink" href="#game-delay" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id3">
+<img alt="../../_images/game_sim_fw_dark.png" class="only-light" src="../../_images/game_sim_fw_dark.png" />
+<figcaption>
+<p><span class="caption-text"><em>Figure 3:</em> Algorithm with delay on <span class="math notranslate nohighlight">\(F_1\)</span></span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Code for Nash Equilibrium Seeking</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nb">rng</span><span class="p">(</span><span class="mi">33</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;twister&#39;</span><span class="p">);</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="c">%define the Linear Quadratic Game</span>
+<span class="linenos"> 4</span><span class="n">N_agent</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="c">%number of agents</span>
+<span class="linenos"> 5</span><span class="n">n</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">5</span><span class="o">*</span><span class="nb">ones</span><span class="p">(</span><span class="n">N_agent</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="c">%strategy space of each agent</span>
+<span class="linenos"> 6</span><span class="n">mu_boost</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w"> </span><span class="c">%add strong monotonicity</span>
+<span class="linenos"> 7</span><span class="p">[</span><span class="n">Q_list</span><span class="p">,</span><span class="w"> </span><span class="n">b_list</span><span class="p">,</span><span class="w"> </span><span class="n">c_list</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">rand_LQ_game</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">mu_boost</span><span class="p">);</span>
+<span class="linenos"> 8</span><span class="n">op1_sim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sim_LQ_game</span><span class="p">(</span><span class="n">Q_list</span><span class="p">,</span><span class="w"> </span><span class="n">b_list</span><span class="p">,</span><span class="w"> </span><span class="n">c_list</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">);</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="c">%% synthesize an algorithm</span>
+<span class="linenos">12</span><span class="n">mu</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op1_sim</span><span class="p">.</span><span class="n">monotone</span><span class="p">;</span><span class="w"> </span><span class="c">%1.4785</span>
+<span class="linenos">13</span><span class="nb">beta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op1_sim</span><span class="p">.</span><span class="n">coco</span><span class="p">;</span><span class="w"> </span><span class="c">%0.1605</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span><span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_gen</span><span class="p">();</span>
+<span class="linenos">16</span><span class="n">op1</span><span class="p">.</span><span class="n">monotone</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">mu</span><span class="p">;</span>
+<span class="linenos">17</span><span class="n">op1</span><span class="p">.</span><span class="n">cocoercive</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">beta</span><span class="p">;</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span><span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_pcc</span><span class="p">();</span>
+<span class="linenos">20</span><span class="n">ops</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">};</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="c">%form the network delay</span>
+<span class="linenos">23</span><span class="n">d1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
+<span class="linenos">24</span><span class="n">d2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
+<span class="linenos">25</span><span class="n">network</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">bridge_channel_delay</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span><span class="w"> </span><span class="n">d2</span><span class="p">);</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="c">%form the system</span>
+<span class="linenos">28</span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="p">[]);</span>
+<span class="linenos">29</span><span class="n">sys_delay</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">network</span><span class="p">,</span><span class="w"> </span><span class="p">[]);</span>
+<span class="linenos">30</span>
+<span class="linenos">31</span><span class="c">%set the information structure</span>
+<span class="linenos">32</span><span class="n">config</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_config</span><span class="p">();</span>
+<span class="linenos">33</span><span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">elimination</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="linenos">34</span>
+<span class="linenos">35</span><span class="c">%backward evaluation of pseudogradient</span>
+<span class="linenos">36</span><span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"> </span>
+<span class="linenos">37</span><span class="n">man_bw</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_synthesis</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">);</span>
+<span class="linenos">38</span>
+<span class="linenos">39</span><span class="c">%forward evaluation of pseudogradient</span>
+<span class="linenos">40</span><span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"> </span>
+<span class="linenos">41</span><span class="n">man_fw</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_synthesis</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">);</span>
+<span class="linenos">42</span>
+<span class="linenos">43</span><span class="c">%delay on pseudogradient, no controller restriction</span>
+<span class="linenos">44</span><span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"> </span>
+<span class="linenos">45</span><span class="n">man_delay</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_synthesis</span><span class="p">(</span><span class="n">sys_delay</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">);</span>
+<span class="linenos">46</span>
+<span class="linenos">47</span><span class="n">sol_bw</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_bw</span><span class="p">.</span><span class="n">bisect</span><span class="p">();</span><span class="w">       </span><span class="c">%rho = 0.7163</span>
+<span class="linenos">48</span><span class="n">sol_fw</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_fw</span><span class="p">.</span><span class="n">bisect</span><span class="p">();</span><span class="w">       </span><span class="c">%rho = 0.8734</span>
+<span class="linenos">49</span><span class="n">sol_delay</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man_delay</span><span class="p">.</span><span class="n">bisect</span><span class="p">();</span><span class="w"> </span><span class="c">%rho = 0.9430</span>
+<span class="linenos">50</span>
+<span class="linenos">51</span><span class="c">%% simulate and plot</span>
+<span class="linenos">52</span>
+<span class="linenos">53</span><span class="c">%define the L infinity ball</span>
+<span class="linenos">54</span><span class="c">%individual constraints for agents</span>
+<span class="linenos">55</span><span class="n">BOX</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+<span class="linenos">56</span><span class="n">op2_sim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_sim_box</span><span class="p">(</span><span class="n">BOX</span><span class="p">);</span>
+<span class="linenos">57</span><span class="n">ops_sim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">op1_sim</span><span class="p">,</span><span class="w"> </span><span class="n">op2_sim</span><span class="p">};</span>
+<span class="linenos">58</span>
+<span class="linenos">59</span><span class="n">sys_sim_fw</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol_fw</span><span class="p">.</span><span class="n">sys</span><span class="p">.</span><span class="n">export_sim</span><span class="p">(</span><span class="n">ops_sim</span><span class="p">);</span>
+<span class="linenos">60</span><span class="n">sys_sim_bw</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol_bw</span><span class="p">.</span><span class="n">sys</span><span class="p">.</span><span class="n">export_sim</span><span class="p">(</span><span class="n">ops_sim</span><span class="p">);</span>
+<span class="linenos">61</span><span class="n">sys_sim_delay</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol_delay</span><span class="p">.</span><span class="n">sys</span><span class="p">.</span><span class="n">export_sim</span><span class="p">(</span><span class="n">ops_sim</span><span class="p">);</span>
+<span class="linenos">62</span>
+<span class="linenos">63</span>
+<span class="linenos">64</span><span class="n">sys_sim_list</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">sys_sim_fw</span><span class="p">,</span><span class="w"> </span><span class="n">sys_sim_bw</span><span class="p">,</span><span class="w"> </span><span class="n">sys_sim_delay</span><span class="p">};</span>
+<span class="linenos">65</span>
+<span class="linenos">66</span><span class="k">for</span><span class="w"> </span><span class="nb">i</span><span class="w"> </span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span>
+<span class="linenos">67</span><span class="w">    </span><span class="n">d</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">sum</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+<span class="linenos">68</span><span class="w">    </span><span class="n">sim</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_sim</span><span class="p">(</span><span class="n">sys_sim_list</span><span class="p">{</span><span class="nb">i</span><span class="p">},</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
+<span class="linenos">69</span><span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+<span class="linenos">70</span><span class="w">    </span>
+<span class="linenos">71</span><span class="w">    </span><span class="n">sim_out</span><span class="p">=</span><span class="w"> </span><span class="n">sim</span><span class="p">.</span><span class="n">sim</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+<span class="linenos">72</span><span class="w">    </span><span class="n">plt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">alg_plotter</span><span class="p">(</span><span class="n">sim_out</span><span class="p">);</span>
+<span class="linenos">73</span><span class="w">    </span><span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">({</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_w&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;payoff&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;z&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;res_z&#39;</span><span class="p">},</span><span class="w"> </span><span class="nb">i</span><span class="p">);</span>
+<span class="linenos">74</span><span class="k">end</span>
+</pre></div>
+</div>
+</div>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="syn_channel_memory.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Channel Memory</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="syn_repeated.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Repeated Operators</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By opt-syn team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, opt-syn team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

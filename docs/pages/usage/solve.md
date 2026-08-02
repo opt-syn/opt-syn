@@ -147,14 +147,8 @@ Other attributes of {class}`opt_solution` include
     - System that solves the inclusion problem
 *   - `lmi_out`
     - Solution information from the numerical solver (LMILAB)
+*   - `cert`
+    - Analysis-and-Synthesis-specific certificates
 :::
-
-
-The field `opt_solution.cert` contains Analysis-and-Synthesis-specific certificates of feasibility. `opt_solution.cert.iqc_op` stores the cell of IQCs used to constrain operator sequences in the performance specification: this is designed in Analysis and is given in Synthesis.
-
  
-In Synthesis, the designed controller is `opt_solution.sys.K`.
-This controller is the interconnection of the internal model `opt_solution.cert.model` and the subcontroller `opt_solution.cert.K_sub`.
-
-
-
+ 

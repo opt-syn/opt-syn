@@ -48,8 +48,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'pages/usage/problem_formulation/config';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Performance Specifications" href="specs.html" />
-    <link rel="prev" title="Problem Setup" href="index_problem_formulation.html" />
+    <link rel="next" title="Solve and Validate" href="../solve.html" />
+    <link rel="prev" title="Performance Specifications" href="specs.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -165,8 +165,8 @@
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../simulation.html">Simulate</a></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="index_problem_formulation.html">Problem Setup</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">Configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="specs.html">Performance Specifications</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Configuration</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../solve.html">Solve and Validate</a></li>
@@ -184,10 +184,20 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/dr_analysis.html">Douglas-Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_dy_delay.html">Davis-Yin with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2"><a class="reference internal" href="../../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_synthesis/index_example_synthesis.html">Synthesis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_games_with_delay.html">Games with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_repeated.html">Repeated Operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_coord_descent.html">Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_switched_system.html">Switched Systems</a></li>
+</ul>
+</details></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../documentation/index_documentation.html">Documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -384,6 +394,7 @@
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#restricting-information-structures">Restricting  Information Structures</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simplified-synthesis-programs">Simplified Synthesis Programs</a></li>
 </ul>
             </nav>
         </div>
@@ -401,10 +412,10 @@
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">config</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_config</span><span class="p">();</span>
 </pre></div>
 </div>
-<p>Configuration options include numerical tolerances and  recovery prereferences. These are detailed in <a class="reference internal" href="../../documentation/doc_config.html"><span class="doc">Configuration</span></a>.</p>
+<p>Configuration options include numerical tolerances and  recovery prereferences. These are detailed in the  <a class="reference internal" href="../../documentation/doc_config.html"><span class="doc">Configuration Documentation</span></a>.</p>
 <section id="restricting-information-structures">
 <h2>Restricting  Information Structures<a class="headerlink" href="#restricting-information-structures" title="Link to this heading">#</a></h2>
-<p>The sparsity pattern of the controller <span class="math notranslate nohighlight">\(D_K\)</span> in Synthesis can be imposed in the configuration options. This sparsity pattern can be used to enforce an <a class="reference internal" href="../../how_it_works/alg_properties.html"><span class="doc">Information Structure</span></a> on the generated algorithm.</p>
+<p>The primary user-facing configuration option in algorithm synthesis is specification of the sparsity pattern of the controller matrix <span class="math notranslate nohighlight">\(D_K\)</span>. This sparsity pattern can be used to enforce an <a class="reference internal" href="../../how_it_works/alg_properties.html"><span class="doc">Information Structure</span></a> on the generated algorithm.</p>
 <p>As an example, a two-operator splitting algorithm with <span class="math notranslate nohighlight">\(\Dcl_{11}=0\)</span> (explicit evaluation of <span class="math notranslate nohighlight">\(F_1\)</span>) and <span class="math notranslate nohighlight">\(\Dcl_{22}\neq 0\)</span> (implicit evaluation of <span class="math notranslate nohighlight">\(F_2\)</span>) can be synthesized using the configuration options</p>
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="c">%F2 can use information from F1</span>
 <span class="linenos">2</span><span class="n">config</span><span class="p">.</span><span class="n">syn</span><span class="p">.</span><span class="n">D_mask</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span>
@@ -425,8 +436,11 @@
 <span class="linenos">7</span><span class="w">                     </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span><span class="w"> </span>
 </pre></div>
 </div>
-<p>By default, <code class="docutils literal notranslate"><span class="pre">config.syn.D_mask</span></code> will be an lower-triangular matrix with all ones.</p>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">config.syn.D_mask</span></code> will be an lower-triangular matrix with all ones, permitting all implicit evaluations.</p>
 <p>An algorithm with nonzero upper-block-triangular  entries of <code class="docutils literal notranslate"><span class="pre">D_mask</span></code> can be Analyzed or Synthesized. However <span style="color:#5D93BF">opt</span>-syn cannot guarantee that the resulting algorithm will be well-posed, nor will it be able to <a class="reference internal" href="../simulation.html"><span class="doc">Simulate</span></a> trajectories of an algorithm execution.</p>
+</section>
+<section id="simplified-synthesis-programs">
+<h2>Simplified Synthesis Programs<a class="headerlink" href="#simplified-synthesis-programs" title="Link to this heading">#</a></h2>
 </section>
 </section>
 
@@ -442,20 +456,20 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index_problem_formulation.html"
+       href="specs.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Problem Setup</p>
+        <p class="prev-next-title">Performance Specifications</p>
       </div>
     </a>
     <a class="right-next"
-       href="specs.html"
+       href="../solve.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Performance Specifications</p>
+        <p class="prev-next-title">Solve and Validate</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -478,6 +492,7 @@
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#restricting-information-structures">Restricting  Information Structures</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simplified-synthesis-programs">Simplified Synthesis Programs</a></li>
 </ul>
   </nav></div>
 
