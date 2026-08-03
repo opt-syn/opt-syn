@@ -146,21 +146,21 @@ classdef op_sml < op_sml_interface
 
             %primal filter
             [Af10, Bf10] = block_fir(order(1));
-            Af1 = kron(eye(reps), Af10 );
-            Bf1 = kron(eye(reps), Bf10);                      
+            Af1 = Af10 ;
+            Bf1 =  Bf10;                      
             Cf1 = [vars.Cf1 ];
             Df1 = [vars.Df1 ];
             
             %dual filter
             [Af20, Bf20] = block_fir(order(2));
-            Af2 = kron(eye(reps), Af20 );
-            Bf2 = kron(eye(reps), Bf20);                      
+            Af2 =  Af20 ;
+            Bf2 = Bf20;                      
             Cf2 = [vars.Cf2 ];
             Df2 = [vars.Df2 ];
 
 
-            Psi1 = sdpss(Af1, Bf1, Cf1, Df1);
-            Psi2 = sdpss(Af2, Bf2, Cf2, Df2);    
+            Psi1 = ss_kron_eye(sdpss(Af1, Bf1, Cf1, Df1), reps);
+            Psi2 = ss_kron_eye(sdpss(Af2, Bf2, Cf2, Df2), reps);    
 
         end
 
@@ -195,7 +195,9 @@ classdef op_sml < op_sml_interface
             Bh2 = Psi2_lift.B;
 
             %form the DHD constraint
-            E = vars.E;
+
+            %terminal cost may be conservative here?
+            E = kron_eye(vars.E, obj.c);
 
             BE = Bh2'*E*Bh1;
 

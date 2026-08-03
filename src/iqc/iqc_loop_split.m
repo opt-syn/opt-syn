@@ -120,6 +120,42 @@ classdef iqc_loop_split
 
         end
 
+
+        function iqc = rotate(obj, M, direction)
+            %ROTATE apply rotation to the IQC for periodic_orbit usage
+            %
+            %Args:
+            %   M:    symmetry matrix
+            %   direction (int): power 
+            %
+            %Returns:
+            %   iqc:    output IQC
+
+            c = size(M, 1);
+            d1 = ssize(obj.Psi1.A, 1);
+            d2 = ssize(obj.Psi2.A, 1);
+
+            Mdir = M^direction;
+            
+            
+
+            iqc = obj;
+            if d1 > 0
+                %primal dynamics
+                M1 = kron(eye(d1/c), Mdir);
+                iqc.Psi1.A = M1 * iqc.Psi1.A;
+                iqc.Psi1.B = M1 * iqc.Psi1.B;
+            end
+            if d2 > 0
+                %dual dynamics
+                M2 = kron(eye(d2/c), Mdir);
+                iqc.Psi2.A = M2 * iqc.Psi2.A;
+                iqc.Psi2.B = M2 * iqc.Psi2.B;
+            end
+
+
+        end
+
         function iqc = blkdiag(obj, b)
             %BLKDIAG: block diagonal of the multipliers
             %Args:
