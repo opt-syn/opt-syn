@@ -57,7 +57,7 @@ classdef  opt_system_periodic_orbit < opt_system
             end
 
 
-            Rc = M;
+            Rc = M*M;
             order = 0;
             order_max = 1000;
             while (norm(Rc - M) > 1e-9) && (order < order_max)
@@ -65,7 +65,7 @@ classdef  opt_system_periodic_orbit < opt_system
                 Rc = Rc * M;
             end
 
-            obj.order = order;
+            obj.order = order+1;
 
             
         end 
@@ -202,9 +202,12 @@ classdef  opt_system_periodic_orbit < opt_system
 
             %rotate the plant
             if (iqc_data.rotate == 0)
-                alg = alg0;
+                alg = alg0;                
             else
                 alg = obj.rotate_plant(alg0);
+                if strcmp(iqc_data.task, 'analysis')
+                    iqc_data.iqc = iqc_data.iqc.rotate(obj.M, 1);
+                end
             end
             
 

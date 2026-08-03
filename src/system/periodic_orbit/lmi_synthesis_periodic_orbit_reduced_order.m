@@ -130,7 +130,8 @@ classdef lmi_synthesis_periodic_orbit_reduced_order < lmi_synthesis_lti_reduced_
             % model_orig = obj.rotate_plant(model, -1);    
             
             modelrho = rhotrafo(model, sol.rho); 
-            P_trans = lft(alg_psi, modelrho);
+            % P_trans = lft(alg_psi, modelrho);
+            P_trans = lft(alg_psi, model);
             % K_rot = obj.rotate_plant(K_nofeed, -1);
 
             K_report = obj.K_alg_report(P_trans, K_nofeed, model);
