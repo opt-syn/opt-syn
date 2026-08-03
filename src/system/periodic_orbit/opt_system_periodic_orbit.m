@@ -71,7 +71,7 @@ classdef  opt_system_periodic_orbit < opt_system
         end 
 
         function ns = Nss(obj)
-            ns = obj.order+1;
+            ns = obj.order;
         end
 
 

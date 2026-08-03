@@ -367,7 +367,11 @@ classdef alg_plotter
                     % name_mid = '$||\text{Proj}_{\text{null} \ E} (1^{\top} w)||_2$';
                     name_mid = '$||$ Proj $_{null(E)} [1^{\top} w] ||_2$';
                 else
-                    name_mid = '$||1^{\top} w||_2$';
+                    if obj.sim_out.s == 1
+                        name_mid = '$||w||_2$';
+                    else
+                        name_mid = '$||1^{\top} w||_2$';
+                    end
                 end
             elseif strcmp(sig, 'res_z')
                 name_mid = '$||z - z_{avg}||_2$';
