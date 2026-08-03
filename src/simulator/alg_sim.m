@@ -97,6 +97,7 @@ classdef alg_sim
             
             %log the signals
             ssim = alg_sim_out();
+            ssim.s = length(obj.sys.bind);
             ssim.w = zeros( obj.sys.P.nw, dl, T);
             ssim.wp = zeros( obj.sys.P.nwp, dl, T);
             ssim.z = zeros( obj.sys.P.nz, dl, T);

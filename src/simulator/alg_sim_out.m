@@ -2,6 +2,7 @@ classdef alg_sim_out
     %ALG_SIM_OUT output of an alg_sim simulation routine
     
     properties        
+      s; %number of oracles (in bind)
       k; %time index
       z; %output of the operators
       w; %input to the operators

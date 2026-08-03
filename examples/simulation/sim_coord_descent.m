@@ -1,20 +1,25 @@
 %coordinate descent scheme
 rng(50, 'twister');
 
-d = 90; %number of dimensions
+d = 30; %number of dimensions
 % c=6; %blocksize 
-c = 3;
+% c = 3;
+c = 5;
 
 %symmetry generator/permutation matrix
 M = circshift(eye(c), 1); 
 
 %gradient descent rule
-gamma = 0.1;
+gamma = 0.2;
+
+alg = ss(eye(c), blkdiag(-gamma , zeros(c-1)), ...
+    eye(c), zeros(c), 1);
+
 % K = ss(eye(c), blkdiag(-gamma , zeros(c-1)), ...
 %     blkdiag(1, zeros(c-1)), zeros(c), 1);
 
-K = ss(eye(c), -gamma*eye(c), ...
-    eye(c), zeros(c), 1);
+% K = ss(eye(c), -gamma*eye(c), ...
+%     eye(c), zeros(c), 1);
 
 
 % K = ss(eye(c), blkdiag(-gamma , zeros(c-1)), ...
@@ -35,27 +40,28 @@ op1.c = c; %enforce coordinate dimension
 
 %define the network
 %implements coordinate descent
-network = coordinate_descent_limited(c);
+% network = coordinate_descent_limited(c);
 
 %form the system
-sys = opt_system_periodic_orbit(op1, network, K, M);
+% sys = opt_system_periodic_orbit(op1, network, K, M);
+sys = opt_system_periodic_orbit(op1, [], alg, M);
 reg = regulator_periodic_orbit(sys);
 rcl = reg.check_regulator();
 
 %% simulate coordinate descent
 sim = alg_sim(sys, d);
-T = 40;
+T = 61;
 sim_out= sim.sim(T);
 
-T_long = 801;
-sim_out_long= sim.sim(T_long);
+% T_long = 801;
+% sim_out_long= sim.sim(T_long);
 
 
 %% plot
 plt = alg_plotter(sim_out);
-plt.plot({'xn', 'w', 'res_w', ...
-    'xc', 'z', 'coord', }, 1);
+plt.plot({'f', 'w', 'res_w', ...
+    'x', 'z', 'coord', }, 1);
 
-plt_long = alg_plotter(sim_out_long);
-plt_long.plot({'xn', 'w', 'res_w', ...
-    'xc', 'z', 'coord', }, 2);
+% plt_long = alg_plotter(sim_out_long);
+% plt_long.plot({'xn', 'w', 'res_w', ...
+%     'xc', 'z', 'coord', }, 2);

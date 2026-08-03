@@ -40,6 +40,21 @@ classdef genplant_poly <  genplant & matlab.mixin.indexing.RedefinesBrace
         end
 
         
+        function obj = rhotrafo(obj, rho)
+            % RHOTRAFO Apply an exponential discount (rho-transformation).
+            %
+            % Scales ``A`` and ``B`` by :math:`\rho^{-1}`, which corresponds
+            % to an exponential weighting of the signals in discrete time.
+            %
+            % :param rho: Discount factor.
+            % :type rho: double
+            % :returns: The transformed plant (modified in place).
+            % :rtype: genplant
+            for i = 1:obj.Nss
+                obj.P{i} = obj.P{i}.rhotrafo(rho);
+            end
+        end
+
         function b_out = lft(obj, b2)
             %LFT linear fractional transformation:
             %feedback interconnection of obj and plant b2
