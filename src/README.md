@@ -1,0 +1,27 @@
+# SRC
+
+All codes for the opt-syn project: analysis and synthesis of optimization algorithms.
+
+An optimization algorithm is a procedure that finds a point beta solving the fixed-point equation
+
+0 \in \sum_{i=1}^s F_i(\beta)
+
+
+These fixed point equations arise in applications including optimization, control, operations research, imaging.
+
+The maps F could arise from subgradients of convex functions, monotone operators, or equality constraints
+
+## Setting up the problem
+
+An algorithmic interconnection is described by five attributes:
+1. Operators
+2. Network
+3. Controller
+4. Performance (optional)
+5. Tracking (optional)
+
+The operators are the oracles F in the optimization problem.
+
+
+## Operator
+

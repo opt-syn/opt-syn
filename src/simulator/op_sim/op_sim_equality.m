@@ -1,0 +1,92 @@
+classdef op_sim_equality < op_sim_interface
+    %OP_SIM_EQUALITY an affine mapping used to enforce
+    %an equality constraint :math:`Ez = b`
+    %
+    %implemented as :math:`z \mapsto E^\top (Ez - b)`
+    %with E full row rank
+    %
+    
+
+    
+    properties        
+        E= [];  % Matrix in the equality constraint
+        b = 0;  %function value (or function values in a game)        
+        
+    end
+    
+    methods
+        function obj = op_sim_equality(E, b)
+            %OP_SIM_EQUALITY Constructor for equatlity constraint
+            
+            
+            %create the operators
+            %TODO: abstract to more general operators E (not stored in
+            %memory as a matrix)
+
+            
+            %https://proximity-operator.net/proximityoperator.html
+            obj@op_sim_interface();
+
+            obj.E = E;
+            if nargin < 2
+                obj.b = 0;
+            end
+            obj.EQUALITY = true;
+        end          
+
+         function w = fw(obj, k, z, param)
+            %forward evaluation of the procedure oracle w = E'(E z- b) 
+            %
+            %Args: 
+            %   k (int): time index
+            %   z:       input to oracle
+            %   param:   parameter structure for the operator
+            %
+            %Returns:
+            %   w:       the w such that w = F(z)
+
+
+            w =  obj.E' * (obj.E*z - obj.b);            
+        end
+
+        function z = bw(obj, k, D, v, param)
+            %backwards evaluation of an oracle, generalization of a 
+            %proximal evaluation with preconditioner D                      
+            %
+            %Args: 
+            %   k (int): time index            
+            %   D:       prox parameter            
+            %   v:       input to proximal oracle
+            %   param:   parameter structure for the operator
+            %
+            %Returns:
+            %   z:       the z such that z = (I - D F)^(-1)(v)
+
+            %weighted projection onto the affine subspace
+            
+            dl = size(v, 1)/size(D, 1);
+            Dkron = kron(eye(dl), (D));
+
+            h = size(obj.E, 1);
+            zlam = [Dkron, obj.E'; obj.E, zeros(h)] \ [Dkron*v; obj.b];
+
+            z = zlam(1:length(v));            
+                        
+        end
+
+        function f_out = f(obj, k, z, param)
+            %primal residual for the equality constraint
+            %
+            %Args: 
+            %   k (int): time index
+            %   z:       input to oracle           
+            %   param:   parameter structure for the operator
+            %
+            %Returns:
+            %   f_out:   f_out = norm(Ez - b)
+
+            f_out = norm(obj.E*z - obj.b);
+        end
+    end
+end
+
