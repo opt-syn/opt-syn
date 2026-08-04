@@ -72,4 +72,5 @@ plt = plt.add_opt_sig(sol.regcl, dstar);
 % plt.plot_4_err(2);    %plot the tracking error
 % plt.plot_4_sq_err(3); %plot the  squared norm of the tracking error
 plt = plt.add_opt_sig(sol.regcl, dstar);
-plt.plot({'xerr', 'z', 'mode'})
+% plt.plot({'xerr', 'z', 'mode'})
+plt.plot_4_err()
