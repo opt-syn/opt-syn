@@ -30,7 +30,7 @@ Figure [1](#track-ana) certifies algorithm convergence at $\pi/4 \approx 0.7854$
 *Figure 2:* Convergence at $\omega = \pi/4$
 :::
 
-:::{figure} _static/track_multi_pi4_dark.png
+:::{figure} _static/track_multi_pi4_light.png
 :align: center
 :class: only-light
 :name: track-ana-conv

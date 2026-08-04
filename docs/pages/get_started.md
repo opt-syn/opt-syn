@@ -52,9 +52,11 @@ Synthesis is then performed when the oracle $\nabla f$ has a time delay of one s
 
 ```{literalinclude} ../../examples/getting_started/synthesis_workflow_test.m
 :caption: Synthesis with a 1-step time-delay
-:language: matlab %0.9860
+:language: matlab 
 :lines:  16-21
 ```
+
+<!-- %0.9860 -->
 
 :::{caution} 
 Under Construction

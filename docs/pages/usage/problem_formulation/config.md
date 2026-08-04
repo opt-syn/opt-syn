@@ -42,11 +42,11 @@ An algorithm with nonzero upper-block-triangular  entries of `D_mask` can be Ana
 
 ## Simplified Synthesis Programs
 
-Special structures of the IQC synthesis programs allow for simplification of the LMI programs. The simplification structures and their compatibility is 
-
+Special structures of the IQC synthesis programs allow for simplification of the LMI programs. 
+Supported simplification methods v.s. dynamical system types are
 :::{list-table}
 :header-rows: 1
-:header-cols: 1
+:stub-columns: 1
 * - LTI 
   - Periodic-Orbit
   - Periodic
@@ -63,7 +63,7 @@ Special structures of the IQC synthesis programs allow for simplification of the
   - []
 :::
 
-Both are enabled by default, and may respectively be disabled by 
+All simplifications  are enabled by default. They may respectively be disabled by 
 ```matlab
 config.syn.elimination = false;
 config.syn.reduced_order = false;
