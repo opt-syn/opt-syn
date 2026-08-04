@@ -1,0 +1,2259 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
+    <title>Systems &#8212; opt-syn</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=720ed60b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../../_static/documentation_options.js?v=e1a75a79"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/documentation/system/doc_system';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Linear Time Invariant Systems" href="doc_lti.html" />
+    <link rel="prev" title="Plant Templates" href="../plants/doc_templates.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/opt_syn_light.svg" class="logo__image only-light" alt="opt-syn - Home"/>
+    <img src="../../../_static/opt_syn_dark.svg" class="logo__image only-dark pst-js-only" alt="opt-syn - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../get_started.html">Get Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_dr_game.html">Nash Equilibrium Seeking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_coord_descent.html">Cyclic Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_switched.html">Time-Varying Delays</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_dy_delay.html">Davis-Yin with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_synthesis/index_example_synthesis.html">Synthesis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_lasso.html">LASSO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_games_with_delay.html">Games with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_repeated.html">Repeated Operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_coord_descent.html">Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_switched_system.html">Switched Systems</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../how_it_works/index_how_it_works.html">How it Works</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/opt_algs.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/alg_properties.html">Properties of Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/convergence_conditions.html">Convergence Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/op_uncertainty_iqc.html">IQC Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/network_synthesis.html">Synthesis and Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../usage/problem_formulation/system/index_system.html">Build the System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/simulation.html">Simulate</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/problem_formulation/specs.html">Performance Specifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/problem_formulation/config.html">Configuration</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/solve.html">Solve and Validate</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index_documentation.html">Documentation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_solutions.html">Solution</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../operators/doc_set_valued.html">Set-Valued Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../operators/doc_sml.html">Subdifferentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../operators/doc_quadratic.html">Gradients of Quadratics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../plants/doc_genplant.html">Generalized Plants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../plants/doc_templates.html">Plant Templates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Systems</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="doc_switched.html">Switched</a></li>
+<li class="toctree-l3"><a class="reference internal" href="doc_periodic.html">Periodic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="doc_periodic_orbit.html">Periodic-Orbit</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_iqc.html">Integral Quadratic Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_specs.html">Performance Specifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_config.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog/0.1.0.html">What’s new in 0.1.0</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/jarmill/opt-syn" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/pages/documentation/system/doc_system.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Systems</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#system-algorithmic-interconnection">System (Algorithmic Interconnection)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regulator">Regulator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lmi-handler">LMI Handler</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lmi-analysis">LMI Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lmi-synthesis">LMI Synthesis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dissipation-container">Dissipation Container</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="systems">
+<h1>Systems<a class="headerlink" href="#systems" title="Link to this heading">#</a></h1>
+<p>Each type of <a class="reference internal" href="../../usage/problem_formulation/system/index_system.html"><span class="doc">dynamical system</span></a> has a dedicated  collection of routines to pose the Analysis and Synthesis problems.</p>
+<p>The routines are</p>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">opt_system</span></code> algorithmic interconnection,</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">regulator</span></code> to build an internal model,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lmi_analysis</span></code> and <code class="docutils literal notranslate"><span class="pre">lmi_synthesis</span></code> objects to pose the required LMIs.</p></li>
+</ol>
+<p>The supported types of dynamical systems are</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc_switched.html">Switched</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc_periodic.html">Periodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc_periodic_orbit.html">Periodic-Orbit</a></li>
+</ul>
+</div>
+<p>All component routines inherit from the <code class="docutils literal notranslate"><span class="pre">generic</span></code> interface.</p>
+<section id="system-algorithmic-interconnection">
+<h2>System (Algorithmic Interconnection)<a class="headerlink" href="#system-algorithmic-interconnection" title="Link to this heading">#</a></h2>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">system.generic.</span></span><span class="sig-name descname"><span class="pre">opt_system_interface</span></span><a class="headerlink" href="#system.generic.opt_system_interface" title="Link to this definition">#</a></dt>
+<dd><p>OPT_SYSTEM interconnection of network and operators
+by default is LTI (linear time invariant)</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.opt_system_interface">
+<span class="sig-name descname"><span class="pre">opt_system_interface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">op</span></em>, <em class="sig-param"><span class="pre">P</span></em>, <em class="sig-param"><span class="pre">K</span></em>, <em class="sig-param"><span class="pre">bind</span></em>, <em class="sig-param"><span class="pre">tracking</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.opt_system_interface" title="Link to this definition">#</a></dt>
+<dd><p>OPT_SYSTEM constructor for the system
+:param P: network
+:type P: genplant
+:param K: controller
+:type K: genplant
+:param bind: indices for repeated oracle evaluations
+:type bind: int array
+:param tracking: exosystem to track the optimal solution
+:type tracking: struct</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.K">
+<span class="sig-name descname"><span class="pre">K</span></span><a class="headerlink" href="#system.generic.opt_system_interface.K" title="Link to this definition">#</a></dt>
+<dd><p>controller</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.P">
+<span class="sig-name descname"><span class="pre">P</span></span><a class="headerlink" href="#system.generic.opt_system_interface.P" title="Link to this definition">#</a></dt>
+<dd><p>network</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.bind">
+<span class="sig-name descname"><span class="pre">bind</span></span><a class="headerlink" href="#system.generic.opt_system_interface.bind" title="Link to this definition">#</a></dt>
+<dd><p>which operators go to which output ports, for repeated evaluations</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.discount">
+<span class="sig-name descname"><span class="pre">discount</span></span><a class="headerlink" href="#system.generic.opt_system_interface.discount" title="Link to this definition">#</a></dt>
+<dd><p>is the subsystem exponentially discounted?</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.op">
+<span class="sig-name descname"><span class="pre">op</span></span><a class="headerlink" href="#system.generic.opt_system_interface.op" title="Link to this definition">#</a></dt>
+<dd><p>a cell of operators (op_sim for simulation, op_[] for analysis/synthesis)</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.tracking">
+<span class="sig-name descname"><span class="pre">tracking</span></span><a class="headerlink" href="#system.generic.opt_system_interface.tracking" title="Link to this definition">#</a></dt>
+<dd><p>tracking of optimal solution (struct (S, R) by default)</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.type">
+<span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#system.generic.opt_system_interface.type" title="Link to this definition">#</a></dt>
+<dd><p>(e.g. lti, periodic, switched, mjls, lpv)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>type of system</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.Nss">
+<span class="sig-name descname"><span class="pre">Nss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.Nss" title="Link to this definition">#</a></dt>
+<dd><p>NSS: number of subsystems</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.build_plant_single">
+<span class="sig-name descname"><span class="pre">build_plant_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">alg</span></em>, <em class="sig-param"><span class="pre">iqc_data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.build_plant_single" title="Link to this definition">#</a></dt>
+<dd><p>BUILD_PLANT_SINGLE build a single plant (in a switched
+system) based on filtering the exponentially-discounted plant
+by an IQC</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alg</strong> – original algorithm or network</p></li>
+<li><p><strong>iqc_data</strong> – IQCs for the oracle uncertainties</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>alg_psi</strong> – filtered algorithm</p></li>
+<li><p><strong>iqc_op</strong> – IQCS for the oracle uncertainties (altogether)</p></li>
+<li><p><strong>alg_loop</strong> – the discounted algorithm before applying the
+dynamical filter (for debugging)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.discount_schedule">
+<span class="sig-name descname"><span class="pre">discount_schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">ordermax</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.discount_schedule" title="Link to this definition">#</a></dt>
+<dd><p>DISCOUNT_SCHEDULE exponential weights encountered when
+applying the FIR filters</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ordermax</strong> – maximum order of the IQCs</p>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>pow</strong> – Exponent sequence of discounts</p>
+<dl class="simple">
+<dt>Example:</dt><dd><p>[0; 1 ; 2] -&gt; rho.^[0; 1; 2] for uniform exponential stability</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.export_sim">
+<span class="sig-name descname"><span class="pre">export_sim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">op_sim</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.export_sim" title="Link to this definition">#</a></dt>
+<dd><p>export the system for use in simulation
+with the operators (for iqcs) replaced by operators (in
+op_sim)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>op_sim</strong> – operators for simulation</p>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>sys_sim</strong> – system for use in alg_sim</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.get_alg">
+<span class="sig-name descname"><span class="pre">get_alg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.get_alg" title="Link to this definition">#</a></dt>
+<dd><p>close the loop of the algorithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>param</strong> – structure of parameters</p>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>sys_alg</strong> – the dynamical system interfacing the operators</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.get_consensus">
+<span class="sig-name descname"><span class="pre">get_consensus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">op</span></em>, <em class="sig-param"><span class="pre">bind</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.get_consensus" title="Link to this definition">#</a></dt>
+<dd><p>GET_CONSENSUS create the consensus matrix
+for the regulation condition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>op</strong> – cell of operator</p></li>
+<li><p><strong>bind</strong> – repeated patterns</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>N</strong> – consensus matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.get_consensus_weighted">
+<span class="sig-name descname"><span class="pre">get_consensus_weighted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">op</span></em>, <em class="sig-param"><span class="pre">bind</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.get_consensus_weighted" title="Link to this definition">#</a></dt>
+<dd><p>GET_CONSENSUS_WEIGHTED create the consensus matrix
+weight by the number of times the operator appears in bind</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>op</strong> – cell of operator</p></li>
+<li><p><strong>bind</strong> – repeated patterns</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>N</strong> – consensus matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.get_discount">
+<span class="sig-name descname"><span class="pre">get_discount</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.get_discount" title="Link to this definition">#</a></dt>
+<dd><p>should only certain modes be discounted</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.get_internal_signals">
+<span class="sig-name descname"><span class="pre">get_internal_signals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em>, <em class="sig-param"><span class="pre">x_all</span></em>, <em class="sig-param"><span class="pre">w_all</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.get_internal_signals" title="Link to this definition">#</a></dt>
+<dd><p>extract the internal signals from the interconnection (y, u)
+using the well-posedness expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param</strong> – structure of parameters</p></li>
+<li><p><strong>x_all</strong> – all states of network and controller</p></li>
+<li><p><strong>w_all</strong> – all inputs to the network (except u)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>y</strong> – input to controller/output of plant</p></li>
+<li><p><strong>u</strong> – output of controller/intput to plant</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.get_op">
+<span class="sig-name descname"><span class="pre">get_op</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">index</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.get_op" title="Link to this definition">#</a></dt>
+<dd><p>get the operator at index
+:param index: the index</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.get_tracked_opt">
+<span class="sig-name descname"><span class="pre">get_tracked_opt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.get_tracked_opt" title="Link to this definition">#</a></dt>
+<dd><p>GET_TRACKED_OPT get the tracked position of the optimal
+solution</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\(\eta^*_{k+1} = S_\beta \eta^*, \beta^*_{k} = R_\beta
+\eta_k\)</span>.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>param: structure of parameters</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Sbeta</strong> – exosystem for optimal solution</p></li>
+<li><p><strong>Rbeta</strong> – output of optimal solution</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.get_type">
+<span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.get_type" title="Link to this definition">#</a></dt>
+<dd><p>type of dynamical system (e.g. LTI, switched)</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.n">
+<span class="sig-name descname"><span class="pre">n</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.n" title="Link to this definition">#</a></dt>
+<dd><p>n: number of states</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.next_mode">
+<span class="sig-name descname"><span class="pre">next_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">mode</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.next_mode" title="Link to this definition">#</a></dt>
+<dd><p>next mode in switching</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.nu">
+<span class="sig-name descname"><span class="pre">nu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.nu" title="Link to this definition">#</a></dt>
+<dd><p>nu: number of states in network</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.ny">
+<span class="sig-name descname"><span class="pre">ny</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.ny" title="Link to this definition">#</a></dt>
+<dd><p>nu: number of states in network</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.opt_system_interface.ss_zy_wu">
+<span class="sig-name descname"><span class="pre">ss_zy_wu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.opt_system_interface.ss_zy_wu" title="Link to this definition">#</a></dt>
+<dd><p>get state space matrices at the current parameter values</p>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="regulator">
+<h2>Regulator<a class="headerlink" href="#regulator" title="Link to this heading">#</a></h2>
+<p>Both Analysis and Synthesis require a confirmation of the Regulator Equation.</p>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">system.generic.</span></span><span class="sig-name descname"><span class="pre">regulator_interface</span></span><a class="headerlink" href="#system.generic.regulator_interface" title="Link to this definition">#</a></dt>
+<dd><p>REGULATOR_INTERFACE</p>
+<p>A regulator employed for the synthesis of optimization algorithms</p>
+<p>This regulator carries the necessary internal model required for
+convergence of optimization algorithms (constant shift of optimal
+solution), as well as extra states associated with position of the
+unknown disturbance. This regulator is adjoined to the network
+dynamics in synthesis of algorithms.</p>
+<p>The regulator allows for the perfect tracking of optimal solutions
+(if known) by the tracking dynamics (Sbeta, Rbeta) in (sys).</p>
+<p>The regulator is specialized for a specific kind of system</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.regulator_interface">
+<span class="sig-name descname"><span class="pre">regulator_interface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.regulator_interface" title="Link to this definition">#</a></dt>
+<dd><p>REGULATOR_INTERFACE Constructor for a regulator</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.Gam">
+<span class="sig-name descname"><span class="pre">Gam</span></span><a class="headerlink" href="#system.generic.regulator_interface.Gam" title="Link to this definition">#</a></dt>
+<dd><p>regulator equation solution, tracking input of controller</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.Gam_basis">
+<span class="sig-name descname"><span class="pre">Gam_basis</span></span><a class="headerlink" href="#system.generic.regulator_interface.Gam_basis" title="Link to this definition">#</a></dt>
+<dd><p>nullspace, freedom to choose Gamma</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.Phi">
+<span class="sig-name descname"><span class="pre">Phi</span></span><a class="headerlink" href="#system.generic.regulator_interface.Phi" title="Link to this definition">#</a></dt>
+<dd><p>regulator equation solution, tracking output of controller</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.Phi_basis">
+<span class="sig-name descname"><span class="pre">Phi_basis</span></span><a class="headerlink" href="#system.generic.regulator_interface.Phi_basis" title="Link to this definition">#</a></dt>
+<dd><p>nullspace, freedom to choose Phi</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.Pi">
+<span class="sig-name descname"><span class="pre">Pi</span></span><a class="headerlink" href="#system.generic.regulator_interface.Pi" title="Link to this definition">#</a></dt>
+<dd><p>regulator equation solution, tracking state of network</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.Pi_basis">
+<span class="sig-name descname"><span class="pre">Pi_basis</span></span><a class="headerlink" href="#system.generic.regulator_interface.Pi_basis" title="Link to this definition">#</a></dt>
+<dd><p>nullspace, freedom to choose Pi</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.R">
+<span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#system.generic.regulator_interface.R" title="Link to this definition">#</a></dt>
+<dd><p>tracking of optimal solution and subgradients (output)</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.S">
+<span class="sig-name descname"><span class="pre">S</span></span><a class="headerlink" href="#system.generic.regulator_interface.S" title="Link to this definition">#</a></dt>
+<dd><p>tracking of optimal solution and subgradients (propagation)</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.sys">
+<span class="sig-name descname"><span class="pre">sys</span></span><a class="headerlink" href="#system.generic.regulator_interface.sys" title="Link to this definition">#</a></dt>
+<dd><p>the system</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.check_regulator">
+<span class="sig-name descname"><span class="pre">check_regulator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.check_regulator" title="Link to this definition">#</a></dt>
+<dd><p>check the regulator equation for a specific system</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>reg_cl</strong> (<em>reg_cl_out</em>) – closed-loop regulator structure if
+succesful, empty if infeasible.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.compute_Phi">
+<span class="sig-name descname"><span class="pre">compute_Phi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">Pi</span></em>, <em class="sig-param"><span class="pre">Gam</span></em>, <em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.compute_Phi" title="Link to this definition">#</a></dt>
+<dd><p>get the tracked controller input from the regulator equation
+solution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Pi</strong> – tracked state of network</p></li>
+<li><p><strong>Gam</strong> – tracked controller output</p></li>
+<li><p><strong>param</strong> – other parameters (if needed)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Phi</strong> – tracked controller input</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.create_vars">
+<span class="sig-name descname"><span class="pre">create_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param_null</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.create_vars" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS: create variables that parameterize the nullspace</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_null</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">bool</span></code></span>) – should the nullspace be searched (as</p></li>
+<li><p><strong>variables)</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>vars_reg</strong> – structure with fields (Pi, Gam, Phi)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.d_influence">
+<span class="sig-name descname"><span class="pre">d_influence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.d_influence" title="Link to this definition">#</a></dt>
+<dd><p>D_INFLUENCE how does the system get affected by the
+disturbance? used for the internal model computation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Bd</strong> – disturbance to state</p></li>
+<li><p><strong>Ded</strong> – disturbance to regulated error</p></li>
+<li><p><strong>Dyd</strong> – disturbance to controller input</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.exosystem">
+<span class="sig-name descname"><span class="pre">exosystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.exosystem" title="Link to this definition">#</a></dt>
+<dd><p>get the exosystem at each mode/internal model</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.fetch_model">
+<span class="sig-name descname"><span class="pre">fetch_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">S</span></em>, <em class="sig-param"><span class="pre">Phi</span></em>, <em class="sig-param"><span class="pre">Gam</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.fetch_model" title="Link to this definition">#</a></dt>
+<dd><p>FETCH_MODEL fetch an internal model from the current
+regulator equation solution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>S</strong> – exosystem generator</p></li>
+<li><p><strong>Phi</strong> – tracked controller input</p></li>
+<li><p><strong>Gam</strong> – tracked controller output</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>model</strong> – the full-order internal model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.form_internal_model">
+<span class="sig-name descname"><span class="pre">form_internal_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.form_internal_model" title="Link to this definition">#</a></dt>
+<dd><p>FORM_INTERNAL_MODEL create the internal model by solving the regulator
+equation. Inputs are the system (P, bind, tracking, op)
+op is important for which oracles are equaltiy constraints and
+which are inequality constraints</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If regulator equation is unsolvable, then no optimization
+algorithm can be found.</p>
+</div>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.get_K">
+<span class="sig-name descname"><span class="pre">get_K</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.get_K" title="Link to this definition">#</a></dt>
+<dd><p>get the controller</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.get_consensus">
+<span class="sig-name descname"><span class="pre">get_consensus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.get_consensus" title="Link to this definition">#</a></dt>
+<dd><p>get the consensus matrix</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.get_tracked_opt">
+<span class="sig-name descname"><span class="pre">get_tracked_opt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.get_tracked_opt" title="Link to this definition">#</a></dt>
+<dd><p>get the part of the exosystem corresponding to tracking the
+optimal solution at each mode/internal model</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.ns">
+<span class="sig-name descname"><span class="pre">ns</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.ns" title="Link to this definition">#</a></dt>
+<dd><p>NS number of states of exosystem</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.null_reg_all">
+<span class="sig-name descname"><span class="pre">null_reg_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">reg_mat</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.null_reg_all" title="Link to this definition">#</a></dt>
+<dd><p>NULL_REG nullspace of the regulator equations: freedom to move</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reg_mat</strong> – solution to linear system for the regulator</p></li>
+<li><p><strong>equation</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Pi_basis</strong> – nullspace, freedom to choose Pi</p></li>
+<li><p><strong>Gam_basis</strong> – nullspace, freedom to choose Gamma</p></li>
+<li><p><strong>Phi_basis</strong> – nullspace, freedom to choose Phi</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.reg_K_sys_all">
+<span class="sig-name descname"><span class="pre">reg_K_sys_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.reg_K_sys_all" title="Link to this definition">#</a></dt>
+<dd><p>assemble the closed-loop regulator equation system</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reg_mat</strong> – matrix for regulator equation</p></li>
+<li><p><strong>reg_ans</strong> – vector for regulator equation solution</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.reg_K_sys_indiv">
+<span class="sig-name descname"><span class="pre">reg_K_sys_indiv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.reg_K_sys_indiv" title="Link to this definition">#</a></dt>
+<dd><p>control regulator equation checks (closed-loop)</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.reg_K_sys_next">
+<span class="sig-name descname"><span class="pre">reg_K_sys_next</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.reg_K_sys_next" title="Link to this definition">#</a></dt>
+<dd><p>control closed-loop regulator equation checks
+next expression</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.reg_sys_all">
+<span class="sig-name descname"><span class="pre">reg_sys_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.reg_sys_all" title="Link to this definition">#</a></dt>
+<dd><p>constraints for the current system, assembling regulator
+equations</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.reg_sys_indiv">
+<span class="sig-name descname"><span class="pre">reg_sys_indiv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.reg_sys_indiv" title="Link to this definition">#</a></dt>
+<dd><p>constraints for the current mode system, assembling regulator
+equations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reg_mat_dyn</strong> – matrix for regulator equation</p></li>
+<li><p><strong>reg_ans</strong> – vector for regulator equation solution</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.reg_sys_next">
+<span class="sig-name descname"><span class="pre">reg_sys_next</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.reg_sys_next" title="Link to this definition">#</a></dt>
+<dd><p>constraints for the next system, assembling regulator
+equations</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.sol_K_reg_all">
+<span class="sig-name descname"><span class="pre">sol_K_reg_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">reg_sol</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.sol_K_reg_all" title="Link to this definition">#</a></dt>
+<dd><p>recover the solution to the regulator equation system</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.sol_K_reg_index">
+<span class="sig-name descname"><span class="pre">sol_K_reg_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">reg_sol</span></em>, <em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.sol_K_reg_index" title="Link to this definition">#</a></dt>
+<dd><p>index the solution to the regulator equation</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.sol_reg_all">
+<span class="sig-name descname"><span class="pre">sol_reg_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">reg_sol</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.sol_reg_all" title="Link to this definition">#</a></dt>
+<dd><p>recover the solution to the regulator equation system</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>reg_sol</strong> – solution of regulator equations</p>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Pi</strong> – tracked state of network</p></li>
+<li><p><strong>Phi</strong> – tracked controller input</p></li>
+<li><p><strong>Gam</strong> – tracked controller output</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.sol_reg_index">
+<span class="sig-name descname"><span class="pre">sol_reg_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">reg_sol</span></em>, <em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.sol_reg_index" title="Link to this definition">#</a></dt>
+<dd><p>index the solution to the regulator equation
+:param reg_sol: solution of regulator equations
+:param param: other parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Pi</strong> – tracked state of network</p></li>
+<li><p><strong>Phi</strong> – tracked controller input</p></li>
+<li><p><strong>Gam</strong> – tracked controller output</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.ss_zy_wu">
+<span class="sig-name descname"><span class="pre">ss_zy_wu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">param</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.ss_zy_wu" title="Link to this definition">#</a></dt>
+<dd><p>get plant matrices for the system</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.regulator_interface.sys_regulated_aug">
+<span class="sig-name descname"><span class="pre">sys_regulated_aug</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.regulator_interface.sys_regulated_aug" title="Link to this definition">#</a></dt>
+<dd><p>the enriched system with the disturbance channel</p>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<p>For Analysis, the output of the <code class="docutils literal notranslate"><span class="pre">check_regulator()</span></code> function is contained in a separate class. If <code class="docutils literal notranslate"><span class="pre">check_regulator()</span></code> fails, then the algorithmic interconnection is not guaranteed to converge.</p>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="system.generic.reg_cl_out">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">system.generic.</span></span><span class="sig-name descname"><span class="pre">reg_cl_out</span></span><a class="headerlink" href="#system.generic.reg_cl_out" title="Link to this definition">#</a></dt>
+<dd><p>REG_CL_OUT Output structure for closed-loop regulator equation</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.reg_cl_out.reg_cl_out">
+<span class="sig-name descname"><span class="pre">reg_cl_out</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.reg_cl_out.reg_cl_out" title="Link to this definition">#</a></dt>
+<dd><p>REG_CL_OUT Constructor</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.reg_cl_out.Gam">
+<span class="sig-name descname"><span class="pre">Gam</span></span><a class="headerlink" href="#system.generic.reg_cl_out.Gam" title="Link to this definition">#</a></dt>
+<dd><p>regulator equation solution, tracking input of controller</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.reg_cl_out.Phi">
+<span class="sig-name descname"><span class="pre">Phi</span></span><a class="headerlink" href="#system.generic.reg_cl_out.Phi" title="Link to this definition">#</a></dt>
+<dd><p>regulator equation solution, tracking output of controller</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.reg_cl_out.Pi">
+<span class="sig-name descname"><span class="pre">Pi</span></span><a class="headerlink" href="#system.generic.reg_cl_out.Pi" title="Link to this definition">#</a></dt>
+<dd><p>regulator equation solution, tracking state of network</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.reg_cl_out.R">
+<span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#system.generic.reg_cl_out.R" title="Link to this definition">#</a></dt>
+<dd><p>exosystem output to plant</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.reg_cl_out.S">
+<span class="sig-name descname"><span class="pre">S</span></span><a class="headerlink" href="#system.generic.reg_cl_out.S" title="Link to this definition">#</a></dt>
+<dd><p>exosystem signal generator</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.reg_cl_out.Th">
+<span class="sig-name descname"><span class="pre">Th</span></span><a class="headerlink" href="#system.generic.reg_cl_out.Th" title="Link to this definition">#</a></dt>
+<dd><p>regulator equation solution, tracking state of controller</p>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="lmi-handler">
+<h2>LMI Handler<a class="headerlink" href="#lmi-handler" title="Link to this heading">#</a></h2>
+<p>These routines are shared by both Analysis and Synthesis.</p>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">system.generic.</span></span><span class="sig-name descname"><span class="pre">lmi_dispatch_interface</span></span><a class="headerlink" href="#system.generic.lmi_dispatch_interface" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref mat mat-class docutils literal notranslate"><span class="pre">handle</span></code></p>
+<p>LMI_DISPATCH_INTERFACE analysis and synthesis LMIs for the
+algorithmic interconnections
+This contains generic routines common among both analysis and
+synthesis for every system type</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.lmi_dispatch_interface">
+<span class="sig-name descname"><span class="pre">lmi_dispatch_interface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys</span></em>, <em class="sig-param"><span class="pre">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.lmi_dispatch_interface" title="Link to this definition">#</a></dt>
+<dd><p>LMI_DISPATCH_INTERFACE Construct the analysis or synthesis program
+:param sys: algorithmic system
+:param config: configuration options</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.config">
+<span class="sig-name descname"><span class="pre">config</span></span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.config" title="Link to this definition">#</a></dt>
+<dd><p>configuration options</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.reduced">
+<span class="sig-name descname"><span class="pre">reduced</span></span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.reduced" title="Link to this definition">#</a></dt>
+<dd><p>reduced-order control</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.reg">
+<span class="sig-name descname"><span class="pre">reg</span></span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.reg" title="Link to this definition">#</a></dt>
+<dd><p>the regulator for the system</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.sys">
+<span class="sig-name descname"><span class="pre">sys</span></span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.sys" title="Link to this definition">#</a></dt>
+<dd><p>the algorithmic system</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.LMILAB">
+<span class="sig-name descname"><span class="pre">LMILAB</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.LMILAB" title="Link to this definition">#</a></dt>
+<dd><p>is LMILAB used?</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.con_dynamic_single">
+<span class="sig-name descname"><span class="pre">con_dynamic_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.con_dynamic_single" title="Link to this definition">#</a></dt>
+<dd><p>CON form a single dissipation and sign constraint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vars</strong> – variables of the problem</p></li>
+<li><p><strong>diss</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">diss_data</span></code></span>) – information about dissipation relation            %   param:  other parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>objective</strong> – term to be minimized</p></li>
+<li><p><strong>con_M</strong> – PSD blocks for the dynamics constraint</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.con_spread">
+<span class="sig-name descname"><span class="pre">con_spread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">vars</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.con_spread" title="Link to this definition">#</a></dt>
+<dd><p>CON_SPREAD increase numerical conditioning by separating the
+primal and dual blocks.
+:param cons: accumulated constraints
+:param vars: variables of the problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cons</strong> – accumulated constraints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.cons_dynamic">
+<span class="sig-name descname"><span class="pre">cons_dynamic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.cons_dynamic" title="Link to this definition">#</a></dt>
+<dd><p>CONS form the dissipation and sign constraints</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vars</strong> – variables of the problem</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>diss</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">diss_data</span></code></span>) – structure describing the dissipation constraint            %</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>objective</strong> – term to be minimized</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.e2e">
+<span class="sig-name descname"><span class="pre">e2e</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.e2e" title="Link to this definition">#</a></dt>
+<dd><p>E2E, energy to energy gain
+:param vars: variables of the problem
+:param cons: accumulated constraints
+:param diss: structure describing the dissipation constraint
+:type diss: diss_data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>objective</strong> – term to be minimized</p></li>
+<li><p><strong>con_M</strong> – PSD blocks for the dynamics constraint</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.ergodic">
+<span class="sig-name descname"><span class="pre">ergodic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.ergodic" title="Link to this definition">#</a></dt>
+<dd><p>ERGODIC certification of ergodic convergence. call quadratic performance.
+:param vars: variables of the problem
+:param cons: accumulated constraints
+:param diss: structure describing the dissipation constraint
+:type diss: diss_data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>objective</strong> – term to be minimized</p></li>
+<li><p><strong>con_M</strong> – PSD blocks for the dynamics constraint</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.l2_stability">
+<span class="sig-name descname"><span class="pre">l2_stability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.l2_stability" title="Link to this definition">#</a></dt>
+<dd><p>l2_stability, bounded l2 gain (input to state stability)
+:param vars: variables of the problem
+:param cons: accumulated constraints
+:param diss: structure describing the dissipation constraint
+:type diss: diss_data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>objective</strong> – term to be minimized</p></li>
+<li><p><strong>con_M</strong> – PSD blocks for the dynamics constraint</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.merge_quad">
+<span class="sig-name descname"><span class="pre">merge_quad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">M_rob</span></em>, <em class="sig-param"><span class="pre">M_spec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.merge_quad" title="Link to this definition">#</a></dt>
+<dd><p>merge together quadratic performance specifications;
+:param M_rob: quadratic constraint for operator uncertainty
+:param M_spec: quadratic constraint for performance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>quad_m</strong> – quadratic performance structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.merge_spec_M">
+<span class="sig-name descname"><span class="pre">merge_spec_M</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">iqc_rob</span></em>, <em class="sig-param"><span class="pre">sp</span></em>, <em class="sig-param"><span class="pre">vars_spec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.merge_spec_M" title="Link to this definition">#</a></dt>
+<dd><p>MERGE_SPEC_M merge the running cost of the robustness and the
+performance specification</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iqc_rob</strong> – robust IQC</p></li>
+<li><p><strong>sp</strong> – performance specification</p></li>
+<li><p><strong>vars_spec</strong> – variables in the specification</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Output:</dt><dd><p>M: merged quadratic performance specification</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.passivity">
+<span class="sig-name descname"><span class="pre">passivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.passivity" title="Link to this definition">#</a></dt>
+<dd><p>PASSIVITY strict passivity specification
+:param vars: variables of the problem
+:param cons: accumulated constraints
+:param diss: structure describing the dissipation constraint
+:type diss: diss_data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>objective</strong> – term to be minimized</p></li>
+<li><p><strong>con_M</strong> – PSD blocks for the dynamics constraint</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.quad_objective">
+<span class="sig-name descname"><span class="pre">quad_objective</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">M_quad</span></em>, <em class="sig-param"><span class="pre">ind_p</span></em>, <em class="sig-param"><span class="pre">ind_q</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.quad_objective" title="Link to this definition">#</a></dt>
+<dd><p>QUAD_OBJECTIVE untangle the quadratic objective into a
+linearizable formulation
+:param M_quad: quadratic performance matrix
+:param ind_p: indices for output of filtered system
+:param ind_q: indices for input of filtered system</p>
+<dl class="simple">
+<dt>Output:</dt><dd><p>quad: quadratic performance structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.separate_performance_output">
+<span class="sig-name descname"><span class="pre">separate_performance_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.separate_performance_output" title="Link to this definition">#</a></dt>
+<dd><p>SEPARATE_PERFORMANCE_OUTPUT extract the performance output
+from the plant, used in reduced-order control</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>diss</strong> – information about dissipation relation</p>
+</dd>
+</dl>
+<p>This routine is used in the computation of l2 norms via Schur
+complements</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.stability">
+<span class="sig-name descname"><span class="pre">stability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.stability" title="Link to this definition">#</a></dt>
+<dd><p>STABILITY certification of exponential stability
+the supply function in the specification is empty,
+so just call quadratic performance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vars</strong> – variables of the problem</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>diss</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">diss_data</span></code></span>) – structure describing the dissipation constraint</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>objective</strong> – term to be minimized</p></li>
+<li><p><strong>con_M</strong> – PSD blocks for the dynamics constraint</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.supply_block">
+<span class="sig-name descname"><span class="pre">supply_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">plant</span></em>, <em class="sig-param"><span class="pre">M</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.supply_block" title="Link to this definition">#</a></dt>
+<dd><p>SUPPLY_BLOCK supply block used in analysis programs
+:param plant: plant to analyze
+:param M: running cost</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sb</strong> – supply term to build dissipation relation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_dispatch_interface.sys_block">
+<span class="sig-name descname"><span class="pre">sys_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">plant</span></em>, <em class="sig-param"><span class="pre">Gnew</span></em>, <em class="sig-param"><span class="pre">Gold</span></em>, <em class="sig-param"><span class="pre">rho</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_dispatch_interface.sys_block" title="Link to this definition">#</a></dt>
+<dd><p>SYS_BLOCK system block used in analysis programs
+:param plant: plant to analyze
+:param Gnew: new storage function
+:param Gold: old storage function
+:param rho: discount rate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sb</strong> – dynamics term to build dissipation relation</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="lmi-analysis">
+<h2>LMI Analysis<a class="headerlink" href="#lmi-analysis" title="Link to this heading">#</a></h2>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="system.generic.lmi_analysis_interface">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">system.generic.</span></span><span class="sig-name descname"><span class="pre">lmi_analysis_interface</span></span><a class="headerlink" href="#system.generic.lmi_analysis_interface" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#system.generic.lmi_dispatch_interface" title="system.generic.lmi_dispatch_interface"><code class="xref mat mat-class docutils literal notranslate"><span class="pre">system.generic.lmi_dispatch_interface</span></code></a></p>
+<p>LMI_ANALYSIS_INTERFACE
+Linear Matrix Inequality constraints for analysis of algorithmic
+interconnections.</p>
+<p>this is overridden by specialized analysis routines for system types.</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_analysis_interface.lmi_analysis_interface">
+<span class="sig-name descname"><span class="pre">lmi_analysis_interface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys</span></em>, <em class="sig-param"><span class="pre">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_analysis_interface.lmi_analysis_interface" title="Link to this definition">#</a></dt>
+<dd><p>LMI_ANALYSIS_INTERFACE Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sys</strong> – algorithmic system</p></li>
+<li><p><strong>config</strong> – configuration options</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<dl class="simple">
+<dt>Error: Regulator equation of system must be solvable,</dt><dd><p>otherwise the algorithm is nonconvergent.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="system.generic.lmi_analysis_interface.regcl">
+<span class="sig-name descname"><span class="pre">regcl</span></span><a class="headerlink" href="#system.generic.lmi_analysis_interface.regcl" title="Link to this definition">#</a></dt>
+<dd><p>closed-loop regulator equation</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_analysis_interface.con_terminal">
+<span class="sig-name descname"><span class="pre">con_terminal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">G</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">iqc_op</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_analysis_interface.con_terminal" title="Link to this definition">#</a></dt>
+<dd><p>CON_TERMINAL
+terminal cost constraint (nonnegativity for the storage function G)
+coupled positivity if the IQC has a terminal cost</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> – storage matrix</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>iqc_op</strong> – IQCs for the operators</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>con_X</strong> – terminal constraint expression</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_analysis_interface.create_vars">
+<span class="sig-name descname"><span class="pre">create_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">specs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_analysis_interface.create_vars" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS create the variables for the problem
+:param vars: problem variables
+:param cons: accumulated constraints
+:param alg_psi: generalized plant in analysis
+:param specs: specifications</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vars</strong> – problem variables</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_analysis_interface.create_vars_spec">
+<span class="sig-name descname"><span class="pre">create_vars_spec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">specs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_analysis_interface.create_vars_spec" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS_SPEC declare variables for the specifications</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>specs</strong> – cell of specification</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>vars</strong> – variables</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_analysis_interface.define_storage_G">
+<span class="sig-name descname"><span class="pre">define_storage_G</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_analysis_interface.define_storage_G" title="Link to this definition">#</a></dt>
+<dd><p>DEFINE_STORAGE_G storage function for a specific subsystem
+:param cons: accumulated constraints
+:param alg_psi: generalized plant in analysis
+:param name: name of the subsystem/object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> – storage function</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="lmi-synthesis">
+<h2>LMI Synthesis<a class="headerlink" href="#lmi-synthesis" title="Link to this heading">#</a></h2>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">system.generic.</span></span><span class="sig-name descname"><span class="pre">lmi_synthesis_interface</span></span><a class="headerlink" href="#system.generic.lmi_synthesis_interface" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#system.generic.lmi_dispatch_interface" title="system.generic.lmi_dispatch_interface"><code class="xref mat mat-class docutils literal notranslate"><span class="pre">system.generic.lmi_dispatch_interface</span></code></a></p>
+<p>LMI_SYNTHESIS_INTERFACE
+Linear Matrix Inequality constraints for analysis of algorithmic
+interconnections.</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.lmi_synthesis_interface">
+<span class="sig-name descname"><span class="pre">lmi_synthesis_interface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys</span></em>, <em class="sig-param"><span class="pre">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.lmi_synthesis_interface" title="Link to this definition">#</a></dt>
+<dd><p>LMI_SYNTHESIS_INTERFACE Constructor for synthesis</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.K_alg_report">
+<span class="sig-name descname"><span class="pre">K_alg_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">P_trans</span></em>, <em class="sig-param"><span class="pre">K_nofeed</span></em>, <em class="sig-param"><span class="pre">model</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.K_alg_report" title="Link to this definition">#</a></dt>
+<dd><p>K_ALG_REPORT recover the algorithmic interconnection and the
+controller
+:param P_trans: the transformed generalized plant before IQC
+:param K_nofeed: subcontroller without direct feedthrough
+:param model: internal model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>K_report</strong> – controller output structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.augment_vars">
+<span class="sig-name descname"><span class="pre">augment_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">diss</span></em>, <em class="sig-param"><span class="pre">con_M</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.augment_vars" title="Link to this definition">#</a></dt>
+<dd><p>AUGMENT_VARS add new variables/terms for recovery (useful for
+matrix elimination). Overriden by LTI.</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.con_spread">
+<span class="sig-name descname"><span class="pre">con_spread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">vars</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.con_spread" title="Link to this definition">#</a></dt>
+<dd><p>CON_SPREAD increase numerical conditioning by separating the
+primal and dual blocks. invoke this over multiple subsystems</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>vars</strong> – variables of the problem</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>cons</strong> – accumulated constraints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.con_spread_single">
+<span class="sig-name descname"><span class="pre">con_spread_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">GX</span></em>, <em class="sig-param"><span class="pre">GY</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.con_spread_single" title="Link to this definition">#</a></dt>
+<dd><p>CON_SPREAD_SINGLE increase numerical conditioning by separating the
+primal and dual blocks
+:param cons: accumulated constraints
+:param GX: primal storage matrix
+:param GY: dualstorage matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cons</strong> – accumulated constraints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.con_terminal">
+<span class="sig-name descname"><span class="pre">con_terminal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">G</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">iqc_op</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.con_terminal" title="Link to this definition">#</a></dt>
+<dd><p>CON_TERMINAL terminal cost constraint (nonnegativity for the storage function G)
+coupled positivity if the IQC has a terminal cost</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> – closed-loop storage matrix</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>alg_psi</strong> – the filtered algorithmic interconnection</p></li>
+<li><p><strong>specs</strong> – performance specifications</p></li>
+<li><p><strong>iqc_op</strong> – information about operator iqcs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>con_X</strong> – the terminal PSD contraint</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.connect_model">
+<span class="sig-name descname"><span class="pre">connect_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.connect_model" title="Link to this definition">#</a></dt>
+<dd><p>connect the plant to the internal model
+:param diss: information about dissipation relation
+:type diss: diss_data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>P_model</strong> – generalized plant with internal model attached</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.cons_dynamic">
+<span class="sig-name descname"><span class="pre">cons_dynamic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.cons_dynamic" title="Link to this definition">#</a></dt>
+<dd><p>CONS_DYNAMIC form the dissipation and sign constraints</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vars</strong> – variables of the problem</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>diss</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">diss_data</span></code></span>) – structure describing the dissipation
+constraint</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>objective</strong> – term to be minimized</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.create_vars">
+<span class="sig-name descname"><span class="pre">create_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">specs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.create_vars" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS create the variables for the problem
+:param vars: variables of the problem
+:param cons: accumulated constraints
+:param diss: structure describing the dissipation constraint
+:type diss: diss_data
+:param alg_psi: the filtered algorithmic interconnection
+:param specs: performance specifications</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vars</strong> – variables of the problem</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.create_vars_controller">
+<span class="sig-name descname"><span class="pre">create_vars_controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">name</span></em>, <em class="sig-param"><span class="pre">D_mask</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.create_vars_controller" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS_CONTROLLER create the nonlinearly-transformed
+controller matrices, used for convexification
+:param cons: accumulated constraints
+:param alg_psi: the filtered algorithmic interconnection
+:param name: a name for the variable
+:param D_mask: sparsity pattern for D of the controller</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vars_K</strong> – controller variables [Ak, Bk, Ck, Dk], or some subset if elimination is used.</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.create_vars_regulator">
+<span class="sig-name descname"><span class="pre">create_vars_regulator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.create_vars_regulator" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS_REGULATOR
+parameterize the solutions to the regulator equations
+use this as a variable in reduced-order control
+:Returns: <strong>vars_reg</strong> – variables of the problem        (regulator)</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.create_vars_spec">
+<span class="sig-name descname"><span class="pre">create_vars_spec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">specs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.create_vars_spec" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS_SPEC declare variables for the specifications
+:param cons: accumulated constraints
+:param specs: performance specifications</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_spec</strong> – variables for performance specification
+cons:   accumulated constraints</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.create_vars_storage">
+<span class="sig-name descname"><span class="pre">create_vars_storage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.create_vars_storage" title="Link to this definition">#</a></dt>
+<dd><p>create_vars_storage create variables for the dissipation
+constraints</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>alg_psi</strong> – the filtered algorithmic interconnection</p></li>
+<li><p><strong>name</strong> – a name for the variable</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>vars_diss</strong> – variables of the problem in the dissipation constraints</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.define_storage_G">
+<span class="sig-name descname"><span class="pre">define_storage_G</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.define_storage_G" title="Link to this definition">#</a></dt>
+<dd><p>DEFINE_STORAGE_G storage function for a specific subsystem
+:param cons: accumulated constraints
+:param alg_psi: the filtered algorithmic interconnection
+:param specs: performance specifications
+:param name: a name for the variable</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>GX</strong> – primal storage matrix</p></li>
+<li><p><strong>GY</strong> – dual storage matrix</p></li>
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.dynamics_block">
+<span class="sig-name descname"><span class="pre">dynamics_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys_cl</span></em>, <em class="sig-param"><span class="pre">quad</span></em>, <em class="sig-param"><span class="pre">herm</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.dynamics_block" title="Link to this definition">#</a></dt>
+<dd><p>DYNAMICS_BLOCK form the supply block in a quadratic objective problem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sys_cl</strong> – closed-loop system dynamics</p></li>
+<li><p><strong>quad</strong> – quadratic performance criteria (used for dimensions)</p></li>
+<li><p><strong>herm</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">bool</span></code></span>) – symmetrize the term? true by default</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>dyn_b_he</strong> – dynamics term to build dissipation relation</p></li>
+<li><p><strong>U_outer</strong> – left outer product in elimination</p></li>
+<li><p><strong>V_outer</strong> – right outer product in elimination</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.dynamics_block_null">
+<span class="sig-name descname"><span class="pre">dynamics_block_null</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys_cl</span></em>, <em class="sig-param"><span class="pre">quad</span></em>, <em class="sig-param"><span class="pre">herm</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.dynamics_block_null" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>DYNAMICS_BLOCK_NULL form the supply block in a p2p quadratic objective</dt><dd><p>problem</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sys_cl</strong> – closed-loop system dynamics</p></li>
+<li><p><strong>quad</strong> – quadratic performance criteria (used for</p></li>
+<li><p><strong>dimensions)</strong></p></li>
+<li><p><strong>herm</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">bool</span></code></span>) – symmetrize the term? true by default</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>dyn_b_he</strong> – dynamics term to build dissipation relation</p></li>
+<li><p><strong>U_outer</strong> – left outer product in elimination</p></li>
+<li><p><strong>V_outer</strong> – right outer product in elimination</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.e2e_target">
+<span class="sig-name descname"><span class="pre">e2e_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars</span></em>, <em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.e2e_target" title="Link to this definition">#</a></dt>
+<dd><p>E2E_target: energy to energy gain
+is a special case of quadratic performance
+:param vars: variables of the problem
+:param cons: accumulated constraints
+:param diss: structure describing the dissipation constraint
+:type diss: diss_data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – accumulated constraints</p></li>
+<li><p><strong>objective</strong> – term to be minimized</p></li>
+<li><p><strong>con_M</strong> – PSD blocks for the dynamics constraint</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.elimination">
+<span class="sig-name descname"><span class="pre">elimination</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.elimination" title="Link to this definition">#</a></dt>
+<dd><p>is matrix elimnation allowed?</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.form_Dk">
+<span class="sig-name descname"><span class="pre">form_Dk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">D_mask</span></em>, <em class="sig-param"><span class="pre">name</span></em>, <em class="sig-param"><span class="pre">include_Dk1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.form_Dk" title="Link to this definition">#</a></dt>
+<dd><p>FORM_Dk: lower triangular structure needed for the controller
+need a better interface for the mask
+:param alg_psi: the filtered algorithmic interconnection
+:param D_mask: sparsity pattern for D of the controller
+:param name: a name for the variable
+:param include_Dk1: should the feed into the internal model
+:type include_Dk1: bool
+:param be included? true by default:
+:param false for reduced-order:
+:param control.:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Dk</strong> – controller matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.get_D_mask">
+<span class="sig-name descname"><span class="pre">get_D_mask</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.get_D_mask" title="Link to this definition">#</a></dt>
+<dd><p>GET_D_MASK get the sparsity pattern for the direct feedthrough
+controller term</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>D_mask</strong> – sparsity pattern for D of the controller</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.get_GY_dim">
+<span class="sig-name descname"><span class="pre">get_GY_dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">n</span></em>, <em class="sig-param"><span class="pre">ns</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.get_GY_dim" title="Link to this definition">#</a></dt>
+<dd><p>dimension of the GY term</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.get_K_mask">
+<span class="sig-name descname"><span class="pre">get_K_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">nxi</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.get_K_mask" title="Link to this definition">#</a></dt>
+<dd><p>K_mask: get the controller sparsity pattern</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nxi</strong> – number of controller states</p>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>K_mask</strong> – pattern of the controller</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.get_K_tri_basis">
+<span class="sig-name descname"><span class="pre">get_K_tri_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">nxi</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.get_K_tri_basis" title="Link to this definition">#</a></dt>
+<dd><p>GET_K_TRI_BASIS get a basis for the
+triangular elimination method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nxi</strong> – number of controller parameters</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>U</strong> (<em>cell</em>) – left factor in outer products</p></li>
+<li><p><strong>V</strong> (<em>cell</em>) – right factor in outer products</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.get_storage">
+<span class="sig-name descname"><span class="pre">get_storage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars_diss</span></em>, <em class="sig-param"><span class="pre">vars_reg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.get_storage" title="Link to this definition">#</a></dt>
+<dd><p>GET_STORAGE get the storage function matrix G
+:param vars_diss: variables of the problem in the dissipation constraints
+:param vars_reg: variables for regulator equation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>G</strong> – the closed-loop storage matrix (warped)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.name_K_feed">
+<span class="sig-name descname"><span class="pre">name_K_feed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">K_in</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.name_K_feed" title="Link to this definition">#</a></dt>
+<dd><p>NAME_K_FEED assign names to the channels of the subcontroller</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>K_in</strong> – controller original</p>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>K_feed</strong> – named controller</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.process_recovery">
+<span class="sig-name descname"><span class="pre">process_recovery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sol</span></em>, <em class="sig-param"><span class="pre">lmi_out</span></em>, <em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">diss</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.process_recovery" title="Link to this definition">#</a></dt>
+<dd><p>recover the controller
+:param sol: solution structure
+:param lmi_out: output from solver
+:param alg_psi: the filtered algorithmic interconnection
+:param diss: structure describing the dissipation constraint
+:type diss: diss_data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sol</strong> – solution structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.recover_K_from_elim">
+<span class="sig-name descname"><span class="pre">recover_K_from_elim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars_rec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.recover_K_from_elim" title="Link to this definition">#</a></dt>
+<dd><p>recover the Ak and Ck matrices
+overridden by matrix elimination
+:param vars_rec: recovered variables from solver</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Ak, Bk, Ck, Dk</strong> – controller matrices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.recover_subcontroller">
+<span class="sig-name descname"><span class="pre">recover_subcontroller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">P_trans</span></em>, <em class="sig-param"><span class="pre">sol</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.recover_subcontroller" title="Link to this definition">#</a></dt>
+<dd><p>RECOVER_SUBCONTROLLER recover the subcontroller of the entire
+program.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alg_psi</strong> – the filtered algorithmic interconnection</p></li>
+<li><p><strong>P_trans</strong> – the transformed generalized plant before IQC</p></li>
+<li><p><strong>sol</strong> – solution structure</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>sol</strong> – solution structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.recover_subcontroller_warp">
+<span class="sig-name descname"><span class="pre">recover_subcontroller_warp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">P_trans</span></em>, <em class="sig-param"><span class="pre">vars_rec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.recover_subcontroller_warp" title="Link to this definition">#</a></dt>
+<dd><p>RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
+controller
+:param alg_psi: the filtered algorithmic interconnection
+:param P_trans: the transformed generalized plant before IQC
+:param sol: solution structure</p>
+<dl class="simple">
+<dt>Output:</dt><dd><p>K_nofeed: subcontroller without direct feedthrough
+Gcl:    closed-loop storage matrix (original)
+Ycl:    similarity transformation/nonlinear warping</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.reduced_order">
+<span class="sig-name descname"><span class="pre">reduced_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.reduced_order" title="Link to this definition">#</a></dt>
+<dd><p>is this a reduced-order controller? Default to no</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.storage_block">
+<span class="sig-name descname"><span class="pre">storage_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys_cl</span></em>, <em class="sig-param"><span class="pre">quad</span></em>, <em class="sig-param"><span class="pre">G_curr</span></em>, <em class="sig-param"><span class="pre">G_next</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.storage_block" title="Link to this definition">#</a></dt>
+<dd><p>STORAGE_BLOCK form the storage block in a synthesis problem
+:param sys_cl: closed-loop system dynamics
+:param quad: quadratic performance criteria (used for
+:param dimensions):
+:param G_curr: current time step closed-loop storage matrix
+:param G_next: next time step closed-loop storage matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stor_b</strong> – storage term to build dissipation relation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.supply_block">
+<span class="sig-name descname"><span class="pre">supply_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys_cl</span></em>, <em class="sig-param"><span class="pre">quad</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.supply_block" title="Link to this definition">#</a></dt>
+<dd><p>SUPPLY_BLOCK form the supply block in a quadratic objective problem
+:param sys_cl: closed-loop system dynamics
+:param quad: quadratic performance criteria (used for dimensions)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>supp_b</strong> – supply term to build dissipation relation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="system.generic.lmi_synthesis_interface.validate_recovery_gain">
+<span class="sig-name descname"><span class="pre">validate_recovery_gain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">alg_psi</span></em>, <em class="sig-param"><span class="pre">iqc_op_all</span></em>, <em class="sig-param"><span class="pre">rho</span></em><span class="sig-paren">)</span><a class="headerlink" href="#system.generic.lmi_synthesis_interface.validate_recovery_gain" title="Link to this definition">#</a></dt>
+<dd><p>VALIDATE_RECOVERY validate that the system obeys the stability
+constraint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alg_psi</strong> – the plant with confirmed performance by LMIs</p></li>
+<li><p><strong>iqc_op_all</strong> – all IQCs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>gain</strong> – [Passivity index, H-infinity index].</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="dissipation-container">
+<h2>Dissipation Container<a class="headerlink" href="#dissipation-container" title="Link to this heading">#</a></h2>
+<p>The dissipation constraints are stored in <code class="docutils literal notranslate"><span class="pre">diss_data</span></code>. This container is used to construct the LMIs in Analysis and Synthesis.</p>
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="manager.diss_data">
+<span class="sig-prename descclassname"><span class="pre">manager.</span></span><span class="sig-name descname"><span class="pre">diss_data</span></span><a class="headerlink" href="#manager.diss_data" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../plants/doc_templates.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Plant Templates</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="doc_lti.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Linear  Time Invariant Systems</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#system-algorithmic-interconnection">System (Algorithmic Interconnection)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regulator">Regulator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lmi-handler">LMI Handler</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lmi-analysis">LMI Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lmi-synthesis">LMI Synthesis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dissipation-container">Dissipation Container</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By opt-syn team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, opt-syn team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

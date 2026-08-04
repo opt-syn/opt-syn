@@ -1,0 +1,1411 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
+    <title>Performance Specifications &#8212; opt-syn</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=720ed60b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../_static/documentation_options.js?v=e1a75a79"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/documentation/doc_specs';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Configuration" href="doc_config.html" />
+    <link rel="prev" title="Integral Quadratic Constraints" href="doc_iqc.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/opt_syn_light.svg" class="logo__image only-light" alt="opt-syn - Home"/>
+    <img src="../../_static/opt_syn_dark.svg" class="logo__image only-dark pst-js-only" alt="opt-syn - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started.html">Get Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr_game.html">Nash Equilibrium Seeking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_coord_descent.html">Cyclic Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_switched.html">Time-Varying Delays</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_dy_delay.html">Davis-Yin with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_lasso.html">LASSO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_games_with_delay.html">Games with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_repeated.html">Repeated Operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_coord_descent.html">Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_switched_system.html">Switched Systems</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../how_it_works/index_how_it_works.html">How it Works</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/opt_algs.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/alg_properties.html">Properties of Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/convergence_conditions.html">Convergence Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/op_uncertainty_iqc.html">IQC Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/network_synthesis.html">Synthesis and Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/system/index_system.html">Build the System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/simulation.html">Simulate</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/specs.html">Performance Specifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/config.html">Configuration</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/solve.html">Solve and Validate</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index_documentation.html">Documentation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_solutions.html">Solution</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="operators/doc_set_valued.html">Set-Valued Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="operators/doc_sml.html">Subdifferentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="operators/doc_quadratic.html">Gradients of Quadratics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="plants/doc_genplant.html">Generalized Plants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plants/doc_templates.html">Plant Templates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="system/doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system/doc_switched.html">Switched</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system/doc_periodic.html">Periodic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system/doc_periodic_orbit.html">Periodic-Orbit</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_iqc.html">Integral Quadratic Constraints</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Performance Specifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_config.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog/0.1.0.html">What’s new in 0.1.0</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/jarmill/opt-syn" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/pages/documentation/doc_specs.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Performance Specifications</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-convergence">Linear Convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-performance">Quadratic Performance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ell-2-stability-iss"><span class="math notranslate nohighlight">\(\ell_2\)</span> Stability (ISS)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ell-2-gain"><span class="math notranslate nohighlight">\(\ell_2\)</span> Gain</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#peak-to-peak">Peak-to-Peak</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#passivity">Passivity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ergodic-convergence">Ergodic Convergence</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="performance-specifications">
+<h1>Performance Specifications<a class="headerlink" href="#performance-specifications" title="Link to this heading">#</a></h1>
+<p>A performance specification <code class="docutils literal notranslate"><span class="pre">spec</span></code> encodes a desired property of the algorithm as a
+constraint on the performance channel <span class="math notranslate nohighlight">\((w_p, z_p)\)</span> of the
+<a class="reference internal" href="plants/doc_genplant.html"><span class="doc">generalized plant</span></a>. In Analysis, <code class="docutils literal notranslate"><span class="pre">spec</span></code> represents the  property to be  verified.
+In Synthesis, <code class="docutils literal notranslate"><span class="pre">spec</span></code> is the property that the returned algorithm should meet.</p>
+<p>The usage-facing
+walkthrough is on the
+<a class="reference internal" href="../usage/problem_formulation/specs.html"><span class="doc">Specifications</span></a> page. The channel each
+specification acts on is created by the plant’s <code class="docutils literal notranslate"><span class="pre">perf_output_*</span></code> and <code class="docutils literal notranslate"><span class="pre">add_oracle_*</span></code> methods
+(see <a class="reference internal" href="plants/doc_genplant.html"><span class="doc">Generalized Plant</span></a>).</p>
+<section id="linear-convergence">
+<h2>Linear Convergence<a class="headerlink" href="#linear-convergence" title="Link to this heading">#</a></h2>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="spec.spec_stability">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">spec.</span></span><span class="sig-name descname"><span class="pre">spec_stability</span></span><a class="headerlink" href="#spec.spec_stability" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref mat mat-class docutils literal notranslate"><span class="pre">spec.spec_interface</span></code></p>
+<p>SPEC_STABILITY Linear convergence / exponential stability specification.</p>
+<p>Enforces exponential (linear) convergence of the algorithmic
+interconnection at rate <span class="math notranslate nohighlight">\(\rho \in (0, 1)\)</span>: for every initial
+condition there is a fixed point <span class="math notranslate nohighlight">\(x^*(x_0)\)</span> with</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2
+\leq \gamma_0 \, \rho^{k} \norm{x_0 - x^*(x_0)}_2,
+\qquad \forall k \in \N .\end{split}\]</div>
+<p>The rate is stored in the inherited <code class="docutils literal notranslate"><span class="pre">rho</span></code> property and enters the
+LMI through the <span class="math notranslate nohighlight">\(\rho\)</span>-transformation of the plant. This
+specification carries no performance channel of its own (<code class="docutils literal notranslate"><span class="pre">iwp</span></code> and
+<code class="docutils literal notranslate"><span class="pre">izp</span></code> are empty); when <span class="math notranslate nohighlight">\(\rho &lt; 1\)</span> it <span class="math notranslate nohighlight">\(\rho\)</span>-weights every
+other specification on the same problem.</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_stability.spec_stability">
+<span class="sig-name descname"><span class="pre">spec_stability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">rho</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_stability.spec_stability" title="Link to this definition">#</a></dt>
+<dd><p>SPEC_STABILITY Construct a linear-convergence specification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rho</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span></code></span>) – Target convergence rate <span class="math notranslate nohighlight">\(\rho \in (0, 1]\)</span>
+(default: <code class="docutils literal notranslate"><span class="pre">1</span></code>, i.e. plain stability).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new stability specification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>spec_stability</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="quadratic-performance">
+<h2>Quadratic Performance<a class="headerlink" href="#quadratic-performance" title="Link to this heading">#</a></h2>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="spec.spec_quad">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">spec.</span></span><span class="sig-name descname"><span class="pre">spec_quad</span></span><a class="headerlink" href="#spec.spec_quad" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref mat mat-class docutils literal notranslate"><span class="pre">spec.spec_interface</span></code></p>
+<p>SPEC_QUAD General quadratic performance specification.</p>
+<p>Imposes a single fixed quadratic supply rate on the performance
+channel <span class="math notranslate nohighlight">\((w_p, z_p)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\sum_{k=0}^{T} \begin{pmatrix} z_{p,k} \\ w_{p,k} \end{pmatrix}^\top
+\begin{pmatrix} Q &amp; S \\ S^\top &amp; R \end{pmatrix}
+\begin{pmatrix} z_{p,k} \\ w_{p,k} \end{pmatrix} \preceq 0 .\end{split}\]</div>
+<p>The named specifications (<code class="xref mat mat-class docutils literal notranslate"><span class="pre">spec_l2</span></code>, <code class="xref mat mat-class docutils literal notranslate"><span class="pre">spec_e2e</span></code>,
+<code class="xref mat mat-class docutils literal notranslate"><span class="pre">spec_passivity</span></code>, …) are special cases obtained by fixing
+the multiplier <span class="math notranslate nohighlight">\(\left(\begin{smallmatrix} Q &amp; S \\ S^\top &amp; R \end{smallmatrix}\right)\)</span>.
+Use this class directly when a desired supply rate is not covered by
+one of the named specifications.</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_quad.spec_quad">
+<span class="sig-name descname"><span class="pre">spec_quad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">M</span></em>, <em class="sig-param"><span class="pre">iwp</span></em>, <em class="sig-param"><span class="pre">izp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_quad.spec_quad" title="Link to this definition">#</a></dt>
+<dd><p>SPEC_QUAD Construct a quadratic performance specification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>M</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span></code></span>) – Quadratic supply-rate matrix on <span class="math notranslate nohighlight">\([z_p; w_p]\)</span>.</p></li>
+<li><p><strong>iwp</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Performance-input indices in the network.</p></li>
+<li><p><strong>izp</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Performance-output indices in the network.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new quadratic specification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>spec_quad</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="spec.spec_quad.M">
+<span class="sig-name descname"><span class="pre">M</span></span><a class="headerlink" href="#spec.spec_quad.M" title="Link to this definition">#</a></dt>
+<dd><p>Quadratic performance matrix on <span class="math notranslate nohighlight">\([z_p; w_p]\)</span>.</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_quad.supply">
+<span class="sig-name descname"><span class="pre">supply</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_quad.supply" title="Link to this definition">#</a></dt>
+<dd><p>SUPPLY Quadratic supply-rate matrix of the specification.</p>
+<p>Returns the stored matrix <code class="docutils literal notranslate"><span class="pre">M</span></code> unchanged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Quadratic running-cost matrix <span class="math notranslate nohighlight">\(M\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="ell-2-stability-iss">
+<h2><span class="math notranslate nohighlight">\(\ell_2\)</span> Stability (ISS)<a class="headerlink" href="#ell-2-stability-iss" title="Link to this heading">#</a></h2>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="spec.spec_l2">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">spec.</span></span><span class="sig-name descname"><span class="pre">spec_l2</span></span><a class="headerlink" href="#spec.spec_l2" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref mat mat-class docutils literal notranslate"><span class="pre">spec.spec_interface</span></code></p>
+<p>SPEC_L2 <span class="math notranslate nohighlight">\(\ell_2\)</span> stability specification.</p>
+<p>Certifies that the performance input has bounded influence on the
+state, i.e. the algorithm is <span class="math notranslate nohighlight">\(\ell_2\)</span>-stable. This is not an
+<span class="math notranslate nohighlight">\(\ell_2\)</span>-gain: there is no performance output (<code class="docutils literal notranslate"><span class="pre">izp</span> <span class="pre">=</span> <span class="pre">[]</span></code>), only
+a bounded quadratic penalty on the performance input <span class="math notranslate nohighlight">\(w_p\)</span>.</p>
+<p>When the discount rate <span class="math notranslate nohighlight">\(\rho \in (0, 1)\)</span>, this specification
+implies Input-to-State Stability (ISS): there exist gains
+<span class="math notranslate nohighlight">\(\gamma_x, \gamma_w \geq 0\)</span> with</p>
+<div class="math notranslate nohighlight">
+\[\norm{x_k - x^*(x_0)}_2^2 \leq
+\gamma_x \, \rho^k \norm{x_0 - x^*(x_0)}
++ \gamma_w \max_{t \in 0, \ldots, k} \norm{w_{p,t}}_2^2,
+\qquad \forall k \in \N .\]</div>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_l2.spec_l2">
+<span class="sig-name descname"><span class="pre">spec_l2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">iwp</span></em>, <em class="sig-param"><span class="pre">MU</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_l2.spec_l2" title="Link to this definition">#</a></dt>
+<dd><p>SPEC_L2 Construct an <span class="math notranslate nohighlight">\(\ell_2\)</span> stability specification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iwp</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Performance-input indices in the network.</p></li>
+<li><p><strong>MU</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span></code></span>) – Optional <span class="math notranslate nohighlight">\(\ell_2\)</span> bound (default: <code class="docutils literal notranslate"><span class="pre">1e4</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new <span class="math notranslate nohighlight">\(\ell_2\)</span> stability specification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>spec_l2</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="spec.spec_l2.gain">
+<span class="sig-name descname"><span class="pre">gain</span></span><a class="headerlink" href="#spec.spec_l2.gain" title="Link to this definition">#</a></dt>
+<dd><p><span class="math notranslate nohighlight">\(\ell_2\)</span> bound (large default, effectively a slack).</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_l2.create_vars">
+<span class="sig-name descname"><span class="pre">create_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">name</span></em>, <em class="sig-param"><span class="pre">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_l2.create_vars" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS Create the <span class="math notranslate nohighlight">\(\ell_2\)</span> bound variable and constraints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – Accumulated LMI constraints.</p></li>
+<li><p><strong>name</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">char</span></code></span>) – Name suffix for the created variable.</p></li>
+<li><p><strong>config</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">opt_config</span></code></span>) – Configuration options.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[vars,</span> <span class="pre">cons]</span></code> — struct with field <code class="docutils literal notranslate"><span class="pre">mu_l2</span></code> and the
+updated constraint set.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>struct, cell</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_l2.set_p">
+<span class="sig-name descname"><span class="pre">set_p</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">p</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_l2.set_p" title="Link to this definition">#</a></dt>
+<dd><p>SET_P Set the bisection parameter (the <span class="math notranslate nohighlight">\(\ell_2\)</span> bound).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>p</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span></code></span>) – New value of the swept parameter, e.g. a convergence
+rate <span class="math notranslate nohighlight">\(\rho\)</span> or an <span class="math notranslate nohighlight">\(\ell_2\)</span>-gain bound.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated specification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>spec_l2</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_l2.supply">
+<span class="sig-name descname"><span class="pre">supply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars_spec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_l2.supply" title="Link to this definition">#</a></dt>
+<dd><p>SUPPLY Quadratic supply-rate matrix of the specification.</p>
+<p>Returns <span class="math notranslate nohighlight">\(-\texttt{gain} \cdot I\)</span> on the performance input
+channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_spec</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">struct</span></code></span>) – Specification variables.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Quadratic running-cost matrix <span class="math notranslate nohighlight">\(M\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_l2.supply_quad">
+<span class="sig-name descname"><span class="pre">supply_quad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars_spec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_l2.supply_quad" title="Link to this definition">#</a></dt>
+<dd><p>SUPPLY_QUAD Decomposed quadratic supply rate.</p>
+<p>When this specification is the optimization target, the bound
+<code class="docutils literal notranslate"><span class="pre">mu_l2</span></code> is minimized; otherwise the base-class decomposition
+is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_spec</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">struct</span></code></span>) – Specification variables (expects <code class="docutils literal notranslate"><span class="pre">mu_l2</span></code>).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[quad,</span> <span class="pre">objective]</span></code> — the decomposed quadratic and the
+objective contribution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>quad_param, double</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="ell-2-gain">
+<h2><span class="math notranslate nohighlight">\(\ell_2\)</span> Gain<a class="headerlink" href="#ell-2-gain" title="Link to this heading">#</a></h2>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="spec.spec_e2e">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">spec.</span></span><span class="sig-name descname"><span class="pre">spec_e2e</span></span><a class="headerlink" href="#spec.spec_e2e" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref mat mat-class docutils literal notranslate"><span class="pre">spec.spec_interface</span></code></p>
+<p>SPEC_E2E Energy-to-energy (<span class="math notranslate nohighlight">\(\ell_2\)</span>) gain specification.</p>
+<p>Bounds the induced <span class="math notranslate nohighlight">\(\ell_2\)</span>-gain from the performance input to
+the performance output:</p>
+<div class="math notranslate nohighlight">
+\[\limsup_{T \to \infty}
+\frac{\sum_{k=0}^{T} \norm{z_{p,k}}_2}{\sum_{k=0}^{T} \norm{w_{p,k}}_2}
+\; &lt; \; \gamma .\]</div>
+<p>for any <span class="math notranslate nohighlight">\(w_p\)</span> with finite energy. For a linear system this is
+the <span class="math notranslate nohighlight">\(H_\infty\)</span> gain. It is the specification minimized when
+sweeping for the best achievable gain.</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_e2e.spec_e2e">
+<span class="sig-name descname"><span class="pre">spec_e2e</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">GAIN</span></em>, <em class="sig-param"><span class="pre">iwp</span></em>, <em class="sig-param"><span class="pre">izp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_e2e.spec_e2e" title="Link to this definition">#</a></dt>
+<dd><p>SPEC_E2E Construct an energy-to-energy gain specification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>GAIN</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span></code></span>) – Gain bound <span class="math notranslate nohighlight">\(\gamma\)</span>.</p></li>
+<li><p><strong>iwp</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Performance-input indices in the network.</p></li>
+<li><p><strong>izp</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Performance-output indices in the network.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new energy-to-energy gain specification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>spec_e2e</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="spec.spec_e2e.gain">
+<span class="sig-name descname"><span class="pre">gain</span></span><a class="headerlink" href="#spec.spec_e2e.gain" title="Link to this definition">#</a></dt>
+<dd><p><span class="math notranslate nohighlight">\(\ell_2\)</span> gain <span class="math notranslate nohighlight">\(\gamma\)</span> (hard constraint).</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_e2e.create_vars">
+<span class="sig-name descname"><span class="pre">create_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">name</span></em>, <em class="sig-param"><span class="pre">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_e2e.create_vars" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS Create the gain variable and its constraints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – Accumulated LMI constraints.</p></li>
+<li><p><strong>name</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">char</span></code></span>) – Name suffix for the created variable.</p></li>
+<li><p><strong>config</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">opt_config</span></code></span>) – Configuration options.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[vars,</span> <span class="pre">cons]</span></code> — struct with field <code class="docutils literal notranslate"><span class="pre">mu_l2</span></code> and the
+updated constraint set.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>struct, cell</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_e2e.set_p">
+<span class="sig-name descname"><span class="pre">set_p</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">p</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_e2e.set_p" title="Link to this definition">#</a></dt>
+<dd><p>SET_P Set the bisection parameter (the <span class="math notranslate nohighlight">\(\ell_2\)</span> gain).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>p</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span></code></span>) – New value of the gain bound.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated specification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>spec_e2e</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_e2e.supply">
+<span class="sig-name descname"><span class="pre">supply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars_spec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_e2e.supply" title="Link to this definition">#</a></dt>
+<dd><p>SUPPLY Quadratic supply-rate matrix of the specification.</p>
+<p>Builds the block-diagonal supply rate
+<span class="math notranslate nohighlight">\(\operatorname{blkdiag}(\gamma^{-1} I,\, -\gamma I)\)</span> on
+<span class="math notranslate nohighlight">\([z_p; w_p]\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_spec</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">struct</span></code></span>) – Specification variables.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Quadratic running-cost matrix <span class="math notranslate nohighlight">\(M\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_e2e.supply_quad">
+<span class="sig-name descname"><span class="pre">supply_quad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars_spec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_e2e.supply_quad" title="Link to this definition">#</a></dt>
+<dd><p>SUPPLY_QUAD Decomposed quadratic supply rate.</p>
+<p>When this specification is the optimization target, the gain
+variable <code class="docutils literal notranslate"><span class="pre">mu_l2</span></code> is minimized; otherwise the base-class
+decomposition is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_spec</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">struct</span></code></span>) – Specification variables (expects <code class="docutils literal notranslate"><span class="pre">mu_l2</span></code>).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[quad,</span> <span class="pre">objective]</span></code> — the decomposed quadratic and the
+objective contribution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>quad_param, double</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="peak-to-peak">
+<h2>Peak-to-Peak<a class="headerlink" href="#peak-to-peak" title="Link to this heading">#</a></h2>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="spec.spec_p2p">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">spec.</span></span><span class="sig-name descname"><span class="pre">spec_p2p</span></span><a class="headerlink" href="#spec.spec_p2p" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref mat mat-class docutils literal notranslate"><span class="pre">spec.spec_interface</span></code></p>
+<p>SPEC_P2P Peak-to-peak gain specification.</p>
+<p>Bounds the induced peak-to-peak norm (the <span class="math notranslate nohighlight">\(*\)</span>-norm of a linear
+system) from the performance input to the performance output: the peak
+(over time) of the output is bounded by <span class="math notranslate nohighlight">\(\gamma\)</span> times the peak
+of the input,</p>
+<p><span class="math notranslate nohighlight">\(\sup_{k \geq 0} \norm{z_{p,k}}_2 \; \leq \; \gamma \, \sup_{k \geq 0} \norm{w_{p,k}}_2.\)</span></p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_p2p.spec_p2p">
+<span class="sig-name descname"><span class="pre">spec_p2p</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">GAIN</span></em>, <em class="sig-param"><span class="pre">iwp</span></em>, <em class="sig-param"><span class="pre">izp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_p2p.spec_p2p" title="Link to this definition">#</a></dt>
+<dd><p>SPEC_P2P Construct a peak-to-peak gain specification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>GAIN</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span></code></span>) – Peak-to-peak gain bound <span class="math notranslate nohighlight">\(\gamma\)</span>.</p></li>
+<li><p><strong>iwp</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Performance-input indices in the network.</p></li>
+<li><p><strong>izp</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Performance-output indices in the network.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new peak-to-peak specification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>spec_p2p</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>if nargin &lt; 4</dt><dd><p>rho = 1;</p>
+</dd>
+</dl>
+<p>end</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="spec.spec_p2p.gain">
+<span class="sig-name descname"><span class="pre">gain</span></span><a class="headerlink" href="#spec.spec_p2p.gain" title="Link to this definition">#</a></dt>
+<dd><p>Peak-to-peak gain <span class="math notranslate nohighlight">\(\gamma\)</span>.</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="spec.spec_p2p.weight">
+<span class="sig-name descname"><span class="pre">weight</span></span><a class="headerlink" href="#spec.spec_p2p.weight" title="Link to this definition">#</a></dt>
+<dd><p>Weighting between the peak and gain terms.</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_p2p.create_vars">
+<span class="sig-name descname"><span class="pre">create_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">name</span></em>, <em class="sig-param"><span class="pre">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_p2p.create_vars" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS Create the peak-to-peak variables and constraints.</p>
+<p>Introduces <code class="docutils literal notranslate"><span class="pre">mu_p2p</span></code> and (when targeted) <code class="docutils literal notranslate"><span class="pre">gam_p2p</span></code>, with the
+ordering and non-negativity constraints of the peak-to-peak
+certificate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – Accumulated LMI constraints.</p></li>
+<li><p><strong>name</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">char</span></code></span>) – Name suffix for the created variables.</p></li>
+<li><p><strong>config</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">opt_config</span></code></span>) – Configuration options.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[vars,</span> <span class="pre">cons]</span></code> — struct with fields <code class="docutils literal notranslate"><span class="pre">mu_p2p</span></code>,
+<code class="docutils literal notranslate"><span class="pre">gam_p2p</span></code> and the updated constraint set.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>struct, cell</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_p2p.quad_terminal">
+<span class="sig-name descname"><span class="pre">quad_terminal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars_spec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_p2p.quad_terminal" title="Link to this definition">#</a></dt>
+<dd><p>QUAD_TERMINAL tbd</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_spec</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">struct</span></code></span>) – Specification variables
+(expects <code class="docutils literal notranslate"><span class="pre">mu_p2p</span></code>, <code class="docutils literal notranslate"><span class="pre">gam_p2p</span></code>).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decomposed terminal quadratic.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>quad_param</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_p2p.supply">
+<span class="sig-name descname"><span class="pre">supply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars_spec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_p2p.supply" title="Link to this definition">#</a></dt>
+<dd><p>SUPPLY Quadratic supply-rate matrix of the specification.</p>
+<p>Returns <span class="math notranslate nohighlight">\(-\texttt{gain} \cdot I\)</span> on the performance input
+channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_spec</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">struct</span></code></span>) – Specification variables.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Quadratic running-cost matrix <span class="math notranslate nohighlight">\(M\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_p2p.supply_quad">
+<span class="sig-name descname"><span class="pre">supply_quad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars_spec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_p2p.supply_quad" title="Link to this definition">#</a></dt>
+<dd><p>SUPPLY_QUAD Decomposed quadratic supply rate.</p>
+<p>Builds the running quadratic on the performance input channel.
+When this specification is the optimization target, the peak
+gain <code class="docutils literal notranslate"><span class="pre">gam_p2p</span></code> is minimized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_spec</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">struct</span></code></span>) – Specification variables
+(expects <code class="docutils literal notranslate"><span class="pre">mu_p2p</span></code>, <code class="docutils literal notranslate"><span class="pre">gam_p2p</span></code>).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[quad,</span> <span class="pre">objective]</span></code> — the decomposed quadratic and the
+objective contribution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>quad_param, double</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="passivity">
+<h2>Passivity<a class="headerlink" href="#passivity" title="Link to this heading">#</a></h2>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="spec.spec_passivity">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">spec.</span></span><span class="sig-name descname"><span class="pre">spec_passivity</span></span><a class="headerlink" href="#spec.spec_passivity" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref mat mat-class docutils literal notranslate"><span class="pre">spec.spec_interface</span></code></p>
+<p>SPEC_PASSIVITY Passivity specification with input/output indices.</p>
+<p>Imposes a (possibly indexed) passivity supply rate on the performance
+channel: for all horizons <span class="math notranslate nohighlight">\(T\)</span> with <span class="math notranslate nohighlight">\(x = 0\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\sum_{k=0}^{T} z_{p,k}^\top w_{p,k}
+\; \geq \;
+\sum_{k=0}^{T} \big( \nu_w \norm{w_{p,k}}^2 + \nu_z \norm{z_{p,k}}^2 \big),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\nu_w = \texttt{ind_w}\)</span> is the input passivity index and
+<span class="math notranslate nohighlight">\(\nu_z = \texttt{ind_z}\)</span> is the output passivity index. The plain
+passivity supply rate is recovered with both indices set to zero.</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_passivity.spec_passivity">
+<span class="sig-name descname"><span class="pre">spec_passivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">ind_w</span></em>, <em class="sig-param"><span class="pre">ind_z</span></em>, <em class="sig-param"><span class="pre">iwp</span></em>, <em class="sig-param"><span class="pre">izp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_passivity.spec_passivity" title="Link to this definition">#</a></dt>
+<dd><p>SPEC_PASSIVITY Construct a passivity specification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ind_w</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span></code></span>) – Input passivity index <span class="math notranslate nohighlight">\(\nu_w\)</span>.</p></li>
+<li><p><strong>ind_z</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span></code></span>) – Output passivity index <span class="math notranslate nohighlight">\(\nu_z\)</span>.</p></li>
+<li><p><strong>iwp</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Performance-input indices in the network.</p></li>
+<li><p><strong>izp</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Performance-output indices in the network.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new passivity specification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>spec_passivity</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p>Error if <code class="docutils literal notranslate"><span class="pre">iwp</span></code> and <code class="docutils literal notranslate"><span class="pre">izp</span></code> have different lengths.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="spec.spec_passivity.ind_w">
+<span class="sig-name descname"><span class="pre">ind_w</span></span><a class="headerlink" href="#spec.spec_passivity.ind_w" title="Link to this definition">#</a></dt>
+<dd><p>Input passivity index <span class="math notranslate nohighlight">\(\nu_w\)</span>.</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="spec.spec_passivity.ind_z">
+<span class="sig-name descname"><span class="pre">ind_z</span></span><a class="headerlink" href="#spec.spec_passivity.ind_z" title="Link to this definition">#</a></dt>
+<dd><p>Output passivity index <span class="math notranslate nohighlight">\(\nu_z\)</span>.</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_passivity.create_vars">
+<span class="sig-name descname"><span class="pre">create_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">name</span></em>, <em class="sig-param"><span class="pre">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_passivity.create_vars" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS Create the passivity margin variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – Accumulated LMI constraints.</p></li>
+<li><p><strong>name</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">char</span></code></span>) – Name suffix for the created variable.</p></li>
+<li><p><strong>config</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">opt_config</span></code></span>) – Configuration options.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[vars,</span> <span class="pre">cons]</span></code> — struct with field <code class="docutils literal notranslate"><span class="pre">ind_pass</span></code> and the
+(unchanged) constraint set.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>struct, cell</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_passivity.set_p">
+<span class="sig-name descname"><span class="pre">set_p</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">p</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_passivity.set_p" title="Link to this definition">#</a></dt>
+<dd><p>SET_P Set the bisection parameter (the input passivity index).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>p</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span></code></span>) – New value of the input passivity index <span class="math notranslate nohighlight">\(\nu_w\)</span>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated specification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>spec_passivity</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_passivity.supply">
+<span class="sig-name descname"><span class="pre">supply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars_spec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_passivity.supply" title="Link to this definition">#</a></dt>
+<dd><p>SUPPLY Quadratic supply-rate matrix for the passivity indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_spec</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">struct</span></code></span>) – Specification variables.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Quadratic running-cost matrix <span class="math notranslate nohighlight">\(M\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_passivity.supply_quad">
+<span class="sig-name descname"><span class="pre">supply_quad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars_spec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_passivity.supply_quad" title="Link to this definition">#</a></dt>
+<dd><p>SUPPLY_QUAD Decomposed quadratic supply rate.</p>
+<p>When this specification is the optimization target, a passivity
+margin <code class="docutils literal notranslate"><span class="pre">ind_pass</span></code> is introduced and maximized; otherwise the
+base-class decomposition is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_spec</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">struct</span></code></span>) – Specification variables (expects <code class="docutils literal notranslate"><span class="pre">ind_pass</span></code>).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[quad,</span> <span class="pre">objective]</span></code> — the decomposed quadratic and the
+objective contribution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>quad_param, double</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="ergodic-convergence">
+<h2>Ergodic Convergence<a class="headerlink" href="#ergodic-convergence" title="Link to this heading">#</a></h2>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="spec.spec_ergodic">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">spec.</span></span><span class="sig-name descname"><span class="pre">spec_ergodic</span></span><a class="headerlink" href="#spec.spec_ergodic" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref mat mat-class docutils literal notranslate"><span class="pre">spec.spec_interface</span></code></p>
+<p>SPEC_ERGODIC Ergodic (sublinear-rate) convergence specification.</p>
+<p>Enforces asymptotic stability of the algorithmic interconnection in an
+ergodic (averaged) sense, appropriate for algorithms whose last iterate
+need not converge but whose running averages do. The specification is
+built on the consensus-weighted performance channel produced by
+<a class="reference internal" href="plants/doc_genplant.html#plant.genplant.genplant.perf_ergodic" title="plant.genplant.genplant.perf_ergodic"><code class="xref mat mat-meth docutils literal notranslate"><span class="pre">plant.genplant.genplant.perf_ergodic()</span></code></a>, using the weighted
+consensus matrix <span class="math notranslate nohighlight">\(N_w\)</span>.</p>
+<p>A strict-passivity margin <code class="docutils literal notranslate"><span class="pre">erg_pass</span></code> supplies an objective for the
+alternating methods used to certify ergodic convergence.</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_ergodic.spec_ergodic">
+<span class="sig-name descname"><span class="pre">spec_ergodic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_ergodic.spec_ergodic" title="Link to this definition">#</a></dt>
+<dd><p>SPEC_ERGODIC Construct an ergodic convergence specification.</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="spec.spec_ergodic.Nw">
+<span class="sig-name descname"><span class="pre">Nw</span></span><a class="headerlink" href="#spec.spec_ergodic.Nw" title="Link to this definition">#</a></dt>
+<dd><p>Weighted consensus matrix <span class="math notranslate nohighlight">\(N_w\)</span>.</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="spec.spec_ergodic.erg_pass">
+<span class="sig-name descname"><span class="pre">erg_pass</span></span><a class="headerlink" href="#spec.spec_ergodic.erg_pass" title="Link to this definition">#</a></dt>
+<dd><p>Strict-passivity margin used as an objective.</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_ergodic.augment_ergodic">
+<span class="sig-name descname"><span class="pre">augment_ergodic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sys</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_ergodic.augment_ergodic" title="Link to this definition">#</a></dt>
+<dd><p>AUGMENT_ERGODIC add new input and output channels to the
+system to allow for ergodic performance specifications to be
+met (duality gap). Reads the consensus structure from the system, appends the</p>
+<blockquote>
+<div><p>ergodic performance channel to the plant via
+<a class="reference internal" href="plants/doc_genplant.html#plant.genplant.genplant.perf_ergodic" title="plant.genplant.genplant.perf_ergodic"><code class="xref mat mat-meth docutils literal notranslate"><span class="pre">plant.genplant.genplant.perf_ergodic()</span></code></a>, and returns
+both the specification and the augmented system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param sys<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The optimization-algorithm system.</p>
+</dd>
+<dt class="field-even">returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[sys_erg]</span></code> — the ergodic specification and the
+system with the ergodic performance channel added.</p>
+</dd>
+<dt class="field-odd">rtype<span class="colon">:</span></dt>
+<dd class="field-odd"><p>spec_ergodic, (system)</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_ergodic.create_vars">
+<span class="sig-name descname"><span class="pre">create_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">cons</span></em>, <em class="sig-param"><span class="pre">name</span></em>, <em class="sig-param"><span class="pre">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_ergodic.create_vars" title="Link to this definition">#</a></dt>
+<dd><p>CREATE_VARS Create the strict-passivity margin variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cons</strong> – Accumulated LMI constraints.</p></li>
+<li><p><strong>name</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">char</span></code></span>) – Name suffix for the created variable.</p></li>
+<li><p><strong>config</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">opt_config</span></code></span>) – Configuration options.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[vars,</span> <span class="pre">cons]</span></code> — struct with field <code class="docutils literal notranslate"><span class="pre">erg_pass</span></code> and the
+updated constraint set.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>struct, cell</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_ergodic.set_p">
+<span class="sig-name descname"><span class="pre">set_p</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">p</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_ergodic.set_p" title="Link to this definition">#</a></dt>
+<dd><p>SET_P Set the bisection parameter (the strict-passivity margin).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>p</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span></code></span>) – New value of the margin, e.g. for a peak-to-peak
+certifier or an <span class="math notranslate nohighlight">\(\ell_2\)</span>-gain bound.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated specification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>spec_ergodic</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_ergodic.supply">
+<span class="sig-name descname"><span class="pre">supply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars_spec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_ergodic.supply" title="Link to this definition">#</a></dt>
+<dd><p>SUPPLY Ergodic supply rate (duality gap).</p>
+<p>Builds a passivity-type supply rate from the consensus matrix
+<span class="math notranslate nohighlight">\(N_w\)</span> and adds a strict-passivity penalty scaled by
+<code class="docutils literal notranslate"><span class="pre">erg_pass</span></code>. Returns empty if <span class="math notranslate nohighlight">\(N_w\)</span> is empty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_spec</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">struct</span></code></span>) – Specification variables.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Quadratic running-cost matrix <span class="math notranslate nohighlight">\(M\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="spec.spec_ergodic.supply_quad">
+<span class="sig-name descname"><span class="pre">supply_quad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">vars_spec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#spec.spec_ergodic.supply_quad" title="Link to this definition">#</a></dt>
+<dd><p>SUPPLY_QUAD Decomposed quadratic supply rate.</p>
+<p>Starts from the base-class decomposition and, when this
+specification is the optimization target, adds a strict
+passivity penalty <code class="docutils literal notranslate"><span class="pre">erg_pass</span></code> to the <span class="math notranslate nohighlight">\(Q\)</span> block and uses
+it as the objective.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vars_spec</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">struct</span></code></span>) – Specification variables (expects <code class="docutils literal notranslate"><span class="pre">erg_pass</span></code>).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[quad,</span> <span class="pre">objective]</span></code> — the decomposed quadratic and the
+objective contribution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>quad_param, double</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="doc_iqc.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Integral Quadratic Constraints</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="doc_config.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Configuration</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-convergence">Linear Convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-performance">Quadratic Performance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ell-2-stability-iss"><span class="math notranslate nohighlight">\(\ell_2\)</span> Stability (ISS)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ell-2-gain"><span class="math notranslate nohighlight">\(\ell_2\)</span> Gain</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#peak-to-peak">Peak-to-Peak</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#passivity">Passivity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ergodic-convergence">Ergodic Convergence</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By opt-syn team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, opt-syn team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,783 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
+    <title>Performance Specifications &#8212; opt-syn</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=720ed60b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../../_static/documentation_options.js?v=e1a75a79"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/usage/problem_formulation/specs';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Configuration" href="config.html" />
+    <link rel="prev" title="Problem Setup" href="index_problem_formulation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/opt_syn_light.svg" class="logo__image only-light" alt="opt-syn - Home"/>
+    <img src="../../../_static/opt_syn_dark.svg" class="logo__image only-dark pst-js-only" alt="opt-syn - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../get_started.html">Get Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_dr_game.html">Nash Equilibrium Seeking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_coord_descent.html">Cyclic Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_switched.html">Time-Varying Delays</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_dy_delay.html">Davis-Yin with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_synthesis/index_example_synthesis.html">Synthesis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_lasso.html">LASSO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_games_with_delay.html">Games with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_repeated.html">Repeated Operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_coord_descent.html">Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_switched_system.html">Switched Systems</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../how_it_works/index_how_it_works.html">How it Works</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/opt_algs.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/alg_properties.html">Properties of Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/convergence_conditions.html">Convergence Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/op_uncertainty_iqc.html">IQC Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/network_synthesis.html">Synthesis and Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index_usage.html">Usage</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="system/index_system.html">Build the System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html">Simulate</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index_problem_formulation.html">Problem Setup</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Performance Specifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html">Configuration</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../solve.html">Solve and Validate</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../documentation/index_documentation.html">Documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../documentation/doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../documentation/doc_solutions.html">Solution</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../documentation/operators/doc_set_valued.html">Set-Valued Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../documentation/operators/doc_sml.html">Subdifferentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../documentation/operators/doc_quadratic.html">Gradients of Quadratics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../documentation/plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../documentation/plants/doc_genplant.html">Generalized Plants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../documentation/plants/doc_templates.html">Plant Templates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../documentation/system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../documentation/system/doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../documentation/system/doc_switched.html">Switched</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../documentation/system/doc_periodic.html">Periodic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../documentation/system/doc_periodic_orbit.html">Periodic-Orbit</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../documentation/doc_iqc.html">Integral Quadratic Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../documentation/doc_specs.html">Performance Specifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../documentation/doc_config.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../documentation/doc_simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../documentation/doc_plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog/0.1.0.html">What’s new in 0.1.0</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/jarmill/opt-syn" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/pages/usage/problem_formulation/specs.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Performance Specifications</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-convergence">Linear Convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-performance">Quadratic Performance</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l2-stability">ℓ2 Stability</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l2-gain">ℓ2 Gain</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#passivity">Passivity</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ergodic-convergence">Ergodic Convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-for-time-varying-dynamical-systems">Performance for Time-Varying Dynamical Systems</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#more-specifications">More Specifications</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="performance-specifications">
+<h1>Performance Specifications<a class="headerlink" href="#performance-specifications" title="Link to this heading">#</a></h1>
+<p>Performance specifications describe constraints on the behavior of the algorithm. Analysis attempts to certify that an algorithm obeys the specification, and Synthesis tries to form an algorithm that obeys the specifications.</p>
+<p>Every specification is a condition on the performance channel <span class="math notranslate nohighlight">\((w_p, z_p)\)</span> of the
+<a class="reference internal" href="../../documentation/plants/doc_genplant.html"><span class="doc">generalized plant</span></a>.</p>
+<p>All specifications have the fields</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">iwp</span></code></p></td>
+<td><p>indices of performance input <span class="math notranslate nohighlight">\(w_p\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">izp</span></code></p></td>
+<td><p>indices of performance output <span class="math notranslate nohighlight">\(z_p\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">target</span></code></p></td>
+<td><p>should this specification be minimized</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Most specifications have an additional field <code class="docutils literal notranslate"><span class="pre">rho</span></code> discount rate <span class="math notranslate nohighlight">\(\rho &gt;0\)</span> as an argument.
+Choosing <span class="math notranslate nohighlight">\(\rho &lt; 1\)</span> imposes that the property holds at an exponential rate.</p>
+<p>Refer to <a class="reference internal" href="../../documentation/doc_specs.html"><span class="doc">Performance Specifications</span></a> for information about the specifications and their interfaces.</p>
+<section id="linear-convergence">
+<h2>Linear Convergence<a class="headerlink" href="#linear-convergence" title="Link to this heading">#</a></h2>
+<p>This imposes exponential stability of the iterates at rate <span class="math notranslate nohighlight">\(\rho\)</span>. For every
+initial condition <span class="math notranslate nohighlight">\(x_0\)</span> there is a fixed point <span class="math notranslate nohighlight">\((x^*(x_0), w^*(x_0), z^*(x_0))\)</span> with</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2
+  \leq \gamma_0\, \rho^{k} \norm{x_0 - x^*(x_0)}_2, &amp; &amp; \forall k \in \N.
+\end{align*}\end{split}\]</div>
+<p>Linear convergence holds if <span class="math notranslate nohighlight">\(\rho &lt; 1\)</span>.</p>
+<p>This is the most common specification and needs no performance channel (by default <code class="docutils literal notranslate"><span class="pre">iwp=[],</span> <span class="pre">izp=[]</span></code>).</p>
+<p>It is specified with</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_stability</span><span class="p">(</span><span class="n">rho</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The default specification used if none are supplied (<code class="docutils literal notranslate"><span class="pre">specs</span> <span class="pre">=</span> <span class="pre">[]</span></code>) is <code class="docutils literal notranslate"><span class="pre">{spec_stability(1)}</span></code> with <code class="docutils literal notranslate"><span class="pre">target=true</span></code>.</p>
+</div>
+<p>Infinite-horizon exponential stability is that for <span class="math notranslate nohighlight">\(x_0\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\lim_{k \rightarrow \infty}\rho^{-k}\mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2
+\end{align*}\end{split}\]</div>
+</section>
+<section id="quadratic-performance">
+<h2>Quadratic Performance<a class="headerlink" href="#quadratic-performance" title="Link to this heading">#</a></h2>
+<p>Several  specifications are special cases of general <strong>quadratic supply-rate</strong> conditions on
+<span class="math notranslate nohighlight">\((w_p, z_p)\)</span>. These conditions must be respected for all performance input sequence <span class="math notranslate nohighlight">\((w_{p, k})_{k \in \N}\)</span> with a finite <span class="math notranslate nohighlight">\(\rho\)</span>-weighted ℓ2 norm  <span class="math notranslate nohighlight">\((\sum_{k=0}^T -\epsilon \rho^{-2k} \norm{w_{p, k}}_2^2 &lt; \infty)\)</span>.</p>
+<p>A quadratic supply rate condition with respect to matrices <span class="math notranslate nohighlight">\((Q, S, R)\)</span> is the existence of an <span class="math notranslate nohighlight">\(\epsilon &gt; 0\)</span> such that</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\sum_{k=0}^{T}
+ \rho^{-2k} \mat{c}{w_{p,k} \\ z_{p,k}}^\top
+  \mat{cc}{Q &amp; S \\ S^\top &amp; R}
+  \mat{c}{w_{p,k} \\ z_{p,k}} \; \leq  \; \sum_{k=0}^T -\epsilon \rho^{-2k} \norm{w_{p, k}}_2^2
+\end{align*}\end{split}\]</div>
+<p>for all time horizons <span class="math notranslate nohighlight">\(T &gt; 0\)</span>.</p>
+<p>Infinite-horizon quadratic performance is that</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+  \limsup_{T \rightarrow \infty} \sum_{k=0}^{T} \rho^{-2k} \mat{c}{w_{p,k} \\ z_{p,k}}^\top
+  \mat{cc}{Q &amp; S \\ S^\top &amp; R}
+  \mat{c}{w_{p,k} \\ z_{p,k}} \; +  \; \epsilon \rho^{-2k} \norm{w_{p, k}}_2^2 \leq 0.
+\end{align*}\end{split}\]</div>
+<p>Quadratic performance specifications are imposed by</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">M</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="n">Q</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="p">;</span><span class="w"> </span><span class="n">S</span><span class="o">&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="p">];</span>
+<span class="linenos">2</span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_quad</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The Synthesis procedure requires that <span class="math notranslate nohighlight">\(Q = Q^\top\)</span> and <span class="math notranslate nohighlight">\(R \prec 0\)</span>.</p>
+<p>The below specifications are all specific instances of quadratic performance:</p>
+<section id="l2-stability">
+<h3>ℓ2 Stability<a class="headerlink" href="#l2-stability" title="Link to this heading">#</a></h3>
+<p><em>Stability and ISS.</em> Certifies that the performance input has a bounded effect on the
+state.</p>
+<div class="math notranslate nohighlight">
+\[\begin{align*}
+\sum_{k=0}^T \rho^{-2k} \norm{x_k - x^*(x_0)}_2^2 \leq \gamma\norm{x_0 - x^*(x_0)}_2^2
+  + \gamma \sum_{k=0}^T \rho^{-2k} \norm{w_{p, k}}_2^2, &amp; &amp; \forall k \in \N.
+\end{align*}\]</div>
+<p>If <span class="math notranslate nohighlight">\(\rho \in (0, 1)\)</span>, then ℓ2 stability implies an Input-to-State Stability property <a class="footnote-reference brackets" href="#footcite-sontag1989smooth" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, </p>
+<div class="math notranslate nohighlight">
+\[\begin{align*}
+\norm{x_k - x^*(x_0)}_2^2 \leq \gamma\, \rho^{2k} \norm{x_0 - x^*(x_0)}_2^2
+  + \frac{\gamma \rho^2}{1-\rho^2} \max_{t \in 0, \ldots, k} \norm{w_{p, t}}_2^2, &amp; &amp; \forall k \in \N.
+\end{align*}\]</div>
+<p>Linear convergence is recovered from Input-to-State Stability when the
+disturbance vanishes (<span class="math notranslate nohighlight">\(w_p= 0\)</span>).</p>
+<p>Use this when you need the iterates to stay
+bounded and convergent under noise but do not need a specific gain; for a gain bound, use
+<span class="math notranslate nohighlight">\(\ell_2\)</span> gain instead.</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_l2</span><span class="p">(</span><span class="n">iwp</span><span class="p">);</span><span class="w">        </span><span class="c">% no performance output; optional bound: spec_l2(iwp, MU)</span>
+</pre></div>
+</div>
+<p>Infinite-horizon  ℓ2 stability is</p>
+<div class="math notranslate nohighlight">
+\[\begin{align*}
+\limsup_{T \to \infty}
+  \frac{\sum_{k=0}^{T} \rho^{-2k} \norm{x_k - x^*(0)}_2^2}{   \sum_{k=0}^{T} \rho^{-2k} \norm{w_{p,k}}^2_2}
+  \; &lt; \; \gamma^2.
+\end{align*}\]</div>
+</section>
+<section id="l2-gain">
+<h3>ℓ2 Gain<a class="headerlink" href="#l2-gain" title="Link to this heading">#</a></h3>
+<p><em>Energy-to-energy gain.</em> Bounds the induced ℓ2 gain <span class="math notranslate nohighlight">\(\gamma\)</span> from the performance
+input to the performance output,</p>
+<div class="math notranslate nohighlight">
+\[\begin{align*}
+\limsup_{T \to \infty}
+  \frac{\sum_{k=0}^{T} \rho^{2k} \norm{z_{p,k}}_2^2}{   \sum_{k=0}^{T} \rho^{-2k} \norm{w_{p,k}}^2_2}
+  \; &lt; \; \gamma^2.
+\end{align*}\]</div>
+<p>For a linear system this, this is the <span class="math notranslate nohighlight">\(H_\infty\)</span> gain under a <span class="math notranslate nohighlight">\(\rho\)</span>-weighting. The ℓ2 gain is an infinite-horizon penalty.</p>
+<p>Use it to quantify how strongly a
+disturbance at <span class="math notranslate nohighlight">\(w_p\)</span> (for example, noise in the gradient evaluations) is amplified at a
+tracked output <span class="math notranslate nohighlight">\(z_p\)</span>.</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_e2e</span><span class="p">(</span><span class="n">GAIN</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span><span class="w">   </span><span class="c">% GAIN is the initial bound</span>
+<span class="linenos">2</span><span class="n">perf</span><span class="p">.</span><span class="n">target</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="c">%enforce the gain bound</span>
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="n">perf</span><span class="p">.</span><span class="n">target</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="c">%minimize the gain </span>
+</pre></div>
+</div>
+</section>
+<section id="passivity">
+<h3>Passivity<a class="headerlink" href="#passivity" title="Link to this heading">#</a></h3>
+<p>Imposes a passivity relation between the performance input and output. Passivity may optionally include an
+input passivity index <span class="math notranslate nohighlight">\(\nu_w\)</span> and an output passivity index <span class="math notranslate nohighlight">\(\nu_z\)</span>:</p>
+<p>Passivity is obeyed if for all time horizons <span class="math notranslate nohighlight">\(T\)</span> with  with <span class="math notranslate nohighlight">\(x_0 = 0, x^*(x_0) = 0\)</span>, it holds that</p>
+<div class="math notranslate nohighlight">
+\[\begin{align*}
+\sum_{k=0}^{T} z_{p,k}^\top w_{p,k}
+  \; \geq \;
+  \sum_{k=0}^{T} \big( \nu_w \norm{w_{p,k}}_2^2 + \nu_z \norm{z_{p,k}}_2^2 \big).
+\end{align*}\]</div>
+<p>Setting both indices to zero requests standard passivity; positive indices request the
+correspondingly stronger input- or output-strict passivity properties. The performance input and
+output channels must have the same length.</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="c">% ind_w = nu_w, ind_z = nu_z</span>
+<span class="linenos">2</span><span class="n">perf</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_passivity</span><span class="p">(</span><span class="n">ind_w</span><span class="p">,</span><span class="w"> </span><span class="n">ind_z</span><span class="p">,</span><span class="w"> </span><span class="n">iwp</span><span class="p">,</span><span class="w"> </span><span class="n">izp</span><span class="p">);</span><span class="w">   </span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="ergodic-convergence">
+<h2>Ergodic Convergence<a class="headerlink" href="#ergodic-convergence" title="Link to this heading">#</a></h2>
+<p>Ergodic convergence arises in the optimization setting where all operators are subdifferentials (<span class="math notranslate nohighlight">\(F_i = \partial f_i\)</span>), and their operators classes are <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_sml</span></code>, <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_pcc</span></code>, or <code class="xref mat mat-class docutils literal notranslate"><span class="pre">op_quad</span></code>.</p>
+<p>An algorithm with no repeated operator evaluations satisfies ergodic convergence if there exists a <span class="math notranslate nohighlight">\(\gamma&gt;0\)</span> such that</p>
+<div class="math notranslate nohighlight">
+\[\begin{align*}
+\sum_{i=1}^s \left[f_i(z^i_k) - f_i(z^{*,i}(x_0))\right] - (w^*)^\top (z_k - z^{*}(x_0)) \leq \frac{\gamma}{k+1} \norm{x_0 - x^*(x_0)}_2^2 &amp; &amp; \forall k \in \N.
+\end{align*}\]</div>
+<p>The bracketed quantity is a duality gap, and is equal to 0 at optimality.
+This  formulation of ergodic convergence in duality gap originates from  <a class="footnote-reference brackets" href="#footcite-upadhyaya2025automated" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> (Section 4.1.2).</p>
+<p>Ergodic convergence requires the introduction of new performance channels for the <span class="math notranslate nohighlight">\((w^*_i)^\top z^*_i\)</span> term. It is implemented as</p>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">[</span><span class="n">perf_erg</span><span class="p">,</span><span class="w"> </span><span class="n">sys</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">spec_ergodic</span><span class="p">(</span><span class="n">sys</span><span class="p">);</span>
+<span class="linenos">2</span><span class="n">specs</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="n">perf_erg</span><span class="p">};</span>
+</pre></div>
+</div>
+<p>Ergodic convergence is weaker than linear convergence. It can certify properties of convex optimization algorithms, whereas establishment of global linear convergence requires strong convexity. Ergodic convergence should only be used if all performance specifications have <span class="math notranslate nohighlight">\(\rho=1\)</span>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In the current implementation, Ergodic convergence requires nonstrict feasibility of linear matrix inequalities. In numerical experiments, the maximal eigenvalue of a negative-semidefinite-constrained block is <span class="math notranslate nohighlight">\(\approx 10^{-12}\)</span>, which is not less than or equal to  <span class="math notranslate nohighlight">\(0\)</span>. Future developments will try to patch this feasibility issue, in the meantime use with caution.</p>
+</div>
+</section>
+<section id="performance-for-time-varying-dynamical-systems">
+<h2>Performance for Time-Varying Dynamical Systems<a class="headerlink" href="#performance-for-time-varying-dynamical-systems" title="Link to this heading">#</a></h2>
+<p>The specific performance constraints imposed by <code class="docutils literal notranslate"><span class="pre">specs</span></code> may vary for <a class="reference internal" href="system/dynamics.html"><span class="doc">systems with time-variations</span></a>.</p>
+<p>All specifications on this page are used as presented for LTI, periodic, and periodic-orbit systems.</p>
+<p>For switched systems, a performance specification in <code class="docutils literal notranslate"><span class="pre">specs</span></code> imposes a  worst-case bound over all possible switching sequences.</p>
+</section>
+<section id="more-specifications">
+<h2>More Specifications<a class="headerlink" href="#more-specifications" title="Link to this heading">#</a></h2>
+<p>We plan to implement further performance criteria for both Analysis and Synthesis.</p>
+</section>
+</section>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-sontag1989smooth" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Eduardo D Sontag. Smooth stabilization implies coprime factorization. <em>IEEE transactions on automatic control</em>, 34(4):435–443, 1989.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-upadhyaya2025automated" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Manu Upadhyaya, Sebastian Banert, Adrien B Taylor, and Pontus Giselsson. Automated tight Lyapunov analysis for first-order methods. <em>Mathematical Programming</em>, 209(1):133–170, 2025.</p>
+</aside>
+</aside>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index_problem_formulation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Problem Setup</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="config.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Configuration</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-convergence">Linear Convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-performance">Quadratic Performance</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l2-stability">ℓ2 Stability</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l2-gain">ℓ2 Gain</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#passivity">Passivity</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ergodic-convergence">Ergodic Convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-for-time-varying-dynamical-systems">Performance for Time-Varying Dynamical Systems</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#more-specifications">More Specifications</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By opt-syn team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, opt-syn team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

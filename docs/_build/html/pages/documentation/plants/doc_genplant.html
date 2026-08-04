@@ -1,0 +1,1741 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
+    <title>Generalized Plant &#8212; opt-syn</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=720ed60b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../../_static/documentation_options.js?v=e1a75a79"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/documentation/plants/doc_genplant';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Plant Templates" href="doc_templates.html" />
+    <link rel="prev" title="Plants" href="doc_plants.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/opt_syn_light.svg" class="logo__image only-light" alt="opt-syn - Home"/>
+    <img src="../../../_static/opt_syn_dark.svg" class="logo__image only-dark pst-js-only" alt="opt-syn - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../get_started.html">Get Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_dr_game.html">Nash Equilibrium Seeking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_coord_descent.html">Cyclic Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_simulation/sim_switched.html">Time-Varying Delays</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_dy_delay.html">Davis-Yin with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples_synthesis/index_example_synthesis.html">Synthesis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_lasso.html">LASSO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_games_with_delay.html">Games with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_repeated.html">Repeated Operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_coord_descent.html">Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples_synthesis/syn_switched_system.html">Switched Systems</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../how_it_works/index_how_it_works.html">How it Works</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/opt_algs.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/alg_properties.html">Properties of Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/convergence_conditions.html">Convergence Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/op_uncertainty_iqc.html">IQC Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../how_it_works/network_synthesis.html">Synthesis and Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../usage/problem_formulation/system/index_system.html">Build the System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/simulation.html">Simulate</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/problem_formulation/specs.html">Performance Specifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/problem_formulation/config.html">Configuration</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/solve.html">Solve and Validate</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index_documentation.html">Documentation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_solutions.html">Solution</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../operators/doc_set_valued.html">Set-Valued Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../operators/doc_sml.html">Subdifferentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../operators/doc_quadratic.html">Gradients of Quadratics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="doc_plants.html">Plants</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Generalized Plants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="doc_templates.html">Plant Templates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../system/doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system/doc_switched.html">Switched</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system/doc_periodic.html">Periodic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system/doc_periodic_orbit.html">Periodic-Orbit</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_iqc.html">Integral Quadratic Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_specs.html">Performance Specifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_config.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../doc_plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog/0.1.0.html">What’s new in 0.1.0</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/jarmill/opt-syn" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/pages/documentation/plants/doc_genplant.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Generalized Plant</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#individual-plants">Individual Plants</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cell-of-plants-subsystems">Cell of Plants (Subsystems)</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="generalized-plant">
+<h1>Generalized Plant<a class="headerlink" href="#generalized-plant" title="Link to this heading">#</a></h1>
+<p>The input-output signals of the plant are</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id1">
+<caption><span class="caption-text">Input-Output Signals</span><a class="headerlink" href="#id1" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 7.1%" />
+<col style="width: 42.9%" />
+<col style="width: 7.1%" />
+<col style="width: 42.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>Plant Input</p></th>
+<th class="head"></th>
+<th class="head"><p>Plant Output</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(z\)</span></p></td>
+<td><p>input to operators</p></td>
+<td><p><span class="math notranslate nohighlight">\(w\)</span></p></td>
+<td><p>output from operators</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(z_p\)</span></p></td>
+<td><p>performance output</p></td>
+<td><p><span class="math notranslate nohighlight">\(w_p\)</span></p></td>
+<td><p>Performance Input</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(y\)</span></p></td>
+<td><p>output to controller</p></td>
+<td><p><span class="math notranslate nohighlight">\(u\)</span></p></td>
+<td><p>input from controller</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- *   - 
+    - $z$
+    - $z_p$
+    - $y$
+*   - Plant Output
+    - input to operators
+    - performance output
+    - output to controller
+*   - 
+    - $w$
+    - $w_p$
+    - $u$ 
+*   - Plant Input
+    - output to operators
+    - performance input
+    - input to controller -->
+<p>The network with state <span class="math notranslate nohighlight">\(x^N\)</span> interfacing the operator <span class="math notranslate nohighlight">\(F\)</span> and the controller may be described as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\mat{c}{x^N_{k+1} \hl z_k \\ z_{p k} \\ y_k} &amp;= \mat{c|cc}{A &amp; B_z &amp; B_{z_p} &amp;  B_u \hl 
+C_z &amp; D_{zd} &amp; D_{z w_p} &amp;  D_{zu} \\
+C_{z_p} &amp; D_{z_p d} &amp; D_{z_p w_p} &amp;  D_{z_p u} \\
+C_y &amp; D_{yd} &amp; D_{y w_p} &amp; D_{yu}} \mat{c}{x_k^N \hl w_k \\ w_{pk} \\ u_k}.
+\end{align*}\end{split}\]</div>
+<p>The dimensions of the signals are stored in a cell <code class="docutils literal notranslate"><span class="pre">n</span></code>, such as <code class="docutils literal notranslate"><span class="pre">n.nz</span> <span class="pre">=</span> <span class="pre">4</span></code>and <code class="docutils literal notranslate"><span class="pre">n.nzp</span> <span class="pre">=</span> <span class="pre">0</span></code>. This partitioning is used to pose the plants.</p>
+<section id="individual-plants">
+<h2>Individual Plants<a class="headerlink" href="#individual-plants" title="Link to this heading">#</a></h2>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="plant.genplant.genplant">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">plant.genplant.</span></span><span class="sig-name descname"><span class="pre">genplant</span></span><a class="headerlink" href="#plant.genplant.genplant" title="Link to this definition">#</a></dt>
+<dd><p>GENPLANT A generalized plant with structured channel partitioning.</p>
+<p>A generalized plant wraps a state-space system <code class="docutils literal notranslate"><span class="pre">P</span></code> and partitions
+its input/output channels into three groups:</p>
+<ul class="simple">
+<li><p><strong>Outputs (from network):</strong> <span class="math notranslate nohighlight">\([z,\; z_p,\; y]\)</span> — operator inputs,
+performance outputs, and controller inputs.</p></li>
+<li><p><strong>Inputs (to network):</strong> <span class="math notranslate nohighlight">\([w,\; w_p,\; u]\)</span> — operator outputs,
+performance inputs, and controller outputs.</p></li>
+</ul>
+<p>The channel dimensions are stored as properties and used by the
+indexing methods to extract submatrices of <code class="docutils literal notranslate"><span class="pre">P</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The ordering convention is <code class="docutils literal notranslate"><span class="pre">[z,</span> <span class="pre">zp,</span> <span class="pre">y]</span></code> for outputs and
+<code class="docutils literal notranslate"><span class="pre">[w,</span> <span class="pre">wp,</span> <span class="pre">u]</span></code> inputs of the plant.</p>
+</div>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">n</span><span class="o">.</span><span class="n">nz</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">n</span><span class="o">.</span><span class="n">nw</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">n</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">n</span><span class="o">.</span><span class="n">nu</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">n</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">genplant</span><span class="p">(</span><span class="n">ss</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">n</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.genplant">
+<span class="sig-name descname"><span class="pre">genplant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">P</span></em>, <em class="sig-param"><span class="pre">n</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.genplant" title="Link to this definition">#</a></dt>
+<dd><p>GENPLANT Construct a generalized plant.</p>
+<p>Wraps a state-space system and, optionally, records the
+dimensions of the channel partition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">ss</span> <span class="pre">or</span> <span class="pre">sdpss</span></code></span>) – State-space system to wrap.</p></li>
+<li><p><strong>n</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">struct</span></code></span>) – Channel dimensions. Required fields: <code class="docutils literal notranslate"><span class="pre">nz</span></code>, <code class="docutils literal notranslate"><span class="pre">nw</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ny</span></code>, <code class="docutils literal notranslate"><span class="pre">nu</span></code>. Optional fields: <code class="docutils literal notranslate"><span class="pre">nzp</span></code>, <code class="docutils literal notranslate"><span class="pre">nwp</span></code>, <code class="docutils literal notranslate"><span class="pre">s</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new <code class="docutils literal notranslate"><span class="pre">genplant</span></code> object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.P">
+<span class="sig-name descname"><span class="pre">P</span></span><a class="headerlink" href="#plant.genplant.genplant.P" title="Link to this definition">#</a></dt>
+<dd><p>State-space system (<code class="docutils literal notranslate"><span class="pre">ss</span></code> or <code class="docutils literal notranslate"><span class="pre">sdpss</span></code> object).</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.nu">
+<span class="sig-name descname"><span class="pre">nu</span></span><a class="headerlink" href="#plant.genplant.genplant.nu" title="Link to this definition">#</a></dt>
+<dd><p>Dimension of controller output <span class="math notranslate nohighlight">\(u\)</span> (to network).</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.nw">
+<span class="sig-name descname"><span class="pre">nw</span></span><a class="headerlink" href="#plant.genplant.genplant.nw" title="Link to this definition">#</a></dt>
+<dd><p>Dimension of operator output <span class="math notranslate nohighlight">\(w\)</span> (to network).</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.nwp">
+<span class="sig-name descname"><span class="pre">nwp</span></span><a class="headerlink" href="#plant.genplant.genplant.nwp" title="Link to this definition">#</a></dt>
+<dd><p>Dimension of performance input <span class="math notranslate nohighlight">\(w_p\)</span> (to network).</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.ny">
+<span class="sig-name descname"><span class="pre">ny</span></span><a class="headerlink" href="#plant.genplant.genplant.ny" title="Link to this definition">#</a></dt>
+<dd><p>Dimension of controller input <span class="math notranslate nohighlight">\(y\)</span> (from network).</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.nz">
+<span class="sig-name descname"><span class="pre">nz</span></span><a class="headerlink" href="#plant.genplant.genplant.nz" title="Link to this definition">#</a></dt>
+<dd><p>Dimension of operator input <span class="math notranslate nohighlight">\(z\)</span> (from network).</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.nzp">
+<span class="sig-name descname"><span class="pre">nzp</span></span><a class="headerlink" href="#plant.genplant.genplant.nzp" title="Link to this definition">#</a></dt>
+<dd><p>Dimension of performance output <span class="math notranslate nohighlight">\(z_p\)</span> (from network).</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.s">
+<span class="sig-name descname"><span class="pre">s</span></span><a class="headerlink" href="#plant.genplant.genplant.s" title="Link to this definition">#</a></dt>
+<dd><p>Number of operators.</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.A">
+<span class="sig-name descname"><span class="pre">A</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.A" title="Link to this definition">#</a></dt>
+<dd><p>A State matrix of the wrapped system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Matrix <span class="math notranslate nohighlight">\(A\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.B">
+<span class="sig-name descname"><span class="pre">B</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.B" title="Link to this definition">#</a></dt>
+<dd><p>B Input matrix of the wrapped system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Matrix <span class="math notranslate nohighlight">\(B\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Bu">
+<span class="sig-name descname"><span class="pre">Bu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Bu" title="Link to this definition">#</a></dt>
+<dd><p>BU Input matrix from controller output <span class="math notranslate nohighlight">\(u\)</span> to state.</p>
+<p>Extracts the columns of <code class="docutils literal notranslate"><span class="pre">B</span></code> indexed by <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">index_u()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(B_u\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Bw">
+<span class="sig-name descname"><span class="pre">Bw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Bw" title="Link to this definition">#</a></dt>
+<dd><p>BW Input matrix from operator output <span class="math notranslate nohighlight">\(w\)</span> to state.</p>
+<p>Extracts the columns of <code class="docutils literal notranslate"><span class="pre">B</span></code> indexed by <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">index_w()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(B_w\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Bwp">
+<span class="sig-name descname"><span class="pre">Bwp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Bwp" title="Link to this definition">#</a></dt>
+<dd><p>BWP Input matrix from performance input <span class="math notranslate nohighlight">\(w_p\)</span> to state.</p>
+<p>Extracts the columns of <code class="docutils literal notranslate"><span class="pre">B</span></code> indexed by <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">index_wp()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(B_{w_p}\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.C">
+<span class="sig-name descname"><span class="pre">C</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.C" title="Link to this definition">#</a></dt>
+<dd><p>C Output matrix of the wrapped system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Matrix <span class="math notranslate nohighlight">\(C\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Cy">
+<span class="sig-name descname"><span class="pre">Cy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Cy" title="Link to this definition">#</a></dt>
+<dd><p>CY Output matrix from state to controller input <span class="math notranslate nohighlight">\(y\)</span>.</p>
+<p>Extracts the rows of <code class="docutils literal notranslate"><span class="pre">C</span></code> indexed by <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">index_y()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(C_y\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Cz">
+<span class="sig-name descname"><span class="pre">Cz</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Cz" title="Link to this definition">#</a></dt>
+<dd><p>CZ Output matrix from state to operator input <span class="math notranslate nohighlight">\(z\)</span>.</p>
+<p>Extracts the rows of <code class="docutils literal notranslate"><span class="pre">C</span></code> indexed by <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">index_z()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(C_z\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Czp">
+<span class="sig-name descname"><span class="pre">Czp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Czp" title="Link to this definition">#</a></dt>
+<dd><p>CZP Output matrix from state to performance output <span class="math notranslate nohighlight">\(z_p\)</span>.</p>
+<p>Extracts the rows of <code class="docutils literal notranslate"><span class="pre">C</span></code> indexed by <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">index_zp()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(C_{z_p}\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.D">
+<span class="sig-name descname"><span class="pre">D</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.D" title="Link to this definition">#</a></dt>
+<dd><p>D Feedthrough matrix of the wrapped system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Matrix <span class="math notranslate nohighlight">\(D\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Dyu">
+<span class="sig-name descname"><span class="pre">Dyu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Dyu" title="Link to this definition">#</a></dt>
+<dd><p>DYU Direct feedthrough from controller output <span class="math notranslate nohighlight">\(u\)</span> to controller input <span class="math notranslate nohighlight">\(y\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(D_{yu}\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Dyw">
+<span class="sig-name descname"><span class="pre">Dyw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Dyw" title="Link to this definition">#</a></dt>
+<dd><p>DYW Feedthrough from operator output <span class="math notranslate nohighlight">\(w\)</span> to controller input <span class="math notranslate nohighlight">\(y\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(D_{yw}\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Dywp">
+<span class="sig-name descname"><span class="pre">Dywp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Dywp" title="Link to this definition">#</a></dt>
+<dd><p>DYWP Feedthrough from performance input <span class="math notranslate nohighlight">\(w_p\)</span> to controller input <span class="math notranslate nohighlight">\(y\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(D_{yw_p}\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Dzpu">
+<span class="sig-name descname"><span class="pre">Dzpu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Dzpu" title="Link to this definition">#</a></dt>
+<dd><p>DZPU Feedthrough from controller output <span class="math notranslate nohighlight">\(u\)</span> to performance output <span class="math notranslate nohighlight">\(z_p\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(D_{z_pu}\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Dzpw">
+<span class="sig-name descname"><span class="pre">Dzpw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Dzpw" title="Link to this definition">#</a></dt>
+<dd><p>DZPW Feedthrough from operator output <span class="math notranslate nohighlight">\(w\)</span> to performance output <span class="math notranslate nohighlight">\(z_p\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(D_{z_pw}\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Dzpwp">
+<span class="sig-name descname"><span class="pre">Dzpwp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Dzpwp" title="Link to this definition">#</a></dt>
+<dd><p>DZPWP Feedthrough from performance input <span class="math notranslate nohighlight">\(w_p\)</span> to performance output <span class="math notranslate nohighlight">\(z_p\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(D_{z_pw_p}\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Dzu">
+<span class="sig-name descname"><span class="pre">Dzu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Dzu" title="Link to this definition">#</a></dt>
+<dd><p>DZU Feedthrough from controller output <span class="math notranslate nohighlight">\(u\)</span> to operator input <span class="math notranslate nohighlight">\(z\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(D_{zu}\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Dzw">
+<span class="sig-name descname"><span class="pre">Dzw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Dzw" title="Link to this definition">#</a></dt>
+<dd><p>DZW Feedthrough from operator output <span class="math notranslate nohighlight">\(w\)</span> to operator input <span class="math notranslate nohighlight">\(z\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(D_{zw}\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Dzwp">
+<span class="sig-name descname"><span class="pre">Dzwp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Dzwp" title="Link to this definition">#</a></dt>
+<dd><p>DZWP Feedthrough from performance input <span class="math notranslate nohighlight">\(w_p\)</span> to operator input <span class="math notranslate nohighlight">\(z\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Submatrix <span class="math notranslate nohighlight">\(D_{zw_p}\)</span>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.Ts">
+<span class="sig-name descname"><span class="pre">Ts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.Ts" title="Link to this definition">#</a></dt>
+<dd><p>TS Sample time of the wrapped system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Sample time (<code class="docutils literal notranslate"><span class="pre">0</span></code> for continuous, <code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">0</span></code> for discrete).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.add_oracle_input">
+<span class="sig-name descname"><span class="pre">add_oracle_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">ind_w</span></em>, <em class="sig-param"><span class="pre">ind_z</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.add_oracle_input" title="Link to this definition">#</a></dt>
+<dd><p>ADD_ORACLE_INPUT Add external perturbation inputs at the operator.</p>
+<p>Introduces additional performance inputs that perturb the
+operator channels:</p>
+<div class="math notranslate nohighlight">
+\[w + \delta w \in F(z + \delta z)\]</div>
+<p>The new inputs are appended to the <span class="math notranslate nohighlight">\(w_p\)</span> channel.
+No extra outputs are added.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ind_w</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Indices within the <span class="math notranslate nohighlight">\(w\)</span> channel to perturb.</p></li>
+<li><p><strong>ind_z</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Indices within the <span class="math notranslate nohighlight">\(z\)</span> channel to perturb.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[obj,</span> <span class="pre">iwp]</span></code> — updated plant and new performance
+input indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant, double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.add_oracle_shift">
+<span class="sig-name descname"><span class="pre">add_oracle_shift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">c</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.add_oracle_shift" title="Link to this definition">#</a></dt>
+<dd><p>ADD_ORACLE_SHIFT Add a shifted perturbation input at the operator.</p>
+<p>Introduces performance inputs corresponding to a uniform
+shift across operator channels:</p>
+<div class="math notranslate nohighlight">
+\[w \in F(z + \delta z \otimes \mathbf{1}_s)\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>c</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">int</span></code></span>) – Coordinate dimension (default: 1).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[obj,</span> <span class="pre">iwp]</span></code> — updated plant and new performance
+input indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant, double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.blkdiag">
+<span class="sig-name descname"><span class="pre">blkdiag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">b2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.blkdiag" title="Link to this definition">#</a></dt>
+<dd><p>BLKDIAG Block-diagonal interconnection of two generalized plants.</p>
+<p>Constructs a new <code class="docutils literal notranslate"><span class="pre">genplant</span></code> whose system matrix is the
+block-diagonal of <code class="docutils literal notranslate"><span class="pre">obj.P</span></code> and <code class="docutils literal notranslate"><span class="pre">b2.P</span></code>, with input and
+output indices interleaved so that the <span class="math notranslate nohighlight">\([z, z_p, y]\)</span> /
+<span class="math notranslate nohighlight">\([w, w_p, u]\)</span> channel structure is preserved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>b2</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">genplant</span></code></span>) – The second plant.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The block-diagonal plant.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.drop_performance">
+<span class="sig-name descname"><span class="pre">drop_performance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.drop_performance" title="Link to this definition">#</a></dt>
+<dd><p>DROP_PERFORMANCE Remove the performance channel from the plant.</p>
+<p>Constructs a new <code class="docutils literal notranslate"><span class="pre">genplant</span></code> with <code class="docutils literal notranslate"><span class="pre">nzp</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">nwp</span> <span class="pre">=</span> <span class="pre">0</span></code>
+by extracting only the <span class="math notranslate nohighlight">\([z, y]\)</span> / <span class="math notranslate nohighlight">\([w, u]\)</span>
+subsystem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Plant without the performance channel.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>genplant</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.dump_dim">
+<span class="sig-name descname"><span class="pre">dump_dim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.dump_dim" title="Link to this definition">#</a></dt>
+<dd><p>DUMP_DIM Return channel dimensions as a struct.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Struct with fields <code class="docutils literal notranslate"><span class="pre">nw</span></code>, <code class="docutils literal notranslate"><span class="pre">nwp</span></code>, <code class="docutils literal notranslate"><span class="pre">nu</span></code>, <code class="docutils literal notranslate"><span class="pre">ny</span></code>,
+<code class="docutils literal notranslate"><span class="pre">nz</span></code>, <code class="docutils literal notranslate"><span class="pre">nzp</span></code>, <code class="docutils literal notranslate"><span class="pre">s</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>struct</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.index_notu">
+<span class="sig-name descname"><span class="pre">index_notu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.index_notu" title="Link to this definition">#</a></dt>
+<dd><p>INDEX_NOTU Indices of the combined <span class="math notranslate nohighlight">\([w,\; w_p]\)</span> channels.</p>
+<p>Returns all input indices except the controller output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Index vector <code class="docutils literal notranslate"><span class="pre">1:(nw</span> <span class="pre">+</span> <span class="pre">nwp)</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double (row vector)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.index_u">
+<span class="sig-name descname"><span class="pre">index_u</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.index_u" title="Link to this definition">#</a></dt>
+<dd><p>INDEX_U Indices of the controller-output channel <span class="math notranslate nohighlight">\(u\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Index vector for <span class="math notranslate nohighlight">\(u\)</span>, offset by <code class="docutils literal notranslate"><span class="pre">nw</span> <span class="pre">+</span> <span class="pre">nwp</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double (row vector)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.index_w">
+<span class="sig-name descname"><span class="pre">index_w</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.index_w" title="Link to this definition">#</a></dt>
+<dd><p>INDEX_W Indices of the operator-output channel <span class="math notranslate nohighlight">\(w\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Index vector <code class="docutils literal notranslate"><span class="pre">1:nw</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double (row vector)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.index_wp">
+<span class="sig-name descname"><span class="pre">index_wp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.index_wp" title="Link to this definition">#</a></dt>
+<dd><p>INDEX_WP Indices of the performance-input channel <span class="math notranslate nohighlight">\(w_p\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Index vector for <span class="math notranslate nohighlight">\(w_p\)</span>, offset by <code class="docutils literal notranslate"><span class="pre">nw</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double (row vector)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.index_y">
+<span class="sig-name descname"><span class="pre">index_y</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.index_y" title="Link to this definition">#</a></dt>
+<dd><p>INDEX_Y Indices of the controller-input channel <span class="math notranslate nohighlight">\(y\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Index vector for <span class="math notranslate nohighlight">\(y\)</span>, offset by <code class="docutils literal notranslate"><span class="pre">nz</span> <span class="pre">+</span> <span class="pre">nzp</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double (row vector)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.index_z">
+<span class="sig-name descname"><span class="pre">index_z</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.index_z" title="Link to this definition">#</a></dt>
+<dd><p>INDEX_Z Indices of the operator-input channel <span class="math notranslate nohighlight">\(z\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Index vector <code class="docutils literal notranslate"><span class="pre">1:nz</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double (row vector)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.index_zp">
+<span class="sig-name descname"><span class="pre">index_zp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.index_zp" title="Link to this definition">#</a></dt>
+<dd><p>INDEX_ZP Indices of the performance-output channel <span class="math notranslate nohighlight">\(z_p\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Index vector for <span class="math notranslate nohighlight">\(z_p\)</span>, offset by <code class="docutils literal notranslate"><span class="pre">nz</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double (row vector)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.lft">
+<span class="sig-name descname"><span class="pre">lft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">b2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.lft" title="Link to this definition">#</a></dt>
+<dd><p>LFT Lower linear fractional transformation (star product).</p>
+<p>Closes the feedback loop between <code class="docutils literal notranslate"><span class="pre">obj</span></code> (upper block) and
+<code class="docutils literal notranslate"><span class="pre">b2</span></code> (lower block) along the shared <span class="math notranslate nohighlight">\((u, y)\)</span> channels.
+The resulting plant inherits the operator channels of <code class="docutils literal notranslate"><span class="pre">obj</span></code>
+and the controller channels of <code class="docutils literal notranslate"><span class="pre">b2</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>b2</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">genplant</span> <span class="pre">or</span> <span class="pre">ss</span></code></span>) – The lower plant or controller.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The interconnected plant.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.lft_lower">
+<span class="sig-name descname"><span class="pre">lft_lower</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">b2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.lft_lower" title="Link to this definition">#</a></dt>
+<dd><p>LFT_LOWER Lower linear fractional transformation (alias).</p>
+<p>Equivalent to <code class="xref mat mat-meth docutils literal notranslate"><span class="pre">lft()</span></code>. Provided for symmetry with
+<code class="xref mat mat-meth docutils literal notranslate"><span class="pre">lft_upper()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>b2</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">genplant</span></code></span>) – The lower plant.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The interconnected plant.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.lft_upper">
+<span class="sig-name descname"><span class="pre">lft_upper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">b2</span></em>, <em class="sig-param"><span class="pre">nz2</span></em>, <em class="sig-param"><span class="pre">nw2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.lft_upper" title="Link to this definition">#</a></dt>
+<dd><p>LFT_UPPER Upper linear fractional transformation.</p>
+<p>Closes the feedback loop with <code class="docutils literal notranslate"><span class="pre">b2</span></code> as the upper block and
+<code class="docutils literal notranslate"><span class="pre">obj</span></code> as the lower block. The resulting plant inherits the
+operator channels of <code class="docutils literal notranslate"><span class="pre">b2</span></code> and the controller channels of
+<code class="docutils literal notranslate"><span class="pre">obj</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>b2</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">genplant</span> <span class="pre">or</span> <span class="pre">ss</span></code></span>) – The upper plant.</p></li>
+<li><p><strong>nz2</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">int</span></code></span>) – Number of output channels to close (used when <code class="docutils literal notranslate"><span class="pre">b2</span></code>
+is a plain <code class="docutils literal notranslate"><span class="pre">ss</span></code>).</p></li>
+<li><p><strong>nw2</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">int</span></code></span>) – Number of input channels to close (used when <code class="docutils literal notranslate"><span class="pre">b2</span></code>
+is a plain <code class="docutils literal notranslate"><span class="pre">ss</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The interconnected plant.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.lift">
+<span class="sig-name descname"><span class="pre">lift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">c</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.lift" title="Link to this definition">#</a></dt>
+<dd><p>LIFT Kronecker lift of the plant by an identity matrix.</p>
+<p>Replaces every matrix <span class="math notranslate nohighlight">\(M\)</span> in the state-space
+representation with <span class="math notranslate nohighlight">\(M \otimes I_c\)</span>. All channel
+dimensions are multiplied by <code class="docutils literal notranslate"><span class="pre">c</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>c</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">int</span></code></span>) – Lift dimension (size of the identity block).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The lifted plant.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.nx">
+<span class="sig-name descname"><span class="pre">nx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.nx" title="Link to this definition">#</a></dt>
+<dd><p>NX Number of states in the wrapped system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>State dimension.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.perf_ergodic">
+<span class="sig-name descname"><span class="pre">perf_ergodic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">Nw</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.perf_ergodic" title="Link to this definition">#</a></dt>
+<dd><p>PERF_ERGODIC Add performance channels for ergodic convergence.</p>
+<p>Appends performance inputs and outputs that encode an
+ergodic convergence condition using the consensus matrix
+<code class="docutils literal notranslate"><span class="pre">Nw</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Nw</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">or</span> <span class="pre">empty</span></code></span>) – Consensus weighting matrix.  Pass <code class="docutils literal notranslate"><span class="pre">[]</span></code> to skip.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[obj,</span> <span class="pre">iwp,</span> <span class="pre">izp]</span></code> — updated plant, new performance
+input indices, and new performance output indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant, double, double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.perf_output_con">
+<span class="sig-name descname"><span class="pre">perf_output_con</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">c</span></em>, <em class="sig-param"><span class="pre">iz</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.perf_output_con" title="Link to this definition">#</a></dt>
+<dd><p>PERF_OUTPUT_CON Add performance outputs for consensus tracking.</p>
+<p>Appends outputs measuring the deviation from the average:</p>
+<div class="math notranslate nohighlight">
+\[z_p^i = z^i - \mathrm{average}(z)\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>c</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">int</span></code></span>) – Coordinate / Kronecker lift dimension (default: 1).</p></li>
+<li><p><strong>iz</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Indices of operator inputs to track (default:
+<code class="docutils literal notranslate"><span class="pre">1:nz</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[obj,</span> <span class="pre">izp]</span></code> — updated plant and new performance
+output indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant, double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.perf_output_opt">
+<span class="sig-name descname"><span class="pre">perf_output_opt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">c</span></em>, <em class="sig-param"><span class="pre">bind</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.perf_output_opt" title="Link to this definition">#</a></dt>
+<dd><p>PERF_OUTPUT_OPT Add performance outputs for the optimality condition.</p>
+<p>Appends a performance output that sums selected operator
+outputs:</p>
+<div class="math notranslate nohighlight">
+\[z_p = \sum_{i=1}^{s} w^i\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>c</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">int</span></code></span>) – Coordinate / Kronecker lift dimension (default: 1).</p></li>
+<li><p><strong>bind</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Indices identifying repeated nonlinearity
+evaluations (default: <code class="docutils literal notranslate"><span class="pre">1:nw/c</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[obj,</span> <span class="pre">izp]</span></code> — updated plant and new performance
+output indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant, double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.perf_output_w">
+<span class="sig-name descname"><span class="pre">perf_output_w</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">iw</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.perf_output_w" title="Link to this definition">#</a></dt>
+<dd><p>PERF_OUTPUT_W Add performance outputs tracking the <span class="math notranslate nohighlight">\(w\)</span> channel.</p>
+<p>Appends new rows to the <span class="math notranslate nohighlight">\(z_p\)</span> channel that directly
+observe selected operator outputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iw</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Indices within <span class="math notranslate nohighlight">\(w\)</span> to observe.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[obj,</span> <span class="pre">izp]</span></code> — updated plant and new performance
+output indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant, double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.perf_output_z">
+<span class="sig-name descname"><span class="pre">perf_output_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">ind_z</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.perf_output_z" title="Link to this definition">#</a></dt>
+<dd><p>PERF_OUTPUT_Z Add performance outputs tracking the <span class="math notranslate nohighlight">\(z\)</span> channel.</p>
+<p>Appends new rows to the <span class="math notranslate nohighlight">\(z_p\)</span> channel that observe
+selected operator inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ind_z</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span> <span class="pre">(vector)</span></code></span>) – Indices within <span class="math notranslate nohighlight">\(z\)</span> to observe.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">[obj,</span> <span class="pre">izp]</span></code> — updated plant and new performance
+output indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant, double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.rhotrafo">
+<span class="sig-name descname"><span class="pre">rhotrafo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">rho</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.rhotrafo" title="Link to this definition">#</a></dt>
+<dd><p>RHOTRAFO Apply an exponential discount (rho-transformation).</p>
+<p>Scales <code class="docutils literal notranslate"><span class="pre">A</span></code> and <code class="docutils literal notranslate"><span class="pre">B</span></code> by <span class="math notranslate nohighlight">\(\rho^{-1}\)</span>, which corresponds
+to an exponential weighting of the signals in discrete time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rho</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">double</span></code></span>) – Discount factor.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The transformed plant (modified in place).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>genplant</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.ss">
+<span class="sig-name descname"><span class="pre">ss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.ss" title="Link to this definition">#</a></dt>
+<dd><p>SS Extract the raw state-space object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The underlying <code class="docutils literal notranslate"><span class="pre">ss</span></code> system.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>ss</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.ss_zy_wu">
+<span class="sig-name descname"><span class="pre">ss_zy_wu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.ss_zy_wu" title="Link to this definition">#</a></dt>
+<dd><p>SS_ZY_WU Extract plant matrices for the <span class="math notranslate nohighlight">\([w, u] \to [z, y]\)</span> subsystem.</p>
+<p>Returns the nine matrices of the two-port partition:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{bmatrix} z \\ y \end{bmatrix}
+=
+\begin{bmatrix} D_{11} &amp; D_{12} \\ D_{21} &amp; D_{22} \end{bmatrix}
+\begin{bmatrix} w \\ u \end{bmatrix}
++
+\begin{bmatrix} C_1 \\ C_2 \end{bmatrix} x\end{split}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">[A,</span> <span class="pre">B1,</span> <span class="pre">B2,</span> <span class="pre">C1,</span> <span class="pre">D11,</span> <span class="pre">D12,</span> <span class="pre">C2,</span> <span class="pre">D21,</span> <span class="pre">D22]</span></code></p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double (multiple outputs)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.ssdata">
+<span class="sig-name descname"><span class="pre">ssdata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.ssdata" title="Link to this definition">#</a></dt>
+<dd><p>SSDATA Extract state-space matrices of the wrapped system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">[A,</span> <span class="pre">B,</span> <span class="pre">C,</span> <span class="pre">D]</span></code> — the state-space quadruple.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>double (multiple outputs)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant.tf">
+<span class="sig-name descname"><span class="pre">tf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant.tf" title="Link to this definition">#</a></dt>
+<dd><p>TF Transfer function representation of the plant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Transfer function of <code class="docutils literal notranslate"><span class="pre">P</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tf</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="cell-of-plants-subsystems">
+<h2>Cell of Plants (Subsystems)<a class="headerlink" href="#cell-of-plants-subsystems" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">genplant_poly</span></code> class is used to store subsystems in the switched systems setting.</p>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">plant.genplant.</span></span><span class="sig-name descname"><span class="pre">genplant_poly</span></span><a class="headerlink" href="#plant.genplant.genplant_poly" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#plant.genplant.genplant" title="plant.genplant.genplant"><code class="xref mat mat-class docutils literal notranslate"><span class="pre">plant.genplant.genplant</span></code></a>, <code class="xref mat mat-class docutils literal notranslate"><span class="pre">matlab.mixin.indexing.RedefinesBrace</span></code></p>
+<p>GENPLANT_POLY a generalized plant defined over corners of a polytope.
+Used for switched systems</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.genplant_poly">
+<span class="sig-name descname"><span class="pre">genplant_poly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">P_orig</span></em>, <em class="sig-param"><span class="pre">n</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.genplant_poly" title="Link to this definition">#</a></dt>
+<dd><p>Constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">cell</span> <span class="pre">of</span> <span class="pre">sdpss</span></code></span>) – state space systems for each subsystem</p></li>
+<li><p><strong>n</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">struct</span></code></span>) – partition of the channels into [z, zp, y], [w, wp, u]</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.A">
+<span class="sig-name descname"><span class="pre">A</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.A" title="Link to this definition">#</a></dt>
+<dd><p>cell of A matrices in state space systems</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.B">
+<span class="sig-name descname"><span class="pre">B</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.B" title="Link to this definition">#</a></dt>
+<dd><p>cell of B matrices in state space systems</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.C">
+<span class="sig-name descname"><span class="pre">C</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.C" title="Link to this definition">#</a></dt>
+<dd><p>cell of C matrices in state space systems</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.D">
+<span class="sig-name descname"><span class="pre">D</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.D" title="Link to this definition">#</a></dt>
+<dd><p>cell of D matrices in state space systems</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.Dyu">
+<span class="sig-name descname"><span class="pre">Dyu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.Dyu" title="Link to this definition">#</a></dt>
+<dd><p>controller output to controller input, direct feedthrough</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.Nss">
+<span class="sig-name descname"><span class="pre">Nss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.Nss" title="Link to this definition">#</a></dt>
+<dd><p>number of subsystems</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.add_oracle_input">
+<span class="sig-name descname"><span class="pre">add_oracle_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">ind_w</span></em>, <em class="sig-param"><span class="pre">ind_z</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.add_oracle_input" title="Link to this definition">#</a></dt>
+<dd><p>add external inputs at the operator F</p>
+<p><span class="math notranslate nohighlight">\(w + \delta w \in F(z + dz)\)</span>
+:param ind_w: at the input of the operator
+:param ind_z: at the output of the operator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iwp</strong> – new performance input indices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.blkdiag">
+<span class="sig-name descname"><span class="pre">blkdiag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">b2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.blkdiag" title="Link to this definition">#</a></dt>
+<dd><p>block-diagonal of two plants, comporting with the indexing scheme</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>b2</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">genplant</span></code></span>) – the other plant</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>b_out (genplant): the block diagonal plant</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.lft">
+<span class="sig-name descname"><span class="pre">lft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">b2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.lft" title="Link to this definition">#</a></dt>
+<dd><p>LFT linear fractional transformation:
+feedback interconnection of obj and plant b2
+along common channels (u, y) in each subsystem
+obj star b2</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>b2</strong> (<span><code class="xref mat mat-obj docutils literal notranslate"><span class="pre">genplant</span></code></span>) – the other plant</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>b_out (genplant): the lft plant</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.nx">
+<span class="sig-name descname"><span class="pre">nx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.nx" title="Link to this definition">#</a></dt>
+<dd><p>number of states</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.perf_ergodic">
+<span class="sig-name descname"><span class="pre">perf_ergodic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">Nw</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.perf_ergodic" title="Link to this definition">#</a></dt>
+<dd><p>PERF_ERGODIC inputs and outputs for ergodic convergence</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Nw</strong> – given consensus matrix</p>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>iwp</strong> – new performance input indices</p></li>
+<li><p><strong>izp</strong> – new performance output indices</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.perf_output_con">
+<span class="sig-name descname"><span class="pre">perf_output_con</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">c</span></em>, <em class="sig-param"><span class="pre">ind_z</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.perf_output_con" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>PERF_OUTPUT_CON: add performance to track the consensus output</dt><dd><p><cite>z_p^i = z^i - text{average}(z)</cite></p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>c</strong> – dimension of the coordinate/kronecker lift</p></li>
+<li><p><strong>iz</strong> – indices of input of operators</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>izp</strong> – new performance output indices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.perf_output_opt">
+<span class="sig-name descname"><span class="pre">perf_output_opt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">c</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.perf_output_opt" title="Link to this definition">#</a></dt>
+<dd><p>PERF_OUTPUT_OPT add performance to track the w output
+condition,
+:param ind_w: indices of the input of the operator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>izp</strong> – new performance output indices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.perf_output_w">
+<span class="sig-name descname"><span class="pre">perf_output_w</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">ind_w</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.perf_output_w" title="Link to this definition">#</a></dt>
+<dd><p>PERF_OUTPUT_W: add performance to track the w output</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ind_w</strong> – indices of the input of the operator</p>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>izp</strong> – new performance output indices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.perf_output_z">
+<span class="sig-name descname"><span class="pre">perf_output_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">ind_z</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.perf_output_z" title="Link to this definition">#</a></dt>
+<dd><p>PERF_OUTPUT_Z: add performance to track the z output</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ind_z</strong> – indices of the output of the operator</p>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>izp</strong> – new performance output indices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.ss">
+<span class="sig-name descname"><span class="pre">ss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.ss" title="Link to this definition">#</a></dt>
+<dd><p>extract the state-space expression</p>
+</dd></dl>
+
+<dl class="mat method">
+<dt class="sig sig-object mat" id="plant.genplant.genplant_poly.ss_zy_wu">
+<span class="sig-name descname"><span class="pre">ss_zy_wu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">ind</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plant.genplant.genplant_poly.ss_zy_wu" title="Link to this definition">#</a></dt>
+<dd><p>get plant matrices for the [wu] -&gt; [zy] subsytsem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ind</strong> – the index of the subsystem to get information from</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="doc_plants.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Plants</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="doc_templates.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Plant Templates</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#individual-plants">Individual Plants</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cell-of-plants-subsystems">Cell of Plants (Subsystems)</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By opt-syn team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, opt-syn team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

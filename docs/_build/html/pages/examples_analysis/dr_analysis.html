@@ -1,0 +1,568 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
+    <title>Cocoercive plus Strongly Monotone &#8212; opt-syn</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=720ed60b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=e1a75a79"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/examples_analysis/dr_analysis';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Synthesis of Algorithms" href="../examples_synthesis/index_example_synthesis.html" />
+    <link rel="prev" title="Analysis of Algorithms" href="index_example_analysis.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/opt_syn_light.svg" class="logo__image only-light" alt="opt-syn - Home"/>
+    <img src="../../_static/opt_syn_dark.svg" class="logo__image only-dark pst-js-only" alt="opt-syn - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started.html">Get Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../how_it_works/index_how_it_works.html">How it Works</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/opt_algs.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/alg_properties.html">Properties of Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/convergence_conditions.html">Convergence Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/op_uncertainty_iqc.html">IQC Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/network_synthesis.html">Synthesis and Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/system/index_system.html">Build the System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/simulation.html">Simulate</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/config.html">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/specs.html">Performance Specifications</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/solve.html">Solve and Validate</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../examples.html">Examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr_game.html">Nash Equilibrium Seeking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_coord_descent.html">Cyclic Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_switched.html">Time-Varying Delays</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index_example_analysis.html">Analysis</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Douglas-Rachford</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../documentation/index_documentation.html">Documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_solutions.html">Solution</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_set_valued.html">Set-Valued Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_sml.html">Subdifferentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/operators/doc_quadratic.html">Gradients of Quadratics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/plants/doc_genplant.html">Generalized Plants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/plants/doc_templates.html">Plant Templates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../documentation/system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_switched.html">Switched</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_periodic.html">Periodic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../documentation/system/doc_periodic_orbit.html">Periodic-Orbit</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_iqc.html">Integral Quadratic Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_specs.html">Performance Specifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_config.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/doc_plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog/0.1.0.html">What’s new in 0.1.0</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/jarmill/opt-syn" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/pages/examples_analysis/dr_analysis.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Cocoercive plus Strongly Monotone</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <!-- ---
+
+tocdepth: 2
+
+--- -->
+<section class="tex2jax_ignore mathjax_ignore" id="cocoercive-plus-strongly-monotone">
+<h1>Cocoercive plus Strongly Monotone<a class="headerlink" href="#cocoercive-plus-strongly-monotone" title="Link to this heading">#</a></h1>
+<p>This example involves finding the solution to a two-operator inclusion problem, where <span class="math notranslate nohighlight">\(F_1\)</span> is <span class="math notranslate nohighlight">\(\beta\)</span>-cocoercive and <span class="math notranslate nohighlight">\(F_1\)</span> is <span class="math notranslate nohighlight">\(\mu\)</span>-strongly maximal monotone.
+The Douglas-Rachford Algorithm with parameters <span class="math notranslate nohighlight">\(\lambda = 1, \gamma = 1\)</span> is used to solve this   problem,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+ \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &amp;= \mat{c|cc}{I &amp; - I &amp; - I \hl I &amp;- I &amp; 0 \\
+ I &amp; -2 I &amp; - I  }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, &amp; \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{F_1(z_k^1) \\  F_2(z_k^2)}.
+\end{align*}\end{split}\]</div>
+<p>The explicit minimal rate <span class="math notranslate nohighlight">\(\rho\)</span> for this Douglas Rachford algorithm is (Corollary 4.2<a class="footnote-reference brackets" href="#footcite-ryu2020operator" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>)</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+\rho_{\text{best}} = \begin{cases} 
+\abs{1-\frac{\beta}{\beta+1}} &amp; &amp; \beta^2 + \mu \beta + \beta \leq 0 \\
+\abs{1-\frac{\1 + \mu\beta}{(\mu+1)(\beta+1)}} &amp; &amp; \mu \beta - \mu - \beta \leq 0 \\
+\abs{1 - \frac{\mu}{\mu+1}} &amp; &amp; \mu^2 + \mu \beta + \mu - \beta \leq 0 \\
+\frac{1}{2} \frac{\beta + \mu}{\sqrt{\beta \mu(\beta + \mu + 1)}} &amp; &amp; \text{else}. \\
+\end{cases}
+\end{align*}\]</div>
+<p>Analysis is performed to numerically estimate this minimal rate at order <code class="docutils literal notranslate"><span class="pre">{1,</span> <span class="pre">1}</span></code>. The parameter <span class="math notranslate nohighlight">\(\mu\)</span> is fixed to 1, and <span class="math notranslate nohighlight">\(\beta\)</span> is swept from  <span class="math notranslate nohighlight">\(\beta \in [10^{-2}, 10^2]\)</span>. Figure <a class="reference internal" href="#dr-est-sum"><span class="xref myst">1</span></a> plots the computed and true contraction rates on top, and the error in the estimates on the bottom.</p>
+<figure class="align-center" id="dr-est-sum">
+<a class="only-dark reference internal image-reference" href="../../_images/dr_mono_plus_coco_dark.png"><img alt="../../_images/dr_mono_plus_coco_dark.png" class="only-dark" height="573" src="../../_images/dr_mono_plus_coco_dark.png" width="615" />
+</a>
+<figcaption>
+<p><span class="caption-text"><em>Figure 1:</em> Estimates of the Douglas Rachford Convergence Rate</span><a class="headerlink" href="#dr-est-sum" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id2">
+<a class="only-light reference internal image-reference" href="../../_images/dr_mono_plus_coco_light.png"><img alt="../../_images/dr_mono_plus_coco_light.png" class="only-light" height="573" src="../../_images/dr_mono_plus_coco_light.png" width="615" />
+</a>
+<figcaption>
+<p><span class="caption-text"><em>Figure 1:</em> Estimates of the Douglas Rachford Convergence Rate</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Code for Douglas-Rachford sweep analysis</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c">%cocoercive plus strongly monotone</span>
+<span class="linenos"> 2</span><span class="n">mu</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="nb">beta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mf">1.5</span><span class="p">;</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="c">%sweep beta</span>
+<span class="linenos"> 5</span><span class="n">Nbeta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+<span class="linenos"> 6</span><span class="n">beta_sweep</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">Nbeta</span><span class="p">);</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="c">%description of operators</span>
+<span class="linenos"> 9</span><span class="n">op1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_gen</span><span class="p">();</span>
+<span class="linenos">10</span><span class="n">op1</span><span class="p">.</span><span class="n">monotone</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">mu</span><span class="p">;</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="n">op2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">op_gen</span><span class="p">();</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="c">%douglas rachford</span>
+<span class="linenos">15</span><span class="nb">gamma</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">lambda</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="n">K</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ss</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span><span class="w">    </span><span class="p">[</span><span class="o">-</span><span class="n">lambda</span><span class="o">*</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">lambda</span><span class="o">*</span><span class="nb">gamma</span><span class="p">],</span><span class="w"> </span><span class="k">...</span>
+<span class="linenos">18</span><span class="w">       </span><span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="nb">gamma</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nb">gamma</span><span class="p">],</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span><span class="c">%form the system</span>
+<span class="linenos">21</span><span class="n">sys</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">({</span><span class="n">op1</span><span class="p">,</span><span class="w"> </span><span class="n">op2</span><span class="p">},</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
+<span class="linenos">22</span><span class="n">sys_subdiff</span><span class="p">=</span><span class="w"> </span><span class="n">opt_system</span><span class="p">({</span><span class="n">op1_subdiff</span><span class="p">,</span><span class="w"> </span><span class="n">op2_subdiff</span><span class="p">},</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="n">K</span><span class="p">);</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span><span class="c">%solve the problem</span>
+<span class="linenos">25</span><span class="n">order</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">};</span>
+<span class="linenos">26</span><span class="n">man</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">opt_analysis</span><span class="p">(</span><span class="n">sys</span><span class="p">);</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span><span class="n">rho_best_dr</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">zeros</span><span class="p">(</span><span class="n">Nbeta</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">29</span><span class="n">rho</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">zeros</span><span class="p">(</span><span class="n">Nbeta</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">30</span><span class="c">%set and solve</span>
+<span class="linenos">31</span><span class="k">for</span><span class="w"> </span><span class="nb">i</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="n">Nbeta</span>
+<span class="linenos">32</span><span class="w">    </span><span class="c">%assign the sweep</span>
+<span class="linenos">33</span><span class="w">    </span><span class="n">man</span><span class="p">.</span><span class="n">sys</span><span class="p">.</span><span class="n">op</span><span class="p">{</span><span class="mi">2</span><span class="p">}.</span><span class="n">cocoercive</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">beta_sweep</span><span class="p">(</span><span class="nb">i</span><span class="p">);</span><span class="w">    </span>
+<span class="linenos">34</span>
+<span class="linenos">35</span><span class="w">    </span><span class="c">%compute bound</span>
+<span class="linenos">36</span><span class="w">    </span><span class="n">sol</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">man</span><span class="p">.</span><span class="n">bisect</span><span class="p">(</span><span class="n">order</span><span class="p">);</span>
+<span class="linenos">37</span><span class="w">    </span><span class="n">rho</span><span class="p">(</span><span class="nb">i</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sol</span><span class="p">.</span><span class="n">rho</span><span class="p">;</span><span class="w">   </span>
+<span class="linenos">38</span>
+<span class="linenos">39</span><span class="w">    </span><span class="c">%find the true rate</span>
+<span class="linenos">40</span><span class="w">    </span><span class="n">rho_best_dr</span><span class="p">(</span><span class="nb">i</span><span class="p">)</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">best_dr_rate</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span><span class="w"> </span><span class="n">beta_sweep</span><span class="p">(</span><span class="nb">i</span><span class="p">));</span><span class="w">     </span>
+<span class="linenos">41</span><span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<p>This example was inspired by the <a class="reference external" href="https://autolyap.github.io/examples/douglas_rachford/cocoercive_plus_strongly_monotone/">demonstration</a> in AutoLyap.</p>
+</section>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-ryu2020operator" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Ernest K Ryu, Adrien B Taylor, Carolina Bergeling, and Pontus Giselsson. Operator Splitting Performance Estimation: Tight Contraction Factors and Optimal Parameter Selection. <em>SIAM Journal on Optimization</em>, 30(3):2251–2271, 2020.</p>
+</aside>
+</aside>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index_example_analysis.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Analysis of Algorithms</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../examples_synthesis/index_example_synthesis.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Synthesis of Algorithms</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By opt-syn team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, opt-syn team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+sphinx
+sphinxcontrib-matlabdomain
+sphinxcontrib-bibtex
+sphinx-book-theme
+sphinx-favicon
+sphinx-subfigure
+myst-parser

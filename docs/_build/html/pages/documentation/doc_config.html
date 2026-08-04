@@ -1,0 +1,901 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../_static/favicon/sun_part_16.svg" rel="icon" type="image/svg+xml">
+    <title>Configuration &#8212; opt-syn</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=720ed60b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../_static/documentation_options.js?v=e1a75a79"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"loader": {"load": ["[tex]/html"]}, "tex": {"packages": {"[+]": ["html", "arydshln", "xcolor"]}, "macros": {"abs": ["\\left\\lvert #1 \\right\\rvert", 1], "Bignorm": ["\\left\\lVert #1 \\right\\rVert", 1], "norm": ["\\lVert #1 \\rVert", 1], "Biginner": ["\\left\\langle #1, #2 \\right\\rangle", 2], "mas": ["\\left[\\begin{array}{#1}#2\\end{array}\\right]", 2], "mat": ["\\left(\\begin{array}{#1}#2\\end{array}\\right)", 2], "mav": ["\\left\\lVert\\begin{array}{#1}#2\\end{array}\\right\\rVert", 2], "argmax": "\\operatorname*{argmax}", "argmin": "\\operatorname*{argmin}", "R": "\\mathbb{R}", "Rbar": "\\overline{\\mathbb{R}}", "rhoi": "\\rho^{-1}", "C": "\\mathbb{C}", "sC": "\\mathcal{C}", "N": "\\mathbb{N}", "Z": "\\mathbb{Z}", "F": "\\mathcal{F}", "1": "\\mathbb{1}", "0": "\\mathbb{0}", "hdots": "\\cdot \\cdot \\cdot ", "hl": "\\\\ \\hline", "hdl": "\\\\ \\hdashline", "nulls": "\\textrm{null}", "ov": ["\\overline{#1}", 1], "Acl": "\\mathcal{A}", "Bcl": "\\mathcal{B}", "Ccl": "\\mathcal{C}", "Dcl": "\\mathcal{D}", "Ac": "A_c", "Bc": "B_c", "Cc": "C_c", "Dc": "D_c", "Kc": "K_c", "blam": "{\\lambda}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pages/documentation/doc_config';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Simulation" href="doc_simulation.html" />
+    <link rel="prev" title="Performance Specifications" href="doc_specs.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/opt_syn_light.svg" class="logo__image only-light" alt="opt-syn - Home"/>
+    <img src="../../_static/opt_syn_dark.svg" class="logo__image only-dark pst-js-only" alt="opt-syn - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../get_started.html">Get Started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_simulation/index_example_simulation.html">Simulation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr.html">Noisy Douglas Rachford</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_dr_game.html">Nash Equilibrium Seeking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_channel_memory_symmetric.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_bind.html">Repeated Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_tracking.html">Tracking an Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_coord_descent.html">Cyclic Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_simulation/sim_switched.html">Time-Varying Delays</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_analysis/index_example_analysis.html">Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_dy_delay.html">Davis-Yin with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_dr_coco_plus_mono.html">Cocoercive plus Strongly Monotone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_analysis/ana_tracking.html">Tracking an Oscillator</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../examples_synthesis/index_example_synthesis.html">Synthesis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_lasso.html">LASSO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_channel_memory.html">Channel Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_games_with_delay.html">Games with Delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_repeated.html">Repeated Operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_coord_descent.html">Coordinate Descent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples_synthesis/syn_switched_system.html">Switched Systems</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../how_it_works/index_how_it_works.html">How it Works</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/opt_algs.html">Optimization Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/alg_properties.html">Properties of Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/convergence_conditions.html">Convergence Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/op_uncertainty_iqc.html">IQC Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_it_works/network_synthesis.html">Synthesis and Networks</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../usage/index_usage.html">Usage</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/system/index_system.html">Build the System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/bind.html">Repeated Operator Evaluations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/tracking.html">Time-Varying Optimal Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/system/dynamics.html">Time-Varying Dynamical Systems</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/simulation.html">Simulate</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../usage/problem_formulation/index_problem_formulation.html">Problem Setup</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/specs.html">Performance Specifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage/problem_formulation/config.html">Configuration</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage/solve.html">Solve and Validate</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index_documentation.html">Documentation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="doc_manager.html">Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_solutions.html">Solution</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="operators/doc_operators.html">Operator Classes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="operators/doc_set_valued.html">Set-Valued Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="operators/doc_sml.html">Subdifferentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="operators/doc_quadratic.html">Gradients of Quadratics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="plants/doc_plants.html">Plants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="plants/doc_genplant.html">Generalized Plants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plants/doc_templates.html">Plant Templates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="system/doc_system.html">Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="system/doc_lti.html">Linear Time Invariant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system/doc_switched.html">Switched</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system/doc_periodic.html">Periodic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system/doc_periodic_orbit.html">Periodic-Orbit</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_iqc.html">Integral Quadratic Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_specs.html">Performance Specifications</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doc_plotting.html">Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../changelog/changelog.html">Changelog</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog/0.1.0.html">What’s new in 0.1.0</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/jarmill/opt-syn" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/pages/documentation/doc_config.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Configuration</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sub-configuration">Sub-configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bisection">Bisection</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">opt_config</span></code> is the configuration file for the <a class="reference internal" href="doc_manager.html"><span class="doc">Manager</span></a> classes.</p>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="config.opt_config">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">opt_config</span></span><a class="headerlink" href="#config.opt_config" title="Link to this definition">#</a></dt>
+<dd><p>OPT_CONFIG configuration options for optimization algorithm analysis
+and synthesis</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="config.opt_config.opt_config">
+<span class="sig-name descname"><span class="pre">opt_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#config.opt_config.opt_config" title="Link to this definition">#</a></dt>
+<dd><p>OPT_CONFIG construct the configuration</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config.ana">
+<span class="sig-name descname"><span class="pre">ana</span></span><a class="headerlink" href="#config.opt_config.ana" title="Link to this definition">#</a></dt>
+<dd><p>analysis only options</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config.gen">
+<span class="sig-name descname"><span class="pre">gen</span></span><a class="headerlink" href="#config.opt_config.gen" title="Link to this definition">#</a></dt>
+<dd><p>general options for analysis and synthesis</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config.recovery">
+<span class="sig-name descname"><span class="pre">recovery</span></span><a class="headerlink" href="#config.opt_config.recovery" title="Link to this definition">#</a></dt>
+<dd><p>recovery of the solution</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config.switched">
+<span class="sig-name descname"><span class="pre">switched</span></span><a class="headerlink" href="#config.opt_config.switched" title="Link to this definition">#</a></dt>
+<dd><p>system-type specific options</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config.syn">
+<span class="sig-name descname"><span class="pre">syn</span></span><a class="headerlink" href="#config.opt_config.syn" title="Link to this definition">#</a></dt>
+<dd><p>synthesis only options</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config.tol">
+<span class="sig-name descname"><span class="pre">tol</span></span><a class="headerlink" href="#config.opt_config.tol" title="Link to this definition">#</a></dt>
+<dd><p>numerical tolerances for solving LMIs</p>
+</dd></dl>
+
+</dd>
+<dt>Method Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="config.opt_config.LMILAB">
+<span class="sig-name descname"><span class="pre">LMILAB</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#config.opt_config.LMILAB" title="Link to this definition">#</a></dt>
+<dd><p>is LMILAB used?</p>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<section id="sub-configuration">
+<h2>Sub-configuration<a class="headerlink" href="#sub-configuration" title="Link to this heading">#</a></h2>
+<p>The dedicated sub-configuration options are</p>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="config.opt_config_tol">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">opt_config_tol</span></span><a class="headerlink" href="#config.opt_config_tol" title="Link to this definition">#</a></dt>
+<dd><p>OPT_CONFIG_TOL Configuration options for numerical tolerances in analysis and synthesis</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="config.opt_config_tol.opt_config_tol">
+<span class="sig-name descname"><span class="pre">opt_config_tol</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#config.opt_config_tol.opt_config_tol" title="Link to this definition">#</a></dt>
+<dd><p>OPT_CONFIG_tol constructor</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_tol.GX_max">
+<span class="sig-name descname"><span class="pre">GX_max</span></span><a class="headerlink" href="#config.opt_config_tol.GX_max" title="Link to this definition">#</a></dt>
+<dd><p>upper bound on norm of primal storage matrix (synthesis)</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_tol.GY_max">
+<span class="sig-name descname"><span class="pre">GY_max</span></span><a class="headerlink" href="#config.opt_config_tol.GY_max" title="Link to this definition">#</a></dt>
+<dd><p>upper bound on norm of dual storage matrix (synthesis)</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_tol.G_max">
+<span class="sig-name descname"><span class="pre">G_max</span></span><a class="headerlink" href="#config.opt_config_tol.G_max" title="Link to this definition">#</a></dt>
+<dd><p>upper bound on norm of storage matrix (analysis)</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_tol.G_min">
+<span class="sig-name descname"><span class="pre">G_min</span></span><a class="headerlink" href="#config.opt_config_tol.G_min" title="Link to this definition">#</a></dt>
+<dd><p>lower-bound on storage function eigenvalue</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_tol.K_max">
+<span class="sig-name descname"><span class="pre">K_max</span></span><a class="headerlink" href="#config.opt_config_tol.K_max" title="Link to this definition">#</a></dt>
+<dd><p>upper bound on norm of controller state space matrices</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_tol.M">
+<span class="sig-name descname"><span class="pre">M</span></span><a class="headerlink" href="#config.opt_config_tol.M" title="Link to this definition">#</a></dt>
+<dd><p>tolerance for dissipation constraints</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_tol.X">
+<span class="sig-name descname"><span class="pre">X</span></span><a class="headerlink" href="#config.opt_config_tol.X" title="Link to this definition">#</a></dt>
+<dd><p>tolerance for sign/terminal cost constraints</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_tol.dia">
+<span class="sig-name descname"><span class="pre">dia</span></span><a class="headerlink" href="#config.opt_config_tol.dia" title="Link to this definition">#</a></dt>
+<dd><p>tolerance for acceptable solution</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_tol.input_diss">
+<span class="sig-name descname"><span class="pre">input_diss</span></span><a class="headerlink" href="#config.opt_config_tol.input_diss" title="Link to this definition">#</a></dt>
+<dd><p>tolerance for strict input dissipation</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_tol.spread">
+<span class="sig-name descname"><span class="pre">spread</span></span><a class="headerlink" href="#config.opt_config_tol.spread" title="Link to this definition">#</a></dt>
+<dd><p>tolerance in the matrix dilation constraint</p>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="mat class">
+<dt class="sig sig-object mat" id="config.opt_config_gen">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">opt_config_gen</span></span><a class="headerlink" href="#config.opt_config_gen" title="Link to this definition">#</a></dt>
+<dd><p>OPT_CONFIG_GEN Configuration options for analysis and synthesis</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="config.opt_config_gen.opt_config_gen">
+<span class="sig-name descname"><span class="pre">opt_config_gen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#config.opt_config_gen.opt_config_gen" title="Link to this definition">#</a></dt>
+<dd><p>OPT_CONFIG_GEN constructor</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_gen.impose_X">
+<span class="sig-name descname"><span class="pre">impose_X</span></span><a class="headerlink" href="#config.opt_config_gen.impose_X" title="Link to this definition">#</a></dt>
+<dd><p>apply PD constraint to the storage matrix</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_gen.same_rho">
+<span class="sig-name descname"><span class="pre">same_rho</span></span><a class="headerlink" href="#config.opt_config_gen.same_rho" title="Link to this definition">#</a></dt>
+<dd><p>use the same convergence rate in all performance specifications</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_gen.solver">
+<span class="sig-name descname"><span class="pre">solver</span></span><a class="headerlink" href="#config.opt_config_gen.solver" title="Link to this definition">#</a></dt>
+<dd><p>which solver to use</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_gen.verbose">
+<span class="sig-name descname"><span class="pre">verbose</span></span><a class="headerlink" href="#config.opt_config_gen.verbose" title="Link to this definition">#</a></dt>
+<dd><p>level of output</p>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="mat class">
+<dt class="sig sig-object mat" id="config.opt_config_ana">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">opt_config_ana</span></span><a class="headerlink" href="#config.opt_config_ana" title="Link to this definition">#</a></dt>
+<dd><p>OPT_CONFIG_ANA Configuration options for analysis</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="config.opt_config_ana.opt_config_ana">
+<span class="sig-name descname"><span class="pre">opt_config_ana</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#config.opt_config_ana.opt_config_ana" title="Link to this definition">#</a></dt>
+<dd><p>OPT_CONFIG_ANA constructor</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_ana.normalize_margin">
+<span class="sig-name descname"><span class="pre">normalize_margin</span></span><a class="headerlink" href="#config.opt_config_ana.normalize_margin" title="Link to this definition">#</a></dt>
+<dd><p>The sum of the coefficients in the analysis program should be within the interval [s-margin, s+margin].</p>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="mat class">
+<dt class="sig sig-object mat" id="config.opt_config_syn">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">opt_config_syn</span></span><a class="headerlink" href="#config.opt_config_syn" title="Link to this definition">#</a></dt>
+<dd><p>OPT_CONFIG_SYN Configuration options for synthesis</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="config.opt_config_syn.opt_config_syn">
+<span class="sig-name descname"><span class="pre">opt_config_syn</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#config.opt_config_syn.opt_config_syn" title="Link to this definition">#</a></dt>
+<dd><p>OPT_CONFIG_SYN constructor</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_syn.D_mask">
+<span class="sig-name descname"><span class="pre">D_mask</span></span><a class="headerlink" href="#config.opt_config_syn.D_mask" title="Link to this definition">#</a></dt>
+<dd><p>which elements of D can be nonzero?</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_syn.elimination">
+<span class="sig-name descname"><span class="pre">elimination</span></span><a class="headerlink" href="#config.opt_config_syn.elimination" title="Link to this definition">#</a></dt>
+<dd><p>if there is only one specification</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_syn.elimination_type">
+<span class="sig-name descname"><span class="pre">elimination_type</span></span><a class="headerlink" href="#config.opt_config_syn.elimination_type" title="Link to this definition">#</a></dt>
+<dd><p>(and the system is LTI), use the
+matrix elimination lemma</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.opt_config_syn.reduced_order">
+<span class="sig-name descname"><span class="pre">reduced_order</span></span><a class="headerlink" href="#config.opt_config_syn.reduced_order" title="Link to this definition">#</a></dt>
+<dd><p>use internal model structure to synthesize reduced-order controllers (LTI and periodic-orbit)</p>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+<section id="bisection">
+<h2>Bisection<a class="headerlink" href="#bisection" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">bisect_opts</span></code> is used only when the Analysis or Synthesis problems are solved in Bisect or Alternating mode. <code class="docutils literal notranslate"><span class="pre">bisect_opts</span></code> is not required if the problem is solved only once, such as at a fixed linear rate <span class="math notranslate nohighlight">\(\rho\)</span>.</p>
+<dl class="mat class">
+<dt class="sig sig-object mat" id="config.bisect_opts">
+<span class="property"><span class="pre">class</span> </span><span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">bisect_opts</span></span><a class="headerlink" href="#config.bisect_opts" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref mat mat-class docutils literal notranslate"><span class="pre">handle</span></code></p>
+<p>BISECT_OPTS options used when applying bisection/alternation in the
+manager class</p>
+<div class="members docutils container">
+<dl>
+<dt>Constructor Summary</dt><dd><dl class="mat method">
+<dt class="sig sig-object mat" id="config.bisect_opts.bisect_opts">
+<span class="sig-name descname"><span class="pre">bisect_opts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#config.bisect_opts.bisect_opts" title="Link to this definition">#</a></dt>
+<dd><p>Constructor</p>
+</dd></dl>
+
+</dd>
+<dt>Property Summary</dt><dd><dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.bisect_opts.backoff">
+<span class="sig-name descname"><span class="pre">backoff</span></span><a class="headerlink" href="#config.bisect_opts.backoff" title="Link to this definition">#</a></dt>
+<dd><p>increase parameter by backoff when switching between analysis and synthesis. Try to ensure feasibility this way.</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.bisect_opts.bisect">
+<span class="sig-name descname"><span class="pre">bisect</span></span><a class="headerlink" href="#config.bisect_opts.bisect" title="Link to this definition">#</a></dt>
+<dd><p>use bisection or not</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.bisect_opts.bisect_rho">
+<span class="sig-name descname"><span class="pre">bisect_rho</span></span><a class="headerlink" href="#config.bisect_opts.bisect_rho" title="Link to this definition">#</a></dt>
+<dd><p>should bisection occur on rho</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.bisect_opts.spec_ind">
+<span class="sig-name descname"><span class="pre">spec_ind</span></span><a class="headerlink" href="#config.bisect_opts.spec_ind" title="Link to this definition">#</a></dt>
+<dd><p>which specification should be bisected</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.bisect_opts.tol">
+<span class="sig-name descname"><span class="pre">tol</span></span><a class="headerlink" href="#config.bisect_opts.tol" title="Link to this definition">#</a></dt>
+<dd><p>tolerance for upper bound - lower bound in bisection</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.bisect_opts.val_init">
+<span class="sig-name descname"><span class="pre">val_init</span></span><a class="headerlink" href="#config.bisect_opts.val_init" title="Link to this definition">#</a></dt>
+<dd><p>initial value</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.bisect_opts.val_range">
+<span class="sig-name descname"><span class="pre">val_range</span></span><a class="headerlink" href="#config.bisect_opts.val_range" title="Link to this definition">#</a></dt>
+<dd><p>parameter range used in bisection</p>
+</dd></dl>
+
+<dl class="mat attribute">
+<dt class="sig sig-object mat" id="config.bisect_opts.warm_factor">
+<span class="sig-name descname"><span class="pre">warm_factor</span></span><a class="headerlink" href="#config.bisect_opts.warm_factor" title="Link to this definition">#</a></dt>
+<dd><p>if an initial guess is supplied, expand for an initial range</p>
+</dd></dl>
+
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="doc_specs.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Performance Specifications</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="doc_simulation.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Simulation</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sub-configuration">Sub-configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bisection">Bisection</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By opt-syn team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, opt-syn team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
