@@ -36,7 +36,7 @@ initial condition $x_0$ there is a fixed point $(x^*(x_0), w^*(x_0), z^*(x_0))$ 
 ```{math}
 \begin{align*}
 \mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2
-  \leq \gamma_0\, \rho^{k} \norm{x_0 - x^*(x_0)}_2, & & \forall k \in \N.
+  \leq \gamma_0\, \rho^{k} \norm{x_0 - x^*(x_0)}_2 = 0, & & \forall k \in \N.
 \end{align*}
 ```
 

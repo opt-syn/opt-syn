@@ -161,7 +161,7 @@ The operator $H_i: = (F_i^{-1} - \Dcl_{zw, ii})^{-1}$ can be evaluated using the
 :::{list-table}
 :header-rows: 1
 * - Evaluation
-  - Method
+  - Used Method
   - Condition
   - Operation $z_i \mapsto H_i z_i$
 * - Explicit

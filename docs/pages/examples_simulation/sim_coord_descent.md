@@ -1,7 +1,7 @@
 # Cyclic Coordinate Descent
 
 A coordinate descent algorithm searches over only a subset of variables in each iteration.
-<!-- {footcite}`wright2015coordinate`.  -->
+{footcite}`wright2015coordinate`.
 
 Letting $i(k)$ be the active coordinate block at iteration $k$, a coordinate descent method to minimize a function $f$ is with stepsize $\gamma>0$ is 
  ```{math}
@@ -45,24 +45,20 @@ The $c$-block cyclic coordinate descent algorithm with $\gamma>0$ is described b
 
 \begin{align*}
 \text{Operator}:  & &w_k  = \nabla f(z_k), \\
-    \text{Network}: & &  \mat{c}{M^{k+1} x_{k+1}^N \hl M^k z_k \\ M^k y_k} &= \left[\mat{cc|cc:cc}{
-    0 & I_{c-1} & 0 & 0_{c-1} & 0 & 0_{c-1} \\
-    0 & 0 & 0 & 0 & 1 & 0 \hl
-    0 & 0 & 0 & 0 & 1 & 0 \\
-    0 & I_{c-1} & 0 & 0 & 0 & 0_{c-1} \hdl
-    0 & 0 & 1 & 0 & 0 & 0 \\
-    0 & 0 & 0 & I_{c-1} & 0 & 0
-    } \otimes I\right]\mat{c}{M^k x_k^N \hl M^k w_k \\ M^k u_k}, \\
-    \text{Gradient Descent}: & & \mat{c}{M^{k+1} x^c_{k+1} \hl M^k u_k} &= \left[\mat{cc|cc}{0 & I_{c-1}  & 0 & 0_{c-1} \\
-    0 & 0 &  -\gamma & 0 \hl
-    1 & 0 & 0  & 0 \\
-    0 & 0 & 0  & 0 } \otimes I \right] \mat{c}{M^k x^c_k \hl M^k y_k}.
+    \text{Network}: & &  \mat{c}{M^k z_k \\ M^k y_k} &= \left[\mat{cc:cc}{
+  0 & 0 & 0 & I_{c-1}  \\
+  0 & 0 & 1 & 0 \\
+  1 & 0 & 0 & 0 \\
+  0 & I_{c-1} & 0 & 0 
+    } \otimes I\right]\mat{c}{M^k w_k \\ M^k u_k}, \\
+    \text{Gradient Descent}: & & \mat{c}{M^{k+1} x^c_{k+1} \hl M^k u_k} &= \left[\mat{cc|cc}{M I & -\gamma M I \\
+    I & 0} \otimes I \right] \mat{c}{M^k x^c_k \hl M^k y_k}.
 \end{align*}
 
 
 Algorithm simulation is performed by using the {class}`opt_system_periodic_orbit` object.
 
-```{literalinclude} ../../../examples/simulation/sim_coordinate_descent.m
+```{literalinclude} ../../../examples/simulation/sim_coord_descent.m
 :linenos: true
 :caption: Code for coordinate descent with blocksize $c=6$
 :language: matlab

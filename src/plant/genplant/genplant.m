@@ -55,28 +55,31 @@ classdef genplant
             end
             obj.P = P;
             if isnumeric(P) && ~isempty(P)
-                % static system
-                [obj.ny, obj.nu] = size(P);
-            else
-                if nargin > 1
-                    if ~isfield(n, 's')
-                        obj.s = 0;
-                    else
-                        obj.s = n.s;
-                    end
-                    obj.nz = n.nz;
-                    obj.nw = n.nw;
-                    obj.ny = n.ny;
-                    obj.nu = n.nu;
-
-                    if isfield(n, 'nzp')
-                        obj.nzp = n.nzp;
-                    end
-                    if isfield(n, 'nwp')
-                        obj.nwp = n.nwp;
-                    end
-                end
+                % static system                
+                obj.P = ss(P);
             end
+            
+            if nargin > 1
+                if ~isfield(n, 's')
+                    obj.s = 0;
+                else
+                    obj.s = n.s;
+                end
+                obj.nz = n.nz;
+                obj.nw = n.nw;
+                obj.ny = n.ny;
+                obj.nu = n.nu;
+
+                if isfield(n, 'nzp')
+                    obj.nzp = n.nzp;
+                end
+                if isfield(n, 'nwp')
+                    obj.nwp = n.nwp;
+                end
+            else
+                [obj.nz, obj.nw] = size(P.D); 
+            end
+            
         end
 
         %% Channel indexers

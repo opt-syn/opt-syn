@@ -24,9 +24,8 @@ Analysis and Synthesis of First-Order Algorithms (MATLAB)
 
 
 
-Target performance criteria for Analysis includes worst-case convergence rates and gain bounds for the amplification of errors. Synthesis process tries to design an optimization algorithm satisfying these desired constraints. 
-These 
-Analysis and Synthesis tasks may be performed for algorithms arising in dynamic environments,  including cases  with constant or time-varying delays, channel memory, and cross-talk.
+Analysis bounds performance measures such as  worst-case convergence rates and gains for error amplification. Synthesis tries to design an optimization algorithm satisfying these desired performance constraints. 
+Analysis and Synthesis may be performed for algorithms arising in dynamic environments,  including cases  with constant or time-varying delays, channel memory, and cross-talk.
 
 
 Both the Analysis and Synthesis problems are posed as convex problems with  Linear Matrix Inequality constraints, and are solved using [LMILab](https://www.mathworks.com/help/robust/ug/introduction.html).  
@@ -35,7 +34,7 @@ Both the Analysis and Synthesis problems are posed as convex problems with  Line
 
 ## Get Started
 
-For installation and  examples of algorithm  analysis and synthesis workflows, see  {doc}`Get Started <pages/get_started>`.
+For installation and  examples of algorithm  Analysis and Synthesis workflows, see  {doc}`Get Started <pages/get_started>`.
 
 ## Contributors
 
