@@ -168,12 +168,38 @@ classdef alg_plotter
             %Return:
             %   obj: the plotter
             
-            obj.sim_out.xnerr = obj.sim_out.xn -  reg_cl.Pi * dstar;
-            obj.sim_out.xcerr = obj.sim_out.xc  - reg_cl.Th * dstar;
-            obj.sim_out.yerr = obj.sim_out.y - reg_cl.Phi * dstar;
-            obj.sim_out.uerr = obj.sim_out.u- reg_cl.Gam * dstar;            
-
             fs = @(sig) squeeze(sum(sig.^2, [1, 2]));
+
+            rPi = reg_cl.Pi;
+            rGam = reg_cl.Gam;
+            rPhi = reg_cl.Phi;
+            rTh = reg_cl.Th;
+
+
+            obj.sim_out.xnerr = obj.sim_out.xn;
+            obj.sim_out.xcerr = obj.sim_out.xc;
+            obj.sim_out.uerr = obj.sim_out.u;
+            obj.sim_out.yerr = obj.sim_out.y;
+            if iscell(reg_cl.Pi)
+                %TODO: override this
+                %trackign switched system
+                for i = 1:length(obj.sim_out.k)
+                    m = obj.sim_out.mode(i);
+                    obj.sim_out.xnerr(:, :, i) = obj.sim_out.xn(:, :, i) - rPi{m} * dstar;
+                    obj.sim_out.xcerr(:, :, i) = obj.sim_out.xc(:, :, i) - rTh{m} * dstar;
+                    obj.sim_out.yerr(:, :, i) = obj.sim_out.y(:, :, i) - rPhi{m} * dstar;
+                    obj.sim_out.uerr(:, :, i) = obj.sim_out.u(:, :, i) - rGam{m} * dstar;
+                end
+            else
+
+                obj.sim_out.xnerr = obj.sim_out.xn -  rPi * dstar;
+                obj.sim_out.xcerr = obj.sim_out.xc  - rTh * dstar;
+                obj.sim_out.yerr = obj.sim_out.y - rPhi * dstar;
+                obj.sim_out.uerr = obj.sim_out.u- rGam * dstar;  
+            end
+
+                      
+
 
             obj.sim_out.sq_xnerr = fs(obj.sim_out.xnerr);
             obj.sim_out.sq_xcerr = fs(obj.sim_out.xcerr);
