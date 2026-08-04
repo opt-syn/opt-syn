@@ -9,7 +9,6 @@
 
 Analysis and Synthesis of First-Order Algorithms (MATLAB)
 
----
 
 <span style="color:#5D93BF">opt</span>-syn: <span style="color:#5D93BF">optimization</span> (algorithm) synthesis.
 
