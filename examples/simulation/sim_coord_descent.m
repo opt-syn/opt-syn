@@ -50,7 +50,7 @@ rcl = reg.check_regulator();
 
 %% simulate coordinate descent
 sim = alg_sim(sys, d);
-T = 61;
+T = 51;
 sim_out= sim.sim(T);
 
 % T_long = 801;
@@ -60,7 +60,7 @@ sim_out= sim.sim(T);
 %% plot
 plt = alg_plotter(sim_out);
 plt.plot({'f', 'w', 'res_w', ...
-    'x', 'z', 'coord', }, 1);
+    'x', 'z', 'coord', }, 10);
 
 % plt_long = alg_plotter(sim_out_long);
 % plt_long.plot({'xn', 'w', 'res_w', ...

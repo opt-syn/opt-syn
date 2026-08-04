@@ -83,4 +83,4 @@ sim_lim_out= sims_lim.sim(T_lim);
 %% plot
 plt = alg_plotter(sim_out);
 plt.plot({'xn', 'w', 'res_w', ...
-    'xc', 'z', 'coord', }, 1);
+    'xc', 'z', 'coord', }, 10);

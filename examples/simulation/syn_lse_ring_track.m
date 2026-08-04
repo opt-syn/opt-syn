@@ -23,7 +23,16 @@ Gring = [1, 1, 0, 0;
 m = 1; L = 1.5;
 ops = {op_sml(m, L)};
 
+%tracking
+theta = pi/8;    
+% theta = pi/30;
+Sbeta = blkdiag(1, givens(cos(theta), sin(theta)));
+Rbeta = [1, 1, 0];
+tracking = struct('Sbeta', Sbeta, 'Rbeta', Rbeta);
+
 sys = opt_system_switched(ops, network, [], Gring);
+
+sys.tracking = tracking;
 
 reg = regulator_switched(sys);
 
@@ -36,10 +45,19 @@ sol= man.bisect();
 
 
 %% begin simulation (attempted)
-d = 30;
+d = 40;
 Q = rand_quad(d, m, L);
-bstar = randi(101, [d, 1]) - 50;
-% bstar = zeros(d, 1);
+
+%shift
+SA = kron(Sbeta, eye(d));
+SAy = kron(Rbeta, eye(d));
+dstar0 = [randi(201, [d, 1]) - 100; (randi(31, [2*d, 1]) + 60).*sign(2*rand(2*d, 1) - 1)];
+
+shift = @(k) SAy * (SA^k) * dstar0;
+
+bstar = @(k, param) randi(101, [d, 1]) - 50 + shift(k);
+
+
 op1 = op_sim_quad(Q, bstar);
 
 ops_sim = {op1};
@@ -49,27 +67,8 @@ sys = sol.sys.export_sim(ops_sim);
 T = 50;
 
 sim  = alg_sim(sys, d);
-nx = sys.get_alg(1).nx;
-sim.sampler.x0 = 4*randn(nx, d);
 sim_out = sim.sim(T);
-
 plt = alg_plotter(sim_out);
-% plt.plot({'f', 'w', 'res_w', ...
-%     'x', 'z', 'mode', }, 10)
+plt.plot({'f', 'w', 'res_w', ...
+    'x', 'z', 'mode', }, 10)
 
-
-% plt.plot({'x', 'w', 'mode', 'z' }, 1)
-% plt.plot({'x', 'w', 'mode', 'z' }, 1)
-plt.plot({'x', 'mode'}, 1)
-
-
-%% regulator equations
-sim_out_long = sim.sim(20*T);
-dstar = -sim_out_long.z(:, :, end);
-plt = plt.add_opt_sig(sol.regcl, dstar);
-
-%% new
-% plt.plot_4_err(2);    %plot the tracking error
-% plt.plot_4_sq_err(3); %plot the  squared norm of the tracking error
-plt = plt.add_opt_sig(sol.regcl, dstar);
-plt.plot({'xerr', 'z', 'mode'})
