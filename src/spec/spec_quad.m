@@ -6,9 +6,9 @@ classdef spec_quad < spec_interface
     %
     % .. math::
     %
-    %    \sum_{k=0}^{T} \begin{pmatrix} z_{p,k} \\ w_{p,k} \end{pmatrix}^\top
+    %    \sum_{k=0}^{T} \begin{pmatrix} w_{p,k} \\ z_{p,k} \end{pmatrix}^\top
     %    \begin{pmatrix} Q & S \\ S^\top & R \end{pmatrix}
-    %    \begin{pmatrix} z_{p,k} \\ w_{p,k} \end{pmatrix} \preceq 0 .
+    %    \begin{pmatrix} w_{p,k} \\ z_{p,k} \end{pmatrix} \preceq 0 .
     %
     % The named specifications (:mat:class:`spec_l2`, :mat:class:`spec_e2e`,
     % :mat:class:`spec_passivity`, ...) are special cases obtained by fixing
