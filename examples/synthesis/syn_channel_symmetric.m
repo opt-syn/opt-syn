@@ -33,9 +33,10 @@ man = opt_synthesis(sys, config);
 order = {1, 1};
 
 %three rounds of alternation
-Niter = 3; 
-[sol_h, v_h] = man.alternate(Niter, order);
-sol = sol_h{end, end};
+% Niter = 3; 
+% [sol_h, v_h] = man.alternate(Niter, order);
+% sol = sol_h{end, end};
+sol = man.bisect();
 
 
 

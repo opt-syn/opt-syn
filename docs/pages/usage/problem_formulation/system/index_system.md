@@ -46,7 +46,7 @@ where the specific signals are
 
 The System is programatically described by an {class}`opt_system` object:
 ```matlab
-:number-lines: false
+
 sys = opt_system(Operators, Network, Controller)
 ```
 
@@ -145,14 +145,17 @@ The supported subdifferentials are based on properties of proper, closed, convex
 * - Convex
   - $f( \alpha x + (1-\alpha)y) \leq \alpha f(x) + (1-\alpha) f(y)$ for all $\alpha \in [0, 1]$ and $(x, y)$.
 ```
-The subdifferential $\partial f(x)$ of a p.c.c. function $f$ is the set of all vectors $g$ such that $f(x) - f(y) \geq \langle g, x-y \rangle$ holds for all pairs $(x, y)$. Indicator functions of closed, nonempty,  convex sets are p.c.c.
+The subdifferential  of a p.c.c. function $f$ is the set 
+$$ \partial f(x) = \{g \mid f(x) - f(y) \geq \langle g, x-y \rangle, \ \forall (x, y) \}$$ 
+
+Indicator functions of closed,  convex sets are p.c.c.
 
 
 Given constants $-\infty < m < L \leq \infty$, the set $S_{m, L}$ is the set of functions such that 
 1. $f - \frac{m}{2}\norm{\cdot}_2^2$ is p.c.c
 2. $\frac{L}{2} \norm{\cdot} - f$ is p.c.c. if $L < \infty$.
 
-$S_{0, \infty}$ is the set of p.c.c. functions. If $m > 0$, then every $f \in S_{m, \infty}$ is strongly convex. If $0 < m < L < \infty$, then every $f \in S_{m, L}$ is has $L$-Lipschitz gradients (is $L$-smooth).
+$S_{0, \infty}$ is the set of p.c.c. functions. If $m > 0$, then every $f \in S_{m, \infty}$ is strongly convex. If $0 < m < L < \infty$, then every $f \in S_{m, L}$  has $L$-Lipschitz gradients (is $L$-smooth).
 
 The subdifferential of p.c.c. functions is extended to subdifferentials of functions $f \in S_{m, L}$ by 
 \begin{align*}
@@ -171,7 +174,7 @@ Operators arising from subdifferentials are described using the classes
 ```
 
 :::{tip}
-`op_pcc` is an alias for `op_sml(0, inf)`. 
+{class}`op_pcc` is an alias for {class}`op_sml(0, inf)`. 
 :::
 
 ## Network and Controller
@@ -186,18 +189,20 @@ If network dynamics are present, then the  `Network` is described by a {class}`g
  
  The {class}`genplant` attributes (`nz`, `nzp`, `ny`, `nw`, `nwp`, `nu`) count dimensions of the respective input and output partitions. 
 
-An example `genplant` declaration for a two-operator problem with one performance input and output channel is
+An example {class}`genplant` declaration for a two-operator problem with one performance input and output channel is
 ```matlab
 D = [0, 0, 1, 1, 0;
      0, 0, 1, 0, 1;
      1, 1, 0, 0, 0;
      1, 0, 0, 0, 0;
      0, 1, 0, 0, 0];
-p = genplant(ss(D));
-p.nz = 2; p.nzp = 1; p.nw = 2;
-p.nw = 2; p.nwp = 1; p.nu = 2;
+
+n = struct('nz', 2, 'nzp', 1, 'nw', 2, ...
+'nw', 2, 'nwp', 1, 'nu', 2);     
+p = genplant(ss(D), n);
 ```
 
+{class}`genplant` can also be called without the `n` argument, letting the dimensions such as  $p.nw$ be set later.
 
 
 

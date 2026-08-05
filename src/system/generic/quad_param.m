@@ -18,12 +18,40 @@ classdef quad_param
     methods
         function obj = quad_param(Q, S, U, T)
             %QUAD_PARAM Constructor
+            %
+            %
+            %Note:
+            %   3 inputs: (Q, S, R), and R will be decomposed into R = T' U^{-1} T
+            %   4 inputs: (Q, S, U, T)
            
             if nargin > 0
                 obj.Q = Q;
-                obj.S = S;
-                obj.U = U;
-                obj.T = T;
+
+                if nargin == 1
+                    nQ = ssize(Q);
+                    obj.S = zeros(nQ, 0);
+                    obj.T = [];
+                    obj.U = [];
+                else
+                    obj.S = S;
+    
+                    if nargin == 3
+                        % (Q, S, R)
+                        [RqV, RqD] = eig(Rq);
+                        eRq = diag(RqD);
+                        ind_pos = find(abs(eRq) > 1e-12);
+    
+                        obj.T = RqV(:, ind_pos)';
+                        obj.Q = diag(1./eRq(ind_pos));
+    
+    
+                    elseif nargin == 4
+                        % (Q, S, U, T)
+                        obj.U = U;
+                        obj.T = T;
+                    end   
+                    
+                end
             end
            
         end
@@ -38,6 +66,25 @@ classdef quad_param
             %number of outputs
             
             nz_out = ssize(obj.U, 1);
+        end
+
+        function quad_new = blkdiag(obj,other)
+            %BLKDIAG block-diagonals of supply rates, respecting partitions
+            %
+            %Args:
+            %   other (quad_param): the other quadratic supply rate
+            %   
+            %Return:
+            %   quad_new (quad_param): the new quadratic supply rate
+
+
+            
+            Q_new = blkdiag(obj.Q, other.Q);
+            S_new = blkdiag(obj.S, other.S);
+            U_new = blkdiag(obj.U, other.U);            
+            T_new = blkdiag(obj.T, other.T);
+
+            quad_new = quad_param(Q_new, S_new, U_new, T_new);
         end
     end
 end

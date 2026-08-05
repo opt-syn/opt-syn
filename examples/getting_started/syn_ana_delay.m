@@ -20,24 +20,15 @@ sys = opt_system({op1, op2}, network);
 man = opt_synthesis(sys);
 sol_delay = man.bisect();
 
+%% analyze performance in the time delay setting
+sys_nom = sol.sys;
+sys_nom.P = network;
+sys_delay = sol_delay.sys;
 
-%% simulate as a test
-d = 50;
-BOX = 30;
-M = rand_quad(d, m, L);
-zstar = randi(101, [d, 1]) - 50;
+man_ana_nom = opt_analysis(sys_nom);
+man_ana_delay = opt_analysis(sys_delay);
+order = {2, 2};
+sol_ana_delay = man_ana_delay.bisect(order);
 
-op1_sim = op_sim_quad(M, zstar);
-op2_sim = op_sim_box(BOX);
+sol_ana_nom = man_ana_nom.bisect(order);
 
-ops_sim = {op1_sim, op2_sim};
-
-sys_sim = sol.sys.export_sim(ops_sim);
-
-sim = alg_sim(sys_sim, d);
-T = 100;
-ssim= sim.sim(T);
-
-% plot the signal
-plt = alg_plotter(ssim);
-plt.plot({'x', 'w', 'res_w', 'f', 'z', 'res_z'}, 13)

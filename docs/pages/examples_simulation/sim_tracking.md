@@ -40,6 +40,6 @@ The subdifferentials $w$ vectors approach at constant value. The iterates $z$ os
 :caption: Code for tracking an oscillating target
 :language: matlab
 ```
-:::{see-also}
+:::{seealso}
 {doc}`Analysis <../examples_analysis/ana_tracking>` of the tracking algorithm.
 :::

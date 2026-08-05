@@ -2,8 +2,6 @@
 rng(50, 'twister');
 
 d = 30; %number of dimensions
-% c=6; %blocksize 
-% c = 3;
 c = 5;
 
 %symmetry generator/permutation matrix
@@ -12,18 +10,8 @@ M = circshift(eye(c), 1);
 %gradient descent rule
 gamma = 0.2;
 
-alg = ss(eye(c), blkdiag(-gamma , zeros(c-1)), ...
+K = ss(eye(c), -gamma*eye(c), ...
     eye(c), zeros(c), 1);
-
-% K = ss(eye(c), blkdiag(-gamma , zeros(c-1)), ...
-%     blkdiag(1, zeros(c-1)), zeros(c), 1);
-
-% K = ss(eye(c), -gamma*eye(c), ...
-%     eye(c), zeros(c), 1);
-
-
-% K = ss(eye(c), blkdiag(-gamma , zeros(c-1)), ...
-%     blkdiag(1, zeros(c-1)), zeros(c), 1);
 
 %define the objective function
 %sum of quadratic and log-sum-exp
@@ -40,11 +28,12 @@ op1.c = c; %enforce coordinate dimension
 
 %define the network
 %implements coordinate descent
-% network = coordinate_descent_limited(c);
+n = struct('nu', c, 'ny', c, 'nz', c, 'nw', c);
+network = genplant([zeros(c), eye(c); blkdiag(1, zeros(c-1)), zeros(c)], n);
 
 %form the system
-% sys = opt_system_periodic_orbit(op1, network, K, M);
-sys = opt_system_periodic_orbit(op1, [], alg, M);
+sys = opt_system_periodic_orbit(op1, network, K, M);
+% sys = opt_system_periodic_orbit(op1, [], alg, M);
 reg = regulator_periodic_orbit(sys);
 rcl = reg.check_regulator();
 

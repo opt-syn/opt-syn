@@ -44,7 +44,7 @@ sys_lti = sys_per.periodic_lift();
 A periodic-orbit linear system is an $h$-periodic linear system 
 in which there exists matrices  $(M_x, M_w, M_z)$ such that 
 ```{math}
-M_x^h &= M_x, \qquad \ M_w^h = M_w,  \qquadM_z^h = M_z, \\
+M_x^h &= M_x, \qquad \ M_w^h = M_w,  \qquad M_z^h = M_z, \\
  \mat{c|c}{\Acl_k & \Bcl_k \hl \Ccl_k & \Dcl_k }  &= \mat{c c}{M_x & 0 \\ 0 & M_y}^{-k} \mat{c|c}{\Acl_{0} & \Bcl_{0} \hl \Ccl_{0} & \Dcl_{0} } \mat{c c}{M_x & 0 \\ 0 & M_u}^k, & & \qquad \forall k \in \N.
 ```
 Cyclic Coordinate-Descent algorithms are instances of periodic-orbit algorithms satisfying this simplified structure.

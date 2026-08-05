@@ -84,7 +84,7 @@ If these conditions fail, then all specifications
 - must have the same rate $\rho$ (`opt_config.gen.same_rho = true`), 
 - must hold only in an infinite-horizon sense (in the current implementation).
 
-The {class}`opt_manager` classes will check these conditions, and will override `same_rho` to true if not already set. This issue is due to the presence of noncausal IQC filters.
+The {class}`opt_manager` classes will check these conditions, and will override `same_rho` to true if not already set. This issue is due to the presence of noncausal filters in IQC synthesis.
  <!-- See {doc}`<../documentation/doc_iqc>` for more detail about this issue. -->
 :::
 
@@ -117,7 +117,7 @@ Niter = 3;
 [sol_syn_alternate, v_history] = man_syn.alternate(Niter, iqc_init, order, specs, b_opts);
 ```
 
-The `v_history` output is a cell array with 2 rows and  Niter columns. Each entroy of the cell array stores the  lower and upper parameter bounds from bisection. The top row are the Synthesis bounds, and the bottom row are the Analysis bounds.
+The `v_history` output is a cell array with 2 rows and  Niter columns. Each entry of the cell array stores the  lower and upper parameter bounds from bisection. The top row are the Synthesis bounds, and the bottom row are the Analysis bounds.
 
 
 ##  Validate
@@ -127,7 +127,7 @@ The {class}`opt_solution` structure contains information about the solution of a
 |----| ---- | ----- | 
 | `STATUS` | Feasibility of problem | `STATUS`$=0$ if feasible, `STATUS`$\neq 0$  if infeasible |
 | `dia` | Constraint violation | `dia`$<0$ if strictly feasible, `dia`$=0$ if marginally feasible, `dia` $> 0$ if infeasible |
-| `gain` | Input passivity index and $H_\infty$ gain | Feasible if `gain(1)` $< 0$ and `gain(2)` $< 1$ |
+| `gain` | Input passivity index and $H_\infty$ gain | Feasible if `gain(1)` $< 0$ and `gain(2)` $< 1$ (for {class}`spec_stability`)|
 | `rho` | Convergence rate |  Linearly convergent if $\rho < 1$ |
 | `regcl` | Closed-loop regulator equation | Nonempty struct with fields (`S`, `R`, `Pi`, `Gam`, `Phi`, `Th`)| 
 

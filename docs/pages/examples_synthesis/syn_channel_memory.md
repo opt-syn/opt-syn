@@ -1,6 +1,6 @@
 #  Channel Memory
 
-This example continues the {doc}`channel memory simulation <../examples_simulation/sim_channel_memory_example>` example.
+This example continues the {doc}`channel memory simulation <../examples_simulation/sim_channel_memory_symmetric>` example.
 
 An optimization problem
 ```{math}
@@ -35,7 +35,7 @@ Three rounds of Synthesis/Analysis alternation are performed using `order = {1, 
 :::
 
 
-In contrast, the algorithm from {doc}`channel memory simulation <../examples_simulation/sim_channel_memory_example>` is certified as convergent with $\rho < 0.9448$ under the same `order={1, 1}` Analysis method.
+In contrast, the algorithm from {doc}`channel memory simulation <../examples_simulation/sim_channel_memory_symmetric>` is certified as convergent with $\rho < 0.9448$ under the same `order={1, 1}` Analysis method.
 
 
 ```{literalinclude} ../../../examples/synthesis/syn_channel_symmetric.m

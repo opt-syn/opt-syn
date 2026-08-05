@@ -42,3 +42,39 @@ An algorithm with nonzero upper-block-triangular  entries of `D_mask` can be Ana
 
 ## Simplified Synthesis Programs
 
+Special structures of the IQC synthesis programs allow for simplification of the LMI programs. 
+Supported simplification methods v.s. dynamical system types are
+:::{list-table}
+:header-rows: 1
+:stub-columns: 1
+* - LTI 
+  - Periodic-Orbit
+  - Periodic
+  - Switched
+* - Matrix Elimination
+  - [x]
+  - [x]
+  - []
+  - []
+* - Reduced-Order
+  - [x]
+  - [x]
+  - []
+  - []
+:::
+
+All simplifications  are enabled by default. They may respectively be disabled by 
+```matlab
+config.syn.elimination = false;
+config.syn.reduced_order = false;
+```
+
+### Matrix Elimination
+
+If only one performance requirement is present, then the Matrix Elimination Lemma {footcite}`gahinet1994linear` may be used to remove the some or all of controller variables from the algorithm design problem. A single LMI constraint with the controller variables is replaced by two smaller LMI constraints lacking these variables. Both constraint sets have the same feasibility region.
+
+The Synthesis programs with and without Elimination use the Transformation approach from {footcite}`scherer1997multiobjective` to design controllers.
+
+### Reduced-Order Control
+
+Reduced-Order Control uses the internal model structure of the controllers to lower the number of states in the generated algorithm. This reduced-order control is based on the formulation of {footcite}`korouglu2009generalized`. Reduced-order control also allows for the search over solutions of the Regulator Equations.
