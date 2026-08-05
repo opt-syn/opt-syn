@@ -1,25 +1,28 @@
 rng(32, 'twister');
+%https://arxiv.org/pdf/1705.04398
+%best rate is 2/(L+m)
+%
+%but bad transient performance
 
 %PGD to minimize quadratic under hard l1 ball constraint
 
-d = 100; %dimension of variable beta
+d = 50; %dimension of variable beta
 
 %define the quadratic
-m = 1; L = 10;
+m = 1; L = 100;
 Q = rand_quad(d, m, L);
-% zstar = 100*(2*rand(d, 1) - 1);
-zstar = 10*ones(d,1);
+zstar = 100*(2*rand(d, 1) - 1);
 op1 = op_sim_quad(Q, zstar);
 
 
 %define the L1 ball
-tau = 100;
+tau = 200;
 op2 = op_sim_l1_hard(tau);
 ops = {op1, op2};
 
 %PGD algorithm
-% gamma = 2/(L + m);
-gamma = 1/L;
+gamma = 2/(L + m);
+% gamma = 1/L;
 K = ss(1, [-gamma, -gamma], [1; 1], [0, 0; -gamma, -gamma],1);
 
 %form the system
@@ -27,8 +30,8 @@ sys = opt_system(ops, [], K);
 
 %simulate and plot
 sim = alg_sim(sys, d);
-T = 50;
-% sim.sampler.x0 = 200*randn(1, d);
+T = 15;
+sim.sampler.x0 = 200*randn(1, d);
 sim_out= sim.sim(T);
 plt = alg_plotter(sim_out);
 % plt.plot_4(1);

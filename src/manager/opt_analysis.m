@@ -195,6 +195,8 @@ classdef opt_analysis < opt_manager_interface
             end
 
         end
+
+      
            
         function [diss] = index_specs(obj, alg_psi, iqc_data, specs)
             %INDEX_SPECS  index into the performance specifications and

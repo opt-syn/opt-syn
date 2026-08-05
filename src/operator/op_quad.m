@@ -17,7 +17,7 @@ classdef op_quad < op_sml
 
        function cons = filter_constraints(obj, cons, order, vars, rho_sched, iqc)
             %FILTER_CONSTRAINTS constraints on the filter coefficients                        
-            %positive-real constraints with terminal cost
+            %positive semidefinite constraints
             %
             %Args:
             %   cons:   accumulated constraints
@@ -32,6 +32,7 @@ classdef op_quad < op_sml
             end
 
                 
+            %this may be more conservative than positive-real
             P = obj.dhd_lift(order, vars, iqc);
 
             P_sym = P + P';

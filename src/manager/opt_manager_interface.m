@@ -188,30 +188,40 @@ classdef (Abstract) opt_manager_interface < handle
             
             
             if obj.LMILAB
-                if ~isnumeric(objective)
-                    cons = lmis(cons, objective, 'c');
-                    OBJECTIVE = true;
-                else
+                if isnumeric(objective)
                     OBJECTIVE = false;
+                    
+                    objective = obj.lmi.default_objective(vars);
+                    
+                % else
+                    %LMILAB sometimes incorrectly marks infeasible
+                    %solutions as feasible when using feasp. This occurs
+                    %with Projected Gradient Descent (gamma = 2/(L+m)),
+                    %should be infeasible, but passes the LMILAB feasp()
+                    %test. Artificially enforce a hard constraint.
+                else
+                    OBJECTIVE = true;
+                    
                 end
-
+                cons = lmis(cons, objective, 'c');
+                
                 [lmi_out,info_out]=lmisolve(cons);
                 
                 
 
-                STATUS = (lmi_out.status || (lmi_out.dia(1+OBJECTIVE) > obj.config.tol.dia));
+                STATUS = (lmi_out.status || (lmi_out.dia(2) > obj.config.tol.dia));
                 sol.info = info_out;
                 sol.info.cons = cons;
 
                 
                 if OBJECTIVE
-                    if STATUS
-                        sol.dia = lmi_out.dia;
-                        sol.objective = Inf;
-                    else
+                    % if STATUS
+                    %     sol.dia = lmi_out.dia;
+                    %     sol.objective = Inf;
+                    % else
                         sol.objective = lmi_out.dia(1);
                         sol.dia = lmi_out.dia(2);
-                    end
+                    % end
                     
                 else
                     sol.dia = lmi_out.dia;
@@ -234,6 +244,7 @@ classdef (Abstract) opt_manager_interface < handle
                 end
                 
             else %YALMIP
+                %warning: not implemented
                 opt = sdpsettings('verbose', obj.gen.config.verbose, 'solver', obj.config.gen.solver);
             
                 t = optimize(lmi, objective, opt);
