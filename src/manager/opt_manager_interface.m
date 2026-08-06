@@ -409,13 +409,12 @@ classdef (Abstract) opt_manager_interface < handle
         end
 
         %% Bisection routines
-        function [sol_best, vr] = bisect(obj, arg, specs, b_opts)
+        function [sol_best, vr] = bisect(obj, arg, specs)
             %BISECT: perform bisection on a parameter to minimize an objective.
             %
             % Args:
             %   arg:     arguments for the routine (order for analysis, iqcs for synthesis)
-            %   specs:    (cell) performance specifications
-            %   b_opts:   (bisect_opts) bisection options (bisect_opts)
+            %   specs:    (cell) performance specifications            
             % Returns:
             %   sol_best: the best solution
             %   vr:       the range of the value at the optimal bisection
@@ -435,10 +434,6 @@ classdef (Abstract) opt_manager_interface < handle
                 specs = {spec_stability(1)};
             end
 
-            if nargin < 4
-                b_opts = bisect_opts;
-            end
-            
             
             %process the inputs and specifications
             obj = obj.process_argument(arg);
@@ -456,8 +451,8 @@ classdef (Abstract) opt_manager_interface < handle
             %take the initial step
             
             
-            v = max(b_opts.val_range);
-            vr = b_opts.val_range;
+            v = max(obj.config.bisect.val_range);
+            vr = obj.config.bisect.val_range;
             
             
             %TODO: implement warm start logic
@@ -468,7 +463,7 @@ classdef (Abstract) opt_manager_interface < handle
             %modify the specification use an oracle to do this
             
             % f = @(pcurr) bisect_inner(obj, pcurr, vars, cons, alg_psi, iqc_op, specs, b_opts);
-            f = @(pcurr) bisect_inner(obj, pcurr, vars, cons, specs, b_opts);
+            f = @(pcurr) bisect_inner(obj, pcurr, vars, cons, specs);
 
             % found_bound = [0, 0];
             sol0 = f(v);
@@ -483,7 +478,7 @@ classdef (Abstract) opt_manager_interface < handle
                 %     %search for upper bound
                 % end
 
-                while diff(vr) > b_opts.tol
+                while diff(vr) > obj.config.bisect.tol
                     %select midpoint (narrowing search)
                     v= sum(vr)/2;
                     [sol] = f(v);
@@ -525,14 +520,13 @@ classdef (Abstract) opt_manager_interface < handle
             %
             %Args:
             %   pcurr: current value of the parameter to set
-            %   spec_old:   specification to update
-            %   b_opts:     bisection options
+            %   spec_old:   specification to update            
             %   
             %Returns:
             %   spec_new: updated specification
             spec_new = spec_old;
-            i = b_opts.spec_ind;
-            if b_opts.bisect_rho && isa(spec_old{i}, 'spec_stability')
+            i = obj.config.bisect.spec_ind;
+            if obj.config.bisect.bisect_rho && isa(spec_old{i}, 'spec_stability')
                 spec_new{i}.rho = pcurr;
             else
                 spec_new{i} = spec_new{i}.set_p(pcurr);                
@@ -556,8 +550,7 @@ classdef (Abstract) opt_manager_interface < handle
             %   pcurr: current value of the parameter to set
             %   vars:   variables of problem
             %   cons:  accumulated constraints
-            %   spec:   specifications
-            %   b_opts: bisection options
+            %   spec:   specifications            
             %   
             %Returns:
             %   sol: solution structure
@@ -565,7 +558,7 @@ classdef (Abstract) opt_manager_interface < handle
             % TODO: will need to redo constraint invocation due to the
             % exponential convergence implementation
 
-            spec_curr = obj.modify_spec(pcurr, spec, b_opts);
+            spec_curr = obj.modify_spec(pcurr, spec);
 
             [vars, cons, objective, alg_psi, diss] = obj.build_program(spec_curr); 
  

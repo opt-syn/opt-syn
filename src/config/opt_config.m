@@ -35,6 +35,9 @@ classdef opt_config
 
         %system-type specific options
         switched = struct('common', false); %use a common lyapunov function?
+
+        %bisection options
+        bisect = opt_config_bisect(); 
     end
     
     methods
