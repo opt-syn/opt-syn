@@ -411,12 +411,11 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %the sparsity-constrained term for internal model control            
 
             if isempty(obj.config.syn.prox)
-                
+                D_mask_0 = obj.config.syn.D_mask;
+            else
                 expl = 1-obj.config.syn.prox(obj.sys.bind);
                 nop = length(obj.sys.bind);
-                D_mask_0 = tril(nop) - diag(expl);
-            else
-                D_mask_0 = obj.config.syn.D_mask;
+                D_mask_0 = tril(nop) - diag(expl);           
             end
 
 

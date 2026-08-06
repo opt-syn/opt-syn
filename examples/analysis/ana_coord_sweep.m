@@ -8,7 +8,8 @@ Nblock = 6;
 L = logspace(0, 2.5, NL);
 rho = zeros(NL, Nblock);
 
-parfor i = 1:NL
+for i = 2:NL
+% for i = 1:1
     for c = 1:Nblock     
 
         m = 1;
