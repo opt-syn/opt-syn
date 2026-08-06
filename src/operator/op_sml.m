@@ -55,7 +55,7 @@ classdef op_sml < op_sml_interface
             if order(2)
                 Cf2 = lmim(['Cf2_', obj.sid], reps, order(2)*reps, 'full');
             else
-                Cf2 = [];
+                Cf2 = zeros(reps, 0);
             end
 
             Df1 = lmim(['Df1_', obj.sid], reps, reps, 'full');    
