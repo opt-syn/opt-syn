@@ -20,7 +20,7 @@ All operators are subdifferentials of functions in $S_{m, L}$.
 
 The non-delayed Davis-Yin can only achieve linear convergence if $L_3 < \infty$ (Theorem 1, 2 of {footcite}`yi2025convergence`). 
 
-Analysis is performed with orders for Davis-Yin with delays $h \in \{0, \ldots, 4}$. 
+Analysis is performed with orders for Davis-Yin with delays $h \in \{0, \ldots, 4\}$. 
 The parameters $\gamma = 1/{L_3}, \lambda = 1$  are used to define the algorithm $L_3$ is swept  in the range $[10^{-2}, 10^{-3}]$. Figure  [1](#dr-delay-opt) plots the outcome of an Analysis run using order  `[2, 0]` at every operator. 
 The stability boundary is the line $\rho=1$. The other curves are the convergence rate $\rho$ as a monotonically increasing function of delay: $h=0$ on the bottom in  blue and $h=4$ on top with green. The Davis-Yin algorithm with these parameters is certified as convergent without delay, and is not certified as convergent with delay.
 

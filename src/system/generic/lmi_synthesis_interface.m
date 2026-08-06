@@ -409,7 +409,15 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %   D_mask:     sparsity pattern for D of the controller
 
             %the sparsity-constrained term for internal model control            
-            D_mask_0 = obj.config.syn.D_mask;
+
+            if isempty(obj.config.syn.prox)
+                
+                expl = 1-obj.config.syn.prox(obj.sys.bind);
+                nop = length(obj.sys.bind);
+                D_mask_0 = tril(nop) - diag(expl);
+            else
+                D_mask_0 = obj.config.syn.D_mask;
+            end
 
 
             if isempty(D_mask_0)
@@ -421,6 +429,8 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             D_mask = kron(D_mask_0, ones(c));
 
         end
+
+
 
         function K_mask = get_K_mask(obj, nxi)
             %K_mask: get the controller sparsity pattern

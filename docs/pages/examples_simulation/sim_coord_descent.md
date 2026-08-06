@@ -65,8 +65,6 @@ Algorithm simulation is performed by using the {class}`opt_system_periodic_orbit
 ```
 
 
-
-
-
-
-
+:::{seealso}
+{doc}`Analysis <../examples_analysis/ana_coord_descent>` of the coordinate-descent scheme.
+:::

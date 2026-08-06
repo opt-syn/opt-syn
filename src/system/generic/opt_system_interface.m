@@ -144,8 +144,10 @@ classdef  opt_system_interface
             iqc_op = iqc_data.iqc;
 
             if isempty(iqc_op)
+                %all operators have explicit formulae
+                %no uncertainty is introduced
                 alg_loop = alg_perm_m;
-                alg_psi = alg_perm_m;
+                alg_psi = genplant(alg_perm_m);
             else
                 loop = iqc_op.loop;
                 nloop = length(loop)/2;
@@ -173,7 +175,7 @@ classdef  opt_system_interface
         
                     alg_psi = genplant(psi * GI); 
                     alg_psi.nz = ssize(psi.D, 1) - obj.P.nzp - obj.P.nwp;
-                    alg_psi.nw = obj.P.nw;
+                    alg_psi.nw = ssize(GI.B, 2);
                     alg_psi.nzp = obj.P.nzp + obj.P.nwp;
                     alg_psi.nwp = obj.P.nwp;
                 else

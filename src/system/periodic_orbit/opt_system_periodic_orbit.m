@@ -267,7 +267,9 @@ classdef  opt_system_periodic_orbit < opt_system
                 obj, index, cons, order);
 
             %
-            iqc_curr = iqc_curr.rotate(obj.M, 1);
+            if ~isnumeric(iqc_curr)
+                iqc_curr = iqc_curr.rotate(obj.M, 1);
+            end
 
 
         end

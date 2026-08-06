@@ -15,14 +15,14 @@ Analysis is performed for this gradient descent scheme
 with stepsize $\gamma := \frac{2}{c(m+L)}$. The coordinate block size $c$ is increased from 1 to 6, and the parameter $L$ is swept from 1 to 100 while $m$ is kept to 1. Figure [1](#coord-6) plots the $\rho$ upper bounds computed at order `[1, 0]`.
 
 
-:::{figure} _static/coord_sweep_dark.png
+:::{figure} _static/coord_sweep_ana_dark.png
 :align: center
 :class: only-dark
 :name: coord-6
 *Figure 1:* Convergence rate of coordinate descent algorithm v.s. number of blocks
 :::
 
-:::{figure} _static/coord_sweep_light.png
+:::{figure} _static/coord_sweep_ana_light.png
 :align: center
 :class: only-light
 :name: coord-6

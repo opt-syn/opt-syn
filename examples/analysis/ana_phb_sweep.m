@@ -1,5 +1,5 @@
 NL = 3;
-Llist = logspace(-2, 3, NL);
+Llist = logspace(0, 3, NL);
 
 orderlist = {{[3, 1], [3, 1]}
     {[3, 0], [3, 0]}};
