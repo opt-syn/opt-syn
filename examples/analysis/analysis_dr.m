@@ -7,7 +7,7 @@ op1_sml = op_sml(m, L);
 op1_quad = op_quad(m, L);
 
 %indicator function for op1
-op2 = op_sml(0, inf, 1);
+op2 = op_sml(0, inf);
 
 
 %douglas-rachford

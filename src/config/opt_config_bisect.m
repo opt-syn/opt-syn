@@ -1,5 +1,5 @@
-classdef bisect_opts < handle
-    %BISECT_OPTS options used when applying bisection/alternation in the
+classdef opt_config_bisect < handle
+    %opt_config_bisect options used when applying bisection/alternation in the
     %manager class    
     
     properties
@@ -16,7 +16,7 @@ classdef bisect_opts < handle
     end
     
     methods
-        function obj = bisect_opts()
+        function obj = opt_config_bisect()
             %Constructor
         end
         

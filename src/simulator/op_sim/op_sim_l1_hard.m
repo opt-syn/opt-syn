@@ -61,7 +61,14 @@ classdef op_sim_l1_hard < op_sim_interface
             Dskron = kron(eye(dl), sqrt(D));
             %skew the box in the projection
             z_weighted = weighted_l1_proj(Dskron \ v, obj.tau, diag(Dskron));
-            z = Dskron * z_weighted;                        
+            z = Dskron * z_weighted; 
+
+
+            %for testing
+            % z2= ProjectL1Ball( v, obj.tau, 1e-8);
+            % z = z2;
+            % err = z - z2;
+                                  
         end
 
 

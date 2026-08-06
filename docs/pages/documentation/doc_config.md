@@ -7,24 +7,29 @@
     :members:   
 ```
 
-## Sub-configuration
+The specific subconfiguration options are:
 
-The dedicated sub-configuration options are
+## Numerical Tolerances
 
 ```{eval-rst}
 .. mat:autoclass :: config.opt_config_tol 
     :members:   
 ```
 
+## All programs (generic)
+
 ```{eval-rst}
 .. mat:autoclass :: config.opt_config_gen    
     :members:   
 ```
 
+## Analysis
 ```{eval-rst}
 .. mat:autoclass :: config.opt_config_ana 
     :members:   
 ```
+
+## Synthesis
 
 ```{eval-rst}
 .. mat:autoclass :: config.opt_config_syn
@@ -33,7 +38,8 @@ The dedicated sub-configuration options are
 
 
 ## Bisection
-`bisect_opts` is used only when the Analysis or Synthesis problems are solved in Bisect or Alternating mode. `bisect_opts` is not required if the problem is solved only once, such as at a fixed linear rate $\rho$. 
+The bisection options are used only when the Analysis or Synthesis problems are solved in Bisect or Alternating mode. These options are not required if the problem is solved only once, such as at a fixed linear rate $\rho$. 
+
 ```{eval-rst}
 .. mat:autoclass :: config.bisect_opts        
    :members:

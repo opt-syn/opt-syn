@@ -204,10 +204,7 @@ classdef  opt_system_periodic_orbit < opt_system
             if (iqc_data.rotate == 0)
                 alg = alg0;                
             else
-                alg = obj.rotate_plant(alg0);
-                if strcmp(iqc_data.task, 'analysis')
-                    iqc_data.iqc = iqc_data.iqc.rotate(obj.M, 1);
-                end
+                alg = obj.rotate_plant(alg0);                
             end
             
 
@@ -248,6 +245,33 @@ classdef  opt_system_periodic_orbit < opt_system
             
             sys_per = opt_system_periodic(obj.op, Pper_poly, Kper, obj.bind, obj.tracking);
         end
+
+        function [iqc_curr, vars_curr,cons_curr] = create_iqc(obj, index, cons, order)
+            %CREATE_IQC form the iqc for the current operator in the
+            %system description
+            %
+            %Args:
+            %   index (int): index of the operator
+            %   cons: accumulated constraints
+            %   order:  order of the operator: [causal order, noncausal order],
+            %   or scalar for causal order
+            %   reps: number of repeated evaluations (in bind)
+            %Returns:
+            %   iqc:    a valid iqc for the operator
+            %   vars:   variables of the problem
+            %   cons:   constraints in the problem (in terms of the
+            %           variables directly)
+
+                        
+            [iqc_curr, vars_curr,cons_curr] = create_iqc@opt_system_interface(...
+                obj, index, cons, order);
+
+            %
+            iqc_curr = iqc_curr.rotate(obj.M, 1);
+
+
+        end
+
 
         function sys_lift = periodic_lift(obj)
             %PERIODIC_LIFT form a periodic LTI lift of the system

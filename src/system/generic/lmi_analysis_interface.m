@@ -132,6 +132,27 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
             end
 
         end
+
+        function objective = default_objective(obj, vars)
+            %  create an objective for mincx() if one doesn't already
+            %  exist.
+            %                       
+            %Args:
+            %   vars:  variables of the problem
+            %Returns:                 
+            %   objective:   the objective to minimize
+
+
+            if iscell(vars.diss)
+                objective = 0;
+                for i = 1:length(vars.diss)
+                    objective = objective + trace(vars.diss.G);
+                end
+            else
+                objective = trace(vars.diss.G);
+            end
+
+        end
         
         %% common specification calls
 

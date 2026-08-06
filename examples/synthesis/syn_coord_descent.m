@@ -9,18 +9,20 @@ c = 3;
 M = circshift(eye(c), 1); 
 
 %define the objective function
-m = 1; L = 5; 
+% m = 1; L = 5; 
+m = 1; L = 1.5; 
 
-op1 = op_sml(1, 5);
+op1 = op_sml(m, L);
 
 op1.c = c; %enforce coordinate dimension
 
 %define the network
 %implements coordinate descent
 
-network = coordinate_descent_primitive(c);
+network = coordinate_descent_limited(c);
 %form the system
 sys = opt_system_periodic_orbit(op1, network, [], M);
+
 
 
 config = opt_config();

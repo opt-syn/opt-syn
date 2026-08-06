@@ -55,7 +55,7 @@ classdef op_sml < op_sml_interface
             if order(2)
                 Cf2 = lmim(['Cf2_', obj.sid], reps, order(2)*reps, 'full');
             else
-                Cf2 = [];
+                Cf2 = zeros(reps, 0);
             end
 
             Df1 = lmim(['Df1_', obj.sid], reps, reps, 'full');    
@@ -214,10 +214,10 @@ classdef op_sml < op_sml_interface
             %   rho_sched:  which times should be discounted
             %   iqc_out:    the IQC under consideration            
             %Returns:
-            %   cons:   accumulated constraints
+            %   cons:   accumulated constraint
 
 
-            if ~isscalar(iqc)
+            
                 if isscalar(order)
                     order = [order, 0];
                 end
@@ -248,7 +248,7 @@ classdef op_sml < op_sml_interface
                     cons = append_lmi(cons, e'*vars.Df1*e, obj.LMILAB);
                     % cons = append_lmi(cons, e'*vars.Df2*e, obj.LMILAB);
                 end
-            end
+            
         end
 
         function M = build_M(obj, vars, order, reps);

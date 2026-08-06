@@ -242,8 +242,7 @@ classdef opt_synthesis < opt_manager_interface
             %   Niter (int): number of alternation iterations
             %   order (cell):  orders of the operators (for analysis)
             %   iqc_init (cell):  initial IQCs for the operators (for synthesis)            
-            %   specs (cell):   performance specifications (for both)            
-            %   b_opts:   (bisect_opts) bisection options (bisect_opts)
+            %   specs (cell):   performance specifications (for both)                        
             %Returns:                 
             %   sol_history (cell):  cell of solutions, first row is Synthesis, second row is analysis.
             %   vr_history (cell):   lower and upper bound of parameter
@@ -262,9 +261,6 @@ classdef opt_synthesis < opt_manager_interface
                 specs = [];
             end
 
-            if nargin < 6
-                b_opts = bisect_opts();
-            end
             iqc_curr = iqc_init;
             
             sys_curr = obj.sys;
@@ -285,13 +281,13 @@ classdef opt_synthesis < opt_manager_interface
             success = false;
             for i = 1:Niter
                 %start with synthesis
-                if b_opts.bisect
-                    [sol_syn, vr_syn] = obj.bisect(iqc_curr, specs, b_opts);
+                if obj.config.bisect.bisect
+                    [sol_syn, vr_syn] = obj.bisect(iqc_curr, specs);
 
                     %back off a bit
-                    vr_back = vr_syn(2)+ b_opts.backoff;
+                    vr_back = vr_syn(2)+ obj.config.bisect.backoff;
 
-                    spec_back = obj.modify_spec(vr_back, specs, b_opts);
+                    spec_back = obj.modify_spec(vr_back, specs);
 
                     obj.specs= {};
                     sol_syn_back = obj.solve_single(iqc_curr, spec_back);
@@ -316,9 +312,9 @@ classdef opt_synthesis < opt_manager_interface
                 %then do analysis
                 sys_curr = sol_syn_back.sys;
 
-                ana = opt_analysis(sys_curr);
-                if b_opts.bisect
-                    [sol_ana, vr_ana] = ana.bisect(order, specs, b_opts);
+                ana = opt_analysis(sys_curr, obj.config);
+                if obj.config.bisect.bisect
+                    [sol_ana, vr_ana] = ana.bisect(order, specs);
                 else
                     [sol_ana] = ana.solve_single(order, specs);
                     vr_ana = sol_ana.objective * [1, 1];

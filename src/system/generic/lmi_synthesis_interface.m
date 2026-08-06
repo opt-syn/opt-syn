@@ -1261,6 +1261,27 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         end
 
+        function objective = default_objective(obj, vars)
+            %  create an objective for mincx() if one doesn't already
+            %  exist.
+            %                       
+            %Args:
+            %   vars:  variables of the problem
+            %Returns:                 
+            %   objective:   the objective to minimize
+
+
+            if iscell(vars.diss)
+                objective = 0;
+                for i = 1:length(vars.diss)
+                    objective = objective + trace(vars.diss.GX) + trace(vars.diss.GY);
+                end
+            else
+                objective = trace(vars.diss.GX) + trace(vars.diss.GY);
+            end
+
+        end
+
 
     end
 

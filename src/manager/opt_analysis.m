@@ -102,8 +102,8 @@ classdef opt_analysis < opt_manager_interface
             
             for i = 1:nop
                 if ismember(i, ind)
-                    rep_curr = nnz(obj.sys.bind==i);
-                    [iqc_curr, vars_curr,cons_curr] = obj.sys.op{i}.create_iqc(cons, order{i}, rep_curr);
+                    
+                    [iqc_curr, vars_curr,cons_curr] = obj.sys.create_iqc(i, cons, order);
     
                     obj.iqc_op{i} = iqc_curr;
                     vars.op{i} = vars_curr;
@@ -195,6 +195,8 @@ classdef opt_analysis < opt_manager_interface
             end
 
         end
+
+      
            
         function [diss] = index_specs(obj, alg_psi, iqc_data, specs)
             %INDEX_SPECS  index into the performance specifications and

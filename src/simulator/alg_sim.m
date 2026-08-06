@@ -177,7 +177,7 @@ classdef alg_sim
                         vi_vec = reshape(vi, [], 1);
                         zi_vec = op_curr.bw(k,  -Dzw_curr, vi_vec, param);
                         zi = reshape(zi_vec, [], dl);
-                        wi = -(Dzw_curr) \ (vi - zi);
+                        wi = (Dzw_curr) \ (zi - vi);
                     else
                         %use forward evaluation
                         zi = vi;
