@@ -1,2 +1,0 @@
-# Coordinate Descent Algorithms
-

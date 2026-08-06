@@ -38,6 +38,7 @@ classdef (Abstract) operator_interface
             %   reps:    number of repetitions of the operator (in the bind)
             %
             %Returns:
+            %   iqc:    a valid iqc for the operator
             %   vars:   variables of the problem
             %   cons:   constraints in the problem (in terms of the
             %           variables directly)

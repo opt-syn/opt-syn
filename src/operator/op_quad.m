@@ -33,7 +33,7 @@ classdef op_quad < op_sml
 
             vars = create_vars@op_sml(obj, order, reps);
 
-            Pf = lmim(['Pf_', obj.sid], sum(order)*reps, sum(order)*reps, 'sym');
+            Pf = lmim(['Pf_', obj.sid], sum(order)*reps*obj.c, sum(order)*reps*obj.c, 'sym');
 
             vars.Pf = Pf;
         end

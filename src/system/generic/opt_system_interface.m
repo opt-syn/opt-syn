@@ -500,7 +500,7 @@ classdef  opt_system_interface
         % 
         % end
 
-        function [iqc_curr, vars_curr,cons_curr] = create_iqc(index, cons, order, rep_curr);
+        function [iqc_curr, vars_curr,cons_curr] = create_iqc(obj, index, cons, order);
             %CREATE_IQC form the iqc for the current operator in the
             %system description
             %
@@ -511,8 +511,15 @@ classdef  opt_system_interface
             %   or scalar for causal order
             %   reps: number of repeated evaluations (in bind)
             %Returns:
-            %   N: consensus matrix
-            [iqc_curr, vars_curr,cons_curr] = obj.op{index}.create_iqc(cons, order, rep_curr);
+            %   iqc:    a valid iqc for the operator
+            %   vars:   variables of the problem
+            %   cons:   constraints in the problem (in terms of the
+            %           variables directly)
+
+            rep_curr = nnz(obj.bind == index);
+
+            
+            [iqc_curr, vars_curr,cons_curr] = obj.op{index}.create_iqc(cons, order{index}, rep_curr);
         end
 
         function sys_sim = export_sim(obj, op_sim)
