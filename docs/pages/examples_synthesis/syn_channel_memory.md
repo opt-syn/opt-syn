@@ -17,7 +17,7 @@ z^2_k &= u_k^2, & y_k^2 &= w_k^2, & & \forall k \in \N.
 \end{align*}
 ```
 
-Three rounds of Synthesis/Analysis alternation are performed using `order = {1, 1}`. Upper-bounds on the convergence rate $\rho$ over the course of this alternation are
+Three rounds of Synthesis/Analysis alternation are performed using `order = {1, 1}` and parameter $\alpha = 0.4$. Upper-bounds on the convergence rate $\rho$ over the course of this alternation are
 :::{list-table}
 :header-rows: 1
 * - Round

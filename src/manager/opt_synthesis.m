@@ -69,7 +69,7 @@ classdef opt_synthesis < opt_manager_interface
 
             ANY_NONCAUSAL = false;
             for i = 1:length(obj.iqc_op_ana)
-                if size(obj.iqc_op_ana{i}.Psi2.A, 1) > 0
+                if ~isnumeric(obj.iqc_op_ana{i}) && size(obj.iqc_op_ana{i}.Psi2.A, 1) > 0
                     ANY_NONCAUSAL = true;
                     break
                 end
@@ -83,7 +83,11 @@ classdef opt_synthesis < opt_manager_interface
                 %perform factorization: squeeze down to causal filter
                 obj.iqc_op = obj.iqc_op_ana;
                 for i = 1:length(obj.iqc_op)
-                    obj.iqc_op{i} = obj.iqc_op_ana{i}.factor();
+                    if isnumeric(obj.iqc_op_ana{i})
+                        obj.iqc_op{i} = obj.iqc_op_ana{i};
+                    else
+                        obj.iqc_op{i} = obj.iqc_op_ana{i}.factor();
+                    end
                 end
             end
         end

@@ -29,6 +29,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx_favicon',     
     'sphinxcontrib.bibtex',    
+    'sphinxcontrib.tikz',    
     'myst_parser'
 ]
 
@@ -168,3 +169,7 @@ mathjax3_config = {
 
 #bibtex
 bibtex_bibfiles = ['references.bib']
+
+#tikz
+tikz_proc_suite = 'GhostScript'
+tikz_transparent = True

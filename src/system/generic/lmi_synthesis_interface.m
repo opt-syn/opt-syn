@@ -234,6 +234,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
             GX = vars_diss.GX;
             GY = vars_diss.GY;
+            
             GS = vars_diss.GS;
             
             G = [GY, GS; GS', GX];                
@@ -415,7 +416,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             else
                 expl = 1-obj.config.syn.prox(obj.sys.bind);
                 nop = length(obj.sys.bind);
-                D_mask_0 = tril(nop) - diag(expl);           
+                D_mask_0 = tril(ones(nop)) - diag(expl);           
             end
 
 
