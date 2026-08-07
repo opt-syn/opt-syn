@@ -100,7 +100,8 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
                 vars_diss.JY = JY;
 
                 n = ssize(JX, 1);
-                vars_diss.JS = lmim(['JS_slack', name], n, n, 'full');                
+                % vars_diss.JS = lmim(['JS_slack', name], n, n, 'full');                
+                vars_diss.JS = eye(n);
 
                 
                 %per-mode storage functions, coupled by the mode-independent slack
@@ -318,6 +319,26 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
         end
 
+        function G = get_storage_slack(obj, vars_diss, vars_reg)
+            %GET_STORAGE_SLACK get the slack storage function matrix
+            %Gslack. Used in the extended LMI characterization of stability
+            %
+            %Args:                   
+            %   vars_diss:   variables of the problem in the dissipation constraints
+            %   vars_reg:   variables for regulator equation
+            %Returns:            
+            %   G:   the closed-loop storage matrix (warped)
+
+            GX = vars_diss.GX;
+            GY = vars_diss.GY;
+
+            n = ssize(GX, 1);
+            GS = vars_diss.GS;
+
+            G = [GY, eye(n); GS', GX];                
+
+        end
+
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
             %QUAD: certificate of infinite-horizon quadratic performance
             %
@@ -337,7 +358,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             vnext = obj.get_vars_involved(vars, diss.ind_next);
             
 
-            Gslack = obj.get_storage(vslack.diss, vslack.reg);
+            Gslack = obj.get_storage_slack(vslack.diss, vslack.reg);
             Gcurr = obj.get_storage(vcurr.diss, vcurr.reg);
             Gnext = obj.get_storage(vnext.diss, vnext.reg);
 

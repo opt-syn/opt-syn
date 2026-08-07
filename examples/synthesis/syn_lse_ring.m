@@ -1,76 +1,91 @@
-%generate the subsystems
-z = tf('z', 1);
+%generate the state space subsystems
+P =cell(4, 1);
+nx = 2;
+P{1} = [0 , 0 , 1 , 0;
+    0 , 0.2 , 0 , 1; 
+    0 , 1 , 0 , 0 ; 
+    -1 , 0 , 0 , 0];
 
-%original
-D11_base = {0, 0, 0, 0};
-D12_base = {1/(z-0.2), 1/(z-0.9), 1/(z+0.5), 1/(z+0.2)};
-D21_base = {-1/z, -0.5*z/(z-0.2), 0.5*z/(z+0.3), 1/(z-1.2)};
-D22_base = {0, 3, 1, 2};
+P{2} = [0.2 , 0 , 0.25 , 0;
+    0 , 0.9 , 0 , 1 ; 
+    0 , 1 , 0 , 0 ; 
+    -0.4 , 0 , -0.5 , 3];
 
-n = struct('nw', 1, 'nz', 1, 'ny', 1, 'nu', 1);
+P{3} = [-0.3 , 0 , 0.5 , 0;
+    0 , -0.5 , 0 , 1 ;
+    0 , 1 , 0 , 0 ; 
+    -0.3 , 0 , 0.5 , 1];
 
+P{4} = [1.2 , 0 , 1 , 0;
+    0 , -0.2 , 0 , 1 ;
+    0 , 1 , 0 , 0 ;
+    1 , 0 , 0 , 2];
+
+%break up the subsystems into genplants
 Plist = cell(4, 1);
+n = struct('nw', 1, 'nz', 1, 'ny', 1, 'nu', 1);
 for i = 1:4
-    Plist{i} = genplant(ss([D11_base{i}, D12_base{i}; D21_base{i}, D22_base{i}]), n);
+    A = P{i}(1:nx, 1:nx);
+    B = P{i}(1:nx, (nx+1) : end);
+    C = P{i}((nx+1) : end, 1:nx);
+    D = P{i}((nx+1) : end, (nx+1) : end);
+    Plist{i} = genplant(ss(A, B, C, D, 1), n);
 end
+
 network = genplant_poly(Plist);
 
-Gring = [1, 1, 0, 0;
-    0, 1, 1, 0;
-    0, 0, 1, 1;
-    1, 0, 0, 1];
 
-m = 1; L = 1.5;
+%ring switching transition graph
+% Gring = [1, 1, 0, 0;
+%          0, 1, 1, 0;
+%          0, 0, 1, 1;
+%          1, 0, 0, 1];
+Gring =circshift(eye(4), -1);
+
+%define the operator
+m = 1; L = 2;
 ops = {op_sml(m, L)};
 
 sys = opt_system_switched(ops, network, [], Gring);
 
-reg = regulator_switched(sys);
-
-Pi = cat(2, reg.Pi{:})
+%only allow gradients
 config =opt_config();
-config.syn.D_mask = 0;
+config.syn.prox = 0;
+
+%pose and solve
 man= opt_synthesis(sys, config);
 sol= man.bisect();
 
-
-
-%% begin simulation (attempted)
-d = 30;
+%% begin simulation
+d = 50;
 Q = rand_quad(d, m, L);
 bstar = randi(101, [d, 1]) - 50;
-% bstar = zeros(d, 1);
 op1 = op_sim_quad(Q, bstar);
 
 ops_sim = {op1};
 
 sys = sol.sys.export_sim(ops_sim);
 
-T = 50;
+T = 100;
 
 sim  = alg_sim(sys, d);
 nx = sys.get_alg(1).nx;
-sim.sampler.x0 = 4*randn(nx, d);
 sim_out = sim.sim(T);
 
 plt = alg_plotter(sim_out);
-% plt.plot({'f', 'w', 'res_w', ...
-%     'x', 'z', 'mode', }, 10)
+% plt.plot({'x', 'mode'}, 1)
+plt.plot({'x', 'w', 'res_w', 'mode', 'z', 'f'}, 1)
 
+% plt.plot({'x', 'w', 'mode', 'z'}, 1)
 
-% plt.plot({'x', 'w', 'mode', 'z' }, 1)
-% plt.plot({'x', 'w', 'mode', 'z' }, 1)
-plt.plot({'x', 'mode'}, 1)
 
 
 %% regulator equations
-sim_out_long = sim.sim(20*T);
+sim_out_long = sim.sim(6*T);
 dstar = -sim_out_long.z(:, :, end);
 plt = plt.add_opt_sig(sol.regcl, dstar);
 
 %% new
-% plt.plot_4_err(2);    %plot the tracking error
-% plt.plot_4_sq_err(3); %plot the  squared norm of the tracking error
 plt = plt.add_opt_sig(sol.regcl, dstar);
-% plt.plot({'xerr', 'z', 'mode'})
-plt.plot_4_err()
+plt.plot_4_err(2);    %plot the tracking error
+plt.plot_4_sq_err(3); %plot the  squared norm of the tracking error

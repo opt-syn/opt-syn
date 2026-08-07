@@ -6,7 +6,7 @@ A coordinate descent algorithm searches over only a subset of variables in each 
 Letting $i(k)$ be the active coordinate block at iteration $k$, a coordinate descent method to minimize a function $f$ is with stepsize $\gamma>0$ is 
  ```{math}
 \begin{align}
-    \beta^{i(k)}_{k+1} = \beta^{i(k)}_{k} -\gamma \   [\nabla f(\beta)]^i. 
+    \beta^{i(k)}_{k+1} = \beta^{i(k)}_{k} -\gamma \   [\nabla f(\beta_k)]^i. 
 \end{align}
 ```
 
@@ -65,8 +65,6 @@ Algorithm simulation is performed by using the {class}`opt_system_periodic_orbit
 ```
 
 
-
-
-
-
-
+:::{seealso}
+{doc}`Analysis <../examples_analysis/ana_coord_descent>` and {doc}`Synthesis <../examples_synthesis/syn_coord_descent>` of coordinate-descent schemes.
+:::

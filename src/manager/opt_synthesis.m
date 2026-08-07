@@ -69,7 +69,7 @@ classdef opt_synthesis < opt_manager_interface
 
             ANY_NONCAUSAL = false;
             for i = 1:length(obj.iqc_op_ana)
-                if size(obj.iqc_op_ana{i}.Psi2.A, 1) > 0
+                if ~isnumeric(obj.iqc_op_ana{i}) && size(obj.iqc_op_ana{i}.Psi2.A, 1) > 0
                     ANY_NONCAUSAL = true;
                     break
                 end
@@ -83,7 +83,11 @@ classdef opt_synthesis < opt_manager_interface
                 %perform factorization: squeeze down to causal filter
                 obj.iqc_op = obj.iqc_op_ana;
                 for i = 1:length(obj.iqc_op)
-                    obj.iqc_op{i} = obj.iqc_op_ana{i}.factor();
+                    if isnumeric(obj.iqc_op_ana{i})
+                        obj.iqc_op{i} = obj.iqc_op_ana{i};
+                    else
+                        obj.iqc_op{i} = obj.iqc_op_ana{i}.factor();
+                    end
                 end
             end
         end
@@ -154,6 +158,7 @@ classdef opt_synthesis < opt_manager_interface
 
                 if iscell(alg_psi)
 
+                    
                     %iterate through all systems
                     n2 = alg_psi{1}.dump_dim();
                     n2.nwp = length(sp.iwp);
@@ -182,9 +187,44 @@ classdef opt_synthesis < opt_manager_interface
                 diss{i}.rho = sp.rho;
                 diss{i}.spec = sp;
                 diss{i}.iqc_data = iqc_data;
-                diss{i}.plant = alg_screen;
-                diss{i}.plant_reg = obj.lmi.reg.sys_regulated_aug();
+                diss{i}.plant = alg_screen;                                
                 diss{i}.ndiss = length(specs);
+
+
+
+                %for reduced-order control
+                
+                plant_reg = obj.lmi.reg.sys_regulated_aug();
+
+                ind_same = iqc_data.ind_same;
+                % if ~iscell(plant_reg) || isa(plant_reg, 'genplant_poly') || isempty(ind_same)
+                if (obj.lmi.reduced) && ~isempty(ind_same)
+                % else                    
+                    %identify and get rid of the same (m=L) oracles   
+                    %use an explicit substitution w = m z rather than w \in F(z)                    
+                    
+                        error('performance channels not yet properly indexed')
+                        nop = length(obj.sys.bind);
+                        wshift = obj.op{1}.c*nop;
+    
+                        w_offset = ssize(plant_reg.P.B, 2) - wshift;
+                        z_offset = ssize(plant_reg.P.C, 1) - wshift;
+    
+    
+                        ind_diff = setdiff(1:(c*nop), ind_same);
+                        Pd = eye(nop*c);
+                        Pd(:, [ind_same, ind_diff]) = Pd;
+                        n_same = length(ind_same);
+        
+                        Pwp2 = blkdiag(Pd', eye(w_offset));
+                        Pzp2 = blkdiag(Pd, eye(z_offset));
+                        alg_perm_same = Pzp2 * alg_perm * Pwp2;
+        
+                        diss{i}.plant_reg = lft(iqc_data.m_same, alg_perm_same, n_same, n_same);
+                else
+                    diss{i}.plant_reg = plant_reg;
+                end
+                
 
                 %TODO: this may run into trouble if one entry has an X.
                 %convex performance with dynamic multipliers and nontrivial 

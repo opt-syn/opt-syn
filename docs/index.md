@@ -28,7 +28,7 @@ Analysis bounds performance measures such as  worst-case convergence rates and g
 Analysis and Synthesis may be performed for algorithms arising in dynamic environments,  including cases  with constant or time-varying delays, channel memory, and cross-talk.
 
 
-Both the Analysis and Synthesis problems are posed as convex problems with  Linear Matrix Inequality constraints, and are solved using [LMILab](https://www.mathworks.com/help/robust/ug/introduction.html).  
+Both the Analysis and Synthesis tasks are posed as convex problems with  Linear Matrix Inequality constraints. These problems are posed and solved using [LMILab](https://www.mathworks.com/help/robust/ug/introduction.html).  
 
 
 

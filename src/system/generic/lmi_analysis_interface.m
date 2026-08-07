@@ -113,22 +113,28 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
             %   cons: accumulated constraints
             %   con_X: terminal constraint expression
 
-            X = iqc_op.X;
-            
-
-            nf = ssize(X);
-            n = ssize(G, 1);
-            Ef = [eye(nf); zeros(n-nf, nf)];
-
-            X_f = Ef * X * Ef';
-            con_X = G + X_f;
-
-            sx = ssize(con_X, 1);
-
-            if obj.config.gen.impose_X == 1
-                cons = append_lmi(cons, con_X - eye(sx)*obj.config.tol.X, obj.config.LMILAB);
-            elseif obj.config.gen.impose_X == 2
+            if isempty(iqc_op)
+                %no uncertainty is present
+                sx = ssize(G, 1);
                 cons = append_lmi(cons, G - eye(sx)*obj.config.tol.X, obj.config.LMILAB);
+            else
+                X = iqc_op.X;
+                
+    
+                nf = ssize(X);
+                n = ssize(G, 1);
+                Ef = [eye(nf); zeros(n-nf, nf)];
+    
+                X_f = Ef * X * Ef';
+                con_X = G + X_f;
+    
+                sx = ssize(con_X, 1);
+    
+                if obj.config.gen.impose_X == 1
+                    cons = append_lmi(cons, con_X - eye(sx)*obj.config.tol.X, obj.config.LMILAB);
+                elseif obj.config.gen.impose_X == 2
+                    cons = append_lmi(cons, G - eye(sx)*obj.config.tol.X, obj.config.LMILAB);
+                end
             end
 
         end

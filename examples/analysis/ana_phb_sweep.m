@@ -1,5 +1,5 @@
-NL = 3;
-Llist = logspace(-2, 3, NL);
+NL = 200;
+Llist = logspace(0, log10(500), NL);
 
 orderlist = {{[3, 1], [3, 1]}
     {[3, 0], [3, 0]}};
@@ -10,10 +10,6 @@ rho = zeros(NL, 2);
 
 
 %analysis of proximal heavy ball algorithm
-
-
-
-
 for i = 1:NL
     m= 1;
     L = Llist(i);
@@ -41,7 +37,7 @@ for i = 1:NL
     man_sml = opt_analysis(sys_sml);
     man_quad = opt_analysis(sys_quad);
 
-    for j = 1:orderlist
+    for j = 1:Norder
         sol_sml = man_sml.bisect(orderlist{j});
         rho_sml(i, j) = sol_sml.rho;
     

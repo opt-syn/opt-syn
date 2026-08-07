@@ -16,7 +16,7 @@ D_base = [zeros(c), zeros(c); zeros(c), zeros(c)];
 
 n = struct('nz', c, 'nu', c, 'nw', c, 'ny', c, 's', 1);
 
-for i = 1:1
+i = 1;
     A_curr = A_base;
     A_curr(i, i) = 0;
     B_curr = B_base;
@@ -30,7 +30,6 @@ for i = 1:1
     P_curr = ss(A_curr, B_curr, C_curr, D_curr, 1);
 
     Plist = genplant(P_curr, n);
-end
 
 end
 

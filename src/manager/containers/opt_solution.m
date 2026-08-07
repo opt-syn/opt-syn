@@ -17,7 +17,7 @@ classdef opt_solution
         rho; %certified linear convergence rate
 
         info; %information about the LMI solution
-        lmi_out; %LMI constraints in the solution
+        spec; %specifications
         regcl; %certificate of closed-loop regulator equation satisfaction
         cert=[]; %other certificates of the solution
 

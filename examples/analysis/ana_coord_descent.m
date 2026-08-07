@@ -5,7 +5,6 @@ M = circshift(eye(c), 1);
 
 %operator definition
 m = 1; L = 5;
-% op1 = op_quad(m, L);
 op1 = op_sml(m, L);
 
 %gradient descent rule
@@ -20,7 +19,5 @@ sys = opt_system_periodic_orbit(op1, [], K, M);
 % %simulate and plot
 man = opt_analysis(sys);
 
-order = [2, 1]; %quad: 0.8942 %sml:  0.8942
-
-order = [1, 0];
-sol = man.bisect(order) %0.9877
+order = [2, 1]; 
+sol = man.bisect(order); %0.8942 

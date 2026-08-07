@@ -222,31 +222,33 @@ classdef op_sml < op_sml_interface
                     order = [order, 0];
                 end
     
-                reps = size(iqc.Psi1.B, 2)/obj.c;
-                
+                if ~isnumeric(iqc)
+                    reps = size(iqc.Psi1.B, 2)/obj.c;
                     
-                P = obj.dhd_lift(order, vars, iqc);
-                [cons] = dhd_impose(P, cons, obj.LMILAB);
-
-                %impose the exponential discounting
-                % nsched = size(rho_sched, 2);
-                % h = sum(order)+1;
-                % for i = 1:nsched
-                %     rho_1 = kron(diag(rho_sched(1:h, i)), eye(reps));
-                %     rho_2 = rho_1;
-                % 
-                %     P_rho = rho_1 * P * rho_2;
-                % 
-                %     [cons] = dhd_impose(P_rho, cons, obj.LMILAB);
-                % end
-                
-                nu = dim(vars.Df1, 1);
-                for i = 1:nu
-                    %TODO: normalization of the multipliers
-                    e = zeros(nu, 1);
-                    e(i) = 1;
-                    cons = append_lmi(cons, e'*vars.Df1*e, obj.LMILAB);
-                    % cons = append_lmi(cons, e'*vars.Df2*e, obj.LMILAB);
+                        
+                    P = obj.dhd_lift(order, vars, iqc);
+                    [cons] = dhd_impose(P, cons, obj.LMILAB);
+    
+                    %impose the exponential discounting
+                    % nsched = size(rho_sched, 2);
+                    % h = sum(order)+1;
+                    % for i = 1:nsched
+                    %     rho_1 = kron(diag(rho_sched(1:h, i)), eye(reps));
+                    %     rho_2 = rho_1;
+                    % 
+                    %     P_rho = rho_1 * P * rho_2;
+                    % 
+                    %     [cons] = dhd_impose(P_rho, cons, obj.LMILAB);
+                    % end
+                    
+                    nu = dim(vars.Df1, 1);
+                    for i = 1:nu
+                        %TODO: normalization of the multipliers
+                        e = zeros(nu, 1);
+                        e(i) = 1;
+                        cons = append_lmi(cons, e'*vars.Df1*e, obj.LMILAB);
+                        % cons = append_lmi(cons, e'*vars.Df2*e, obj.LMILAB);
+                    end
                 end
             
         end
