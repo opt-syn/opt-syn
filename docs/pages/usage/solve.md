@@ -120,6 +120,14 @@ Niter = 3;
 The `v_history` output is a cell array with 2 rows and  Niter columns. Each entry of the cell array stores the  lower and upper parameter bounds from bisection. The top row are the Synthesis bounds, and the bottom row are the Analysis bounds.
 
 
+:::{caution}
+The sequence of parameter bounds in `v_history` ideally forms a monotonically nonincreasing sequence.
+This may not hold true in implementation due to numerical issues in the solutions and controller recovery. Adjustment of the tolerances in the configuration options (e.g. raising the Analysis option `config.tol.G_max`) may encourage monotonic decrease.
+
+Further development will attempt to encourage monotonicity of decrease in alternation.
+
+:::
+
 ##  Validate
 
 The {class}`opt_solution` structure contains information about the solution of analysis/synthesis. The solution is feasible if the following conditions are met:

@@ -36,11 +36,11 @@ network = genplant_poly(Plist);
 
 
 %ring switching transition graph
-% Gring = [1, 1, 0, 0;
-%          0, 1, 1, 0;
-%          0, 0, 1, 1;
-%          1, 0, 0, 1];
-Gring =circshift(eye(4), -1);
+Gring = [1, 1, 0, 0;
+         0, 1, 1, 0;
+         0, 0, 1, 1;
+         1, 0, 0, 1];
+
 
 %define the operator
 m = 1; L = 2;
@@ -55,6 +55,13 @@ config.syn.prox = 0;
 %pose and solve
 man= opt_synthesis(sys, config);
 sol= man.bisect();
+
+
+
+% as opt_syn_periodic: %0.9493
+%periodic structure:   0.8212 %% Gring =circshift(eye(4), -1);
+%ring structure:   0.7028
+
 
 %% begin simulation
 d = 50;
