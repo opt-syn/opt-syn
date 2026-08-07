@@ -123,6 +123,9 @@ classdef (Abstract) opt_manager_interface < handle
                 %alone                
                 if (ind_stab > 0) && (length(sperf)>1)
                     sperf(ind_stab) = [];
+                    for i = ind_stab:length(sperf)
+                        sperf{i}.id = sperf{i}.id - 1;
+                    end
                 end
 
 
@@ -133,8 +136,13 @@ classdef (Abstract) opt_manager_interface < handle
                     %this needs to be done individually for each rho
                     iqc_op_factored = obj.iqc_op_ana;
                     for i = 1:length(iqc_op_factored)
-                        iqccurr = rhotrafo(obj.iqc_op_ana{i}, common_rho);
-                        iqc_op_factored{i} = iqccurr.factor();
+                        if isnumeric(obj.iqc_op_ana{i})
+                            iqc_op_factored{i} = obj.iqc_op_ana{i};
+                        else
+                            iqccurr = rhotrafo(obj.iqc_op_ana{i}, common_rho);
+                        
+                            iqc_op_factored{i} = iqccurr.factor();
+                        end
                     end
                     obj.iqc_op = iqc_op_factored;
                     [iqc_data] = obj.iqc_op_all();
@@ -518,7 +526,7 @@ classdef (Abstract) opt_manager_interface < handle
             %   spec_new: updated specification
             spec_new = spec_old;
             i = obj.config.bisect.spec_ind;
-            if obj.config.bisect.bisect_rho && isa(spec_old{i}, 'spec_stability')
+            if obj.config.bisect.bisect_rho || isa(spec_old{i}, 'spec_stability')
                 spec_new{i}.rho = pcurr;
             else
                 spec_new{i} = spec_new{i}.set_p(pcurr);                
@@ -555,14 +563,20 @@ classdef (Abstract) opt_manager_interface < handle
             [vars, cons, objective, alg_psi, diss] = obj.build_program(spec_curr); 
  
             [sol] = obj.run(vars, cons, objective);
-            sol.objective = double(double(objective, sol.info.lmi_out));
-            
-            for i = 1:length(spec_curr)
-                if isa(spec_curr{i}, 'spec_stability')
-                    sol.rho = spec_curr{i}.rho;
-                end
-            end
 
+            if obj.config.bisect.bisect_rho
+                sol.rho = pcurr;
+            else
+                for i = 1:length(spec_curr)
+                    if isa(spec_curr{i}, 'spec_stability')
+                        sol.rho = spec_curr{i}.rho;
+                    end
+                end
+
+            end
+            
+            
+            sol.spec = spec_curr;
             sol.cert.alg_psi = alg_psi;
             sol.vars = vars;
             sol.cert.diss = diss;
