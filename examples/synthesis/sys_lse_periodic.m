@@ -34,19 +34,11 @@ end
 
 network = genplant_poly(Plist);
 
-
-%ring switching transition graph
-% Gring = [1, 1, 0, 0;
-%          0, 1, 1, 0;
-%          0, 0, 1, 1;
-%          1, 0, 0, 1];
-Gring =circshift(eye(4), -1);
-
 %define the operator
 m = 1; L = 2;
 ops = {op_sml(m, L)};
 
-sys = opt_system_switched(ops, network, [], Gring);
+sys = opt_system_periodic(ops, network, []);
 
 %only allow gradients
 config =opt_config();
@@ -54,7 +46,7 @@ config.syn.prox = 0;
 
 %pose and solve
 man= opt_synthesis(sys, config);
-sol= man.bisect();
+sol= man.bisect();   %0.7028
 
 %% begin simulation
 d = 50;
@@ -66,18 +58,14 @@ ops_sim = {op1};
 
 sys = sol.sys.export_sim(ops_sim);
 
-T = 100;
+T = 60;
 
 sim  = alg_sim(sys, d);
 nx = sys.get_alg(1).nx;
 sim_out = sim.sim(T);
 
 plt = alg_plotter(sim_out);
-% plt.plot({'x', 'mode'}, 1)
 plt.plot({'x', 'w', 'res_w', 'mode', 'z', 'f'}, 1)
-
-% plt.plot({'x', 'w', 'mode', 'z'}, 1)
-
 
 
 %% regulator equations

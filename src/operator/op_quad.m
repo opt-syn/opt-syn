@@ -160,45 +160,46 @@ classdef op_quad < op_sml
 
 
            %assemble the filter for the sum
-           Psi1 = iqc.Psi1;
-           Psi2 = iqc.Psi2;
-           
-
-           Apsi = blkdiag(Psi1.A, Psi2.A);
-           Bpsi = [Psi1.B; Psi2.B];
-           Cpsi = blkdiag(Psi1.C, Psi2.C);
-           Dpsi = [Psi1.D; Psi2.D];
-
-
-                    
-           %call the KYP lemma for positive realness
-
-
-           %dynamics
-           [n, m] = ssize(Bpsi);
-           Ablock = [eye(n), zeros(n, m);
-           Apsi, Bpsi];
-
-           Pblock = blkdiag(vars.Pf, -vars.Pf);
-
-           M_sys = Ablock' * Pblock * Ablock;
-
-
-           %supply
-           Cblock = [Cpsi, Dpsi];
-           p = ssize(Dpsi, 1);
-
-           sup_block = kron([0, 1; 1, 0], eye(p/2));
-           M_supp = Cblock' * sup_block * Cblock;
-
-           %imposition
-           lmi_pass = M_sys + M_supp;
-           lmi_terminal = vars.Pf - iqc.X;
-
-           
-           cons = append_lmi(cons, lmi_pass, obj.LMILAB);
-           cons = append_lmi(cons, lmi_terminal, obj.LMILAB);
-
+           if ~isnumeric(iqc)
+               Psi1 = iqc.Psi1;
+               Psi2 = iqc.Psi2;
+               
+    
+               Apsi = blkdiag(Psi1.A, Psi2.A);
+               Bpsi = [Psi1.B; Psi2.B];
+               Cpsi = blkdiag(Psi1.C, Psi2.C);
+               Dpsi = [Psi1.D; Psi2.D];
+    
+    
+                        
+               %call the KYP lemma for positive realness
+    
+    
+               %dynamics
+               [n, m] = ssize(Bpsi);
+               Ablock = [eye(n), zeros(n, m);
+               Apsi, Bpsi];
+    
+               Pblock = blkdiag(vars.Pf, -vars.Pf);
+    
+               M_sys = Ablock' * Pblock * Ablock;
+    
+    
+               %supply
+               Cblock = [Cpsi, Dpsi];
+               p = ssize(Dpsi, 1);
+    
+               sup_block = kron([0, 1; 1, 0], eye(p/2));
+               M_supp = Cblock' * sup_block * Cblock;
+    
+               %imposition
+               lmi_pass = M_sys + M_supp;
+               lmi_terminal = vars.Pf - iqc.X;
+    
+               
+               cons = append_lmi(cons, lmi_pass, obj.LMILAB);
+               cons = append_lmi(cons, lmi_terminal, obj.LMILAB);
+           end
        end
 
         

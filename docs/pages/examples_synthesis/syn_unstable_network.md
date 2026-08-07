@@ -50,15 +50,15 @@ Figure [2](#state) plots the states, oracle input, oracle output over this execu
 
 
 
-Figure [3](#track) plots the tracking errors of the algorithm, based on the Regulator Equation solutions in `sol.cert.regcl`.
-:::{figure} _static/unstable_3_state_iter_dark.png
+Figure [3](#track) plots the tracking errors of the algorithm based on the Regulator Equation solutions.
+:::{figure} _static/unstable_3_state_track_dark.png
 :align: center
 :class: only-dark
 :name: track
 *Figure 3:* Trace of tracking errors
 :::
 
-:::{figure} _static/unstable_3_state_iter_dark.png
+:::{figure} _static/unstable_3_state_track_dark.png
 :align: center
 :class: only-light
 :name: track

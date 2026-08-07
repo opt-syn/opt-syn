@@ -112,7 +112,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             %   D_mask:     sparsity pattern for D of the controller
 
             %the sparsity-constrained term for internal model control            
-            D_mask_0 = obj.config.syn.D_mask;
+            D_mask_0 = get_D_mask@lmi_synthesis_interface(obj);
 
 
 
@@ -265,7 +265,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             vars_diss = vcurr.diss;
             vars_diss.GX = vnext.diss.GX;
 
-            sys_cl = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K{diss.ind_curr});
+            sys_cl = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K{diss.ind_curr}, diss.rho);
             
             %index the quadratic specification
             np = diss.iqc_rob.np;

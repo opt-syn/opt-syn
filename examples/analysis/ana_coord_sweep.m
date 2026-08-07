@@ -43,10 +43,10 @@ save('ana_coord_sweep_data_2.mat')
 figure(1)
 clf
 hold on
-plot(L(121:end), rho(121:end, :), 'linewidth', 2)
+plot(L, rho, 'linewidth', 2)
 % % plot(omegalist, rholist_1_0, 'linewidth', 2, 'color', cc(2, :))
 % plot(omegalist, rholist_2_0, 'linewidth', 2, 'color', cc(3, :))
-plot([L(121), L(end)], [1, 1], ':', 'linewidth', 2, 'color', 0.5*[1,1,1])
+plot([L(1), L(end)], [1, 1], ':', 'linewidth', 2, 'color', 0.5*[1,1,1])
 xlabel('$L$', 'interpreter', 'latex', 'fontsize', 16)
 ylabel('$\rho$', 'interpreter', 'latex', 'fontsize', 16)
 xlim([1, 100]);
