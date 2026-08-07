@@ -25,15 +25,16 @@ sys_sml = opt_system({op1_sml,  op2}, [], sK);
 sys_quad = opt_system({op1_quad, op2}, [], sK);
 
 % order = {[3, 0], [3, 0]};
-% order = {[3, 1], [3, 1]};
-order = {[3, 2], [3, 2]};
+order = {[3, 1], [3, 1]};
+% order = {[3, 2], [3, 2]};
 
 man_sml = opt_analysis(sys_sml);
 man_quad = opt_analysis(sys_quad);
 
 % sol_sml = man_sml.bisect(order); % 0.8971
 % 
-sol_quad = man_quad.bisect(order);
+sol_quad = man_quad.bisect(order); %0.8076
+
 
 % [0.8971, sol_quad.rho]
 % [sol_sml.rho, sol_quad.rho]

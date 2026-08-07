@@ -5,15 +5,14 @@ orderlist = {{[3, 1], [3, 1]}
     {[3, 0], [3, 0]}};
 Norder = length(orderlist);
 
-rho = zeros(NL, 2);
-
-
 
 %analysis of proximal heavy ball algorithm
-for i = 1:NL
+sol_quad = cell(NL, 1);
+parfor i = 1:NL
     m= 1;
     L = Llist(i);
 
+    
     %different operator classes for op1
     op1_sml = op_sml(m, L);
     op1_quad = op_quad(m, L);
@@ -38,14 +37,32 @@ for i = 1:NL
     man_quad = opt_analysis(sys_quad);
 
     for j = 1:Norder
+    
         sol_sml = man_sml.bisect(orderlist{j});
         rho_sml(i, j) = sol_sml.rho;
     
         sol_quad = man_quad.bisect(orderlist{j});
         rho_quad(i, j) = sol_quad.rho;
+    % end
     end
 
 end
+
+%% plot the result
+
+figure(1)
+clf
+hold on
+cc = linspecer(4);
+plot(Llist, rho_sml, 'linewidth', 2)
+plot(Llist, rho_quad, 'linewidth', 2)
+plot([Llist(1), Llist(2)], [1, 1], ':', 'linewidth', 2, 'color', 0.5*[1,1,1])
+xlabel('$L$', 'interpreter', 'latex', 'fontsize', 16)
+ylabel('$\rho$', 'interpreter', 'latex', 'fontsize', 16)
+% xlim([min(omegalist), max(omegalist)]);
+% legend({'Order [0,0]', 'Order [1, 0]', 'Order [2, 0]', '$\rho$=1'}, 'location','northeast', 'interpreter', ...
+    % 'latex', 'fontsize', 16,'location', 'north')
+
 
 % [0.8971, sol_quad.rho]
 % [sol_sml.rho, sol_quad.rho]

@@ -2,6 +2,10 @@ classdef op_quad < op_sml
     %OP_QUAD a gradient of a quadratic function 1/2 x' Q x, with eigenvalues of Q between
     %  m and L.
         
+    properties
+        P_max = 1e4; %hardcoded tolerance for conditioning of quadratics, to be improved.
+    end
+
     methods
         function obj = op_quad(m, L, c)
             %OP_QUAD Constructor
@@ -174,13 +178,16 @@ classdef op_quad < op_sml
                         
                %call the KYP lemma for positive realness
     
+               %credit to Lennart Dahlhues for this formulation
     
+
                %dynamics
                [n, m] = ssize(Bpsi);
                Ablock = [eye(n), zeros(n, m);
                Apsi, Bpsi];
     
-               Pblock = blkdiag(vars.Pf, -vars.Pf);
+               % Pblock = blkdiag(vars.Pf, -vars.Pf);
+               Pblock = blkdiag(-vars.Pf, vars.Pf);
     
                M_sys = Ablock' * Pblock * Ablock;
     
@@ -194,9 +201,16 @@ classdef op_quad < op_sml
     
                %imposition
                lmi_pass = M_sys + M_supp;
-               lmi_terminal = vars.Pf - iqc.X;
+               % lmi_terminal = vars.Pf - iqc.X;
+               lmi_terminal = -vars.Pf + iqc.X;
     
+               %conditioning on certifier
+               sterm = ssize(lmi_terminal, 1);
+               lmi_term_max = sterm * eye(sterm) * obj.P_max - (lmi_terminal);
                
+               cons = append_lmi(cons, lmi_term_max, obj.LMILAB);
+
+
                cons = append_lmi(cons, lmi_pass, obj.LMILAB);
                cons = append_lmi(cons, lmi_terminal, obj.LMILAB);
            end
