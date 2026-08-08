@@ -85,14 +85,8 @@ Valid relations for operators can be adjusted to allow for exponential weighting
 ## Outlook for Optimization
 
 
-<!-- The exponentially weighted iterates $(\ov p, \ov q)$ related by $\ov p_k \in \rho^{-k} F(\rho^{-k} w_k)$ for the operator $\mathcal{O}$. This pair $(\ov w, \ov z)$ satisfies the IQC -->
-  <!-- $(\Psi(\blam), M(\blam), X(\blam))$ for any  $\blam \in \Lambda(\rho)$. -->
-
-<!-- Let $\lambda$ be a set of coefficients for the IQC filter $\Psi$, $\rho > 0$ be a rate, and $\Lambda(\rho)$ be a constraint region.  -->
-
 IQC descriptions of uncertainties can be used to validate optimization algorithms.
 
-<!-- Given a  rate $\rho > 0$,  an IQC $(\Psi(\lambda), M(\lambda), X(\lambda))$ parameterized by coefficients $\lambda$,  -->
 
 Let $\rho > 0$ be a convergence rate, $\Lambda(\rho)$ be a constraint set, and  $(\Psi(\lambda), M(\lambda), X(\lambda), \ell)$ be a valid relation for any 
 1. $F \in \F$ 

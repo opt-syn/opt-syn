@@ -19,7 +19,7 @@ A solution (fixed-point) to a zero-inclusion problem is a pair $(\beta^*, w^*)$ 
 
 ```{math}
 \begin{align*}
- 0 \in \sum_{i=1}^s w^{*i}, \qquad w^{*i} \in F_i(\beta^*).
+ 0 \in \sum_{i=1}^s w^{*,i}, \qquad w^{*,i} \in F_i(\beta^*).
 \end{align*}
 ```
 
@@ -79,7 +79,7 @@ A fixed-point of the algorithm is a tuple $(x^*, w^*, z^*)$ satisfying
 ``` 
 
 The algorithm is convergent if for every initial condition $x_0$, there exists a fixed point $(x^*(x_0), w^*(x_0), z^*(x_0))$ such that 
-1. Optimality: $\sum_{i=1}^s w^{*i}(x_0) = 0$ 
+1. Optimality: $\sum_{i=1}^s w^{*,i}(x_0) = 0$ 
 2. Consensus:  $z^{*1}(x_0) = z^{*2}(x_0) = \ldots = z^{*s}(x_0)$
 3. Attractivity:  $\lim_{k\rightarrow \infty} \mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2 = 0$.
 
@@ -103,7 +103,7 @@ It is linearly convergent  with rate $\rho \in (0, 1)$ if there exists a constan
 satisfy  $\lim_{k \rightarrow \infty} \rho^{-k} x_k = 0$.
 
 
-2. Solvability of *Regulator Equation:*  For any pair $(\beta^*, w^*)$ with $\sum_{i=1}^s w^{*i} = 0$, there exists a state $x^*$ satisfying 
+2. Solvability of *Regulator Equation:*  For any pair $(\beta^*, w^*)$ with $\sum_{i=1}^s w^{*,i} = 0$, there exists a state $x^*$ satisfying 
 ```{math}
 \begin{align}
 \mat{c}{x^* \\ 0} = \mat{c|cc}{\Acl & 0 & \Bcl \hl 
@@ -112,6 +112,8 @@ satisfy  $\lim_{k \rightarrow \infty} \rho^{-k} x_k = 0$.
 ```
 
 The Robust Stability criterion is an intensive dynamical test, and will be verified using Integral Quadratic Constraints and Linear Matrix Inequality methods. In contrast, the  Regulator Equation can be easily checked by solving a linear system of  equations. Uniqueness of the state $x^*$ is provided by detectability of $(\Acl, \Ccl)$.
+
+The Regulator Equation requirement is independent of the specific operators in $F$. Robust Stability is verified for classes of operators (e.g. $F_2$ is maximal monotone).
 
 
 Fullfillment of the Regulator Equation and the {{osyn}}-verified Robust Stability requrirements imply that the algorithm is a fixed-point encoding {footcite}`ryu2020uniqueness`: every fixed point of the algorithm is a fixed point of the inclusion problem.
@@ -132,7 +134,7 @@ A more general network can be modeled as a linear system. The interconnection be
 
 The Regulator Equation condition in the networked setting can be expanded into 
 
-2. *Regulator Equation*:  For any $(\beta^*, w^*)$ with $\sum_{i=1}^s w^{*i} = 0$, there exists a 
+2. *Regulator Equation*:  For any $(\beta^*, w^*)$ with $\sum_{i=1}^s w^{*,i} = 0$, there exists a 
 ```{math}
 \begin{align}    
      \text{Network}: & &    \mat{c|cc:c}{A & 0 & B_w & B_y \hl
@@ -149,8 +151,8 @@ Under the Convergence and Regulator Equation conditions, convergence in all sign
 ```{math}
 \begin{align}
     \lim_{k \rightarrow \infty}
-    \mat{c}{x_k^N \\ x^c_k \hl  y_k \\u_k} & = \mat{c}{\Pi \\ \Theta \hl \Phi \\ \Gamma} \mat{c}{-\beta^* \\{w}^{*1} \\ w^{*2} \\ \vdots \\ w^{*, s-1}}, &   \lim_{k \rightarrow \infty}
-    \mat{c}{z_k \\ w_k } & =  z^* = \mat{c}{\1 \otimes \beta^*}.     
+    \mat{c}{x_k^N \\ x^c_k \hl  y_k \\u_k} & = \mat{c}{\Pi \\ \Theta \hl \Phi \\ \Gamma} \mat{c}{-\beta^* \\{w}^{*,1} \\ w^{*,2} \\ \vdots \\ w^{*, s-1}}, &   \lim_{k \rightarrow \infty}
+    z_k & =  z^* = \mat{c}{\1 \otimes \beta^*}.     
 \end{align}
 ```
 
