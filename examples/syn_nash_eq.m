@@ -1,8 +1,6 @@
 %synthesis of fixed point algorithms 
-%
 %set-valued maps (nash equilibria)
     
-
 %% generate parameters of the game
 rng(40, 'twister')
 

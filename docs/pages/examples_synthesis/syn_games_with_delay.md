@@ -5,7 +5,7 @@ This example continues the Douglas-Rachford Game {doc}`simulation <../examples_s
 In this two-operator example, the pseudogradient $F_1$ is $1.4785$-monotone and $0.1605$-cocoercive, and the normal cone $F_2 = \partial \mathbb{I}_{\norm{\cdot}_{\infty} \leq 10}$ is the subdifferential of a p.c.c. function. The operators are therefore described by {class}`op_gen` and {class}`op_pcc` respectively.
 
 
-Three algorithms to solve this inclusion problem are synthesized. 
+Four algorithms to solve this inclusion problem are synthesized. 
 
 1. Backward evaluation of both $F_1$ and $F_2$,
 2. Forward evaluation of $F_1$, backward evaluation of $F_2$,
@@ -39,7 +39,7 @@ Figure  [2](#game-fw) plots a trajectory of the forward and backward evaluation 
 *Figure 2:* Algorithm with one forward and one  backward evaluation
 :::
 
-:::{figure} _static/game_sim_fw_dark.png
+:::{figure} _static/game_sim_fw_light.png
 :align: center
 :class: only-light
 :name: game-fw
@@ -54,7 +54,7 @@ Figure  [3](#game-delay) plots a trajectory of the algorithm with time delay.
 *Figure 3:* Algorithm with delay on $F_1$
 :::
 
-:::{figure} _static/game_sim_delay_dark.png
+:::{figure} _static/game_sim_delay_light.png
 :align: center
 :class: only-light
 :name: game-delay

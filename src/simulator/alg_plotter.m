@@ -217,23 +217,24 @@ classdef alg_plotter
             %Returns
             %   ax: axis with the signal
 
-            k = obj.sim_out.k;
-            T = length(k);
-            if ismember(sig, fieldnames(obj.sim_out))
-                sig_curr = getfield(obj.sim_out, sig);
-            elseif strcmp(sig, 'x')
-                sig_curr = [obj.sim_out.xn; obj.sim_out.xc];
-            elseif strcmp(sig, 'payoff')
-                sig_curr = [obj.sim_out.f];
-            elseif strcmp(sig, 'xerr')
-                sig_curr = [obj.sim_out.xnerr; obj.sim_out.xcerr];
-            elseif strcmp(sig, 'sq_xerr')
-                sig_curr = obj.sim_out.sq_xnerr +  obj.sim_out.sq_xcerr;
-            elseif strcmp(sig, 'delay')
-                sig_curr = obj.sim_out.mode - 1;
-            elseif strcmp(sig, 'coord')
-                sig_curr = obj.sim_out.mode;
-            end
+            if ~isempty(sig)
+                k = obj.sim_out.k;
+                T = length(k);
+                if ismember(sig, fieldnames(obj.sim_out))
+                    sig_curr = getfield(obj.sim_out, sig);
+                elseif strcmp(sig, 'x')
+                    sig_curr = [obj.sim_out.xn; obj.sim_out.xc];
+                elseif strcmp(sig, 'payoff')
+                    sig_curr = [obj.sim_out.f];
+                elseif strcmp(sig, 'xerr')
+                    sig_curr = [obj.sim_out.xnerr; obj.sim_out.xcerr];
+                elseif strcmp(sig, 'sq_xerr')
+                    sig_curr = obj.sim_out.sq_xnerr +  obj.sim_out.sq_xcerr;
+                elseif strcmp(sig, 'delay')
+                    sig_curr = obj.sim_out.mode - 1;
+                elseif strcmp(sig, 'coord')
+                    sig_curr = obj.sim_out.mode;            
+                end
                
 
                 sz_curr = size(sig_curr);
@@ -261,7 +262,7 @@ classdef alg_plotter
                 if strcmp(sig, 'delay') || strcmp(sig, 'mode') || strcmp(sig, 'coord')
                     yticks(1:max(sig_plot));                    
                 end
-            
+            end 
         end
 
         function name = get_title(obj, sig)

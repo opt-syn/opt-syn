@@ -97,13 +97,13 @@ The supported pairs of simplification methods and dynamical system types are
   - Periodic
   - Switched
 * - Matrix Elimination
-  - Yes
-  - Yes
+  - ✔
+  - ✔
   - 
   - 
 * - Reduced-Order
-  - Yes
-  - Yes
+  - ✔
+  - ✔
   - 
   - 
 :::
