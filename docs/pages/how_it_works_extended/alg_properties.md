@@ -6,9 +6,6 @@ Desirable properties of optimization algorithms are convergence, performance,  w
 In Analysis, we aim to verify that an algorithm always achieves these properties. In Synthesis, we try to generate an algorithm meeting these properties. 
 
 
-
-
-
  ## Convergence
 
 The operators $\{F_i\}_{i=1}^s$  in the inclusion problem will be assembled into a single operator $F$, defined as  
@@ -85,7 +82,7 @@ The interconnection $(F, G)$ may be condensed using the set-valued map $H := (F^
  (F, G): & & x_{k+1} &\in \Acl x_k + \Bcl H(\Ccl x_k).
 \end{align*}
 ``` 
-\
+
 The interconnection is well-posed if  $H$ is globally defined and continuous. Well-posedness implies that the sequence $(x_k, w_k, z_k)_{k \in \N}$ exists and is unique for every  initial state $x_0$. A well-posed algorithm therefore satisfies the explicit relation $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)$ for all $k$. 
 
 

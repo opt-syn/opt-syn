@@ -10,8 +10,46 @@ Configuration options include numerical tolerances and  recovery prereferences. 
 
 ## Restricting  Information Structures
 
-The primary user-facing configuration option in algorithm synthesis is specification of the sparsity pattern of the controller matrix $D_K$. This sparsity pattern can be used to enforce an {doc}`Information Structure <../../how_it_works/alg_properties>` on the generated algorithm.
+The primary user-facing configuration option in algorithm synthesis is specification of the sparsity pattern of the controller matrix $D_K$. 
 
+
+### Background of Information Structure
+
+The well-posed algorithmic interconnection $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)$ is a nonlinear iterative procedure. Computation of  $x_{k+1}$ from $x_k$ for general $(F, \Dcl)$ requires the solution of a nonlinear fixed-point equation, and may be computationally intractable. If $\Dcl$ is block-lower-triangular, the system $(\Acl, \Bcl, \Ccl, \Dcl)$ can be then partitioned as 
+```{math}
+\begin{align}
+\mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2 \\ \vdots \\ z_k^s} &= \mat{c|cccc}{
+   \Acl & \Bcl_1 & \Bcl_2  & \hdots & \Bcl_s \hl
+   \Ccl_1 & \Dcl_{11} & 0 &   \hdots & 0\\
+   \Ccl_2 & \Dcl_{21 } & \Dcl_{22} &   \hdots & 0\\
+   \vdots & \vdots & \vdots  & \ddots & \vdots\\
+   \Ccl_s & \Dcl_{s1} & \Dcl_{s2} & \hdots & \Dcl_{ss}} \mat{c}{x_{k} \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s}.
+\end{align}
+```
+
+
+
+The information structure of the algorithm is the block-sparsity pattern of $\Dcl$. 
+
+- If $\Dcl_{ii} = 0$, then $w^i_k$ is explicitly computed from $(x_k, w^1_k, \ldots, w^{i-1}_k)$. 
+
+- If $\Dcl_{ii} \neq 0$, then $w^i_k$ implicitly depends on $(x_k, w^1_k, \ldots, w^{i-1}_k, w^i_k)$.   
+
+- If $\Dcl_{ij} = 0$ with $i > j$, then $w^i_k$ does not use information from the previously computed output $w^j_k$.
+
+
+Examples of information structures for $s=2$ operators (with $\bullet$ marking  nonzero entries) are 
+|    | Sequential    | Parallel       |
+| ------: | :-----: | :-------:  |
+| Only Implicit | $\mat{cc}{\bullet & 0 \\ \bullet & \bullet}$ | $\mat{cc}{\bullet & 0 \\ 0 & \bullet}$ |
+| Mixed | $\mat{cc}{0 & 0 \\ \bullet & \bullet}, \quad  \mat{cc}{\bullet & 0 \\ \bullet & 0}$ | $ \mat{cc}{0& 0 \\ 0 & \bullet}, \quad   \mat{cc}{\bullet & 0 \\ 0 & 0}$ |
+| Only Explicit | $\mat{cc}{0 & 0 \\ \bullet & 0}$  | $\mat{cc}{0 & 0 \\ 0 & 0}$ |
+
+The sequential schemes each have a $\bullet$ in the lower-left position: $w^2$ is computed based on information from $w^1$. Parallel schemes can evaluate $w^1$ and $w^2$ separately. 
+
+In Analysis, the information structure can be verified by inspection. Synthesis may be constrained to return algorithms with a desired information structure.
+
+### Control of Information Structures
 
 Coarse-grained control on the sparsity of $K$ is performed by setting the vector `config.syn.prox`, indicating which oracles are permitted proximal evaluation. Fine-grained control is achieved by assigning the matrix `config.syn.D_mask`. 
 
@@ -49,25 +87,28 @@ An algorithm with nonzero upper-block-triangular  entries of `D_mask` can be Ana
 ## Simplified Synthesis Programs
 
 Special structures of the IQC synthesis programs allow for simplification of the LMI programs. 
-Supported simplification methods v.s. dynamical system types are
+The supported pairs of simplification methods and dynamical system types are
 :::{list-table}
 :header-rows: 1
 :stub-columns: 1
-* - LTI 
+* -
+  - LTI 
   - Periodic-Orbit
   - Periodic
   - Switched
 * - Matrix Elimination
-  - [x]
-  - [x]
-  - []
-  - []
+  - Yes
+  - Yes
+  - 
+  - 
 * - Reduced-Order
-  - [x]
-  - [x]
-  - []
-  - []
+  - Yes
+  - Yes
+  - 
+  - 
 :::
+
+
 
 All simplifications  are enabled by default. They may respectively be disabled by 
 ```matlab

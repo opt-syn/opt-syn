@@ -128,10 +128,12 @@ The System `sys` executed  by first interconnecting the Network and Controller, 
 \Ccl_{z_p} & \Dcl_{z_p w} & \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k \\ w_{p k}},
 \end{align*}
 ```
+Well-posedness requires that the map $H: = (F^{-1} - \Dcl{zw})^{-1}$ is globally defined and continuous.
+
 The closed loop state $x$ is the concatenation $x = [x^N, x^c]$. 
 
 
-{class}`alg_sim` execution using {meth}`sim`  requires the {doc}`algorithm properties <../how_it_works/alg_properties>` of  well-posedness and a block-triangular information structures. 
+{class}`alg_sim` execution using {meth}`sim`  requires the {doc}`algorithm properties <../how_it_works/alg_properties>` of  well-posedness and a block-triangular information structure. 
 
 Under these conditions, the System can be partitioned as 
 
@@ -156,6 +158,8 @@ x_{k+1} &= \Acl x_k + \textstyle \sum_{i=1}^s \Bcl_{wi} w^i_k + \Bcl_{w_p} w_{pk
 z_{p, k+1} &= \Ccl_{z_p} x_k + \textstyle \sum_{i=1}^s \Dcl_{z_p w i} w^i_k + \Dcl_{z_p w_p} w_{pk}.
 \end{align}
 ```
+
+
 
 The operator $H_i: = (F_i^{-1} - \Dcl_{zw, ii})^{-1}$ can be evaluated using the {class}`op_sim` methods 
 :::{list-table}

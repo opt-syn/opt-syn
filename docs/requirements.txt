@@ -5,3 +5,4 @@ sphinx-book-theme
 sphinx-favicon
 sphinx-subfigure
 myst-parser
+sphinxemoji

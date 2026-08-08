@@ -25,7 +25,7 @@ Synthesis is used to find a algorithm that is convergent for all $f \in S_{1, 8}
 * - $h=1$
   - 0.7979
   - 0.7982
-  - $h=3$
+* - $h=3$
   - 0.9967
   - 0.7050
 :::

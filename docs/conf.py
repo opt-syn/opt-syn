@@ -30,6 +30,7 @@ extensions = [
     'sphinx_favicon',     
     'sphinxcontrib.bibtex',    
     'sphinxcontrib.tikz',    
+    'sphinxemoji.sphinxemoji',
     'myst_parser'
 ]
 
@@ -49,8 +50,9 @@ html_context = {
 }
 
 templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'pages/how_it_works_extended', 'img/logo' ]
 myst_number_code_blocks = ['matlab']
+
 
 # matlab source code
 matlab_src_dir = '../src'
