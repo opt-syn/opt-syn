@@ -5,14 +5,8 @@ op1 = op_sml(m, L);
 op2 = op_pcc();
 ops = {op1, op2};
 
-% We solve the optimization problem with a Douglas-Rachford algorithm 
-%Douglas-Rachford algorithm
-% gamma = 0.4;
-% lambda = 0.25;
-% K = ss(1, [-gamma*lambda, -gamma*lambda], [1; 1], [-gamma, 0; -2*gamma, -gamma],1);
-
 %PGD
-gamma = 1/L;
+gamma = 2/(m+L);
 K = ss(1, [-gamma, -gamma], [1; 1], [0, 0; -gamma, -gamma],1);
 
 
@@ -24,7 +18,14 @@ man = opt_analysis(sys);
 order = {1, 1};
 
 %get the convergence rate
-rho = 0.95;
-spec = spec_stability(rho);
+% rho = 0.95;
+% spec = spec_stability(rho);
 
-sol_best = man.solve_single(order, spec)
+sol_best = man.bisect(order) %0.8182
+
+%% with a time delay
+delay = [1, 0];
+network = bridge_channel_delay(delay, delay);
+sys_delay = opt_system({op1, op2}, network, K);
+man_delay = opt_analysis(sys_delay);
+sol_delay = man_delay.bisect(order);  % 1.3744

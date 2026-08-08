@@ -34,7 +34,7 @@ Both the Analysis and Synthesis tasks are posed as convex problems with  Linear 
 
 ## Get Started
 
-For installation and  examples of algorithm  Analysis and Synthesis workflows, see  {doc}`Get Started <pages/get_started>`.
+For installation and  examples of algorithm  Analysis and Synthesis workflows, see  {doc}`Get Started <pages/get_started/index_get_started>`.
 
 ## Contributors
 
@@ -47,18 +47,21 @@ For installation and  examples of algorithm  Analysis and Synthesis workflows, s
 
 Contact [Jared Miller](https://jarmill.github.io/) for questions, issues, feedback, and suggestions.
 
+## Funding
+Development of {{osyn}} was in part supported by  Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Germany's Excellence Strategy - EXC 2075 – 390740016, and by the Stuttgart Center for Simulation Science (SimTech)
+
 ```{toctree}
 :maxdepth: 2
 :hidden:
 
 Home <self>
-Get Started <pages/get_started>
+Get Started <pages/get_started/index_get_started>
 Examples <pages/examples>
 How it Works <pages/how_it_works/index_how_it_works>
 Usage <pages/usage/index_usage>
 Documentation <pages/documentation/index_documentation>
 Changelog <pages/changelog/changelog>
-Resources <pages/resources>
+Resources <pages/resources/resources>
 ```
 
 
