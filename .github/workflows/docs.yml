@@ -33,11 +33,11 @@ jobs:
           python -m pip install -r docs/requirements.txt
       - name: Build docs
         run: |
-          make -C docs dhtml          
+          make -C docs dirhtml          
       - name: Upload docs artifact
         uses: actions/upload-artifact@v6
         with:
-          name: docs-dhtml
+          name: docs-dirhtml
           include-hidden-files: true
           path: docs/_build/html/
           if-no-files-found: error
@@ -52,7 +52,7 @@ jobs:
       - name: Download built docs
         uses: actions/download-artifact@v8
         with:
-          name: docs-dhtml
+          name: docs-dirhtml
           path: built-docs
       - name: Require docs deploy token
         shell: bash
