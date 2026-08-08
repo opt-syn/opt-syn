@@ -3,4 +3,5 @@
 .PHONY: docs
 
 docs:
-	@$(MAKE) -C docs dhtml
+	@$(MAKE) -C docs dirhtml
+	 touch _build/dirhtml/.nojekyll

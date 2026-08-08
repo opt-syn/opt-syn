@@ -5,8 +5,8 @@
 # from the environment for the first two.
 SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
-SOURCEDIR     = ../opt-syn
-BUILDDIR      = ../opt-syn/_build
+SOURCEDIR     = ../src
+BUILDDIR      = ./_build
 REQFILE = requirements.txt
 
 
@@ -23,8 +23,6 @@ deps:
 	@$(PYTHON) -m pip install -r "$(REQFILE)"
 
 
-dhtml: clean
-         html
 
 
 # Catch-all target: route all unknown targets to Sphinx using the new
