@@ -33,14 +33,13 @@ jobs:
           python -m pip install -r docs/requirements.txt
       - name: Build docs
         run: |
-          make -C docs dirhtml
-          touch docs/build/dirhtml/.nojekyll
+          make -C docs dhtml          
       - name: Upload docs artifact
         uses: actions/upload-artifact@v6
         with:
-          name: docs-dirhtml
+          name: docs-dhtml
           include-hidden-files: true
-          path: docs/build/dirhtml/
+          path: docs/_build/html/
           if-no-files-found: error
 
   publish:
@@ -53,7 +52,7 @@ jobs:
       - name: Download built docs
         uses: actions/download-artifact@v8
         with:
-          name: docs-dirhtml
+          name: docs-dhtml
           path: built-docs
       - name: Require docs deploy token
         shell: bash
