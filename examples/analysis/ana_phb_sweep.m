@@ -1,68 +1,70 @@
+%parameters of the sweep
 NL = 200;
 Llist = logspace(0, log10(500), NL);
 
-orderlist = {{[3, 1], [3, 1]}
-    {[3, 0], [3, 0]}};
+orderlist = {
+    {[3, 0], [3, 0]};
+    {[3, 1], [3, 1]}
+    };
 Norder = length(orderlist);
 
 
 %analysis of proximal heavy ball algorithm
-sol_quad = cell(NL, 1);
 parfor i = 1:NL
     m= 1;
     L = Llist(i);
 
     
-    %different operator classes for op1
+    %different operator classes for \nabla f
     op1_sml = op_sml(m, L);
     op1_quad = op_quad(m, L);
     
-    %indicator function for op1
+    %indicator function for \partial g
     op2 = op_sml(0, inf, 1);
+
     %proximal heavy ball
-    alpha = 2/(m+L);
-    beta = 0.65;
+    gamma = 2/(m+L);
+    lambda = 0.65;
     
-    A = [1+beta, -beta; 1, 0];
-    B = [-alpha, -alpha; 0 , 0];
-    C = [1, 0; 1+beta, -beta];
-    D = [0, 0; -alpha, -alpha];
+    A = [1+lambda, -lambda; 1, 0];
+    B = [-gamma, -gamma; 0 , 0];
+    C = [1, 0; 1+lambda, -lambda];
+    D = [0, 0; -gamma, -gamma];
     
     sK = ss(A, B, C, D, 1);
 
+    %form the system
     sys_sml = opt_system({op1_sml,  op2}, [], sK);
     sys_quad = opt_system({op1_quad, op2}, [], sK);
 
+    %pose and solve the problem
     man_sml = opt_analysis(sys_sml);
     man_quad = opt_analysis(sys_quad);
 
-    for j = 1:Norder
-    
+    for j = 1:Norder   
         sol_sml = man_sml.bisect(orderlist{j});
         rho_sml(i, j) = sol_sml.rho;
     
         sol_quad = man_quad.bisect(orderlist{j});
-        rho_quad(i, j) = sol_quad.rho;
-    % end
+        rho_quad(i, j) = sol_quad.rho;    
     end
 
 end
 
 %% plot the result
-
-figure(1)
+figure(4)
 clf
 hold on
-cc = linspecer(4);
 plot(Llist, rho_sml, 'linewidth', 2)
 plot(Llist, rho_quad, 'linewidth', 2)
-plot([Llist(1), Llist(2)], [1, 1], ':', 'linewidth', 2, 'color', 0.5*[1,1,1])
+
+plot([Llist(1), Llist(end)], [1, 1], ':', 'linewidth', 2, 'color', 0.5*[1,1,1])
+xlim([Llist(1), Llist(end)]);
+
 xlabel('$L$', 'interpreter', 'latex', 'fontsize', 16)
 ylabel('$\rho$', 'interpreter', 'latex', 'fontsize', 16)
-% xlim([min(omegalist), max(omegalist)]);
-% legend({'Order [0,0]', 'Order [1, 0]', 'Order [2, 0]', '$\rho$=1'}, 'location','northeast', 'interpreter', ...
-    % 'latex', 'fontsize', 16,'location', 'north')
-
-
-% [0.8971, sol_quad.rho]
-% [sol_sml.rho, sol_quad.rho]
+set(gca, 'xscale', 'log')
+lname = {'Order [3, 0], $S_{m, L}$', 'Order [3, 1], $S_{m, L}$', ...
+    'Order [3, 0], Quadratic', 'Order [3, 1], Quadratic', '$\rho$=1'};
+legend(lname, 'location','southeast', 'interpreter', ...
+    'latex', 'fontsize', 16)

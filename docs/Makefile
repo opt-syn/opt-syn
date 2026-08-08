@@ -7,14 +7,28 @@ SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = ../opt-syn
 BUILDDIR      = ../opt-syn/_build
+REQFILE = requirements.txt
+
+
+.PHONY: help clean deps docs dhtml Makefile
 
 # Put it first so that "make" without argument is like "make help".
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: help Makefile
+clean:
+	@rm -rf "$(BUILDDIR)"
+
+deps:
+	@$(PYTHON) -m pip install -r "$(REQFILE)"
+
+
+dhtml: clean
+         html
+
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O) -E
+

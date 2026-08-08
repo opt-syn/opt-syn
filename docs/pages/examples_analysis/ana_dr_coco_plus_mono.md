@@ -1,9 +1,3 @@
-<!-- ---
-
-tocdepth: 2
-
---- -->
-
 # Cocoercive plus Strongly Monotone
 
 This example involves finding the solution to a two-operator inclusion problem, where $F_1$ is $\beta$-cocoercive and $F_1$ is $\mu$-strongly maximal monotone.
@@ -32,14 +26,12 @@ Analysis is performed to numerically estimate this minimal rate at order `{1, 1}
 :align: center
 :class: only-dark
 :name: dr-est-sum
-:scale: 70%
 *Figure 1:* Estimates of the Douglas Rachford Convergence Rate
 :::
 
 :::{figure} _static/dr_mono_plus_coco_light.png
 :align: center
 :class: only-light
-:scale: 70%
 :name: dr-est-sum
 *Figure 1:* Estimates of the Douglas Rachford Convergence Rate
 :::
