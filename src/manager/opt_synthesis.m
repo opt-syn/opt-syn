@@ -187,51 +187,11 @@ classdef opt_synthesis < opt_manager_interface
 
 
                 %for reduced-order control
-                
-                plant_reg = obj.lmi.reg.sys_regulated_aug();
-
-                ind_same = iqc_data.ind_same;                
-                % if ~iscell(plant_reg) || isa(plant_reg, 'genplant_poly') || isempty(ind_same)
-                if (obj.lmi.reduced) && ~isempty(ind_same)
-                % else                    
-                    %identify and get rid of the same (m=L) oracles   
-                    %use an explicit substitution w = m z rather than w \in F(z)                    
-                    
-
-                        nd = plant_reg.nwp;
-                        ne = plant_reg.nzp;
-
-                        nz0 = plant_reg.nz - nzp;
-                        nw0 = plant_reg.nw - nwp;
-
-
-                        nw_reorder = [ind_same, setdiff(1:nw0, ind_same)];
-                        n_input_aug = [nw0, nwp, nd,  nu];
-                        ind_input_aug = {nw_reorder, sp.iwp, 1:nd, 1:nu};
-                        E_input_aug = screen_system(n_input_aug, ind_input_aug);
-        
-                        %nw and nz are the same indices
-
-                        n_output_aug = [nz0, nzp, ne, ny];
-                        ind_output_aug = {nw_reorder, sp.izp, 1:ne,  1:ny};
-                        E_output_aug = screen_system(n_output_aug, ind_output_aug);
-
-                        plant_reg_perm = E_output_aug * plant_reg.P * E_input_aug';
-        
-                        %remove the 
-                        n_same = length(ind_same);
-
-
-                        plant_reg_m = lft(iqc_data.m_same, plant_reg_perm, n_same, n_same);
-
-
-                        n = plant_reg.dump_dim();
-                        n.nw = n.nw - length(ind_same);
-                        n.nz = n.nz - length(ind_same);
-                        diss{i}.plant_reg = genplant(plant_reg_m, n);
-                else
-                    diss{i}.plant_reg = plant_reg;
+                if obj.lmi.reduced
+                    diss{i}.plant_reg = obj.lmi.reg.sys_regulated_aug();
                 end
+
+                
                 
 
                 %TODO: this may run into trouble if one entry has an X.
