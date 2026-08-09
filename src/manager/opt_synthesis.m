@@ -141,20 +141,14 @@ classdef opt_synthesis < opt_manager_interface
                     ny = alg_psi.ny;
                 end
 
-                %output indexer                
-                nzpa = length(sp.izp);
-                nwpa = length(sp.iwp);
-                i_output = 1:(nz+nzpa+ny);
-                j_output = [(1:nz), (nz + sp.izp), nz+nzp + (1:ny)];
-                v_output = ones(length(i_output), 1);
-                E_output = full(sparse(i_output, j_output, v_output, nz+nzpa+ny, nz+nzp+ny));
-                
-                %input indexer
-                i_input = 1:(nw+nwpa+nu);
-                j_input = [(1:nw), (nw + sp.iwp), nw+nwp + (1:nu)];
-                v_input = ones(length(i_input), 1);
-                E_input = full(sparse(i_input, j_input, v_input, nw+nwpa+nu, nw+nwp+nu))';
-                   
+                n_input = [nw, nwp, nu];
+                ind_input = {1:nw, sp.iwp, 1:nu};
+                E_input = screen_system(n_input, ind_input);
+
+
+                n_output = [nz, nzp, ny];
+                ind_output= {1:nz, sp.izp, 1:ny};
+                E_output = screen_system(n_output, ind_output);
 
                 if iscell(alg_psi)
 
@@ -166,7 +160,7 @@ classdef opt_synthesis < opt_manager_interface
 
                     alg_screen = cell(size(alg_psi));
                     for j = 1:length(alg_screen)
-                        alg_screen{j} = genplant(E_output * alg_psi{j}.ss * E_input, n2);
+                        alg_screen{j} = genplant(E_output * alg_psi{j}.ss * E_input', n2);
                     end                                        
                 else
 
@@ -175,7 +169,7 @@ classdef opt_synthesis < opt_manager_interface
                     n2.nwp = length(sp.iwp);
                     n2.nzp = length(sp.izp);
 
-                    alg_screen_P = E_output * alg_psi.ss * E_input;
+                    alg_screen_P = E_output * alg_psi.ss * E_input';
                     alg_screen = genplant(alg_screen_P, n2);
 
                     
@@ -196,31 +190,45 @@ classdef opt_synthesis < opt_manager_interface
                 
                 plant_reg = obj.lmi.reg.sys_regulated_aug();
 
-                ind_same = iqc_data.ind_same;
+                ind_same = iqc_data.ind_same;                
                 % if ~iscell(plant_reg) || isa(plant_reg, 'genplant_poly') || isempty(ind_same)
                 if (obj.lmi.reduced) && ~isempty(ind_same)
                 % else                    
                     %identify and get rid of the same (m=L) oracles   
                     %use an explicit substitution w = m z rather than w \in F(z)                    
                     
-                        error('performance channels not yet properly indexed')
-                        nop = length(obj.sys.bind);
-                        wshift = obj.op{1}.c*nop;
-    
-                        w_offset = ssize(plant_reg.P.B, 2) - wshift;
-                        z_offset = ssize(plant_reg.P.C, 1) - wshift;
-    
-    
-                        ind_diff = setdiff(1:(c*nop), ind_same);
-                        Pd = eye(nop*c);
-                        Pd(:, [ind_same, ind_diff]) = Pd;
+
+                        nd = plant_reg.nwp;
+                        ne = plant_reg.nzp;
+
+                        nz0 = plant_reg.nz - nzp;
+                        nw0 = plant_reg.nw - nwp;
+
+
+                        nw_reorder = [ind_same, setdiff(1:nw0, ind_same)];
+                        n_input_aug = [nw0, nwp, nd,  nu];
+                        ind_input_aug = {nw_reorder, sp.iwp, 1:nd, 1:nu};
+                        E_input_aug = screen_system(n_input_aug, ind_input_aug);
+        
+                        %nw and nz are the same indices
+
+                        n_output_aug = [nz0, nzp, ne, ny];
+                        ind_output_aug = {nw_reorder, sp.izp, 1:ne,  1:ny};
+                        E_output_aug = screen_system(n_output_aug, ind_output_aug);
+
+                        plant_reg_perm = E_output_aug * plant_reg.P * E_input_aug';
+        
+                        %remove the 
                         n_same = length(ind_same);
-        
-                        Pwp2 = blkdiag(Pd', eye(w_offset));
-                        Pzp2 = blkdiag(Pd, eye(z_offset));
-                        alg_perm_same = Pzp2 * alg_perm * Pwp2;
-        
-                        diss{i}.plant_reg = lft(iqc_data.m_same, alg_perm_same, n_same, n_same);
+
+
+                        plant_reg_m = lft(iqc_data.m_same, plant_reg_perm, n_same, n_same);
+
+
+                        n = plant_reg.dump_dim();
+                        n.nw = n.nw - length(ind_same);
+                        n.nz = n.nz - length(ind_same);
+                        diss{i}.plant_reg = genplant(plant_reg_m, n);
                 else
                     diss{i}.plant_reg = plant_reg;
                 end
@@ -398,4 +406,5 @@ classdef opt_synthesis < opt_manager_interface
         
     end
 end
+
 

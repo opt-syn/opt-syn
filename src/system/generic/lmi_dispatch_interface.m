@@ -372,12 +372,12 @@ classdef lmi_dispatch_interface < handle
             %   objective:  term to be minimized            
             %   con_M:      PSD blocks for the dynamics constraint
 
-            if diss.spec.target
-                [cons, objective, con_M] = obj.e2e_target(vars, cons, diss);
-            else
+            % if diss.spec.target
+            %     [cons, objective, con_M] = obj.e2e_target(vars, cons, diss);
+            % else
                 %is a special case of quadratic performance
                 [cons, objective, con_M] = obj.quad(vars, cons, diss);
-            end           
+            % end           
         end
 
 

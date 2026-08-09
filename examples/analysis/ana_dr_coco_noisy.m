@@ -35,8 +35,6 @@ rho_best_dr = zeros(Nbeta, 1);
 rho = zeros(Nbeta, 1);
 %set and solve
 
-
-
 spec = spec_e2e(100, iwp, izp);
 spec.target = true;
 GAIN = zeros(Nbeta, 1);
