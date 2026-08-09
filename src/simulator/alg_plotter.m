@@ -181,8 +181,8 @@ classdef alg_plotter
             obj.sim_out.uerr = obj.sim_out.u;
             obj.sim_out.yerr = obj.sim_out.y;
             if iscell(reg_cl.Pi)
-                %TODO: override this
-                %trackign switched system
+                %TODO: override this for time-varying
+                %tracking switched system
                 for i = 1:length(obj.sim_out.k)
                     m = obj.sim_out.mode(i);
                     obj.sim_out.xnerr(:, :, i) = obj.sim_out.xn(:, :, i) - rPi{m} * dstar;

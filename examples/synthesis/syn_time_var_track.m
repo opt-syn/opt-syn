@@ -23,8 +23,8 @@ end
  
 
 %delay network
-delay_max = 1;
-[Pprim, Gcon] = delay_primitives(0:delay_max, 0, -1:0:1, 0);
+delay_max = 4;
+[Pprim, Gcon] = delay_primitives(0, 0:delay_max, 0, -1:0:1);
 % [Pprim, Gcon] = delay_primitives(0:delay_max, 0:delay_max, -1:0:1, -1:0:1);
 % 
 % Pdelay = cell(s, 1);
@@ -52,8 +52,9 @@ reg = regulator_switched(sys);
 
 man = opt_synthesis(sys);
 
-spec = spec_stability(0.99);
-sol = man.solve_single([], {spec});
+% spec = spec_stability(0.99);
+% sol = man.solve_single([], {spec});
+sol = man.bisect();
 sol.rho
 
 

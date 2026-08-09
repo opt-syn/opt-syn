@@ -48,17 +48,9 @@ classdef regulator_switched < regulator_interface
                 % par_next = pair_curr(:, (obj.Nss+1):end);
 
                 par_curr = struct('mode', src(i));
-                par_next = struct('mode', dst(i));
-
-
-                reg_mat_S = [];
-                reg_mat_dyn = [];
-                reg_ans = 0;
 
                 [reg_mat_dyn_L_curr, reg_mat_dyn_R_curr, reg_ans_curr] = obj.reg_sys_indiv(par_curr);    
                 [reg_mat_S_L_next, reg_mat_S_R_next] = obj.reg_sys_next(par_curr);
-
-
                 
                 %take kroneckers to find the per-subsystem contributions
                 reg_ans = reg_ans_curr;
@@ -122,7 +114,11 @@ classdef regulator_switched < regulator_interface
         function NS = ns(obj)
             %NS number of states of exosystem
 
-            NS = length(obj.S{1});
+            if iscell(obj.S)
+                NS = length(obj.S{1});
+            else
+                NS = length(obj.S);
+            end
         end
 
 
@@ -204,18 +200,22 @@ classdef regulator_switched < regulator_interface
                 par_curr = struct('mode', src(i));
                 par_next = struct('mode', dst(i));
 
-                [reg_mat_dyn_curr, reg_ans_curr] = obj.reg_K_sys_indiv(par_curr);    
-                reg_mat_S_next = obj.reg_K_sys_next(par_next);
-
+                [reg_mat_dyn_L_curr, reg_mat_dyn_R_curr, reg_ans_curr] = obj.reg_K_sys_indiv(par_curr);    
+                [reg_mat_S_L_next, reg_mat_S_R_next] = obj.reg_K_sys_next(par_curr);
 
                 %take kroneckers to find the per-subsystem contributions
                 reg_ans = reg_ans_curr;
                 pcurr = full(sparse(1, src(i), 1, 1, obj.Nss));
                 pnext = full(sparse(1, dst(i), 1, 1, obj.Nss));
 
-                reg_mat_dyn = kron(pcurr, reg_mat_dyn_curr);
-                reg_mat_S = kron(pnext, reg_mat_S_next);
+                reg_mat_dyn_L = kron(pcurr, reg_mat_dyn_L_curr);
+                reg_mat_S_L = kron(pnext, reg_mat_S_L_next);
 
+
+                reg_mat_dyn = kron(reg_mat_dyn_R_curr', reg_mat_dyn_L);
+                reg_mat_S = kron(reg_mat_S_R_next', reg_mat_S_L);
+
+ 
 
                 %append the answer
                 reg_ans_all = [reg_ans_all; reg_ans];
@@ -227,7 +227,7 @@ classdef regulator_switched < regulator_interface
             end
         end
 
-        function [reg_mat_dyn, reg_ans] = reg_K_sys_indiv(obj, param)
+        function [reg_mat_dyn_L, reg_mat_dyn_R, reg_ans] = reg_K_sys_indiv(obj, param)
             %control regulator equation checks (closed-loop)
 
             if nargin < 2
@@ -253,9 +253,9 @@ classdef regulator_switched < regulator_interface
             nxi = size(Ak, 1);
             ns = obj.ns;
             % nu = 
-            reg_mat_L = [Ak; Ck];
+            reg_mat_dyn_L = [Ak; Ck];
 
-            reg_mat_dyn = kron(speye(ns), reg_mat_L);   
+            reg_mat_dyn_R = speye(ns);
 
             if ~isempty(obj.Gam_basis)
                 nnull = size(obj.Gam_basis, 3);
