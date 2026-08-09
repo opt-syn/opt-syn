@@ -62,10 +62,9 @@ classdef regulator_lpv_poly_multi< regulator_interface
                 P_corn = obj.weight_sum(P, obj.par(i, :));
             end
         end       
-
+    
 
         %% routines to compute the internal model
-
         function [reg_mat_all, reg_ans_all] = reg_sys_all(obj)
             %assemble the regulator equation system
 

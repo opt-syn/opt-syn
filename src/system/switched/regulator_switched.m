@@ -27,253 +27,303 @@ classdef regulator_switched < regulator_interface
             ns = obj.sys.Nss;
         end
 
-        function obj = form_internal_model(obj)
-            %FORM_INTERNAL_MODEL create the internal model by solving the regulator
-            %equation. Inputs are the system (P, bind, tracking, op)            
-            %op is important for which oracles are equaltiy constraints and
-            %which are inequality constraints
-            %
-            %Warning:
-            %   If regulator equation is unsolvable, then no optimization
-            %   algorithm can be found.
+        %% form the internal model
+        function [reg_mat_all, reg_ans_all] = reg_sys_all(obj)
+            %assemble the regulator equation system
 
+            reg_mat_all = [];
+            reg_ans_all = [];
 
-            Npre = obj.sys.get_consensus(obj.sys.op, obj.sys.bind);
-            c = obj.sys.op{1}.c; %coordinate lifts: change this later?
-            N = kron(Npre, eye(c));
-
-            [sN0, dN0] = size(Npre);
-            [sN, dN] = size(N);
-            n = obj.sys.P.nx;
-            
-            nu = obj.sys.P.nu;
-
+            %alignment across all arcs
             [src, dst] = obj.sys.get_arcs();
             Narcs = length(src);
 
-            [Sbeta, Rbeta] = obj.sys.get_tracked_opt();
+            
 
-            if isempty(obj.sys.tracking)
-                S = eye(size(N, 2)+c);
-                R = S;
-                reg_ans = [];
-                reg_mat = [];
+            for i = 1:Narcs
+
+                %form the transition constraint
+                % pair_curr = obj.sys.pair(i, :);
+                % par_curr = pair_curr(:, 1:obj.Nss);
+                % par_next = pair_curr(:, (obj.Nss+1):end);
+
+                par_curr = struct('mode', src(i));
+                par_next = struct('mode', dst(i));
+
+
+                reg_mat_S = [];
+                reg_mat_dyn = [];
+                reg_ans = 0;
+
+                [reg_mat_dyn_L_curr, reg_mat_dyn_R_curr, reg_ans_curr] = obj.reg_sys_indiv(par_curr);    
+                [reg_mat_S_L_next, reg_mat_S_R_next] = obj.reg_sys_next(par_curr);
+
 
                 
-                ns = size(S, 1);
-                %go through each subsystem
-                for i = 1:Narcs
-                    Pcurr = obj.sys.P{src(i)};
-                    [A, B1, B2, C1, D11, D12, C2, D21, D22] = Pcurr.ss_zy_wu();
+                %take kroneckers to find the per-subsystem contributions
+                reg_ans = reg_ans_curr;
+                pcurr = full(sparse(1, src(i), 1, 1, obj.Nss));
+                pnext = full(sparse(1, dst(i), 1, 1, obj.Nss));
 
-                    reg_ans_curr = [zeros(n, c), -B1*N;  -kron(ones(sN0,1), eye(c)), -D11*N];
-                    reg_mat_curr = [A, B2; C1, D12];
-
-
-                    reg_mat_next = zeros(size(reg_mat_curr));
-                    reg_mat_next(1:(n), 1:(n)) = -eye(n);
-
-                    sz2 = size(reg_mat_curr, 2);
-                    reg_mat_embed = zeros(size(reg_mat_curr, 1), sz2*obj.Nss);
-
-                    shift_curr = (1:sz2) + (src(i)-1)*sz2;
-                    
-                    reg_mat_embed(:, shift_curr) = reg_mat_curr;
-
-                    if src(i) == dst(i)
-                        reg_mat_embed(:, shift_curr) = reg_mat_embed(:, shift_curr) + reg_mat_next;
-                    else
-                        shift_next = (1:sz2) + (dst(i)-1)*sz2;
-                        reg_mat_embed(:, shift_next) = reg_mat_next;
-                    end
-
-                    % reg_mat_embed(:, shift_curr) = reg_mat_curr + reg_mat_next;
-
-                    reg_ans = [reg_ans; reg_ans_curr];
-
-                    
-                    reg_mat = [reg_mat; reg_mat_embed];
-                end
-              
-                %solve the regulator equation
-                null_basis = null(reg_mat, 'rational');
-                % try                    
-                    sol0 = lsqminnorm(reg_mat, reg_ans);
-                % catch
-                sol_err = reg_mat * sol0 - reg_ans;
-                if norm(sol_err) > 1e-12
-                    error('Regulator equation cannot be solved')
-                end
-
-                nnull = size(null_basis, 2);
-
-                %extract the solution
-
-                Pi0 = cell(obj.Nss, 1);
-                Gam0 = cell(obj.Nss, 1);
-                Phi0 = cell(obj.Nss, 1);
-
-                Pi_basis = cell(obj.Nss, 1);
-                Gam_basis = cell(obj.Nss, 1);
-                Phi_basis = cell(obj.Nss, 1);
-
-                count = 0;
-                for i = 1:obj.Nss
-                    %get the regulator equation solution
-                    Pcurr = obj.sys.P{i};
-                    [~, ~, ~, ~, ~, ~, C2, D21, D22] = Pcurr.ss_zy_wu();
+                reg_mat_dyn_L = kron(pcurr, reg_mat_dyn_L_curr);
+                reg_mat_S_L = kron(pnext, reg_mat_S_L_next);
 
 
-                    ind_pi = count + (1:n);
-                    ind_gam = count + n+ (1:nu);
-                    Pi0{i} = sol0(ind_pi, :);
-                    Gam0{i} = sol0(ind_gam, :);
-                    Phi0{i} = D21 * [zeros(sN, c), N] + D22*Gam0{i} + C2*Pi0{i};
+                reg_mat_dyn = kron(reg_mat_dyn_R_curr', reg_mat_dyn_L);
+                reg_mat_S = kron(reg_mat_S_R_next', reg_mat_S_L);
 
-                    %get the free parameters
-                    if nnull
-                        Pi_basis_pre = null_basis(ind_pi, :);
-                        Gam_basis_pre = null_basis(ind_gam, :);
-                        Phi_basis_pre = D22*Gam_basis_pre + C2*Pi_basis_pre;
+                %append the answer
+                reg_ans_all = [reg_ans_all; reg_ans];
 
-                        Pi_basis{i} = kron(Pi_basis_pre, eye(nnull));
-                        Gam_basis{i} = kron(Gam_basis_pre, eye(nnull));
-                        Phi_basis{i} = kron(Phi_basis_pre, eye(nnull));
-                    else
-                        Pi_basis{i} = [];
-                        Gam_basis{i} = [];
-                        Phi_basis{i} = [];
-                    end
+                %load in to the matrix               
+                % reg_mat_expand = ;
 
-                    count = count + n + nu;
-
-                end                                    
-                
-
-            else
-                error('Switched regulation: tracking not yet supported')
+                reg_mat_all = [reg_mat_all; reg_mat_dyn - reg_mat_S];
             end
-
-
-            obj.S = S;
-            obj.R = R;
-            obj.Pi = Pi0;
-            obj.Gam = Gam0;
-            obj.Phi = Phi0;
-            obj.Pi_basis = Pi_basis;
-            obj.Gam_basis = Gam_basis;
-            obj.Phi_basis = Phi_basis;
         end
-
-        function [regulator_closed] = check_regulator(obj)
-            %CHECK_REGULATOR is the regulator equation satisfied?
-            %
-            %Return:
-            %   reg_cl (reg_cl_out): closed-loop regulator structure if succesful, empty if infeasible.
-            %
-            %
-            sys_cl = lft(obj.sys.P, obj.sys.K);
-
-            %if the system is convergent, then the regulator equation
-            %solution in closed loop is unique
-            
-
-            % error('Switched regulator: regulator check not yet done')
-            Npre = obj.sys.get_consensus(obj.sys.op, obj.sys.bind);
-            c = size(sys_cl{1}.D, 1)/length(obj.sys.bind); %coordinate lifts: change this later?
-            N = kron(Npre, eye(c));
-
-
-            [sN0, dN0] = size(Npre);
-            [sN, dN] = size(N);
-
-
-            [src, dst] = obj.sys.get_arcs();
-            Narcs = length(src);
-
-            if isempty(obj.sys.tracking)
-                S = eye(size(N, 2)+c);
-                R = S;
-                reg_ans = [];
-                reg_mat = [];
-
-                n = length(sys_cl{1}.A);
-
-                %go through each subsystem
-
-
-                for i = 1:Narcs
-                    Pcurr = obj.sys.P{src(i)};
-                    [A, B, C, D] = ssdata(sys_cl.P{src(i)});
-
-
-                    reg_ans_curr = [zeros(n, c), -B*N;  -kron(ones(sN0, 1), eye(c)), -D*N];
-                    reg_mat_curr = [A; C];
-                    reg_mat_next = [-eye(n); zeros(size(C))];
-
-                    sz2 = size(reg_mat_curr, 2);
-                   
-                    reg_mat_embed = zeros(size(reg_mat_curr, 1), sz2*obj.Nss);
-
-                    shift_curr = (1:sz2) + (src(i)-1)*sz2;
-
-                    reg_mat_embed(:, shift_curr) = reg_mat_curr;
-
-                    if src(i) == dst(i)
-                        reg_mat_embed(:, shift_curr) = reg_mat_embed(:, shift_curr) + reg_mat_next;
-                    else
-                        shift_next = (1:sz2) + (dst(i)-1)*sz2;
-                        reg_mat_embed(:, shift_next) = reg_mat_next;
-                    end
-
-                    % reg_mat_embed(:, shift_curr) = reg_mat_curr + reg_mat_next;
-
-                    reg_ans = [reg_ans; reg_ans_curr];
-
-
-                    reg_mat = [reg_mat; reg_mat_embed];
-                end
-
-                %solve the regulator equation
-                null_basis = null(reg_mat, 'rational');
-                
-                sol0 = reg_mat \ reg_ans;
-                sol_err = reg_mat * sol0 - reg_ans;
-                if norm(sol_err) > 1e-12
-                    error('Regulator equation cannot be solved')
-                end
-            
-      
-                %extract the solution
-
-                Pi0 = cell(obj.Nss, 1);
-                Th0 = cell(obj.Nss, 1);               
-
-                count = 0;
-                nxn = obj.sys.nxn;                
-                nxi = obj.sys.nxi;
-                for i = 1:obj.Nss
-                    %get the regulator equation solution                    
-                    ind_pi = count + (1:nxn);
-                    ind_th = count + nxn + (1:nxi);
-                    Pi0{i} = sol0(ind_pi, :);
-                    Th0{i} = sol0(ind_th, :);                    
-
-                    count = count + nxn + nxi;
-
-                end                                    
-            end
-
-            regulator_closed = struct('S', S, 'R', R);
-            
-            regulator_closed.Pi = Pi0;
-            regulator_closed.Th = Th0;
-            regulator_closed.Gam = obj.Gam;
-            regulator_closed.Phi = obj.Phi;
-                
         
+        %% fetch the exosystem
+        function [S, R] = exosystem(obj, param)
+
+            %get the exosystem at each mode/internal model
+            N = obj.get_consensus();
+            [sN, dN] = size(N);
+
+
+            if nargin == 2
+                [Sbeta, Rbeta] = obj.sys.get_tracked_opt(param);                   
+
+                S = blkdiag(Sbeta, eye(dN));
+                R = blkdiag(Rbeta, eye(dN));
+            else
+                [Sbeta, Rbeta] = obj.sys.get_tracked_opt();
+                if iscell(Sbeta)
+                    S = cell(size(Sbeta));
+                    R = cell(size(Rbeta));
+
+                    for i = 1:numel(S)
+                        %the first term is constant. Then the rest are
+                        %deviations.
+                        if i > 1
+                            Isupp = zeros(dN);
+                        else
+                            Isupp = eye(dN);
+                        end
+                        S{i} = blkdiag(Sbeta{i}, Isupp);
+                        R{i} = blkdiag(Rbeta{i}, Isupp);
+                    end
+                else
+                    S = blkdiag(Sbeta, eye(dN));
+                    R = blkdiag(Rbeta, eye(dN));
+                end
+            end
+        end
+
+        function NS = ns(obj)
+            %NS number of states of exosystem
+
+            NS = length(obj.S{1});
+        end
+
+
+
+        function [Pi, Gam, Phi] = sol_reg_all(obj, reg_sol)
+            %recover the solution to the regulator equation system
+
+            ns = obj.ns;
+            reg_sol = reshape(reg_sol, [], ns);
+
+            nxn = obj.sys.nxn;
+            nu = obj.sys.nu;
+
+            count = 0;
+            I = eye(obj.Nss);
+            Pi = cell(obj.Nss, 1);
+            Gam = cell(obj.Nss, 1);
+            Phi = cell(obj.Nss, 1);
+            for i = 1:obj.Nss
+
+                reg_sol_curr = reg_sol(count + (1:(nxn + nu)), :);
+                % parl = I(i, :);
+                parl = struct('mode', i);
+
+                count = count + nxn + nu;
+                [Pi{i}, Gam{i}, Phi{i}] = obj.sol_reg_index(reg_sol_curr, parl);
+            end
 
         end
+
+        function [Pi_basis, Gam_basis, Phi_basis] = null_reg(obj, null_basis);
+            %NULL_REG a nullspace indexer (altogether)
+
+
+            if nargin < 3
+                param =[];
+            end
+
+            Pi_basis = cell(obj.Nss, 1);
+            Gam_basis = cell(obj.Nss, 1);
+            Phi_basis = cell(obj.Nss, 1);
+            I = eye(obj.Nss);
+
+            count = 0;
+            nxn = obj.sys.nxn;
+            nu = obj.sys.nu;
+
+            for i = 1:obj.Nss
+                % parl = I(i, :);
+                parl = struct('mode', i);
+
+                null_curr = squeeze(null_basis(count + (1:(nxn + nu)), :, :));
+                [Pi_basis{i}, Gam_basis{i}, Phi_basis{i}] = null_reg_index(obj, null_curr, parl);
+                count = count + nxn + nu;
+            end
+        end
+
+
+        %% check the regulator equations
+
+        function [reg_mat_all, reg_ans_all] = reg_K_sys_all(obj)
+            %assemble the closed-loop regulator equation system 
+            %
+            %Returns: 
+            %   reg_mat:    matrix for regulator equation
+            %   reg_ans:    vector for regulator equation solution
+           
+
+            reg_mat_all = [];
+            reg_ans_all = [];
+
+            %alignment across all arcs
+            [src, dst] = obj.sys.get_arcs();
+            Narcs = length(src);
+
+            for i = 1:Narcs
+
+                %form the transition constraint  
+                par_curr = struct('mode', src(i));
+                par_next = struct('mode', dst(i));
+
+                [reg_mat_dyn_curr, reg_ans_curr] = obj.reg_K_sys_indiv(par_curr);    
+                reg_mat_S_next = obj.reg_K_sys_next(par_next);
+
+
+                %take kroneckers to find the per-subsystem contributions
+                reg_ans = reg_ans_curr;
+                pcurr = full(sparse(1, src(i), 1, 1, obj.Nss));
+                pnext = full(sparse(1, dst(i), 1, 1, obj.Nss));
+
+                reg_mat_dyn = kron(pcurr, reg_mat_dyn_curr);
+                reg_mat_S = kron(pnext, reg_mat_S_next);
+
+
+                %append the answer
+                reg_ans_all = [reg_ans_all; reg_ans];
+
+                %load in to the matrix               
+                % reg_mat_expand = ;
+
+                reg_mat_all = [reg_mat_all; reg_mat_dyn - reg_mat_S];
+            end
+        end
+
+        function [reg_mat_dyn, reg_ans] = reg_K_sys_indiv(obj, param)
+            %control regulator equation checks (closed-loop)
+
+            if nargin < 2
+                param = [];
+            end
+            Kcurr = obj.get_K(param);
+
+            [Ak, Bk, Ck, Dk] = ssdata(Kcurr);
+            [S, R] = obj.exosystem(param);
+
+            N = obj.get_consensus();
+            [sN, dN] = size(N);
+
+
+            %answer to regulator equation
+            Gam = obj.get_Gam(param);
+            Phi= obj.get_Phi(param);
+
+            reg_ans = reshape([-Bk*Phi; Gam - Dk*Phi], [], 1);
+
+
+            %system for 
+            nxi = size(Ak, 1);
+            ns = obj.ns;
+            % nu = 
+            reg_mat_L = [Ak; Ck];
+
+            reg_mat_dyn = kron(speye(ns), reg_mat_L);   
+
+            if ~isempty(obj.Gam_basis)
+                nnull = size(obj.Gam_basis, 3);
+
+                Gam_contract = tensorprod([Bk; Dk], obj.Gam_basis, 2, 1);
+                Phi_contract = tensorprod([Bk; Dk], obj.Phi_basis, 2, 1);
+            end
+
+        end
+
+        function Pi_out = get_Pi(obj, param)
+            if nargin == 2
+                Pi_out = obj.Pi{param.mode};
+            else
+                Pi_out = obj.Pi;
+            end
+        end
+
+        function Gam_out = get_Gam(obj, param)            
+            if nargin == 2
+                Gam_out = obj.Gam{param.mode};
+            else
+                Gam_out = obj.Gam;
+            end
+        end
+
+        function Phi_out = get_Phi(obj, param)
+            if nargin == 2
+                Phi_out = obj.Phi{param.mode};
+            else
+                Phi_out = obj.Phi;
+            end
+        end
+
+        function [Pi0, Gam0, Phi0, Th0] = sol_K_reg_all(obj, reg_sol)
+            %recover the solution to the regulator equation system
+
+            ns = obj.ns;
+            reg_sol = reshape(reg_sol, [], ns);
+
+
+            ns = obj.ns;
+            reg_sol = reshape(reg_sol, [], ns);
+
+            nxi = obj.sys.nxi;
+            
+
+            count = 0;
+            
+            Pi0 = cell(obj.Nss, 1);
+            Gam0 = cell(obj.Nss, 1);
+            Phi0 = cell(obj.Nss, 1);
+            Th0 = cell(obj.Nss, 1);
+
+            for i = 1:obj.Nss
+
+                reg_sol_curr = reg_sol(count + (1:nxi), :);
+                % parl = I(i, :);
+                parl = struct('mode', i);
+
+                count = count + nxi;
+                [Pi0{i}, Gam0{i}, Phi0{i}, Th0{i}] = sol_K_reg_index(obj, reg_sol_curr, parl);
+
+            end
+
+        end
+
+    
 
         %% use the model in synthesis
 
@@ -367,23 +417,29 @@ classdef regulator_switched < regulator_interface
             
 
             
-            if isempty(obj.Gam_basis{1})==0
-                nbasis = size(obj.Gam_basis{1}, 3);                
-                eta = [];
-%                 lmim('reg_param', nbasis, 1, 'full');
-
-
-%                 for i = 1:nbasis
-%                     eta_curr = lmim_index(eta, i, 1);
-% 
-%                     vars_reg.Pi = vars_reg.Pi + obj.Pi_basis(:, :, i) * eta_curr;
-%                     vars_reg.Gam = vars_reg.Gam + obj.Gam_basis(:, :, i) * eta_curr;
-%                     vars_reg.Phi = vars_reg.Phi + obj.Phi_basis(:, :, i) * eta_curr;
-%                 end
-
-                vars_reg.eta = eta;
-            else
+            if isempty(obj.Gam_basis) || isempty(obj.Gam_basis{1})
                 vars_reg.eta= [];
+            % else
+            %     nbasis = size(obj.Gam_basis{1}, 3);                
+            %     eta =  lmim('reg_param', nbasis, 1, 'full');
+            % 
+            % 
+            %     vars_reg.Pi = cell(obj.Nss, 1);
+            %     vars_reg.Gam = cell(obj.Nss, 1);
+            %     vars_reg.Phi = cell(obj.Nss, 1);
+            %     for i = 1:nbasis
+            %         for j = 1:obj.Nss
+            %             eta_curr = lmim_index(eta, i, 1);
+            % 
+            %             vars_reg.Pi{j} = vars_reg.Pi{j} + obj.Pi_basis{j}(:, :, i) * eta_curr;
+            %             vars_reg.Gam{j} = vars_reg.Gam{j} + obj.Gam_basis{j}(:, :, i) * eta_curr;
+            %             vars_reg.Phi{j} = vars_reg.Phi{j} + obj.Phi_basis{j}(:, :, i) * eta_curr;
+            %         end
+            %     end
+            % 
+            %     vars_reg.eta = eta;
+            % 
+                
             end
         end
         

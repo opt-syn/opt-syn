@@ -39,5 +39,21 @@ classdef opt_solution
                 obj.cert = struct;
             end
         end
+
+        function sys_sim = export_sim(obj, ops_sim)
+            %EXPORT_SIM export the closed-loop system for simulation
+            %
+            %Args:
+            %   ops_sim: cell array of op_sim objects
+            %
+            %Returns:
+            %   sys_sim: system for simulation
+
+            if isempty(obj.sys)
+                sys_sim = [];
+            else
+                sys_sim = obj.sys.export_sim(ops_sim);
+            end
+        end
     end
 end

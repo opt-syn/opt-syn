@@ -43,7 +43,7 @@ K = ss(AK, BK, CK, DK, 1);
 
 
 sys = opt_system(op_list, [], K);
-
+sys.tracking = struct('S', Sbeta, 'R', Rbeta);
 
 man = opt_analysis(sys);
 

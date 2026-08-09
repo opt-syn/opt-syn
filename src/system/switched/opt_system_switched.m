@@ -40,6 +40,59 @@ classdef  opt_system_switched < opt_system_interface
 
         %TODO: allow for parameterized systems
 
+
+
+        function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
+            %GET_TRACKED_OPT get the tracked position of the optimal
+            %solution
+            %
+            % :math:`\eta^*_{k+1} = S_\beta \eta^*, \beta^*_{k} = R_\beta
+            % \eta_k`.
+            %
+            %
+            % Args:
+            %   param: structure of parameters
+            %   
+            %Returns:
+            %   Sbeta: exosystem for optimal solution
+            %   Rbeta: output of optimal solution
+
+            if nargin == 1 || isempty(param)
+                if isempty(obj.tracking)
+                    Sbeta = num2cell(ones(obj.Nss, 1));
+                    Rbeta = num2cell(ones(obj.Nss, 1));
+                else
+                    Sbeta = obj.tracking.Sbeta;
+                    Rbeta = obj.tracking.Rbeta;
+                end
+            else
+                if isempty(obj.tracking)
+                    Sbeta = 1;
+                    Rbeta = 1;
+                else
+                    if ~iscell(obj.tracking.Sbeta)
+                        Sbeta = obj.tracking.Sbeta;
+                        Rbeta = obj.tracking.Rbeta;
+                        
+                    else
+                        Sbeta = obj.tracking.Sbeta{param.mode};
+                        Rbeta = obj.tracking.Rbeta{param.mode};
+                    end
+                end
+            end
+
+            c = obj.op{1}.c;
+            if iscell(Sbeta)
+                for i = 1:obj.Nss
+                    Sbeta{i}  = kron(Sbeta{i}, eye(c));
+                    Rbeta{i} = kron(Rbeta{i}, eye(c));
+                end
+            else
+                Sbeta = kron(Sbeta, eye(c));
+                Rbeta = kron(Rbeta, eye(c));
+            end
+        end
+
         function [src, dst] = get_arcs(obj)
             %GET_ARCS get transitions in the adjacency matrix
             [src, dst] = find(obj.adj);
@@ -127,6 +180,13 @@ classdef  opt_system_switched < opt_system_interface
         function dimn = nxi(obj)
             %nxi: number of states in controller
             dimn = length(obj.K{1}.A);
+        end
+
+        function [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = ss_zy_wu(obj, param)
+            %get state space matrices at the current parameter values
+
+            Pcurr = obj.P{param.mode};
+            [Aa, B1, B2, C1, D11, D12, C2, D21, D22] = Pcurr.ss_zy_wu();
         end
 
         function pow = discount_schedule(obj, ordermax)

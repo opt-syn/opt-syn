@@ -142,9 +142,8 @@ classdef regulator_interface
             reg_sol= lsqminnorm(reg_mat, reg_ans);
             % catch
             reg_err = reg_mat * reg_sol - reg_ans;
-            if norm(reg_err) > 1e-8
-            
-                warning('Regulator equation cannot be solved')
+            if norm(reg_err) > 1e-8            
+                error('Regulator equation cannot be solved')
             end
 
                 
@@ -204,7 +203,7 @@ classdef regulator_interface
             n = obj.sys.nxn;
             Pi = reg_sol(1:n, :);
             Gam = reg_sol(n+1:end, :);        
-            Phi = obj.compute_Phi(Pi, Gam);
+            Phi = obj.compute_Phi(Pi, Gam, param);
         end
 
         function [Phi] = compute_Phi(obj, Pi, Gam, param)
@@ -305,14 +304,17 @@ classdef regulator_interface
             %equations
 
 
-            [reg_mat_dyn, reg_ans] = obj.reg_sys_indiv();            
+            [reg_mat_dyn_L, reg_mat_dyn_R, reg_ans] = obj.reg_sys_indiv();            
 
-            reg_mat_S = obj.reg_sys_next();
+            reg_mat_dyn = kron(reg_mat_dyn_R', reg_mat_dyn_L);
+
+            [reg_mat_S_L, reg_mat_S_R] = obj.reg_sys_next();
             
+            reg_mat_S = kron(reg_mat_S_R', reg_mat_S_L);
             reg_mat = reg_mat_dyn - reg_mat_S;
         end
 
-        function reg_mat_S = reg_sys_next(obj, param)
+        function [reg_mat_S_L, reg_mat_S_R] = reg_sys_next(obj, param)
             %constraints for the next system, assembling regulator
             %equations
 
@@ -325,23 +327,24 @@ classdef regulator_interface
             N = obj.get_consensus();
             [sN, dN] = size(N);
 
-            reg_mat_RR = S;
+            reg_mat_S_R = S;
             n = obj.sys.nxn;
             nu = obj.sys.nu;
-            reg_mat_RL = [speye(n), sparse(n, nu);
+            reg_mat_S_L = [speye(n), sparse(n, nu);
                          sparse(sN, n), sparse(sN, nu)];
 
             
-            reg_mat_S = kron(reg_mat_RR', reg_mat_RL);
+            % reg_mat_S = kron(reg_mat_RR', reg_mat_RL);
 
         end
 
-        function [reg_mat_dyn, reg_ans] = reg_sys_indiv(obj, param)
+        function [reg_mat_dyn_L, reg_mat_dyn_R, reg_ans] = reg_sys_indiv(obj, param)
             %constraints for the current mode system, assembling regulator
             %equations
             %
             %Returns:
-            %   reg_mat_dyn:    matrix for regulator equation
+            %   reg_mat_dyn_L:    matrix for regulator equation (left)
+            %   reg_mat_dyn_R:    matrix for regulator equation (right)
             %   reg_ans:        vector for regulator equation solution
             if nargin < 2
 
@@ -366,8 +369,8 @@ classdef regulator_interface
     
             reg_ans = reshape(reg_ans_mat, [], 1);
             
-            reg_mat_L = [A, B2; C1, D12];
-            reg_mat_dyn = kron(speye(ns), reg_mat_L);
+            reg_mat_dyn_L = [A, B2; C1, D12];
+            reg_mat_dyn_R = speye(ns);           
 
 
         end
@@ -510,13 +513,16 @@ classdef regulator_interface
             %   reg_mat:    matrix for regulator equation
             %   reg_ans:    vector for regulator equation solution
            
-            [reg_mat_dyn, reg_ans] = obj.reg_K_sys_indiv();            
+            [reg_mat_dyn_L, reg_mat_dyn_R, reg_ans] = obj.reg_K_sys_indiv();            
 
-            reg_mat_S = obj.reg_K_sys_next();
+            [reg_mat_S_L, reg_mat_S_R] = obj.reg_K_sys_next();
+
+            reg_mat_dyn = kron(reg_mat_dyn_R', reg_mat_dyn_L);
+            reg_mat_S = kron(reg_mat_S_R', reg_mat_S_L);
             reg_mat = reg_mat_dyn - reg_mat_S;
         end
 
-        function [reg_mat_S] = reg_K_sys_next(obj, param)
+        function [reg_mat_S_L, reg_mat_S_R] = reg_K_sys_next(obj, param)
             %control closed-loop regulator equation checks
             %next expression
             if nargin < 2
@@ -528,12 +534,12 @@ classdef regulator_interface
             N = obj.get_consensus();
             [sN, dN] = size(N);
 
-            reg_mat_RR = S;
+            reg_mat_S_R = S;
             nxi = obj.sys.nxi;
-            reg_mat_RL = [speye(nxi); sparse(sN, nxi)];
+            reg_mat_S_L = [speye(nxi); sparse(sN, nxi)];
 
 
-            reg_mat_S = kron(reg_mat_RR', reg_mat_RL);
+            
 
         end
 
@@ -545,7 +551,7 @@ classdef regulator_interface
             Kcurr = obj.sys.get_K(param);
         end
 
-        function [reg_mat_dyn, reg_ans] = reg_K_sys_indiv(obj, param)
+        function [reg_mat_dyn_L, reg_mat_dyn_R, reg_ans] = reg_K_sys_indiv(obj, param)
             %control regulator equation checks (closed-loop)
             
             if nargin < 2
@@ -571,9 +577,9 @@ classdef regulator_interface
             nxi = size(Ak, 1);
             ns = obj.ns;
             % nu = 
-            reg_mat_L = [Ak; Ck];
+            reg_mat_dyn_L = [Ak; Ck];
 
-            reg_mat_dyn = kron(speye(ns), reg_mat_L);   
+            reg_mat_dyn_R =speye(ns);
 
             if ~isempty(obj.Gam_basis)
                 nnull = size(obj.Gam_basis, 3);

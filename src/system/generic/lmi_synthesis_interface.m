@@ -470,7 +470,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
             % Break up the lower-triangular Dk factor
             %to apply Lemma 4 of https://arxiv.org/pdf/1305.1746
-
             
             
             %get the mask for the permuted controller matrix
@@ -479,41 +478,24 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             
             %now break it down
             %find the lower triangular factors
-            [sel, cs] = max( K_mask ==0, [], 2 );
-            [uf, ff] = unique(cs, 'first');
-            
-            [selv, csv] = max( K_mask ==0, [], 1 );
-            sel_blank = min(selv);
+            v = diag(1:size(K_mask, 1)) * K_mask;
+            v(v==0) = NaN;
+            [m, i] = min(v, [], 1);
+            [um, im] = unique(m, 'last');
 
-            coords= [uf, ff];
-            
-            coord_first = coords(2:end, :);
-            coord_last = coords(1, 2);
-            
-            h_first = diff([1; coord_first(:, 1)]);
-            
-            coord_shift = coords(:, 2);
-            coord_shift(1) = 0;
-            
-            USE_LAST = obj.reduced || all(nxi~=0) || (size(coords, 1)==1);
-            
-            %store the identity indexers   
-            %to be refactored
-            nc = size(coord_first, 1);
-            U = cell(nc+USE_LAST, 1);
-            V = cell(nc+USE_LAST, 1);            
-            for i = 1:nc  
-                % U{i} = speye(sz(1) - coord_shift(i), sz(1));
-                U{i} = [sparse(sz(1)- coord_shift(i), coord_shift(i)),  speye(sz(1) - coord_shift(i))];
-                hi = h_first(i);
-                V{i} = sparse(1:hi, sum(h_first(1:i-1)) + (1:hi), ones(hi, 1), hi, sz(2));    
-            end
-            
-            if USE_LAST
-                U{nc+1} = [sparse(sz(1)-coord_last+1-sel_blank, coord_last - 1+sel_blank),  speye(sz(1) - coord_last+1 - sel_blank)];
-                hi = sz(2) - sum(cellfun(@(n) size(n, 1), V(1:end-1))); %not ideal
-                V{nc+1} = sparse(1:hi, sum(h_first) + (1:hi), ones(hi, 1), hi, sz(2));
-            end
+            nc = length(im);
+
+            um = [0, um];
+            im = [0; im]';
+
+
+            U = cell(nc, 1);
+            V = cell(nc, 1);            
+            for i = 1:nc                  
+                U{i} = [sparse(sz(1)- um(i+1)+1, um(i+1)-1),  speye(sz(1) - um(i+1)+1)];
+                hi = im(i+1) - im(i);
+                V{i} = sparse(1:hi, (im(i)+1):im(i+1), ones(hi, 1), hi, sz(2));    
+            end            
         end
 
 

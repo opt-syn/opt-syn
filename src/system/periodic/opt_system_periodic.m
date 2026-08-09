@@ -33,25 +33,28 @@ classdef  opt_system_periodic < opt_system_switched
         end        
 
 
-        function [Sbeta, Rbeta] = get_tracked_opt(obj)
+        function [Sbeta, Rbeta] = get_tracked_opt(obj, param)
             %GET_TRACKED_OPT get the tracked position of the optimal
             %solution. allow for time-varying exosystems (periodic),
             %represented by a cell
 
-            [Sbeta0, Rbeta0] = get_tracked_opt@opt_system_switched(obj);
-
-            if iscell(Sbeta0)
-                Sbeta = Sbeta0;
-                Rbeta = Rbeta0;
-            else
-                Sbeta = cell(obj.P.Nss, 1);
-                Rbeta = cell(obj.P.Nss, 1);
-
-                for i = 1:obj.P.Nss
-                    Sbeta{i} = Sbeta0;
-                    Rbeta{i} = Rbeta0;
-                end
+            if nargin < 2
+                param = [];
             end
+            [Sbeta, Rbeta] = get_tracked_opt@opt_system_switched(obj, param);
+
+            % if iscell(Sbeta0)
+            %     Sbeta = Sbeta0;
+            %     Rbeta = Rbeta0;
+            % elseif isempty(param)
+            %     Sbeta = cell(obj.P.Nss, 1);
+            %     Rbeta = cell(obj.P.Nss, 1);
+            % 
+            %     for i = 1:obj.P.Nss
+            %         Sbeta{i} = Sbeta0;
+            %         Rbeta{i} = Rbeta0;
+            %     end
+            % end
  
         end
 

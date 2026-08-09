@@ -72,8 +72,8 @@ Figure [3](#track) plots the tracking errors of the algorithm based on the Regul
 :::
 
 <!-- ## Simulation with Noise -->
-Noise is now injected into the gradient evaluation. The performance input $w_p$ is bounded as $\max_{k \in \{0, \ldots, T\}} \norm{w_{p, k}}_2^2 \leq 10$ for all $T \in \N$.
-Figure [4](#fun) plots the persistent tracking and convergence errors with noise. 
+Noise is now injected into the gradient evaluation. The applied performance input $w_p$ is bounded as $\max_{k \in \{0, \ldots, T\}} \norm{w_{p, k}}_2^2 \leq 10$ for all time horizons $T \in \N$.
+Figure [4](#fun) plots the persistent tracking and convergence errors with this exogenous noise. 
 :::{figure} _static/unstable_noisy_xerr_dark.png
 :align: center
 :class: only-dark
