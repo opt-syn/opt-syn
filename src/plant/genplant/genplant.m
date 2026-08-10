@@ -435,6 +435,16 @@ classdef genplant
             P_out = ss2tf(obj.ss());
         end
 
+        function e= eig(obj)
+            %EIG get the eigenvalues of the A matrix. Should have absolute
+            %value less than one for stability
+            %
+            %Returns:
+            %   e:  vector of eigenvalues
+
+            e = eig(obj.P);
+        end
+
         function obj = rhotrafo(obj, rho)
             % RHOTRAFO Apply an exponential discount (rho-transformation).
             %

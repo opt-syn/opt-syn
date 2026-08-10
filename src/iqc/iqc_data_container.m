@@ -10,6 +10,7 @@ classdef iqc_data_container
         augmented=false; %(bool) true if reduced-order control;
         ERGODIC = false; %(bool) true if function values
         rotate = false; %(bool) true if periodic-orbit
+        common_rho = 1; %(double) common rho used in noncausal synthesis
     end
     
     methods

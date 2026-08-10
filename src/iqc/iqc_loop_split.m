@@ -47,7 +47,7 @@ classdef iqc_loop_split
         function nx2_out = nx2(obj)
             %NX2 number of states in filter 2
 
-            if ~isscalar(obj.Psi2)
+            if ~isnumeric(obj.Psi2)
                 nx2_out = length(obj.Psi2.A);
             else
                 nx2_out = 0;

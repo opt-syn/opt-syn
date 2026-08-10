@@ -143,6 +143,9 @@ classdef  opt_system_interface
             %no loop transformations in performance
             iqc_op = iqc_data.iqc;
 
+            %deal with the common rho (noncausal synthesis)
+            alg_perm_m = rhotrafo(alg_perm_m, iqc_data.common_rho);
+
             if isempty(iqc_op)
                 %all operators have explicit formulae
                 %no uncertainty is introduced

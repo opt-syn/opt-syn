@@ -369,7 +369,8 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             %(maybe it should happen at a higher level?)
             P = obj.reg.connect_model(diss.plant, diss.ind_curr);            
 
-            sys_cl = obj.system_closed_loop(P, vslack.diss, vslack.reg, vars.K{diss.ind_curr}, diss.rho);
+            rho = obj.used_rho(diss);
+            sys_cl = obj.system_closed_loop(P, vslack.diss, vslack.reg, vars.K{diss.ind_curr}, rho);
             
             %index the quadratic specification
             np = diss.iqc_rob.np;

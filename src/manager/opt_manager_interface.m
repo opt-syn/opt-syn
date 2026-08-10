@@ -145,8 +145,8 @@ classdef (Abstract) opt_manager_interface < handle
                         end
                     end
                     obj.iqc_op = iqc_op_factored;
-                    [iqc_data] = obj.iqc_op_all();
-                    iqc_data.iqc = iqc_data.iqc.rhotrafo(1/common_rho);
+                    [iqc_data] = obj.iqc_op_all();    
+                    iqc_data.common_rho = common_rho;
                 else
                     [iqc_data] = obj.iqc_op_all();
                 end

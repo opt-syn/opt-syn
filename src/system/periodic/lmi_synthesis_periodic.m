@@ -265,7 +265,8 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             vars_diss = vcurr.diss;
             vars_diss.GX = vnext.diss.GX;
 
-            sys_cl = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K{diss.ind_curr}, diss.rho);
+            rho = obj.used_rho(diss);
+            sys_cl = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K{diss.ind_curr}, rho);
             
             %index the quadratic specification
             np = diss.iqc_rob.np;

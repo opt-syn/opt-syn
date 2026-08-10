@@ -120,29 +120,35 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             
             if obj.config.gen.same_rho
                 rho_common = sol.rho;
-                P_aug = rhotrafo(P_aug, rho_common);
+                % P_aug = rhotrafo(P_aug, rho_common);
             else
                 rho_common = 1;
             end
 
-            [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_aug, vars_rec);
+            [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_aug, vars_rec);           
 
             K_nofeed = rhotrafo(K_nofeed, 1/rho_common);
-
             
             model = obj.reg.get_model(vars_rec.reg);            
-            modelrho = rhotrafo(model, sol.rho);
+            modelrho = rhotrafo(model, rho_common);
             P_trans = lft(alg_psi, modelrho);
 
             K_report = obj.K_alg_report(P_trans, K_nofeed, model);
             
+            
             sol.cert.alg_trans = K_report.alg_trans;            
-            sol.cert.model = K_report.model;           
-            % sol.K= 
+            sol.cert.model = K_report.model;                       
             sol.cert.K = K_report.K;
             sol.cert.K_sub = K_report.K_sub;
             sol.cert.alg = lft(obj.sys.P, sol.cert.K);
-            sol.cert.alg_psi = rhotrafo(lft(sol.cert.alg_psi, sol.cert.K), sol.rho);
+
+            network_psi = sol.cert.alg_psi;
+            if obj.config.gen.same_rho
+                sol.cert.alg_psi = lft(network_psi, rhotrafo(sol.cert.K, sol.rho));                
+            else
+                sol.cert.alg_psi = rhotrafo(lft(network_psi, sol.cert.K), sol.rho);
+            end
+
             sol.gain = obj.validate_recovery_gain(sol.cert.alg_psi, sol.cert.iqc_op_all);
 
             sol.cert.Gcl = Gcl;
@@ -403,6 +409,12 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             [S, R] = obj.reg.exosystem();
 
             rhoi = (1/rho);
+            rhoiS = rhoi;
+            if obj.config.gen.same_rho                
+                rhoiP = 1;                
+            else
+                rhoiP = rhoi;
+            end
 
             Pibar = obj.Pibar(vars_diss, vars_reg);
             Pihat = obj.Pihat(vars_diss, vars_reg);
@@ -413,8 +425,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %includes a reverting of rho-weighting the IQC if 
             %opt.config.gen.same_rho == true;
             [A, B, C, D] = ssdata(P);
-            A = rhoi * A;
-            B = rhoi * B;
+            A = rhoiP * A;
+            B = rhoiP * B;
 
             iu = P.index_u;
             iw = [P.index_w];
@@ -436,13 +448,13 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %follows formulation of (26) in 
             %https://www.sciencedirect.com/science/article/pii/S0005109808005402
 
-            Ak = rhoi* vars_K.A;
-            Bk = rhoi * vars_K.B;
+            Ak = rhoiP * vars_K.A;
+            Bk = rhoiP * vars_K.B;
             Ck = vars_K.C;
             Dk = vars_K.D;
             
             Aaug = [A, B(:, id); 
-                zeros(ns, n), rhoi * S];
+                zeros(ns, n), rhoiS * S];
 
             Bpaug = [B(:, iw); 
                 zeros(ns, length(iw))];
@@ -487,7 +499,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 %this is ok, because there is only one performance
                 %specification. Recovery will catch the controller.                
                 U_cl_base = [B(:, iu), zeros(nxn, nxiU);
-                 zeros(nxiU, nu), rhoi*eye(nxiU),;
+                 zeros(nxiU, nu), rhoiP*eye(nxiU),;
                  D(iz, iu),  zeros(nz, nxiU)]';
 
                 nxiV = n;
@@ -831,7 +843,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             ny = length(iy);
 
 
-            if obj.config.gen.same_rho
+            if obj.config.gen.same_rho 
                 rho_common = vars_rec.rho;
             else
                 rho_common = 1;
@@ -938,11 +950,14 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             Dkt = Dk;
 
 
-    
-
-            LblockI = [eye(n),  [zeros(nf, ns); rhoi* Pi], rhoi* B(:, iu);
-                zeros(ns, n),  rhoi*eye(ns), zeros(ns, nu);
+            LblockI = [eye(n),  [zeros(nf, ns); Pi],  B(:, iu);
+                zeros(ns, n),  eye(ns), zeros(ns, nu);
                 zeros(nu, n), zeros(nu, ns), eye(nu)];
+
+
+            % LblockI = [eye(n),  [zeros(nf, ns); rhoi* Pi],  B(:, iu);
+            %     zeros(ns, n),  rhoi*eye(ns), zeros(ns, nu);
+            %     zeros(nu, n), zeros(nu, ns), eye(nu)];
 
             Cblock = [Akt, Bkt;
                 Ckt, Dkt];

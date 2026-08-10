@@ -90,6 +90,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             vars_diss= struct('GX', GX, 'GY', GY, 'GS', GS);
 
         end
+        
 
         %% Quadratic performance (infinite horizon)        
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
@@ -112,7 +113,8 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %(maybe it should happen at a higher level?)
             P = obj.connect_model(diss);
 
-            [sys_cl, U_cl, V_cl] = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K, diss.rho);
+            rho = obj.used_rho(diss);
+            [sys_cl, U_cl, V_cl] = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K, rho);
             
             %index the quadratic specification
             vars_spec = vars.spec{diss.spec.id};

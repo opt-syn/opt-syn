@@ -75,9 +75,24 @@ classdef iqc_loop_factored
             end
         end
 
-        function hf = nf(obj)
-            %NF number of states in the filter            
-            hf = length(obj.Psi1.A)+ length(obj.Psi2.A);
+        function nf_out = nf(obj)
+            %NF number of states in the IQC filter
+            nf_out = obj.nx1 + obj.nx2;            
+        end
+
+        function nx1_out = nx1(obj)
+            %NX1 number of states in filter 1
+            nx1_out = length(obj.Psi1.A);
+        end
+
+        function nx2_out = nx2(obj)
+            %NX2 number of states in filter 2
+
+            if ~isnumeric(obj.Psi2)
+                nx2_out = length(obj.Psi2.A);
+            else
+                nx2_out = 0;
+            end
         end
 
        
@@ -121,7 +136,7 @@ classdef iqc_loop_factored
                         if isempty(obj.C3)
                             C3 = zeros(n1+n2, 0);
                         else
-                            C3 = [obj.C3, zeros(n2, size(obj.C3, 1))];
+                            C3 = [obj.C3; zeros(n2, size(obj.C3, 1))];
                         end
                     else
                         if isempty(obj.C3)

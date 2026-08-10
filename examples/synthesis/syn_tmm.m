@@ -17,11 +17,14 @@ sys = opt_system(ops);
 config =opt_config();
 
 config.syn.D_mask = [0, 0; 1, 1]; %gradient evaluation of lsq
+% config.syn.reduced_order = false;
 man = opt_synthesis(sys, config);
 
 % sol = man.bisect();
-Niter = 4;
-order = {[2, 2], [2, 2]};
+Niter = 2;
+order = {[2, 1], 1};
+% order = {1, 1}; %works
+% order = {[1, 1], 1};
 % order = {[1, 1], [1, 1]};
 % order = {3, 3};
 % order = {1, 1};

@@ -133,7 +133,7 @@ Well-posedness requires that the map $H: = (F^{-1} - \Dcl{zw})^{-1}$ is globally
 The closed loop state $x$ is the concatenation $x = [x^N, x^c]$. 
 
 
-{class}`alg_sim` execution using {meth}`sim`  requires the {doc}`algorithm properties <../how_it_works/alg_properties>` of  well-posedness and a block-triangular information structure. 
+{class}`alg_sim` execution using {meth}`sim`  requires   well-posedness and a block-triangular information structure (closed loop $\Dcl$ matrix). 
 
 Under these conditions, the System can be partitioned as 
 

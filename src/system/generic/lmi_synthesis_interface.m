@@ -103,6 +103,17 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         end
 
+        function rho = used_rho(obj, diss)
+            %which rho to use? Common formulation (noncausal) vs.
+            %exponential formulation (causal, multiperformance)
+            
+            if obj.config.gen.same_rho
+                rho = 1;
+            else
+                rho = diss.rho;
+            end
+        end
+
         function [vars_reg] = create_vars_regulator(obj)
             %CREATE_VARS_REGULATOR
             %parameterize the solutions to the regulator equations
