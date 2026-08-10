@@ -115,21 +115,19 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             vars_rec = sol.vars;
             
             if obj.config.gen.same_rho
-                rho_common = sol.rho;
-                P_aug = rhotrafo(P_aug, rho_common);
+                rho_common = sol.rho;                
             else
                 rho_common = 1;
             end
 
             [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_aug, vars_rec, rho_common);           
-
-            K_nofeed = rhotrafo(K_nofeed, 1/rho_common);
+            
             
             model = obj.reg.get_model(vars_rec.reg);            
             modelrho = rhotrafo(model, rho_common);
             P_trans = lft(alg_psi, modelrho);
 
-            K_report = obj.K_alg_report(P_trans, K_nofeed, model);
+            K_report = obj.K_alg_report(P_trans, K_nofeed, model, rho_common);
             
             
             sol.cert.alg_trans = K_report.alg_trans;            

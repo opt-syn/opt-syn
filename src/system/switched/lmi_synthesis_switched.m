@@ -67,13 +67,6 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             vars_diss = struct;
 
 
-            
-            % GX_cell = cell(obj.Nss, 1);
-            % GY_cell = cell(obj.Nss, 1);
-            % S_cell = cell(obj.Nss, 1);
-
-            
-
             if obj.common
                 %common storage function among all subsystems
                 [GX, GY, cons] = obj.define_storage_G(cons, alg_psi{1}, '');
@@ -249,7 +242,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             %Upper-levels: iterate over the systems
             objective = 0;
 
-            ds = obj.sys.get_discount();
+            % ds = obj.sys.get_discount();
             if obj.common
 
                 for i = 1:obj.Nss
@@ -259,11 +252,11 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
                     diss_curr.ind_curr = (i);
                     diss_curr.ind_next = (i);
 
-                    if ds(i)
+                    % if ds(i)
                         diss_curr.rho = diss.rho;
-                    else
-                        diss_curr.rho = 1;
-                    end
+                    % else
+                    %     diss_curr.rho = 1;
+                    % end
 
 
                     [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
@@ -291,12 +284,13 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
                     
     
-                    if ds(src(i))
+                    %per-mode discounts are removed
+                    % if ds(src(i))
                         diss_curr.rho = diss.rho;
-                    else
-                        diss_curr.rho = 1;
-                    end
-    
+                    % else
+                    %     diss_curr.rho = 1;
+                    % end
+                    % 
                     [cons, objective_curr, con_M] = obj.con_dynamic_single(vars, cons, diss_curr);
     
     
@@ -369,8 +363,8 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             %(maybe it should happen at a higher level?)
             
 
-            rho = obj.used_rho(diss);
-            P = obj.reg.connect_model(diss.plant, diss.ind_curr);            
+            rhou = obj.used_rho(diss);
+            P = obj.connect_model(diss, rhou);            
 
             sys_cl = obj.system_closed_loop(P, vslack.diss, vslack.reg, vars.K{diss.ind_curr}, diss.rho);
             
@@ -408,6 +402,8 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             
         end
 
+        %% helper functions
+
         function cons = con_spread(obj, cons, vars)
             %CON_SPREAD increase numerical conditioning by separating the 
             %primal and dual blocks. Invoke this over multiple subsystems
@@ -423,6 +419,29 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             if ~obj.config.syn.reduced_order
                 for i = 1:obj.Nss
                     cons = obj.con_spread_single(cons, vars.diss.GX{i}, vars.diss.GY{i});
+                end
+            end
+        end
+
+
+        function P_model = connect_model(obj, diss, rho)
+            %connect the plant to the internal model 
+            %Args:                   
+            %   diss (diss_data): information about dissipation relation
+            %   rho:              discount rate
+            %
+            %Returns:            
+            %   P_model:   generalized plant with internal model attached            
+            if nargin < 3
+                rho = 1;
+            end
+
+            if isfield(diss, 'ind_curr')
+                P_model =obj.reg.connect_model(diss.plant, diss.ind_curr, rho);            
+            else
+                P_model = cell(obj.Nss, 1);
+                for i = 1:obj.Nss
+                    P_model = obj.reg.connect_model(diss.plant, i, rho);            
                 end
             end
         end
@@ -451,24 +470,17 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
 
             %recover the controller
             if obj.config.gen.same_rho
-                rho_common = sol.rho;
-                for i = 1:obj.Nss
-                    P_trans{i} = rhotrafo(P_trans{i}, rho_common);
-                end
+                rho_common = sol.rho;                
             else
                 rho_common = 1;
             end
 
             [K_nofeed,Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec);
 
-            for i = 1:obj.Nss
-                K_nofeed{i} = rhotrafo(K_nofeed{i}, 1/rho_common);
-            end
-
             %package it up
             K_report = cell(obj.Nss, 1);
 
-            ds = obj.sys.get_discount;
+            ds = obj.sys.get_discount; %unused
 
 
             sol.cert.Gcl = Gcl;
@@ -479,7 +491,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
                 
                 model = obj.reg.get_model(i, vars_rec.reg);
     
-                K_report = obj.K_alg_report(P_trans{i}, K_nofeed{i}, model);
+                K_report = obj.K_alg_report(P_trans{i}, K_nofeed{i}, model, rho_common);
 
                 %form the algorithm                
                 sol.cert.alg_trans{i} = rhotrafo(K_report.alg_trans, rho_common);

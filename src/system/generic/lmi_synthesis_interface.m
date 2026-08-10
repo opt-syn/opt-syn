@@ -912,8 +912,10 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %get the system with the internal model
             dissend = struct;
             dissend.plant = alg_psi;
-            dissend.rho = 1;            
-            P_trans =  obj.connect_model(dissend);
+            dissend.rho = sol.rho;       
+            rhou = obj.used_rho(dissend);
+            dissend.rho = 1;
+            P_trans =  obj.connect_model(dissend, rhou);
             
             %evaluate the variables
             [sol] = obj.recover_subcontroller(alg_psi, P_trans, sol);
@@ -942,17 +944,15 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                         
             if obj.config.gen.same_rho
                 rho_common = sol.rho;
-                P_trans = rhotrafo(P_trans, rho_common);
+                % P_trans = rhotrafo(P_trans, rho_common);
             else
                 rho_common = 1;
             end
             [K_nofeed, Gcal, Ycal] = recover_subcontroller_warp(obj, P_trans, vars_rec);
 
-            K_nofeed = rhotrafo(K_nofeed, 1/rho_common);
-
             model = obj.reg.get_model(vars_rec.reg);
 
-            K_report = obj.K_alg_report(P_trans, K_nofeed, model);
+            K_report = obj.K_alg_report(P_trans, K_nofeed, model, rho_common);
             
             sol.cert.alg_trans = K_report.alg_trans;            
             sol.cert.model = K_report.model;           
@@ -962,10 +962,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             sol.cert.Ycl = Ycal;
 
             %validate after the rho weighting
-            alg_psi_K = lft(alg_psi, sol.cert.K);           
-            alg_psi_rho = rhotrafo(alg_psi_K, sol.rho);
+            
 
-            sol.gain = obj.validate_recovery_gain(alg_psi_rho, sol.cert.iqc_op_all);
+            sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
 
             
         end
@@ -1154,16 +1153,21 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
 
-        function K_report = K_alg_report(obj, P_trans, K_nofeed, model)
+        function K_report = K_alg_report(obj, P_trans, K_nofeed, model, rho)
             %K_ALG_REPORT recover the algorithmic interconnection and the
             %controller
             %Args:
             %   P_trans:    the transformed generalized plant before IQC
             %   K_nofeed:   subcontroller without direct feedthrough
             %   model:      internal model
+            %   rho:        discount rate
             %Return:
             %   K_report:   controller output structure
             
+            if nargin < 4
+                rho = 1;
+            end
+
             D = P_trans.D;
 
             iz = [P_trans.index_z(), P_trans.index_zp()];
@@ -1188,8 +1192,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
             T_feed = [zeros(nu, ny), eye(nu); eye(ny), -D22];
 
-            K_feed = lft(T_feed, K_nofeed, nu, ny);
-            % K_feed_full = lft(T_feed, K_nofeed_full, nu, ny);
+            K_feed = lft(T_feed, K_nofeed, nu, ny);            
 
             
             K_feed = obj.name_K_feed(K_feed);
@@ -1199,7 +1202,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             alg_trans_nofeed = lft(P_trans_nofeed, K_nofeed);
 
 
-            K_sub = K_feed;
+            K_sub = rhotrafo(K_feed, 1/rho);
             
             
 

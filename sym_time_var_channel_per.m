@@ -39,17 +39,16 @@ sys_cont = opt_system_switched(ops, network, [], Gcon);
 %% synthesize
 config =opt_config();
 config.syn.D_mask = 0;
-config.gen.same_rho = 1;
-man_per = opt_synthesis(sys_per, config);
-man_snap = opt_synthesis(sys_snap, config);
-man_cont = opt_synthesis(sys_cont, config);
+man_per0 = opt_synthesis(sys_per, config);
+
+sol_per0 = man_per.bisect();
 
 
-sol_snap = man_snap.bisect();
-
+config2 = config;
+config2.gen.same_rho = 1;
+man_per = opt_synthesis(sys_per, config2);
 
 sol_per = man_per.bisect();
-sol_cont = man_cont.bisect();
 
 
 %% begin simulation (attempted)
@@ -60,29 +59,15 @@ op1 = op_sim_quad(Q, bstar);
 ops_sim = {op1};
 
 sys_per = sol_per.sys.export_sim(ops_sim);
-sys_snap = sol_snap.sys.export_sim(ops_sim);
-sys_cont = sol_cont.sys.export_sim(ops_sim);
 
 T = 150;
 sim_per  = alg_sim(sys_per, d);
-sim_snap = alg_sim(sys_snap, d);
-sim_cont = alg_sim(sys_cont, d);
 
 
 sim_out_per  = sim_per.sim(T);
-sim_out_snap = sim_snap.sim(T);
-sim_out_cont = sim_cont.sim(T);
 
 %% plot the signals
 plt_per = alg_plotter(sim_out_per);
 plt_per.plot({'f', 'w', 'res_w', ...
     'x', 'z', 'delay', }, 10)
 
-plt_snap = alg_plotter(sim_out_snap);
-plt_snap.plot({'f', 'w', 'res_w', ...
-    'x', 'z', 'delay', }, 12)
-
-
-plt_cont = alg_plotter(sim_out_cont);
-plt_cont.plot({'f', 'w', 'res_w', ...
-    'x', 'z', 'delay', }, 11)

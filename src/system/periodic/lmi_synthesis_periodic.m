@@ -1,4 +1,4 @@
-classdef lmi_synthesis_periodic < lmi_synthesis_interface
+classdef lmi_synthesis_periodic < lmi_synthesis_switched
     %LMI_SYNTHESIS_PERIODIC synthesis LMIs for algorithmic interconnections
     %involving periodic linear networks and controllers
     
@@ -31,20 +31,10 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
     methods
         function obj = lmi_synthesis_periodic(sys,config)
             %LMI_SYNTHESIS_PERIODIC constructor
-            obj@lmi_synthesis_interface(sys, config);
+            obj@lmi_synthesis_switched(sys, config);
         end
 
         %% definition of variables and helpers
-
-        function ns = Nss(obj)
-            %NSS: Number of subsystems            
-            ns = obj.sys.Nss;
-        end
-
-        function cm = common(obj)
-            %is a common storage function used?
-            cm = obj.config.switched.common;
-        end
 
 
         function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
@@ -101,74 +91,6 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             vars_diss.GY = GY_cell;
             vars_diss.GS  = GS_cell;
 
-        end
-
-        function D_mask = get_D_mask(obj)
-            %GET_D_MASK get the direct feedthrough terms
-            %Returns:
-            %   D_mask:     sparsity pattern for D of the controller
-
-            %the sparsity-constrained term for internal model control            
-            D_mask_0 = get_D_mask@lmi_synthesis_interface(obj);
-
-
-
-            D_mask_default  = tril(ones(length(obj.sys.bind)));
-            % Handle the case when D_mask_0 is empty
-
-
-            if ~iscell(D_mask_0)
-                D_mask_0_orig = D_mask_0;
-                D_mask_0 = cell(obj.Nss, 1);
-                for i = 1:obj.Nss
-                    if isempty(D_mask_0_orig)
-                        D_mask_0{i} = D_mask_default;
-                    else
-                        D_mask_0{i} = D_mask_0_orig;
-                    end
-                end
-            end
-
-
-            %WARNING: do a better conversion on the coordinate lifts
-            c = obj.sys.op{1}.c;
-            D_mask = cell(obj.Nss, 1);
-            for i = 1:obj.Nss
-                D_mask{i} = kron(D_mask_0{i}, ones(c));
-            end
-
-        end
-
-        function [vars_K, cons] = create_vars_controller(obj, cons, alg_psi, name)
-            %CREATE_VARS_CONTROLLER create the nonlinearly-transformed
-            %controller matrices
-            %Args:                   
-            %   cons:   accumulated constraints
-            %   alg_psi:   the filtered algorithmic interconnection  
-            %   name:       a name for the variable
-            %   D_mask:     sparsity pattern for D of the controller
-            %
-            %Returns:   
-            %   vars_K: controller variables [Ak, Bk, Ck, Dk], or some subset if elimination is used.           
-            %   cons:   accumulated constraints
-
-
-            %get the dimensions
-
-            vars_K = cell(obj.Nss, 1);
-
-            if nargin < 4
-                name = [];
-            end
-
-            D_mask = obj.get_D_mask();
-            for i = 1:obj.Nss
-                name_curr = [name, '_', num2str(i)];
-                alg_curr = alg_psi{i};
-                D_mask_curr = D_mask{i};
-                [vars_K{i}, cons] = create_vars_controller@lmi_synthesis_interface(obj, cons, alg_curr, name_curr, D_mask_curr);
-            end
-            
         end
 
         function vars_inv= get_vars_involved(obj, vars, ind)
@@ -302,50 +224,10 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             cons = obj.con_terminal(Gcurr, cons, [], diss.iqc_rob);
         end
 
-        %% helper functions
-
-        function P_model = connect_model(obj, diss, rho)
-            %connect the plant to the internal model 
-            %Args:                   
-            %   diss (diss_data): information about dissipation relation
-            %   rho:              discount rate
-            %
-            %Returns:            
-            %   P_model:   generalized plant with internal model attached            
-            if nargin < 3
-                rho = 1;
-            end
-
-            if isfield(diss, 'ind_curr')
-                P_model =obj.reg.connect_model(diss.plant, diss.ind_curr, rho);            
-            else
-                P_model = cell(obj.Nss, 1);
-                for i = 1:obj.Nss
-                    P_model = obj.reg.connect_model(diss.plant, i, rho);            
-                end
-            end
-        end
-
+        %% helper functions       
         
 
-
-        function cons = con_spread(obj, cons, vars)
-            %CON_SPREAD increase numerical conditioning by separating the 
-            %primal and dual blocks. Invoke this over multiple subsystems
-            %
-            %Args:                   
-            %   cons:   accumulated constraints
-            %   GX:   primal storage matrix
-            %   GY:   dualstorage matrix
-            %
-            %Returns:            
-            %   cons:   accumulated constraints
-        
-            for i = 1:obj.Nss
-                cons = obj.con_spread_single(cons, vars.diss.GX{i}, vars.diss.GY{i});                
-            end
-        end
-
+ 
 
         %% Recovery
         % Call the recovery method to finalize the synthesis process
@@ -370,17 +252,11 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             %recover the controller
             if obj.config.gen.same_rho
                 rho_common = sol.rho;
-                for i = 1:obj.Nss
-                    P_trans{i} = rhotrafo(P_trans{i}, rho_common);
-                end
             else
                 rho_common = 1;
             end
             [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec);
 
-            for i = 1:obj.Nss
-                K_nofeed{i} = rhotrafo(K_nofeed{i}, 1/rho_common);
-            end
 
             %package it up
             K_report = cell(obj.Nss, 1);
@@ -388,7 +264,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
 
                 model = obj.reg.get_model(i, vars_rec.reg);
     
-                K_report = obj.K_alg_report(P_trans{i}, K_nofeed{i}, model);
+                K_report = obj.K_alg_report(P_trans{i}, K_nofeed{i}, model, rho_common);
 
                 %form the algorithm
                 sol.cert.alg_trans{i} = K_report.alg_trans;
@@ -404,9 +280,9 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             n = sol.cert.alg_trans{1}.dump_dim();
             sol.cert.alg_trans = genplant_poly(sol.cert.alg_trans, n);
 
-            alg_psi_rho = rhotrafo(sol.cert.alg_trans, sol.rho);
+            
 
-            sol.gain = obj.validate_recovery_gain(alg_psi_rho, sol.cert.iqc_op_all);
+            sol.gain = obj.validate_recovery_gain(sol.cert.alg_trans, sol.cert.iqc_op_all);
         end
 
         function [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_trans, vars_rec)
@@ -560,21 +436,24 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             is_passive = (norm(M11) + norm(M22) + norm(M12 - eye(nw)))==0;
             is_hinf = (norm(M11-eye(nw)) + norm(M22+eye(nw)) + norm(M12))==0;
 
+            nw_lift = size(P.D, 1);       
+            E=eye(nw_lift);
 
             if is_passive
                 gain_passive = -getPassiveIndex(-P, 'input');
 
-                E=eye(nw);
+                
+                
                 Tinf=[E sqrt(2)*E;sqrt(2)*E E];
-                P_inf = lft(Tinf,P,nw,nw);
+                P_inf = lft(Tinf,P,nw_lift,nw_lift);
 
                 gain_inf = norm(P_inf, 'inf');
             elseif is_hinf
                 gain_inf = norm(P, 'inf');
 
-                E=eye(nw);
+                
                 Tpass = [-E sqrt(2)*E;sqrt(2)*E -E];
-                Ppass = lft(Tpass,P,nw,nw);
+                Ppass = lft(Tpass,P,nw_lift,nw_lift);
 
                 gain_passive = -getPassiveIndex(-Ppass, 'input');
             else
