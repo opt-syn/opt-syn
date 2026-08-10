@@ -159,6 +159,22 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
             end
 
         end
+
+        %% recovery
+        function sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
+            %recover the controller
+            %Args:
+            %   sol: solution structure
+            %   lmi_out: output from solver
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   diss (diss_data):   structure describing the dissipation constraint            
+            %
+            %Returns:  
+            %   sol: solution structure
+
+
+            %system-dependent overrides
+        end
         
         %% common specification calls
 

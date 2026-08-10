@@ -118,9 +118,10 @@ config.syn.reduced_order = false;
 
 ### Matrix Elimination
 
-If only one performance requirement is present, then the Matrix Elimination Lemma {footcite}`gahinet1994linear` may be used to remove the some or all of controller variables from the algorithm design problem. A single LMI constraint with the controller variables is replaced by two smaller LMI constraints lacking these variables. Both constraint sets have the same feasibility region.
+If only one performance requirement is present and the matrix $D_K$ is constrained by `config.syn.D_mask` to have block-lower-triangular sparsity, then a triangular {footcite}`scherer1995complete` Matrix Elimination Lemma {footcite}`gahinet1994linear` can be used to remove the some or all of controller variables from the Synthesis problem. 
+A single LMI constraint in Synthesis with the controller variables is replaced by multiple smaller LMI constraints lacking these variables. Both constraint sets have the same feasibility region.
 
-The Synthesis programs with and without Elimination use the Transformation approach from {footcite}`scherer1997multiobjective` to design controllers.
+All Synthesis programs the nonlinear  Transformation approach from {footcite}`scherer1997multiobjective` to convexify the search for controllers.
 
 ### Reduced-Order Control
 

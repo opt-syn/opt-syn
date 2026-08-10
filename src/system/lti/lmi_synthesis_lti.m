@@ -29,8 +29,41 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
         function obj = lmi_synthesis_lti(sys, config)
             %LMI_SYNTHESIS_LTI Constructor
             obj@lmi_synthesis_interface(sys, config);
+
+
+            if obj.config.syn.elimination
+                %check D_mask, only perform elimination if it is
+                %block-lower triangular
+                obj.config.syn.elimination = obj.check_lower_triangular();
+            end
+            
+
         end       
         
+        function [is_tri] = check_lower_triangular(obj)
+            %CHECK_LOWER_TRIANGULAR is the D matrix constrained to be
+            %block-lower-triangular? This must be true to use matrix
+            %elimination
+            %
+            %Returns:
+            %   is_tri (bool): verdict on lower triangularity
+
+            D_mask = obj.get_D_mask();           
+            is_tri = true;
+            i0 = find(D_mask == 0);
+            [i, j] = ind2sub(size(D_mask), i0);
+
+            for k = 1:length(i)
+                D_right = D_mask(i(k), (j(k)+1):end);
+                D_top = D_mask(1:(i(k)-1), j(k));
+
+                if sum(D_right) || sum(D_top)
+                    is_tri = false;
+                    break
+                end
+            end
+
+        end
         
         %% definition of variables and helpers
         function [vars_diss, cons]= create_vars_storage(obj, cons, alg_psi, name)
@@ -461,7 +494,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
         function el = elimination(obj)
             %ELIMINATION is the matrix elimination lemma used?
-            el = obj.config.syn.elimination;               
+            el = obj.config.syn.elimination;   
         end
 
         function [sys_cl, U_cl, V_cl] = system_closed_loop(obj, P,  vars_diss, vars_reg, vars_K, rho);

@@ -329,7 +329,7 @@ classdef opt_analysis < opt_manager_interface
             for i = 1:length(alg_psi_rec)
                 alg_psi_rec{i}.P.C = double(double(alg_psi_rec{i}.P.C, lmi_out));
                 alg_psi_rec{i}.P.D = double(double(alg_psi_rec{i}.P.D, lmi_out));
-                alg_psi_rec{i} = ss(alg_psi_rec{i}.A, alg_psi_rec{i}.B, alg_psi_rec{i}.C, alg_psi_rec{i}.D, 1);
+                alg_psi_rec{i}.P = ss(alg_psi_rec{i}.A, alg_psi_rec{i}.B, alg_psi_rec{i}.C, alg_psi_rec{i}.D, 1);
             end
 
             if ~iscell(alg_psi)
@@ -338,6 +338,8 @@ classdef opt_analysis < opt_manager_interface
                 sol.cert.alg_psi = alg_psi_rec;
             end
 
+            %system-specific recovery options
+            % [sol] = obj.lmi.process_recovery(sol, lmi_out, alg_psi_rec, diss);            
             
         end
         

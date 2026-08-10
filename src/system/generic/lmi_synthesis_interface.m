@@ -1193,64 +1193,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         end
 
-        function gain = validate_recovery_gain(obj, alg_psi, iqc_op_all, rho)
-            %VALIDATE_RECOVERY validate that the system obeys the stability
-            %constraint
-            %
-            %Args:
-            %   alg_psi: the plant with confirmed performance by LMIs
-            %   iqc_op_all: all IQCs
-            %Return:
-            %   gain:   [Passivity index, H-infinity index].
-
-            if nargin < 4
-                rho = 1;
-            end
-
-            %  (TODO: performance specs)
-
-
-            %closed-loop and weighted system
-            P = alg_psi.P(alg_psi.index_z, alg_psi.index_w);
-
-            M = iqc_op_all.iqc.M;
-            M = (M + M')/2;
-            nw = floor(size(M, 1)/2);
-
-            M11 = M(1:nw, 1:nw);
-            M12 = M(nw + (1:nw), 1:nw);
-            M22 = M(nw + (1:nw), nw + (1:nw));
-            %is the constraint passive?
-            is_passive = (norm(M11) + norm(M22) + norm(M12 - eye(nw)))==0;
-            is_hinf = (norm(M11-eye(nw)) + norm(M22+eye(nw)) + norm(M12))==0;
-
-
-            if is_passive
-                gain_passive = -getPassiveIndex(-P, 'input');
-
-                E=eye(nw);
-                Tinf=[E sqrt(2)*E;sqrt(2)*E E];
-                P_inf = lft(Tinf,P,nw,nw);
-
-                gain_inf = norm(P_inf, 'inf');
-            elseif is_hinf
-                gain_inf = norm(P, 'inf');
-
-                E=eye(nw);
-                Tpass = [-E sqrt(2)*E;sqrt(2)*E -E];
-                Ppass = lft(Tpass,P,nw,nw);
-
-                gain_passive = -getPassiveIndex(-Ppass, 'input');
-            else
-                %TODO: advanced validation
-                warning('Customized validation is not yet implemented')
-                gain_inf = 0;
-                gain_passive = 0;
-            end
-
-            gain = [gain_passive, gain_inf];            
-
-        end
 
         function objective = default_objective(obj, vars)
             %  create an objective for mincx() if one doesn't already

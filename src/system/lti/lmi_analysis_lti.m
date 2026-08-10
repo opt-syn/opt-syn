@@ -258,6 +258,40 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             con_M = {con_M_1, con_M_2};
         end
 
+        function sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
+            %recover the controller
+            %Args:
+            %   sol: solution structure
+            %   lmi_out: output from solver
+            %   alg_psi:   the filtered algorithmic interconnection
+            %   diss (diss_data):   structure describing the dissipation constraint            
+            %
+            %Returns:  
+            %   sol: solution structure
+            if nargin < 5
+                diss = [];
+            end
+
+            %highlight exponential stability
+
+            alg_psi_first = alg_psi{1};
+
+            nwp = alg_psi_first.nwp;
+            nzp = alg_psi_first.nzp;
+
+            alg_psi_exp = alg_psi_first(1:(end - (nzp)), 1:(end - (nwp)));
+
+            %evaluate the variables
+            alg_psi_exp = rhotrafo(alg_psi_exp, sol.rho);
+            iqc_op_all = struct('iqc', diss{1}.iqc_rob);
+
+            %TODO: finish validation
+            % sol.gain = obj.validate_recovery_gain(alg_psi_exp, iqc_op_all);
+
+            % sol.G = obj.get_storage(sol.vars.diss, sol.vars.reg);
+        end
+
+
     end
 
     

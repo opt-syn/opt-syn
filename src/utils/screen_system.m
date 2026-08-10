@@ -30,7 +30,7 @@ for c = 1:k
 end
 
 
-E_indexer = sparse(i, j, v, n_ind, N);
+E_indexer = full(sparse(i, j, v, n_ind, N));
 
 
 end

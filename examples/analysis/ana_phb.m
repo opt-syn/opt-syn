@@ -24,6 +24,7 @@ sK = ss(A, B, C, D, 1);
 sys_sml = opt_system({op1_sml,  op2}, [], sK);
 sys_quad = opt_system({op1_quad, op2}, [], sK);
 
+% order = {1, 1};
 % order = {[3, 0], [3, 0]};
 order = {[3, 1], [3, 1]};
 % order = {[3, 2], [3, 2]};
