@@ -93,23 +93,33 @@ It is linearly convergent  with rate $\rho \in (0, 1)$ if there exists a constan
 
 ## Checking Convergence
 
-{{osyn}} certifies linear convergence of well-posed algorithms by checking two conditions:
-1. *Robust Stability:* If the algorithm is well-posed and $0 \in F^i(0)$ for all operators $F^i$,  then for any initial state $x_0$, all trajectories of 
+{{osyn}} certifies linear convergence of well-posed algorithms by checking two conditions: Robust Stability and the Solvability of Regulator Equations.
+
+
+
+### Robust Stability
+ Assume that the algorithm is well-posed, and the operator inclusion problem $\{F^i}$ is solved by the pair $\beta^*, w^* = (0, 0)$ ($0 \in F^i(0)$ holds for all operators $F^i$.) Then for all initial conditions $x_0$, the subsequent trajectories of 
 ```{math}
 \begin{align}
 \mat{c}{ x_{k+1} \hl {z}_k} &= \mat{c|c}{ \Acl &  \Bcl \hl \Ccl & \Dcl} \mat{c}{ x_{k} \hl {w}_k}, & {w}_k \in  F( {z_k}),
 \end{align}
 ```
-satisfy  $\lim_{k \rightarrow \infty} \rho^{-k} x_k = 0$.
+  satisfy $\lim_{k \rightarrow \infty} \rho^{-k} x_k = 0$.
 
 
-2. Solvability of *Regulator Equation:*  For any pair $(\beta^*, w^*)$ with $\sum_{i=1}^s w^{*,i} = 0$, there exists a state $x^*$ satisfying 
+### Solvability of Regulator Equations
+ For any pair $(\beta^*, w^*)$ with $\sum_{i=1}^s w^{*,i} = 0$, there exists a state $x^*$ satisfying 
 ```{math}
 \begin{align}
-\mat{c}{x^* \\ 0} = \mat{c|cc}{\Acl & 0 & \Bcl \hl 
-\Ccl & \1 \otimes I & \Dcl} \mat{c}{x^*\\ \beta^*, w^*}.
+\mat{c}{x^* \hl 0} = \mat{c|cc}{\Acl & 0 & \Bcl \hl 
+\Ccl & \1 \otimes I & \Dcl} \mat{c}{x^*\hl \beta^* \\ w^*}.
 \end{align}
 ```
+
+
+### Implications
+
+Robust Stability ensures convergence to 0 if 0 is the solution to the inclusion problem. Solvability of the Regulator Equations ensures that a nonzero solution to the inclusion problem can be shifted into a zero solution of an associated error problem.
 
 The Robust Stability criterion is an intensive dynamical test, and will be verified using Integral Quadratic Constraints and Linear Matrix Inequality methods. In contrast, the  Regulator Equation can be easily checked by solving a linear system of  equations. Uniqueness of the state $x^*$ is provided by detectability of $(\Acl, \Ccl)$.
 

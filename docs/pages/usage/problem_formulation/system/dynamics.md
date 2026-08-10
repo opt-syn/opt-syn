@@ -3,7 +3,7 @@
 
 A trajectory $(x, w, z)$ of a Linear Time-Varying (LTV) dynamical system with matrix representation $(\Acl_k, \Bcl_k, \Ccl_k, \Dcl_k)_{k \in \N}$ obeys the relation
 ```{math}
-\mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_k & \Bcl_k \hl \Ccl_k & \Dcl_k } \mat{c}{x_k \\ w_k}, & \forall k \in \N.
+\mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_k & \Bcl_k \hl \Ccl_k & \Dcl_k } \mat{c}{x_k \\ w_k}, & & \forall k \in \N.
 ```
 
 Linear Time Invariant (LTI) systems are a special case of LTV systems where $(\Acl, \Bcl, \Ccl, \Dcl)$ are constant in time. 

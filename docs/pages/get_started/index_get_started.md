@@ -41,10 +41,10 @@ The Projected Gradient Descent (PGD) algorithm with stepsize $\gamma > 0$ is the
 
 PGD achieves linear convergence at rate $\rho \in (0, 1)$ if there exists a constant $C_0 > 0$ such that
 ```{math}
-\norm{\beta_{k}-\beta^*}_2  \leq  C_0 \rho^{-k} \norm{\beta_0-\beta^*}, \ \forall x_0, k, f, \mathcal{Z}.
+\norm{\beta_{k}-\beta^*}_2  \leq  C_0 \rho^{-k} \norm{\beta_0-\beta^*}, \ \forall x_0, k, f.
 ```
 
-The minimal worst-case convergence convergence rate for PGD is $\frac{L-m}{L+m}$ `footcite`{taylor2018exact}. This rate is achieved with stepsize parameter $\gamma = \frac{2}{L+m}$.
+The minimal worst-case convergence convergence rate for PGD is $\frac{L-m}{L+m}$ {footcite}`taylor2018exact`. This rate is achieved with stepsize parameter $\gamma = \frac{2}{L+m}$.
 
 
 Analysis code to numerically verify this rate for parameters $m = 1, L = 10$ is
@@ -94,7 +94,7 @@ Code to generate an optimization algorithm for $m=1, L=10$ is
 Convergence is confirmed, because the algorithm has a worst-case linear convergence rate of $0.8676 < 1$.
 
 Synthesis is then performed when the oracle $\nabla f$ has a delay of one time step before and after evaluation.
-```{literalinclude} ../../examples/getting_started/synthesis_workflow_test.m
+```{literalinclude} ../../../examples/getting_started/synthesis_workflow_test.m
 :caption: Synthesis with a 1-step time-delay
 :language: matlab 
 :lines:  16-21
@@ -112,7 +112,7 @@ The delay-1 synthesized algorithm is used to solve an $L_1$-norm-constrained qua
 ```
 
 Figure [1](#syn-ex) tracing out the execution  is created using the commands
-```{literalinclude} ../../examples/getting_started/synthesis_workflow_test.m
+```{literalinclude} ../../../examples/getting_started/synthesis_workflow_test.m
 :language: matlab 
 :lines:  46-47
 ```
@@ -135,7 +135,3 @@ Figure [1](#syn-ex) tracing out the execution  is created using the commands
 <!-- The algorithm deployment is convergent to the unique optimum $\beta^* \in \R^{500}$ with 16 nonzero entries. -->
 
 <!-- %0.9860 -->
-
-:::{caution} 
-Under Construction
-:::

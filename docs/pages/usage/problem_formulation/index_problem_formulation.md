@@ -24,8 +24,17 @@ man_syn = opt_synthesis(sys, config);
 
 The managers and specifications are subsequently used to {doc}`Solve <../solve>` the Analysis and Synthesis problems with respect to the Performance Specifications.
 
+
+
 ```{toctree}
 :maxdepth: 1
 Performance Specifications <specs>
 Configuration <config>
 ```
+
+:::{tip}
+Omission of the `config` argument leads to use of the default configuration options in {class}`opt_config`:
+```matlab
+man_syn = opt_synthesis(sys); 
+```
+:::

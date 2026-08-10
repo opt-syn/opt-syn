@@ -146,7 +146,10 @@ The supported subdifferentials are based on properties of proper, closed, convex
   - $f( \alpha x + (1-\alpha)y) \leq \alpha f(x) + (1-\alpha) f(y)$ for all $\alpha \in [0, 1]$ and $(x, y)$.
 ```
 The subdifferential  of a p.c.c. function $f$ is the set 
-$$ \partial f(x) = \{g \mid f(x) - f(y) \geq \langle g, x-y \rangle, \ \forall (x, y) \}$$ 
+
+\begin{align*}
+\partial f(x) = \{g \mid f(x) - f(y) \geq \langle g, x-y \rangle, \ \forall (x, y) \}
+\end{align*}
 
 Indicator functions of closed,  convex sets are p.c.c.
 

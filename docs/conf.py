@@ -86,7 +86,7 @@ html_theme_options = {
       "image_light": "opt_syn_light.svg",
       "image_dark": "opt_syn_dark.svg",
    },
-   "repository_url": "https://github.com/jarmill/opt-syn",
+   "repository_url": "https://github.com/opt-syn/opt-syn",
    "use_repository_button": True,
    "use_download_button": True      
 }
