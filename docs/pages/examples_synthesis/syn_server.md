@@ -21,11 +21,11 @@ The Synthesized algorithm to solve this problem must have a block-lower-triangul
 ```
 
 
-Next, the same optimization  problem must be solved in a remote setting. The network dynamics separating the oracles $\partial f$ include time-delays and channel memory. 
+Next, the same optimization  problem must be solved in a remote setting. The network dynamics separating the oracles $\partial f$ include time-delays and channel memory. The following code generates an algorithm with $\rho < 0.9341$ in the networked setting.
 
-```{literalinclude} ../../../examples/synthesis/syn_server.m
+```{literalinclude} ../../../examples/synthesis/syn_server_channel.m
 :linenos: true
-:caption: Composite Quadratic Programming
+:caption: Composite Quadratic Programming with Network Dynamics
 :language: matlab
-:lines: 1-16
+:lines: 1-44
 ```

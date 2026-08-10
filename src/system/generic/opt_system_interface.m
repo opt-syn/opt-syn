@@ -173,9 +173,36 @@ classdef  opt_system_interface
                     psi = blkdiag(Psi1, I_zp, Psi2, I_wp);
                     
         
-                    alg_psi = genplant(psi * GI); 
-                    alg_psi.nz = ssize(psi.D, 1) - obj.P.nzp - obj.P.nwp;
-                    alg_psi.nw = ssize(GI.B, 2);
+
+                    %ordering of channels
+                    %[p, zp, q, wp]                    
+                    Gpsi = psi * GI;
+
+                    %then perform a reordering
+                    %[p, q, wp, zp]
+                    %this makes the performance calls easier
+                    %
+                    %because performance is stored in supply_quad (Schur), 
+                    %while the M matrix is generally not in Schur-complement form
+
+                    n1 = iqc_op.np;
+                    n2 = iqc_op.nq;
+                    nzp = obj.P.nzp;
+                    nwp = obj.P.nwp;
+
+                    i_order = 1:(n1+n2+nzp+nwp);
+                    j_order = [1:n1, (n1+nzp)+(1:n2), (n1+nzp+n2) + (1:nwp), n1 + (1:nzp)];
+                    v_order = ones(n1+n2+nzp+nwp, 1);
+                    P_order = full(sparse(i_order, j_order, v_order));
+
+                    %permute the order of the channels
+                    Gpsi_perm = P_order * Gpsi;
+
+
+                    %these dimension counts are very inelegant
+                    alg_psi = genplant(Gpsi_perm); 
+                    alg_psi.nz = n1 + n2;
+                    alg_psi.nw = obj.P.nw;
                     alg_psi.nzp = obj.P.nzp + obj.P.nwp;
                     alg_psi.nwp = obj.P.nwp;
                 else

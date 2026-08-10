@@ -3,8 +3,8 @@ mu = 1; beta = 1.5;
 
 %sweep beta
 % Nbeta = 100;
-Nbeta = 3;
-beta_sweep = logspace(-2, 2, Nbeta);
+Nbeta = 30;
+beta_sweep = logspace(-3, 0, Nbeta);
 
 %description of operators
 op1 = op_gen();

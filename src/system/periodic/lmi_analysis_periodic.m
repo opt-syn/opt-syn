@@ -108,71 +108,25 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
 
 
             %supply block with {C, D, M}
-            vars_spec = vars.spec{diss.spec.id};
-            M_quad = obj.merge_spec_M(diss.iqc_rob, diss.spec, vars_spec);
-            suppb = -obj.supply_block(diss.plant, M_quad);
+            [plant_rob, plant_perf] = obj.partition_perf(diss);
 
 
-            %wrap it all together
-            objective = 0;
+            %supply block with {C, D, M}
+            suppb = -obj.supply_block(plant_rob, diss.iqc_rob.M);
 
-            con_M = -(sysb + suppb);
+            con_M = -(sysb + suppb);           
+            
 
-
+            %quadratic performance block by Schur complement
+            [con_M, objective] = obj.quad_performance_augment(diss, con_M, plant_perf);
+                        
+            
             sM = ssize(con_M,1);
             cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB); 
 
             %impose sign constraint
             cons = obj.con_terminal(Gcurr, cons, diss.iqc_rob);
         end        
-
-        function [cons, objective, con_M] = e2e_target(obj, vars, cons, diss)
-            %E2E_TARGET: use a Schur complement to minimize the energy to
-            %energy gain of the transfer function
-            %Args:                   
-            %   cons:   accumulated constraints
-            %   specs: performance specifications
-            %
-            %Returns:            
-            %  vars_spec:   variables for performance specification
-            %   cons:   accumulated constraints
-            
-            Gcurr = vars.diss.G{diss.ind_curr};
-            Gnext = vars.diss.G{diss.ind_next};
-
-
-
-            
-           
-            sysb = obj.sys_block(diss.plant, Gnext, Gcurr);
-
-            %variable to optimize
-            mu = vars.spec{diss.spec.id}.mu_l2;
-
-            [plant_no_p, CDp] = obj.separate_performance_output(diss);
-
-            %form the supply
-            nwp = length(diss.spec.iwp);
-            M_base = blkdiag(diss.iqc_rob.M, -mu * eye(nwp));
-            
-            objective = mu;            
-            suppb = obj.supply_block(plant_no_p, M_base);
-
-
-            %wrap it all together           
-            con_M_corner = sysb + suppb;
-            nzp = ssize(CDp, 1);
-            con_M = [con_M_corner, CDp'; CDp, mu*eye(nzp)];
-
-
-            sM = ssize(con_M,1);
-            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB);   
-            
-            
-            %impose sign constraint
-            cons = obj.con_terminal(Gcurr, cons, diss.iqc_rob);
-        end
-
 
 
         %% helper routines

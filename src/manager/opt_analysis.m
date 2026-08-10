@@ -247,18 +247,20 @@ classdef opt_analysis < opt_manager_interface
                     nu = 0;
                     ny = 0;
                 end
+                nzp0 = nzp - nwp;
                 nzpa = length(sp.izp);
                 nwpa = length(sp.iwp);
-                i_output = 1:(nz+nzpa+ny);
-                j_output = [(1:nz), (nz + sp.izp), nz+nzp + (1:ny)];
+                i_output = 1:(nz+nzpa + nwpa);
+                j_output = [(1:nz), (nz + sp.izp), nz+nzp0 + sp.iwp];
                 v_output = ones(length(i_output), 1);
-                E_output = full(sparse(i_output, j_output, v_output, nz+nzpa+ny, nz+nzp+ny));
+                E_output = full(sparse(i_output, j_output, v_output, nz+nzpa+nwpa, nz+nzp));
+                % E_output = full(sparse(i_output, j_output, v_output, nz+nzpa+ny, nz+nzp+ny));
                 
                 %input indexer
-                i_input = 1:(nw+nwpa+nu);
-                j_input = [(1:nw), (nw + sp.iwp), nw+nwp + (1:nu)];
+                i_input = 1:(nw+nwpa);
+                j_input = [(1:nw), (nw + sp.iwp)];
                 v_input = ones(length(i_input), 1);
-                E_input = full(sparse(i_input, j_input, v_input, nw+nwpa+nu, nw+nwp+nu))';
+                E_input = full(sparse(i_input, j_input, v_input, nw+nwpa, nw+nwp))';
                 
                 %nonminimal representation of the multiplier-extended plant
                 if iscell(alg_psi)

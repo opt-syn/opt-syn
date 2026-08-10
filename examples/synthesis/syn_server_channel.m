@@ -24,11 +24,11 @@ channel.P(3, s+3) =  -1/(z+0.4);
 channel.P(s+3, 3) = -1/(z+0.4);
 
 %form the systems
-sys = opt_system(ops);
 sys_channel = opt_system(ops, channel);
 
 
 %information structure for the channel case
+%enforces block-lower-triangularity of the closed-loop system
 config = opt_config();
 config.syn.D_mask = [1, 0, 1, 1, 0, 0;
     1, 1, 1, 1, 0, 0;
@@ -36,12 +36,8 @@ config.syn.D_mask = [1, 0, 1, 1, 0, 0;
     1, 1, 1, 1, 0, 0;
     1, 1, 1,1 ,1 ,0;
     1, 1, 1, 1, 1, 1];
-%this is not block-lower-triangular
-%so matrix elimination must be disabled
-config.syn.elimination = 0;
 
 %solve the problem
-man = opt_synthesis(sys);
 man_channel = opt_synthesis(sys_channel, config);
 sol_channel = man_channel.bisect(); 
 % 0.9357 with block-triangular

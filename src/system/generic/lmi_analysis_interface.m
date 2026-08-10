@@ -178,6 +178,71 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
         
         %% common specification calls
 
+        function [plant_rob, plant_perf] = partition_perf(obj, diss)
+            %PARTITION_PERF partition the robust and performance channels
+            %
+            %Args:
+            %   diss (diss_data):   current dissipation constraint
+            %
+            %Returns:
+            %   plant_rob (sdpss):   plant with robust outputs
+            %   plant_perf (sdpss):  plant with performance outputs
+            nz_all = diss.iqc_rob.nq + diss.iqc_rob.nq;
+            nwp = length(diss.spec.iwp);
+            nzp = length(diss.spec.izp);
+
+            I = eye(nz_all + nwp + nzp);
+            I_robust = I(1:nz_all, :);
+            I_perf = I((nz_all+1):end, :);
+
+            plant_rob = I_robust * diss.plant;
+            
+            if nwp + nzp > 0
+                plant_perf = I_perf * diss.plant;
+            else
+                plant_perf = [];
+            end
+              
+
+        end
+
+        function [con_M_out, objective] = quad_performance_augment(obj, diss, con_M, plant_perf)
+            %apply a quadratic performance constraint by Schur-Complement
+            %in Analysis
+            %
+            %Args:            
+            %   diss (diss_data):   current dissipation constraint
+            %   con_M (lmim):       current PSD constraint (LMI)
+            %   plant_perf (sdpss):  plant with performance outputs
+            %
+            %Returns:
+            %   con_M_out (lmim):   Schur-complemented LMI constraint with
+            %                       robustness and performance
+            %   objective:          the objective in optimization (scalar)
+
+
+            if diss.spec.nwp + diss.spec.nzp > 0                
+                %an extra quadratic performance condition is present
+                
+                %get the supply rate
+                vars_spec = vars.spec{diss.spec.id};
+                [quad_perf, objective] = diss.spec.supply_quad(vars_spec);                
+                nt = ssize(quad_perf.U, 1);
+
+                %apply the schur-complement-style constraint
+                perfb = obj.perf_block(plant_perf, quad_perf);
+
+                con_M_out = blkdiag(con_M, zeros(nt));
+                con_M_out = con_M_out- perfb;
+            else
+                %no extra quadratic performance condition 
+                objective = 0;
+                con_M_out = con_M;
+                
+            end
+
+        end
+
     end
 
     methods (Abstract)

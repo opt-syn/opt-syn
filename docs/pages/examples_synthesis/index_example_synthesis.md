@@ -14,8 +14,8 @@ These examples perform Synthesis of inclusion algorithms.
 Channel Memory <syn_channel_memory>
 LASSO <syn_lasso>
 Games with Delay <syn_games_with_delay>
-Remote Quadratic Programming <syn_server>
 Unstable Network <syn_unstable_network>
+Remote Quadratic Programming <syn_server>
 Repeated Operators <syn_repeated>
 Coordinate Descent <syn_coord_descent>
 Sequential Games <syn_games_sequential>

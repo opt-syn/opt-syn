@@ -1,6 +1,9 @@
 classdef lmi_analysis_periodic_orbit < lmi_analysis_lti
     %LMI_ANALYSIS_PERIODIC_ORBIT analysis LMIs for algorithmic interconnections
     %involving periodic linear networks and controllers
+    %
+    %Note: this calls routines from lmi_analysis_lti with no extra
+    %functionality
     
     % w(k) \in F(z(k))
     %

@@ -207,8 +207,6 @@ classdef lmi_dispatch_interface < handle
             %   sb:   supply term to build dissipation relation
             %
 
-
-
             %sb =  [C, D]^T [-M] [C D]
             %               
 
@@ -216,6 +214,42 @@ classdef lmi_dispatch_interface < handle
             Cblock = [plant.C, plant.D];   
             
             sb = Cblock' * (-M) * Cblock;
+
+        end
+
+
+        function pb = perf_block(obj, plant, quad)
+            % PERF_BLOCK performance block used in analysis programs
+            %Args:    
+            %   plant: plant to analyze
+            %   quad: running cost            
+            %Returns:                        
+            %   pb:   performance term to build dissipation relation
+            %
+
+            %sb =  [C, D]^T [-M] [C D]
+            
+            [nzp, nwp] = ssize(quad.S);
+            if nzp + nwp > 0                
+                I = eye(nzp+nwp);
+                Iwp = I(1:nwp, :);
+                Izp = I((nwp+1):end, :);
+                
+    
+                F = Izp * [plant.C, plant.D];
+                E = Iwp * [plant.C, plant.D];
+    
+                topc = E'*quad.Q * E + E' * quad.S' * F + F' * quad.S * E;
+                sidec = F * quad.T';
+                botc = -quad.U;
+    
+                pb = [topc, sidec';
+                    sidec, botc];
+            else
+                pb = [];
+            end
+
+
 
         end
 
