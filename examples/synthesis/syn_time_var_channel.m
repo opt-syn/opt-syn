@@ -39,6 +39,7 @@ sys_cont = opt_system_switched(ops, network, [], Gcon);
 %% synthesize
 config =opt_config();
 config.syn.D_mask = 0;
+config.gen.same_rho = 1;
 man_per = opt_synthesis(sys_per, config);
 man_snap = opt_synthesis(sys_snap, config);
 man_cont = opt_synthesis(sys_cont, config);

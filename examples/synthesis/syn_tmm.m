@@ -17,7 +17,9 @@ sys = opt_system(ops);
 config =opt_config();
 
 config.syn.D_mask = [0, 0; 1, 1]; %gradient evaluation of lsq
-% config.syn.reduced_order = false;
+config.gen.same_rho = 0;
+config.syn.elimination = true;
+config.syn.reduced_order = false;
 man = opt_synthesis(sys, config);
 
 % sol = man.bisect();
@@ -28,13 +30,15 @@ order = {[2, 1], 1};
 % order = {[1, 1], [1, 1]};
 % order = {3, 3};
 % order = {1, 1};
-[sol_h, v_h] = man.alternate(Niter, order);
 
-%composite triple-momentum
-best_rho = 1 - sqrt(m/L);
-[best_rho, v_h(end, end)]
+sol = man.bisect();
+% [sol_h, v_h] = man.alternate(Niter, order);
 
-sol = sol_h{1, end}
+% %composite triple-momentum
+% best_rho = 1 - sqrt(m/L);
+% [best_rho, v_h(end, end)]
+% 
+% sol = sol_h{1, end}
 
 
 

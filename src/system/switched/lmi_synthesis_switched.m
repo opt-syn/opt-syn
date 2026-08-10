@@ -367,10 +367,12 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
             %IMPORTANT!
             %hook up the internal model
             %(maybe it should happen at a higher level?)
-            P = obj.reg.connect_model(diss.plant, diss.ind_curr);            
+            
 
             rho = obj.used_rho(diss);
-            sys_cl = obj.system_closed_loop(P, vslack.diss, vslack.reg, vars.K{diss.ind_curr}, rho);
+            P = obj.reg.connect_model(diss.plant, diss.ind_curr);            
+
+            sys_cl = obj.system_closed_loop(P, vslack.diss, vslack.reg, vars.K{diss.ind_curr}, diss.rho);
             
             %index the quadratic specification
             np = diss.iqc_rob.np;
@@ -480,7 +482,7 @@ classdef lmi_synthesis_switched < lmi_synthesis_interface
                 K_report = obj.K_alg_report(P_trans{i}, K_nofeed{i}, model);
 
                 %form the algorithm                
-                sol.cert.alg_trans{i} = K_report.alg_trans;
+                sol.cert.alg_trans{i} = rhotrafo(K_report.alg_trans, rho_common);
                 sol.cert.alg{i} = lft(obj.sys.P{i}, K_report.K);
                 sol.cert.model{i} = K_report.model;           
                 sol.cert.K{i}= K_report.K;

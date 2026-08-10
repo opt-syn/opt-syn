@@ -116,12 +116,12 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             
             if obj.config.gen.same_rho
                 rho_common = sol.rho;
-                % P_aug = rhotrafo(P_aug, rho_common);
+                P_aug = rhotrafo(P_aug, rho_common);
             else
                 rho_common = 1;
             end
 
-            [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_aug, vars_rec);           
+            [K_nofeed, Gcl, Ycl] = recover_subcontroller_warp(obj, P_aug, vars_rec, rho_common);           
 
             K_nofeed = rhotrafo(K_nofeed, 1/rho_common);
             
@@ -156,6 +156,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %CONNECT_MODEL connect the plant to the internal model
             %Args:                   
             %   diss (diss_data): information about dissipation relation
+            %   rho: discount rate
             %
             %Returns:            
             %   P_model:   *augmented* generalized plant with internal model attached            
@@ -173,6 +174,9 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             
             %do not perform discounting. this happens later in the LMI
 
+            if nargin < 3
+                rho = 1;
+            end
             sys_aug = obj.sys;
             sys_aug.P = diss.plant_reg;
             diss.iqc_data.rotate = 0; %specialization for orbits
@@ -180,7 +184,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             diss.iqc_data.augmented = true;
             [Plant, ~, alg_loop_aug] = sys_aug.build_plant(diss.iqc_data, diss.rho);
 
-            P_model = Plant;
+            P_model = rhotrafo(Plant, rho);
+            
             % P_model = struct('P', Plant, 'rho', diss.rho);
             % P_model = obj.reg.connect_model(diss.plant, diss.rho);
         end
@@ -496,7 +501,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 %this is ok, because there is only one performance
                 %specification. Recovery will catch the controller.                
                 U_cl_base = [B(:, iu), zeros(nxn, nxiU);
-                 zeros(nxiU, nu), rhoiP*eye(nxiU),;
+                 zeros(nxiU, nu), rhoiP * eye(nxiU),;
                  D(iz, iu),  zeros(nz, nxiU)]';
 
                 nxiV = n;
@@ -651,13 +656,14 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
         
         %% recovery
 
-        function [K_nofeed, Xcal, Ycal] = recover_subcontroller_warp(obj, P_trans, vars_rec)
+        function [K_nofeed, Xcal, Ycal] = recover_subcontroller_warp(obj, P_trans, vars_rec, rho)
             %RECOVER_SUBCONTROLLER_WARP recover the nonlinearly warped
             %controller dynamics and indexers
             %Args:
             %   alg_psi:   the filtered algorithmic interconnection
             %   P_trans:    the transformed generalized plant before IQC
             %   sol: solution structure
+            %   rho: discount rate
             %
             %Output:
             %   K_nofeed: subcontroller without direct feedthrough
@@ -672,8 +678,20 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %this is the (nonlinearly-warped) system that is certified as
             %possessing the desired performance and robustness
             %specifications
+            if nargin < 4
+                rho = 1;
+            end
             
 
+            rhoi = (1/rho);
+            
+            if obj.config.gen.same_rho                
+                rhoiS = rhoi;
+                rhoiP = 1;                
+            else
+                rhoiP = 1;
+                rhoiS = 1;
+            end
 
             
             %get the regulator equation solution
@@ -840,16 +858,9 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             ny = length(iy);
 
 
-            if obj.config.gen.same_rho 
-                rho_common = vars_rec.rho;
-            else
-                rho_common = 1;
-            end
-            rhoi = 1/rho_common;
-
             %augmented system from the regulation conditions
             [S, R] = obj.reg.exosystem();
-            Aaug = [A, B(:, id); zeros(ns, n),  rhoi* S];            
+            Aaug = [A, B(:, id); zeros(ns, n),  rhoiS* S];            
             Bpaug = [B(:, iw); zeros(ns, length(iw))];
             Caug = [C(iy, :), D(iy, id)];
                         
@@ -947,8 +958,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             Dkt = Dk;
 
 
-            LblockI = [eye(n),  [zeros(nf, ns); Pi],  B(:, iu);
-                zeros(ns, n),  eye(ns), zeros(ns, nu);
+            LblockI = [eye(n),  [zeros(nf, ns); rhoiS * Pi],  B(:, iu);
+                zeros(ns, n),  rhoiS * eye(ns), zeros(ns, nu);
                 zeros(nu, n), zeros(nu, ns), eye(nu)];
 
 

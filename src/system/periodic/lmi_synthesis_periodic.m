@@ -61,10 +61,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
 
             if nargin < 4
                 name = [];
-            end
-
-
-            
+            end           
 
 
             GX_cell = cell(obj.Nss, 1);
@@ -235,6 +232,8 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
 
         end
 
+        %% performance specifications
+
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
             %QUAD: certificate of infinite-horizon quadratic performance
             %
@@ -260,13 +259,16 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             %IMPORTANT!
             %hook up the internal model
             %(maybe it should happen at a higher level?)
-            P = obj.reg.connect_model(diss.plant, diss.ind_curr);
+            rhou = obj.used_rho(diss);
+            P = obj.connect_model(diss, rhou);            
 
+            
+
+            %dynamics constraint
             vars_diss = vcurr.diss;
             vars_diss.GX = vnext.diss.GX;
-
-            rho = obj.used_rho(diss);
-            sys_cl = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K{diss.ind_curr}, rho);
+            
+            sys_cl = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K{diss.ind_curr}, diss.rho);
             
             %index the quadratic specification
             np = diss.iqc_rob.np;
@@ -300,7 +302,31 @@ classdef lmi_synthesis_periodic < lmi_synthesis_interface
             cons = obj.con_terminal(Gcurr, cons, [], diss.iqc_rob);
         end
 
-        %TODO: e2e_target
+        %% helper functions
+
+        function P_model = connect_model(obj, diss, rho)
+            %connect the plant to the internal model 
+            %Args:                   
+            %   diss (diss_data): information about dissipation relation
+            %   rho:              discount rate
+            %
+            %Returns:            
+            %   P_model:   generalized plant with internal model attached            
+            if nargin < 3
+                rho = 1;
+            end
+
+            if isfield(diss, 'ind_curr')
+                P_model =obj.reg.connect_model(diss.plant, diss.ind_curr, rho);            
+            else
+                P_model = cell(obj.Nss, 1);
+                for i = 1:obj.Nss
+                    P_model = obj.reg.connect_model(diss.plant, i, rho);            
+                end
+            end
+        end
+
+        
 
 
         function cons = con_spread(obj, cons, vars)

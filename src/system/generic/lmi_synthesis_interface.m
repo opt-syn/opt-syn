@@ -894,10 +894,6 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
         %% common specification calls
 
-        
-        %function [cons, objective, con_M] = quad(obj, vars, cons, diss)
-        %Quadratic performance (defined on a per-system basis)
-
         %% Controller Recovery
         function sol = process_recovery(obj, sol, lmi_out, alg_psi, diss)
             %recover the controller
@@ -1243,7 +1239,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
 
     methods (Abstract)
         %variable creation routines        
-        quad(obj, vars, cons, diss)               
+        quad(obj, vars, cons, diss)  %quadratic performance at a minimum
     end
 end
 
