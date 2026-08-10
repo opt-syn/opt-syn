@@ -8,9 +8,30 @@ where each function $f_i$ is a quadratic in $S_{m_i, L_i}$.
 
 
 The overall composite optimization problem is described using the constants
-\begin{align*}
-m &= \[0, 1, -2, 1, 1, 0\], & L &= \[5, 2, 1, 6, 1, inf\]. 
-\end{align*}
+:::{list-table}
+:header-rows: 1
+* - Oracle
+  - $m$
+  - $L$
+* - 1
+  - 0
+  - 5
+* - 2
+  - 1
+  - 2
+* - 3
+  - -2
+  - 1
+* - 4
+  - 1
+  - 6
+* - 5
+  - 1
+  - 1
+* - 6
+  - 0
+  - $\infty$
+:::
 
 The Synthesized algorithm to solve this problem must have a block-lower-triangular $\Dcl$ matrix. Synthesis of an algorithm with convergence rate $\rho < 0.7679$ is accomplished by using the code
 ```{literalinclude} ../../../examples/synthesis/syn_server.m

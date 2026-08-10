@@ -6,12 +6,13 @@ A switched linear system with $N_s$ modes is described by a collection of $N_s$ 
 \mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_j & \Bcl_j \hl \Ccl_j & \Dcl_j } \mat{c}{x_k \\ w_k}.
 ```
 
-The function $\text{mode}: \N \rightarrow 1, \ldots, N_s$ chooses the active subsystem at time $k$. A trajectory $(x, w, z, \text{mode})_{k \in \N}$ of a switched system  satisfies the relations
+The function $\theta: \N \rightarrow 1, \ldots, N_s$ chooses the active subsystem at time $k$. A trajectory $(x, w, z, \theta)_{k \in \N}$ of a switched system  satisfies the relations
 ```{math}
 \begin{align*}
-& \mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_{\textrm{mode}(k)} & \Bcl_{\textrm{mode}(k)} \hl \Ccl_{\textrm{mode}(k)} & \Dcl_{\textrm{mode}(k)} } \mat{c}{x_k \\ w_k} & & \forall k \in \N.
-& (\textrm{mode}(k), \textrm{mode}(k+1)) \in \text{Edges}(\Gs)  & & \forall k \in \N.
+& \mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_{\theta(k)} & \Bcl_{\theta(k)} \hl \Ccl_{\theta(k)} & \Dcl_{\theta(k)} } \mat{c}{x_k \\ w_k} & &  \\
+& (\theta(k), \theta(k+1)) \in \text{Edges}(\Gs)  & & \forall k \in \N.
 \begin{align*}
+```
 
 
 ## System
@@ -20,9 +21,9 @@ The algorithmic interconnection is
 ```{math}
 \begin{align*}
 w_k & \in F_k(z_k), \,  \\
- \mat{c}{x^N_{k+1} \hl z_k \\ y_k} &= \mat{c|cc}{A_{\textrm{mode}(k)} & B_{\textrm{mode}(k), \,  z} & B_{\textrm{mode}(k), \,  u} \hl 
-C_{\textrm{mode}(k), \,  z} & D_{\textrm{mode}(k), \,  zd} & D_{\textrm{mode}(k), \,  zu} \\ C_{\textrm{mode}(k), \,  y} & D_{\textrm{mode}(k), \,  yd} & D_{\textrm{mode}(k), \,  yu}} \mat{c}{x_k^N \hl w_k \\ u_k}, \\
- \mat{c}{\xi_{k+1} \\ y_k} &=  \mat{c|c}{A_{K, \textrm{mode}(k)} & B_{K, \textrm{mode}(k)} \hl C_{K, \textrm{mode}(k)} & D_{K, \textrm{mode}(k)} } \mat{c}{\xi_k \\ y_k}
+ \mat{c}{x^N_{k+1} \hl z_k \\ y_k} &= \mat{c|cc}{A_{\theta(k)} & B_{\theta(k), \,  z} & B_{\theta(k), \,  u} \hl 
+C_{\theta(k), \,  z} & D_{\theta(k), \,  zd} & D_{\theta(k), \,  zu} \\ C_{\theta(k), \,  y} & D_{\theta(k), \,  yd} & D_{\theta(k), \,  yu}} \mat{c}{x_k^N \hl w_k \\ u_k}, \\
+ \mat{c}{\xi_{k+1} \\ y_k} &=  \mat{c|c}{A_{K, \theta(k)} & B_{K, \theta(k)} \hl C_{K, \theta(k)} & D_{K, \theta(k)} } \mat{c}{\xi_k \\ y_k}.
 \end{align*}
 ``` 
 
@@ -30,7 +31,7 @@ C_{\textrm{mode}(k), \,  z} & D_{\textrm{mode}(k), \,  zd} & D_{\textrm{mode}(k)
 <!-- \mat{c}{\xi_{k+1} \\ u_k} &= \mat{c|c}{\Ac_k & \Bc_k \hl \Cc & \Dc_k } \mat{c}{\xi_k \\ y_k} -->
 
 <!-- 
-C_{\textrm{mode}(k), \,  y} & D_{\textrm{mode}(k), \,  yd} & D_{\textrm{mode}(k), \,  yu}} \mat{c}{x_k^N \hl z_k \\ u_k}, -->
+C_{\theta(k), \,  y} & D_{\theta(k), \,  yd} & D_{\theta(k), \,  yu}} \mat{c}{x_k^N \hl z_k \\ u_k}, -->
 
 ```{eval-rst}
 .. mat:autoclass :: system.switched.opt_system_switched
@@ -43,7 +44,7 @@ C_{\textrm{mode}(k), \,  y} & D_{\textrm{mode}(k), \,  yd} & D_{\textrm{mode}(k)
 The subsystems for an open switched system with disturbance $d$ and regulated error $e$ may be described as 
 ```{math}
 \begin{align}
-d_{k+1} &= S_j d_(k), \,  \\
+d_{k+1} &= S_j d_k, \,  \\
 \mat{c}{x_{k+1} \hl e_k \\ y_k} &= \mat{c|cc}{A_j & B_{j, d} & B_{j, u} \hl 
 C_{j, e} & D_{j, ed} & D_{j, eu} \\
 C_{j, y} & D_{j, yd} & D_{j, yu}} \mat{c}{x_k \hl d_k \\ u_k}.

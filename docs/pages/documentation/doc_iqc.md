@@ -3,12 +3,7 @@
 Input-output sequences of the operators satisfy a family of relations defined by {doc}Integral Quadratic Constraints (IQC).
 
 
----
-
-tocdepth: 1
-
----
-
+ 
 
 ## IQC Analysis
 

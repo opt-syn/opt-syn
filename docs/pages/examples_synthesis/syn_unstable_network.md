@@ -31,7 +31,7 @@ Figure [1](#fun) plots the function values, and errors over the execution with $
 *Figure 1:* Trace of function values and errors
 :::
 
-:::{figure} _static/unstable_3_state_err_dark.png
+:::{figure} _static/unstable_3_state_err_light.png
 :align: center
 :class: only-light
 :name: fun
@@ -47,7 +47,7 @@ Figure [2](#state) plots the states, oracle input, oracle output over this execu
 *Figure 2:* Trace of state and oracle evolution
 :::
 
-:::{figure} _static/unstable_3_state_iter_dark.png
+:::{figure} _static/unstable_3_state_iter_light.png
 :align: center
 :class: only-light
 :name: state
@@ -64,7 +64,7 @@ Figure [3](#track) plots the tracking errors of the algorithm based on the Regul
 *Figure 3:* Trace of tracking errors (noiseless)
 :::
 
-:::{figure} _static/unstable_3_tracking_dark.png
+:::{figure} _static/unstable_3_tracking_light.png
 :align: center
 :class: only-light
 :name: track

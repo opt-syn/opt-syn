@@ -17,7 +17,7 @@ The expression for PGD with time-delays is
 \end{align*}.
 ```
 
-The delay  $h(k)$ is bounded between 0 and 3 steps at all $h(k)$. It is  temporally restricted according to the logics
+The delay  $h(k)$ is bounded between 0 and 3 steps at all $k \in \N$. It is  temporally restricted according to the logics
 :::{list-table}
 :header-rows: 1
 *  - Type

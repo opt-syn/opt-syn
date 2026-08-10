@@ -45,7 +45,7 @@ sys_snap = opt_system_switched(ops, network, K, Gsnap);
 sys_cont = opt_system_switched(ops, network, K, Gcon);
 
 
-%% begin simulation (attempted)
+%% begin simulation
 T = 150;
 sim_per  = alg_sim(sys_per, d);
 sim_snap = alg_sim(sys_snap, d);

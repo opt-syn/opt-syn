@@ -31,7 +31,7 @@ The controller structure with parameters $(\gamma, \lambda) \geq 0$ used to solv
 ```
 
 This controller structure is parameterized by $\alpha$. If $\alpha = 0$ and $\lambda = 1$, then this controller is the same as Projected Gradient Descent.
-The controller structure is chosen to ensure that the {doc}`Regulator Equation <../how_it_works/network_synthesis>` condition for algorithm convergence is satisfied for all values $(\gamma, \lambda)$. Projected Gradient Descent fails the regulator equation requirement of convergence when $\alpha > 0$. 
+The controller structure is chosen to ensure that the {doc}`Regulator Equation <../how_it_works/index_how_it_works>` condition for algorithm convergence is satisfied for all values $(\gamma, \lambda)$. Projected Gradient Descent fails the regulator equation requirement of convergence when $\alpha > 0$. 
 
 We use this algorithm to solve a composite optimization problem 
 ```{math}

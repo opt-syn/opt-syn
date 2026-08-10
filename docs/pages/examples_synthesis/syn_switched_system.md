@@ -2,7 +2,7 @@
 
 
 
-This is example synthesizes an unconstrained optimization algorithm in which the gradient operator $\nabla f$ is interfaced through a network. The network switches between four subsystems in a ring pattern: at each time step $k$, the mode either stays the same, or increases by 1. An example mode sequence is $(1,1,2,3,3,3,4,4,1,2,3,3,\ldots)$.
+This is example synthesizes an unconstrained optimization algorithm in which the gradient operator $\nabla f$ is interfaced through a network. The network switches between four subsystems in a ring pattern: at each time step $k$, the mode either stays the same, or increases by 1. An example mode sequence is $\theta = (1,1,2,3,3,3,4,4,1,2,3,3,\ldots)$.
 
 The individual subsystems are described by the state-space matrices
 ```{math}

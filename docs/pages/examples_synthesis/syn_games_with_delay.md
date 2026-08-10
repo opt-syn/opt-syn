@@ -24,7 +24,7 @@ Figure  [1](#game-bw) plots a trajectory of the backward evaluation algorithm.
 *Figure 1:* Algorithm with both backward evaluations
 :::
 
-:::{figure} _static/game_sim_bw_dark.png
+:::{figure} _static/game_sim_bw_light.png
 :align: center
 :class: only-light
 :name: game-bw

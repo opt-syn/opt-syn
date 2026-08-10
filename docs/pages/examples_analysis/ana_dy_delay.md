@@ -24,7 +24,6 @@ Analysis is performed with orders for Davis-Yin with delays $h \in \{0, \ldots, 
 The parameters $\gamma = 1/{L_3}, \lambda = 1$  are used to define the algorithm $L_3$ is swept  in the range $[10^{-2}, 10^{-3}]$. Figure  [1](#dr-delay-opt) plots the outcome of an Analysis run using order  `[2, 0]` at every operator. 
 The stability boundary is the line $\rho=1$. The other curves are the convergence rate $\rho$ as a monotonically increasing function of delay: $h=0$ on the bottom in  blue and $h=4$ on top with green. The Davis-Yin algorithm with these parameters is certified as convergent without delay, and is not certified as convergent with delay.
 
-Figure  plots a short trajectory of cyclic coordinate descent.
 :::{figure} _static/davis_yin_delay_dark.png
 :align: center
 :class: only-dark

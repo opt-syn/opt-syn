@@ -93,12 +93,12 @@ It is linearly convergent  with rate $\rho \in (0, 1)$ if there exists a constan
 
 ## Checking Convergence
 
-{{osyn}} certifies linear convergence of well-posed algorithms by checking two conditions: Robust Stability and the Solvability of Regulator Equations.
+{{osyn}} certifies linear convergence of well-posed algorithms by checking two conditions: Robust Stability and the Solvability of Regulator Equations. This theory holds for on includion problems with unique fixed-point pairs $(\beta^*, w^*)$. 
 
-
+Robust Stability ensures convergence to 0 if 0 is the solution to the inclusion problem ($0 \in F^i(0)$ holds for all operators $F^i$). Solvability of the Regulator Equations ensures that a nonzero solution to the inclusion problem can be shifted into a zero solution of an zero-centered problem (error coordinates).
 
 ### Robust Stability
- Assume that the algorithm is well-posed, and the operator inclusion problem $\{F^i}$ is solved by the pair $\beta^*, w^* = (0, 0)$ ($0 \in F^i(0)$ holds for all operators $F^i$.) Then for all initial conditions $x_0$, the subsequent trajectories of 
+ Assume that the algorithm is well-posed, and the operator inclusion problem $0\in \sum_{i=1}^s F^i(\beta^*)$ is uniquely solved by the pair $(\beta^*, w^*) = (0, 0)$  Then for all initial conditions $x_0$, the subsequent trajectories of 
 ```{math}
 \begin{align}
 \mat{c}{ x_{k+1} \hl {z}_k} &= \mat{c|c}{ \Acl &  \Bcl \hl \Ccl & \Dcl} \mat{c}{ x_{k} \hl {w}_k}, & {w}_k \in  F( {z_k}),
@@ -119,7 +119,7 @@ It is linearly convergent  with rate $\rho \in (0, 1)$ if there exists a constan
 
 ### Implications
 
-Robust Stability ensures convergence to 0 if 0 is the solution to the inclusion problem. Solvability of the Regulator Equations ensures that a nonzero solution to the inclusion problem can be shifted into a zero solution of an associated error problem.
+
 
 The Robust Stability criterion is an intensive dynamical test, and will be verified using Integral Quadratic Constraints and Linear Matrix Inequality methods. In contrast, the  Regulator Equation can be easily checked by solving a linear system of  equations. Uniqueness of the state $x^*$ is provided by detectability of $(\Acl, \Ccl)$.
 
@@ -144,7 +144,7 @@ A more general network can be modeled as a linear system. The interconnection be
 
 The Regulator Equation condition in the networked setting can be expanded into 
 
-2. *Regulator Equation*:  For any $(\beta^*, w^*)$ with $\sum_{i=1}^s w^{*,i} = 0$, there exists a 
+*Regulator Equation*:  For any $(\beta^*, w^*)$ with $\sum_{i=1}^s w^{*,i} = 0$, there exists a 
 ```{math}
 \begin{align}    
      \text{Network}: & &    \mat{c|cc:c}{A & 0 & B_w & B_y \hl

@@ -2,14 +2,14 @@
 
 This demonstration applies Synthesis towards LASSO {footcite}`tibshirani1996regression` solvers. The hard LASSO problem is 
 \begin{align}
-\beta^* \in \argmin_{\norm{\beta}_1 \leq \tau} \frac{1}{2}\norm{E\beta - b}_2^2..
+\beta^* \in \argmin_{\norm{\beta}_1 \leq \tau} \frac{1}{2}\norm{E\beta - b}_2^2.
 \end{align}
 
 The LASSO problem with $E \in \R^{m \times n}$ is overparameterized if $n > m$, and is  underparameterized if $n < m$. It is assumed that $E$ has full row rank.
 
 
-In the underparameterized regime, the convex  least-squares function $f(\beta) = \frac{1}{2}\norm{Ex - b}_2^2$  is a member of $S_{0, \sigma_{\max}(E)^2}$. 
-In the overparameterized regime the strongly convex $f$ is a member of $S_{\sigma_{\min}(E)^2, \sigma_{\max}(E)^2}$ 
+In the overparameterized regime, the convex  least-squares function $f(\beta) = \frac{1}{2}\norm{Ex - b}_2^2$  is a member of $S_{0, \sigma_{\max}(E)^2}$. 
+In the underparameterized regime, the strongly convex $f$ is a member of $S_{\sigma_{\min}(E)^2, \sigma_{\max}(E)^2}$ 
 
 Synthesis of linearly convergent algorithms will take place in the underparameterized regime, and synthesis of ergodically convergent algorithms will occur in the overparameterized regime. These solvers will only implement explicit/forward evaluations of $f$.
 
@@ -25,7 +25,7 @@ A LASSO solver is first Synthesized for an overparameterized system with $\sigma
 *Figure 1:* Explicit overparamterized LASSO solution
 :::
 
-:::{figure} _static/lasso_under_explicit_long_dark.png
+:::{figure} _static/lasso_under_explicit_long_light.png
 :align: center
 :class: only-light
 :name: lasso-slow
@@ -51,7 +51,7 @@ An explicit algorithm is synthesized for underparameterized setting. The matrix 
 *Figure 2:* Explicit underparamterized LASSO solution 
 :::
 
-:::{figure} _static/lasso_over_explicit_long_dark.png
+:::{figure} _static/lasso_over_explicit_long_light.png
 :align: center
 :class: only-light
 :name: lasso-rho
