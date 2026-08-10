@@ -111,10 +111,10 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %IMPORTANT!
             %hook up the internal model
             %(maybe it should happen at a higher level?)
-            P = obj.connect_model(diss);
-
-            rho = obj.used_rho(diss);
-            [sys_cl, U_cl, V_cl] = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K, rho);
+            rhou = obj.used_rho(diss);
+            P = obj.connect_model(diss, rhou);            
+            
+            [sys_cl, U_cl, V_cl] = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K, diss.rho);
             
             %index the quadratic specification
             vars_spec = vars.spec{diss.spec.id};
@@ -259,13 +259,14 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %   cons:   accumulated constraints
             %
             %Warning:
-            %   not yet stable.
+            %   not yet stable. do not use yet.
             
             %get the variables of the problem
             G = obj.get_storage(vars.diss, vars.reg);
             
-            %IMPORTANT!            
-            P = obj.connect_model(diss);
+            %IMPORTANT!                 
+            rhou = obj.used_rho(diss);
+            P = obj.connect_model(diss, rhou);
 
             [sys_cl, U_cl, V_cl] = obj.system_closed_loop(P, vars.diss, vars.reg, vars.K);
             
@@ -517,8 +518,15 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             if nargin < 6
                 rho = 1;
             end
-             rhoi  = 1/rho;
-             
+
+            rhoi = (1/rho);
+            rhoiS = rhoi;
+            if obj.config.gen.same_rho                
+                rhoiP = 1;                
+            else
+                rhoiP = rhoi;
+            end
+
             if obj.elimination
                 %knock out the terms
 
@@ -528,8 +536,8 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
                 [A, B, C, D] = ssdata(P);
 
-                A =  rhoi * A;
-                B =  rhoi * B;
+                A =  rhoiP * A;
+                B =  rhoiP * B;
 
                 iu = P.index_u;
                 iw = [P.index_w, P.index_wp];
@@ -557,9 +565,9 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
                     %closed loop without [Ak, Bk; Ck1, Dk1]
 
-                    Acal = [A*GY ,  A ;
+                    Acal =  [A*GY ,  A ;
                         zeros(nxi), GX*A];
-                    Bcal = [B(:, iw);
+                    Bcal =  [B(:, iw);
                         GX*B(:, iw)];
                     Ccal = [C(iz, :)*GY, C(iz, :) ];
                     Dcal = D(iz, iw);
@@ -567,7 +575,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
                     %base outer factors
                     U_cl_base = [B(:, iu2), zeros(nxn, nxi), B(:, iu1);
-                        zeros(nxi, nu2), eye(nxi), zeros(nxi, ns);
+                        zeros(nxi, nu2), rhoiP*eye(nxi), zeros(nxi, ns);
                         D(iz, iu2), zeros(nz, nxi), D(iz, iu1)]';
     
                     V_cl_base = [eye(nxi), zeros(nxi, nxn), zeros(nxi, nw);
@@ -603,9 +611,9 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                     %closed loop without [Ak, Bk; Ck1, Dk1]
 
 
-                    Acal = [A*GY + B(:, iu2)*Ck2,  A + B(:, iu2)*Dk2*C(iy, :);
+                    Acal =  [A*GY + B(:, iu2)*Ck2,  A + B(:, iu2)*Dk2*C(iy, :);
                         zeros(nxi), GX*A];
-                    Bcal = [B(:, iw) + B(:, iu2)*Dk2*D(iy, iw);
+                    Bcal =  [B(:, iw) + B(:, iu2)*Dk2*D(iy, iw);
                         GX*B(:, iw)];
                     Ccal = [C(iz, :)*GY+ D(iz, iu2)*Ck2, C(iz, :) + D(iz, iu2)*Dk2*C(iy, :)];
                     Dcal = D(iz, iw) + D(iz, iu2)*Dk2*D(iy, iw);
@@ -613,7 +621,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
                     %outer factors
                     U_cl = [zeros(nxn, nxi), B(:, iu1);
-                        eye(nxi), zeros(nxi, ns);
+                         rhoiP * eye(nxi), zeros(nxi, ns);
                         zeros(nz, nxi), D(iz, iu1)]';
     
                     V_cl = [eye(nxi), zeros(nxi, nxn), zeros(nxi, nw);
@@ -638,7 +646,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                     
                     %outer factors
                     U_cl = [zeros(nxn, nxi), B(:, iu);
-                        eye(nxi), zeros(nxi, nu);
+                        rhoiP * eye(nxi), zeros(nxi, nu);
                         zeros(nz, nxi), D(iz, iu)]';
     
                     V_cl = [eye(nxi), zeros(nxi, nxn+nw)];

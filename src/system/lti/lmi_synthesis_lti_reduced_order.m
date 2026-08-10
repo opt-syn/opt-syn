@@ -113,10 +113,6 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %   K_sub: the subcontroller
             
             vars_rec = sol.vars;
-
-
-            
-
             
             if obj.config.gen.same_rho
                 rho_common = sol.rho;
@@ -156,7 +152,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             
         end
 
-        function P_model = connect_model(obj, diss)
+        function P_model = connect_model(obj, diss, rho)
             %CONNECT_MODEL connect the plant to the internal model
             %Args:                   
             %   diss (diss_data): information about dissipation relation
@@ -175,6 +171,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             % d  -> e
             % u  -> y
             
+            %do not perform discounting. this happens later in the LMI
 
             sys_aug = obj.sys;
             sys_aug.P = diss.plant_reg;

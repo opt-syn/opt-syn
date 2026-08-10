@@ -108,9 +108,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             %exponential formulation (causal, multiperformance)
             
             if obj.config.gen.same_rho
-                rho = 1;
-            else
                 rho = diss.rho;
+            else
+                rho = 1;
             end
         end
 
@@ -225,14 +225,18 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             verdict = obj.config.syn.reduced_order;
         end
 
-        function P_model = connect_model(obj, diss)
+        function P_model = connect_model(obj, diss, rho)
             %connect the plant to the internal model 
             %Args:                   
             %   diss (diss_data): information about dissipation relation
+            %   rho:              discount rate
             %
             %Returns:            
             %   P_model:   generalized plant with internal model attached            
-            P_model = obj.reg.connect_model(diss.plant);
+            if nargin < 3
+                rho = 1;
+            end
+            P_model = obj.reg.connect_model(diss.plant, rho);            
         end
 
         function G = get_storage(obj, vars_diss, vars_reg)
@@ -820,8 +824,16 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             if nargin < 6
                 rho = 1;
             end
-            rhoi = 1/rho;
 
+
+            rhoi = (1/rho);
+            rhoiS = rhoi;
+            if obj.config.gen.same_rho                
+                rhoiP = 1;                
+            else
+                rhoiP = rhoi;
+            end
+            
             GX = vars_diss.GX;
             GY = vars_diss.GY;
 
@@ -847,9 +859,9 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             Ck = vars_K.C;
             Dk = vars_K.D;
             %
-            Acal = rhoi * [A*GY + B(:, iu)*Ck,  A + B(:, iu)*Dk*C(iy, :);
+            Acal = rhoiP * [A*GY + B(:, iu)*Ck,  A + B(:, iu)*Dk*C(iy, :);
                 Ak, GX*A + Bk*C(iy, :)];
-            Bcal = rhoi * [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
+            Bcal = rhoiP * [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
                 GX*B(:, iw) + Bk*D(iy, iw)];
             Ccal = [C(iz, :)*GY+ D(iz, iu)*Ck, C(iz, :) + D(iz, iu)*Dk*C(iy, :)];
             Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);

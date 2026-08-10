@@ -16,7 +16,7 @@ sys = opt_system(ops, network, []);
 config =opt_config();
 config.syn.D_mask = 0;
 config.gen.same_rho = true;
-config.syn.reduced_order = false;
+config.syn.reduced_order = true;
 man= opt_synthesis(sys, config);
 sol= man.bisect();
 
