@@ -118,7 +118,7 @@ classdef lmi_analysis_periodic < lmi_analysis_interface
             
 
             %quadratic performance block by Schur complement
-            [con_M, objective] = obj.quad_performance_augment(diss, con_M, plant_perf);
+            [con_M, objective] = obj.quad_performance_augment(diss, vars, con_M, plant_perf);
                         
             
             sM = ssize(con_M,1);

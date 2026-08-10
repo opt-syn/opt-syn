@@ -36,6 +36,25 @@ Analysis is performed to numerically estimate this minimal rate at order `{1, 1}
 *Figure 1:* Estimates of the Douglas Rachford Convergence Rate
 :::
 
+Noise is then introduced into the Douglas Rachford execution. The performance input $w_p$ introduces a shift at the input of each oracle $F_i$. The performance output $z$ is the optimality error $z_{p, k} := w^1_k + w^2_k$. Figure [2](#only-light) plots the $\ell_2$ gain between $w_p$ and $z_p$ as a function of the cocoercivity parameter. The gain rises as the cocoercivity parameter decreases. 
+
+
+:::{figure} _static/dr_mono_plus_coco_dark.png
+:align: center
+:class: only-dark
+:name: dr-est-noise
+*Figure 2:* Gain of Douglas Rachford
+:::
+
+:::{figure} _static/dr_mono_plus_coco_light.png
+:align: center
+:class: only-light
+:name: dr-est-sum
+*Figure 2:* Gain of Douglas Rachford
+:::
+
+
+
 
 ```{literalinclude} ../../../examples/analysis/ana_dr_coco.m
 :caption: Code for Douglas-Rachford sweep analysis

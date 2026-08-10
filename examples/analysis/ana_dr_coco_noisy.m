@@ -2,8 +2,7 @@
 mu = 1; beta = 1.5;
 
 %sweep beta
-% Nbeta = 100;
-Nbeta = 30;
+Nbeta = 200;
 beta_sweep = logspace(-3, 0, Nbeta);
 
 %description of operators
@@ -48,3 +47,14 @@ for i = 1:Nbeta
 
     %find the true rate
 end
+
+
+%% plot the result
+figure(5)
+clf
+hold on
+plot(beta_sweep, GAIN, 'linewidth', 2)
+xlabel('Cocoercivity', 'interpreter', 'latex', 'fontsize', 16)
+ylabel('$\ell_2$ gain', 'interpreter', 'latex', 'fontsize', 16)
+
+set(gca, 'Xscale', 'Log')

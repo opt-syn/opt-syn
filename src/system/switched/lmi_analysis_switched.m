@@ -144,7 +144,7 @@ classdef lmi_analysis_switched < lmi_analysis_interface
             con_M = -(sysb + suppb);           
 
             %quadratic performance block by Schur complement
-            [con_M, objective] = obj.quad_performance_augment(diss, con_M, plant_perf);
+            [con_M, objective] = obj.quad_performance_augment(diss, vars, con_M, plant_perf);
                         
 
             sM = ssize(con_M,1);

@@ -206,12 +206,13 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
 
         end
 
-        function [con_M_out, objective] = quad_performance_augment(obj, diss, con_M, plant_perf)
+        function [con_M_out, objective] = quad_performance_augment(obj, diss, vars, con_M, plant_perf)
             %apply a quadratic performance constraint by Schur-Complement
             %in Analysis
             %
             %Args:            
             %   diss (diss_data):   current dissipation constraint
+            %   vars:               variables of the problem
             %   con_M (lmim):       current PSD constraint (LMI)
             %   plant_perf (sdpss):  plant with performance outputs
             %
@@ -223,7 +224,7 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
 
             if diss.spec.nwp + diss.spec.nzp > 0                
                 %an extra quadratic performance condition is present
-                
+
                 %get the supply rate
                 vars_spec = vars.spec{diss.spec.id};
                 [quad_perf, objective] = diss.spec.supply_quad(vars_spec);                

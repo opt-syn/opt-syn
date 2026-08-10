@@ -86,7 +86,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             con_M = -(sysb + suppb);           
             
             %quadratic performance block by Schur complement
-            [con_M, objective] = obj.quad_performance_augment(diss, con_M, plant_perf);
+            [con_M, objective] = obj.quad_performance_augment(diss, vars, con_M, plant_perf);
                         
 
             %wrap it all up
