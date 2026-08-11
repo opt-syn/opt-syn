@@ -188,7 +188,31 @@ classdef opt_synthesis < opt_manager_interface
 
                 %for reduced-order control
                 if obj.lmi.reduced
-                    diss{i}.plant_reg = obj.lmi.reg.sys_regulated_aug();
+                    plant_reg = obj.lmi.reg.sys_regulated_aug();
+
+                    %in the reduced-order controller, the wp and zp
+                    %channels are overloaded by the error outputs
+
+                    %index the specifications
+                    n_input = [nw, nwp, plant_reg.nwp, nu];
+                    ind_input = {1:nw, sp.iwp, 1:plant_reg.nwp, 1:nu};
+                    E_input_aug = screen_system(n_input, ind_input);
+
+
+                    n_output = [nz, nzp, plant_reg.nzp, ny];
+                    ind_output= {1:nz, sp.izp, 1:plant_reg.nzp, 1:ny};
+                    E_output_aug = screen_system(n_output, ind_output);
+
+
+
+                     
+                    %screen out the performance indices and perform bookkeepping
+                    plant_reg_P = E_output_aug * plant_reg.P * E_input_aug';
+                    n = plant_reg.dump_dim();
+                    n.nz = nz + length(sp.izp);
+                    n.nw = nw + length(sp.iwp);
+
+                    diss{i}.plant_reg = genplant(plant_reg_P, n);
                 end
 
                 

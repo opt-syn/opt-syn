@@ -16,14 +16,12 @@ classdef lmi_synthesis_periodic < lmi_synthesis_switched
     %(monodromy methods): a single large LMI system rather than multiple 
     % coupled smaller LMI systems
     %
-    %   Implemented
-    %       stability
-    %       e2e
+    %   Implemented    
     %       quad
-    %       p2p
+    %       h2
     %
     %   TODO:
-    %       h2      
+    %       p2p      
     %       e2p
     %       
     %
@@ -199,7 +197,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_switched
             M_quad_rob = quad_objective_decomp(diss.iqc_rob.M, 1:np, np + (1:nq));
             [M_quad_spec, objective] = diss.spec.supply_quad(vars.spec);
 
-            quad = obj.merge_quad(M_quad_rob, M_quad_spec);
+            quad = blkdiag(M_quad_rob, M_quad_spec);
       
             %formulation from ParDynSyn notes (parametric dynamic
             %synthesis)
@@ -223,6 +221,88 @@ classdef lmi_synthesis_periodic < lmi_synthesis_switched
             %impose sign constraint            
             cons = obj.con_terminal(Gcurr, cons, [], diss.iqc_rob);
         end
+
+        function [cons, objective, con_M] = h2(obj, vars, cons, diss)
+            %H2: certificate of stochastic performance
+            %
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
+
+
+            %get the variables of the problem
+            vcurr = obj.get_vars_involved(vars, diss.ind_curr);
+            vnext = obj.get_vars_involved(vars, diss.ind_next);
+            
+            Gcurr = obj.get_storage(vcurr.diss, vcurr.reg);
+            Gnext = obj.get_storage(vnext.diss, vnext.reg);
+
+
+            %IMPORTANT!
+            %hook up the internal model
+            %(maybe it should happen at a higher level?)
+
+            %dynamics constraint
+            vars_diss = vcurr.diss;
+            vars_diss.GX = vnext.diss.GX;
+            
+            rhou = obj.used_rho(diss);
+            P = obj.connect_model(diss, rhou);            
+
+            sys_cl = obj.system_closed_loop(P, vars_diss, vars.reg, vars.K{diss.ind_curr}, diss.rho);
+
+            diss_h2 = diss;
+            diss_h2.plant = sys_cl;
+            [plant_rob, plant_perf] = obj.partition_perf_zp(diss_h2);
+
+
+            %index the quadratic specification
+            vars_spec = vars.spec{diss.spec.id};
+
+            np = diss.iqc_rob.np;
+            nq = diss.iqc_rob.nq;
+
+            M_quad_rob = quad_objective_decomp(diss.iqc_rob.M, 1:np, np + (1:nq));
+            [M_quad_spec, objective] = diss.spec.supply_quad(vars_spec);
+
+            quad = blkdiag(M_quad_rob, M_quad_spec);
+
+            %the quadratic objective
+            supp_b = obj.supply_block(plant_rob, quad);
+
+            %the storage
+            stor_b = obj.storage_block(plant_rob, quad, Gcurr, Gnext);
+
+            %the dynamics
+            [dyn_b ] = obj.dynamics_block(plant_rob, quad);
+
+            %wrap it all together     (robustness)      
+            con_M = -(stor_b + supp_b + dyn_b);
+
+
+            %now tackle performance
+            Omega = diss.spec.get_cov();
+
+            con_Z = h2_block(obj, plant_perf, Gnext, vars_spec, Omega);
+
+
+
+            %TODO: partial elimination
+
+            sM = ssize(con_M,1);
+            % cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.LMILAB); 
+            cons = append_lmi(cons, con_M, obj.LMILAB); 
+            cons = append_lmi(cons, con_Z, obj.config.LMILAB); 
+
+            %impose sign constraint            
+            cons = obj.con_terminal(Gcurr, cons, [], diss.iqc_rob);
+        end    
+
 
         %% helper functions       
         

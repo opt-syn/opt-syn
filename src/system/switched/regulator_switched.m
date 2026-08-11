@@ -352,7 +352,11 @@ classdef regulator_switched < regulator_interface
             ny = ssize(Phi, 1);
 
 
-            Am = obj.S{ind};
+            if iscell(obj.S)
+                Am = obj.S{ind};
+            else
+                Am = obj.S;
+            end
             Bm = [zeros(ns, ny), eye(ns), zeros(ns, nu)];
             Cm = [-Gam; Phi];
             Dm = [zeros(nu, ny), zeros(nu, ns), eye(nu);

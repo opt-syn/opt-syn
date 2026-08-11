@@ -61,11 +61,8 @@ classdef spec_h2 < spec_interface
         end
 
        function [quad, objective] = supply_quad(obj, vars_spec)
-            % SUPPLY_QUAD Decomposed quadratic supply rate.
+            % SUPPLY_QUAD Decomposed quadratic supply rate for h2 synthesis
             %
-            % When this specification is the optimization target, a passivity
-            % margin ``ind_pass`` is introduced and maximized; otherwise the
-            % base-class decomposition is used.
             %
             % :param vars_spec: Specification variables (expects ``ind_pass``).
             % :type vars_spec: struct
@@ -73,18 +70,20 @@ classdef spec_h2 < spec_interface
             %    objective contribution.
             % :rtype: quad_param, double
 
-           if obj.target
-               nwp = length(obj.iwp);
-               nzp = length(obj.izp);
-               
-               Q = -eye(obj.nwp);
-               S = zeros(0, obj.nwp);
-               quad = quad_param(Q, S, []);
 
-               objective  = trace(vars_spec.Z);
+            % Q = -eye(obj.nwp);
+            % S = zeros(0, obj.nwp);
+            Q = [];
+            S = zeros(obj.nzp,0);
+            U = eye(obj.nzp);
+            T = eye(obj.nzp);
+            quad = quad_param(Q, S, U, T);
+
+           if obj.target
+  
+              objective  = trace(vars_spec.Z);
 
            else
-               
                objective = 0;
 
            end

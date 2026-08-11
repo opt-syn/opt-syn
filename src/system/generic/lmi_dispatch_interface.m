@@ -142,7 +142,7 @@ classdef lmi_dispatch_interface < handle
             Tq = RqV(:, ind_pos)';
             Uq = diag(1./eRq(ind_pos));
 
-            quad = struct('Q', Qq, 'S', Sq, 'U', Uq, 'T', Tq);
+            quad = quad_param(Qq, Sq, Uq, Tq);
         end
 
         function quad_m = merge_quad(obj, M_rob, M_spec)
@@ -158,7 +158,7 @@ classdef lmi_dispatch_interface < handle
             Tq= blkdiag(M_rob.T, M_spec.T);
             Uq= blkdiag(M_rob.U, M_spec.U);
 
-            quad_m = struct('Q', Qq, 'S', Sq, 'U', Uq, 'T', Tq);
+            quad_m = quad_param(Qq, Sq, Uq, Tq);
         end
 
 

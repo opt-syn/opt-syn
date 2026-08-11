@@ -168,7 +168,7 @@ classdef lmi_analysis_switched < lmi_analysis_interface
             %   con_M:      PSD blocks for the dynamics constraint
 
 
-
+            %partition the inputs
             [plant_rob, plant_perf] = obj.partition_perf_zp(diss);
 
 

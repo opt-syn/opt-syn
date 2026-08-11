@@ -177,7 +177,6 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
         end
         
         %% common specification calls
-
         function [plant_rob, plant_perf] = partition_perf(obj, diss)
             %PARTITION_PERF partition the robust and performance channels
             %

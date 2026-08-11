@@ -86,6 +86,14 @@ classdef quad_param
 
             quad_new = quad_param(Q_new, S_new, U_new, T_new);
         end
+
+        function R_out = R(obj)
+            % get the double output term
+
+            R_out = obj.T' * (obj.U \ obj.T);
+
+
+        end
     end
 end
 

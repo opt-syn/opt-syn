@@ -232,7 +232,7 @@ classdef (Abstract) opt_manager_interface < handle
                 %time. Why is this the case?
 
                 
-                if obj.config.recovery.blocks
+                if obj.config.recovery.blocks && (~STATUS)
                     ncons = length(cons.lmim);
                     sol.recovery = struct;
                     sol.recovery.blocks = cell(ncons, 1);

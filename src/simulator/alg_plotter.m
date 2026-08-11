@@ -230,6 +230,8 @@ classdef alg_plotter
                     sig_curr = [obj.sim_out.xnerr; obj.sim_out.xcerr];
                 elseif strcmp(sig, 'sq_xerr')
                     sig_curr = obj.sim_out.sq_xnerr +  obj.sim_out.sq_xcerr;
+                elseif strcmp(sig, 'sq_zp')
+                    sig_curr = squeeze(sum(obj.sim_out.zp.^2, [1, 2]));
                 elseif strcmp(sig, 'delay')
                     sig_curr = obj.sim_out.mode - 1;
                 elseif strcmp(sig, 'coord')
@@ -326,6 +328,8 @@ classdef alg_plotter
                     name = 'Input Error';
                 case 'sq_yerr'
                     name = 'Output Error';
+                case 'sq_zp'
+                    name = 'Performance Output Error';
 
             end
         end
@@ -348,6 +352,8 @@ classdef alg_plotter
                 name_mid = '$w_p$';
             elseif strcmp(sig, 'zp')
                 name_mid = '$z_p$';
+            elseif strcmp(sig, 'sq_zp')
+                name_mid = '$||z_p||_2^2$';
             elseif strcmp(sig, 'xc')
                 name_mid = '$x_c$';
             elseif strcmp(sig, 'xn')
@@ -388,6 +394,8 @@ classdef alg_plotter
                 name_mid = '$||u - u^*||^2_2$';
             elseif strcmp(sig, 'sq_yerr')
                 name_mid = '$||y - y^*||^2_2$';
+            elseif strcmp(sig, 'sq_zp')
+                name_mid = '$||z_p||^2_2$';
 
 
             %residuals

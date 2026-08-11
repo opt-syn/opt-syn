@@ -218,6 +218,8 @@ Ergodic convergence is weaker than linear convergence. It can certify properties
 In the current implementation, Ergodic convergence requires nonstrict feasibility of linear matrix inequalities. In numerical experiments, the maximal eigenvalue of a negative-semidefinite-constrained block is $\approx 10^{-12}$, which is not less than or equal to  $0$. Future developments will try to patch this feasibility issue, in the meantime use with caution.
 :::
 
+## H2 Performance
+
 ## Performance for Time-Varying Dynamical Systems
 
 The specific performance constraints imposed by `specs` may vary for {doc}`systems with time-variations <system/dynamics>`.

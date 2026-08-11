@@ -308,7 +308,7 @@ classdef  opt_system_interface
                 param = struct('mode', 1);
             end
             
-            if isempty(obj.K)
+            if isempty(obj.K) || (iscell(obj.K) && isempty(obj.K{1}))
                 sys_alg = Pcurr;
             else
 

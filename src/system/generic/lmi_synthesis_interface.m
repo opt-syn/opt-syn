@@ -114,6 +114,34 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
             end
         end
 
+        function con_Z = h2_block(obj, plant, G, vars_spec, Omega)
+            % h2_BLOCK supply block used in stochastic h2 analysis programs
+            %Args:    
+            %   plant: plant to analyze
+            %   G: storage function
+            %   vars_spec: variable for h2 constraint
+            %   Omega: covariance of noise
+            %Returns:                        
+            %   con_Z:   output constraint to build h2 relation
+            %
+
+            Z = vars_spec.Z;
+
+            %cost matrix
+            sOm = inv(sqrtm(Omega));
+
+            Zom = sOm *  Z * sOm;
+
+            
+            BD = [plant.B; plant.D];
+            
+
+            nd = ssize(plant.D, 1);
+ 
+            %schur-complement form
+            con_Z = [Zom, BD'; BD, blkdiag(G, eye(nd))];            
+        end
+
         function [vars_reg] = create_vars_regulator(obj)
             %CREATE_VARS_REGULATOR
             %parameterize the solutions to the regulator equations
@@ -647,6 +675,39 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
         end
 
         %% helper functions to construct LMIs
+
+        function [plant_rob, plant_perf] = partition_perf_zp(obj, diss)
+            %PARTITION_PERF_zp partition the robust and performance channels
+            %ignore the performance inputs wp
+            %
+            %Args:
+            %   diss (diss_data):   current dissipation constraint
+            %
+            %Returns:
+            %   plant_rob (sdpss):   plant with robust outputs
+            %   plant_perf (sdpss):  plant with performance outputs
+
+            %input indexer
+            nwp = diss.spec.nwp;
+            nw = ssize(diss.plant.D, 2) - nwp;
+            E_rob = screen_system([nw, nwp], {1:nw, []})';
+            E_perf = screen_system([nw, nwp], {[], 1:nwp})';
+
+            %output indexers
+            nzp = diss.spec.nzp;
+            nz = ssize(diss.plant.D, 1) - nzp; %for analysis program, the outputs contain copies of the inputs
+            E_out = screen_system([nz, nzp], {1:nz,   1:nzp});
+
+            plant_rob = E_out * diss.plant*E_rob;
+
+            if nzp > 0
+                plant_perf = E_out * diss.plant*E_perf;            
+            else
+                plant_perf = [];
+            end
+
+
+        end
 
         function stor_b = storage_block(obj, sys_cl, quad, G_curr, G_next)
             %STORAGE_BLOCK form the storage block in a synthesis problem
