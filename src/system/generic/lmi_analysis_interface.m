@@ -206,6 +206,39 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
 
         end
 
+        function [plant_rob, plant_perf] = partition_perf_zp(obj, diss)
+            %PARTITION_PERF_zp partition the robust and performance channels
+            %ignore the performance inputs wp
+            %
+            %Args:
+            %   diss (diss_data):   current dissipation constraint
+            %
+            %Returns:
+            %   plant_rob (sdpss):   plant with robust outputs
+            %   plant_perf (sdpss):  plant with performance outputs
+            
+            %input indexer
+            nwp = diss.spec.nwp;
+            nw = ssize(diss.plant.D, 2) - nwp;
+            E_rob = screen_system([nw, nwp], {1:nw, []})';
+            E_perf = screen_system([nw, nwp], {[], 1:nwp})';
+
+            %output indexers
+            nzp = diss.spec.nzp;
+            nz = ssize(diss.plant.D, 1) - nzp - nwp; %for analysis program, the outputs contain copies of the inputs
+            E_out = screen_system([nz, nwp, nzp], {1:nz, [],  1:nzp});
+           
+            plant_rob = E_out * diss.plant*E_rob;
+
+            if nzp > 0
+                plant_perf = E_out * diss.plant*E_perf;            
+            else
+                plant_perf = [];
+            end
+
+
+        end
+
         function [con_M_out, objective] = quad_performance_augment(obj, diss, vars, con_M, plant_perf)
             %apply a quadratic performance constraint by Schur-Complement
             %in Analysis

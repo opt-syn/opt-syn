@@ -30,9 +30,8 @@ l2gain = zeros(Ngam, 1);
 rho = zeros(Ngam, 1);
 
 parfor i = 1:Ngam
-
-    gamma = gsweep(i);
     %PGD algorithm
+    gamma = gsweep(i);
     K = ss(1, [-gamma, -gamma], [1; 1], [-gamma, 0; -gamma, 0],1);      
     
     %form the systems

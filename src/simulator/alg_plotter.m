@@ -233,7 +233,9 @@ classdef alg_plotter
                 elseif strcmp(sig, 'delay')
                     sig_curr = obj.sim_out.mode - 1;
                 elseif strcmp(sig, 'coord')
-                    sig_curr = obj.sim_out.mode;            
+                    sig_curr = obj.sim_out.mode;    
+                else
+                    error('Alg Plotter: Unsupported Signal to Plot')
                 end
                
 

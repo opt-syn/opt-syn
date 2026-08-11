@@ -113,17 +113,8 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
             %separate the performance inputs from the plant inputs
 
-            nwp = diss.spec.nwp;
-            nw = ssize(diss.plant.D, 2) - nwp;
-            E_rob = screen_system([nw, nwp], {1:nw, []})';
-            E_perf = screen_system([nw, nwp], {[], 1:nwp})';
+            [plant_rob, plant_perf] = obj.partition_perf_zp(diss);
             
-            
-            nzp = diss.spec.nzp;
-            nz = ssize(diss.plant.D, 1) - nzp - nwp; %for analysis program, the outputs contain copies of the inputs
-            E_out = screen_system([nz, nwp, nzp], {1:nz, [],  1:nzp});
-
-            plant_rob = E_out * diss.plant*E_rob;
 
             %pose quadratic constraint
             G = vars.diss.G;
@@ -137,10 +128,7 @@ classdef lmi_analysis_lti < lmi_analysis_interface
             con_M = -(sysb + suppb);           
 
 
-            %output constraint
-            plant_perf = E_out * diss.plant*E_perf;
-            
-
+            %output constraint          
             vars_spec = vars.spec{diss.spec.id};
             Omega = diss.spec.get_cov();
             

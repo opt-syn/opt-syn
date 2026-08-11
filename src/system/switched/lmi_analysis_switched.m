@@ -70,6 +70,9 @@ classdef lmi_analysis_switched < lmi_analysis_interface
                     %impose the positivity constraints
                     Gcurr = vars.diss.G{i};
                     cons = obj.con_terminal(Gcurr, cons, diss.iqc_rob);
+                    if i==1
+                        objective = objective + objective_curr;
+                    end
                     
                 end
                 num_terminal = 1;
@@ -150,6 +153,60 @@ classdef lmi_analysis_switched < lmi_analysis_interface
             sM = ssize(con_M,1);
             cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB);             
         end        
+
+
+        function [cons, objective, con_M] = h2(obj, vars, cons, diss)
+            %H2: certificate of stochastic performance
+            %
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
+
+
+
+            [plant_rob, plant_perf] = obj.partition_perf_zp(diss);
+
+
+            Gcurr = vars.diss.G{diss.ind_curr};
+            Gnext = vars.diss.G{diss.ind_next};
+
+
+            %allow for differing one-step exponential growths along arcs
+            %graph Lyapunov function format
+
+
+            %system block with {A, B, G}
+            sysb = obj.sys_block(plant_rob, Gnext, Gcurr, diss.rho);
+
+
+
+            %supply block with {C, D, M}
+            M_rob = blkdiag(diss.iqc_rob.M, eye(diss.spec.nwp));
+            suppb = -obj.supply_block(plant_rob, M_rob);
+
+            con_M = -(sysb + suppb);           
+
+            %output constraint
+
+            vars_spec = vars.spec{diss.spec.id};
+            Omega = diss.spec.get_cov();
+
+            con_Z = h2_block(obj, plant_perf, Gnext, vars_spec, Omega);
+
+            objective = diss.spec.get_objective(vars_spec);
+
+            sM = ssize(con_M,1);
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB); 
+            cons = append_lmi(cons, con_Z, obj.config.LMILAB); 
+
+            %impose sign constraint
+            cons = obj.con_terminal(Gcurr, cons, diss.iqc_rob);
+        end  
  
         %% helper routines
         function ns = Nss(obj)
