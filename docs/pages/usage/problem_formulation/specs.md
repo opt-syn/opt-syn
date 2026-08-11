@@ -25,7 +25,7 @@ Most specifications have an additional field `rho` discount rate $\rho >0$ as an
 Choosing $\rho < 1$ imposes that the property holds at an exponential rate. 
 
 
-Refer to {doc}`Performance Specifications <../../documentation/doc_specs>` for information about the specifications and their interfaces. 
+Refer to the  {doc}`Performance Specification Documentation <../../documentation/doc_specs>` for information about the specifications and their interfaces. 
 
 
 ## Linear Convergence
@@ -191,6 +191,22 @@ output channels must have the same length.
 perf = spec_passivity(ind_w, ind_z, iwp, izp);   
 ```
 
+## Stochastic Sensitivity
+
+Stochastic sensitivity imposes a mean-square boundedness requirement on the performance output {footcite}`van2021speed`. The performance input sequence $\{w_{p, k}\}$ is a sequence of i.i.d. random variables. These inputs are zero-mean and bounded: there exists a known $\Omega \succ 0$ such that  $\E[w_{p, k}] = 0$ and $\E[w_{p, k} w_{p, k}^\top] \preceq \Omega$ at all $k \in \N$. The algorithm achieves stochastic sensitivity with gain $\gamma \geq 0$ if for all initial conditions $x_0$ and performance inputs $w_p$, it holds that 
+```{math}
+ \limsup_{T \rightarrow \infty} \frac{1}{T} \sum_{k=0}^{T}
+        \mathbb{E}[|| z_{p,k}||^2_2] \leq \gamma^2.
+```
+
+Stochastic sensitivity is invoked by the command
+```matlab
+perf = spec_h2(GAIN, Omega, iwp, izp);   %GAIN = gamma
+```
+
+Stochastic sensitivity is only certified if  $\rho = 1$ and the oracle input $z$ is independent of $w_p$. In contrast, the $\ell_2$ gain is usable if these conditions are violated.
+
+
  
 ## Ergodic Convergence
 
@@ -202,14 +218,13 @@ An algorithm with no repeated operator evaluations satisfies ergodic convergence
 \sum_{i=1}^s \left[f_i(z^i_k) - f_i(z^{*,i}(x_0))\right] - (w^*)^\top (z_k - z^{*}(x_0)) \leq \frac{\gamma}{k+1} \norm{x_0 - x^*(x_0)}_2^2 & & \forall k \in \N.
 \end{align*}
 ```
-The bracketed quantity is a duality gap, and is equal to 0 at optimality. 
+The left-hand side  is a duality gap, and is equal to 0 at optimality. 
 This  formulation of ergodic convergence in duality gap originates from  {footcite}`upadhyaya2025automated` (Section 4.1.2).
 
 
-Ergodic convergence requires the introduction of new performance channels for the $(w^*_i)^\top z^*_i$ term. It is implemented as 
+Ergodic convergence is called by 
 ```matlab
-[perf_erg, sys] = spec_ergodic(sys);
-specs = {perf_erg};
+spec = spec_ergodic();
 ```
 
 Ergodic convergence is weaker than linear convergence. It can certify properties of convex optimization algorithms, whereas establishment of global linear convergence requires strong convexity. Ergodic convergence should only be used if all performance specifications have $\rho=1$. 
@@ -218,7 +233,8 @@ Ergodic convergence is weaker than linear convergence. It can certify properties
 In the current implementation, Ergodic convergence requires nonstrict feasibility of linear matrix inequalities. In numerical experiments, the maximal eigenvalue of a negative-semidefinite-constrained block is $\approx 10^{-12}$, which is not less than or equal to  $0$. Future developments will try to patch this feasibility issue, in the meantime use with caution.
 :::
 
-## H2 Performance
+
+
 
 ## Performance for Time-Varying Dynamical Systems
 

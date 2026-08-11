@@ -143,6 +143,7 @@ mathjax3_config = {
             "R" : r"\mathbb{R}",
             "Rbar": r"\overline{\mathbb{R}}",
             "rhoi" : r"\rho^{-1}",
+            "E" : r"\mathbb{E}",
             "C" : r"\mathbb{C}",
             "sC" : r"\mathcal{C}",
             "N" : r"\mathbb{N}",
