@@ -53,9 +53,12 @@ classdef lmi_analysis_lti < lmi_analysis_interface
         end
 
 
-        %% Quadratic performance (infinite horizon)
+
+        %% performance spceifications
+
+        % quadratic performance  
         function [cons, objective, con_M] = quad(obj, vars, cons, diss)
-            %QUAD: certificate of infinite-horizon quadratic performance
+            %QUAD: certificate of quadratic performance
             %
             %Args:
             %   vars:   variables of the problem        
@@ -75,8 +78,6 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
             %supply and quadratic performance constraints
             %index the robustness and performance channels separately
-
-
             [plant_rob, plant_perf] = obj.partition_perf(diss);
 
 
@@ -95,7 +96,68 @@ classdef lmi_analysis_lti < lmi_analysis_interface
 
             %impose sign constraint
             cons = obj.con_terminal(G, cons, diss.iqc_rob);
-        end        
+        end    
+
+        function [cons, objective, con_M] = h2(obj, vars, cons, diss)
+            %H2: certificate of stochastic performance
+            %
+            %Args:
+            %   vars:   variables of the problem        
+            %   cons:   accumulated constraints
+            %   diss (diss_data):   structure describing the dissipation constraint
+            %Returns:
+            %   cons:   accumulated constraints
+            %   objective:  term to be minimized            
+            %   con_M:      PSD blocks for the dynamics constraint
+
+
+            %separate the performance inputs from the plant inputs
+
+            nwp = diss.spec.nwp;
+            nw = ssize(diss.plant.D, 2) - nwp;
+            E_rob = screen_system([nw, nwp], {1:nw, []})';
+            E_perf = screen_system([nw, nwp], {[], 1:nwp})';
+            
+            
+            nzp = diss.spec.nzp;
+            nz = ssize(diss.plant.D, 1) - nzp - nwp; %for analysis program, the outputs contain copies of the inputs
+            E_out = screen_system([nz, nwp, nzp], {1:nz, [],  1:nzp});
+
+            plant_rob = E_out * diss.plant*E_rob;
+
+            %pose quadratic constraint
+            G = vars.diss.G;
+            %system block with {A, B, G}
+            sysb = obj.sys_block(plant_rob, G, G, diss.rho);
+
+            %supply block with {C, D, M} and wp
+            M_rob = blkdiag(diss.iqc_rob.M, eye(diss.spec.nwp));
+            suppb = -obj.supply_block(plant_rob, M_rob);
+
+            con_M = -(sysb + suppb);           
+
+
+            %output constraint
+            plant_perf = E_out * diss.plant*E_perf;
+            
+
+            vars_spec = vars.spec{diss.spec.id};
+            Omega = diss.spec.get_cov();
+            
+            con_Z = h2_block(obj, plant_perf, G, vars_spec, Omega);
+
+            objective = diss.spec.get_objective(vars_spec);
+
+
+
+            %wrap it all up
+            sM = ssize(con_M,1);            
+            cons = append_lmi(cons, con_M - obj.config.tol.M*eye(sM), obj.config.LMILAB); 
+            cons = append_lmi(cons, con_Z, obj.config.LMILAB); 
+
+            %impose sign constraint
+            cons = obj.con_terminal(G, cons, diss.iqc_rob); 
+        end   
 
 
 

@@ -1,6 +1,9 @@
 rng(32, 'twister');
 
 %PGD to minimize quadratic under hard l1 ball constraint
+%
+%this uses a time-shifted version of the PGD algorithm
+
 
 d = 100; %dimension of variable beta
 
@@ -15,12 +18,12 @@ op1 = op_sim_quad(Q, zstar);
 %define the L1 ball
 tau = 100;
 op2 = op_sim_l1_hard(tau);
-ops = {op1, op2};
+ops = {op2, op1};
 
 %PGD algorithm
 gamma = 2/(L + m);
 % gamma = 1/L;
-K = ss(1, [-gamma, -gamma], [1; 1], [0, 0; -gamma, -gamma],1);
+K = ss(1, [-gamma, -gamma], [1; 1], [-gamma, 0; -gamma, 0],1);
 
 %form the system
 sys = opt_system(ops, [], K);

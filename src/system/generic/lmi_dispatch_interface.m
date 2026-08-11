@@ -217,6 +217,45 @@ classdef lmi_dispatch_interface < handle
 
         end
 
+        function con_Z = h2_block(obj, plant, G, vars_spec, Omega)
+            % h2_BLOCK supply block used in stochastic h2 analysis programs
+            %Args:    
+            %   plant: plant to analyze
+            %   G: storage function
+            %   vars_spec: variable for h2 constraint
+            %   Omega: covariance of noise
+            %Returns:                        
+            %   con_Z:   output constraint to build h2 relation
+            %
+
+            Z = vars_spec.Z;
+
+            %cost matrix
+            sOm = inv(sqrtm(Omega));
+
+
+            Zom = sOm *  Z * sOm;
+
+
+
+            BG = plant.B' * G * plant.B;
+            DD = plant.D;
+            
+            nd = ssize(plant.D, 1);
+
+            
+
+            
+            %schur-complement form
+            con_Z = [Zom-BG, DD'; DD, eye(nd)];            
+
+
+
+            % Cblock = [plant.B; plant.D];   
+            % sb = Cblock' * blkdiag(G, eye(nd)) * Cblock;
+
+        end
+
 
         function pb = perf_block(obj, plant, quad)
             % PERF_BLOCK performance block used in analysis programs
