@@ -15,6 +15,7 @@ These examples perform Analysis of inclusion algorithms.
 ```{toctree}
 :maxdepth: 1
 Triple Momentum <ana_tmm>
+Stochastic Gradient Noise <ana_stoch_noise_pgd>
 Channel Memory <ana_channel_memory>
 Davis-Yin with Delay <ana_dy_delay>
 Coordinate Descent <ana_coord_descent>

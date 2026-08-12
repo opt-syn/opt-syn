@@ -149,46 +149,57 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                     U_cl = {U_cl0, []};
                     V_cl = {[], V_cl0};
                 end
-                
-                ntri = length(U_cl);                    
 
-                U_elim = cell(ntri, 1);
-                V_elim = cell(ntri, 1);
-                con_M_null = cell(ntri, 1);
-                V_accum = [];
-                null_accum = cell(ntri, 1);
-                for i = 1:ntri
-
-                    if ~isempty(U_cl{i})
-                        U_elim{i} = U_cl{i} * U_outer;
+                if isscalar(V_cl) && isempty(V_cl{1})
+                    con_M_curr = con_M;
+ 
+                    U_elim = U_cl{1} * U_outer;
+                    V_elim = {};
+                    null_accum = eye(ssize(con_M, 1));
+                    con_M_null = con_M;
+                else
+                    ntri = length(U_cl);                    
+    
+                    U_elim = cell(ntri, 1);
+                    V_elim = cell(ntri, 1);
+                    con_M_null = cell(ntri, 1);
+                    V_accum = [];
+                    null_accum = cell(ntri, 1);
+                    for i = 1:ntri
+    
+                        if ~isempty(U_cl{i})
+                            U_elim{i} = U_cl{i} * U_outer;
+                        end
+                        if ~isempty(V_cl{i})
+                            V_elim{i} = V_cl{i} * V_outer;
+                        end
+                        V_accum = [V_accum; V_cl{i}];
+                        
+                        %get the nullspace
+                        if isempty(V_accum)
+                            elim_curr = U_elim{i}; %used in elimination
+                            null_store = eye(ssize(con_M, 1));       %stored for recovery
+                        else
+                            elim_curr = [V_accum * V_outer; U_elim{i}];
+                            null_store = null(V_accum * V_outer, 'rational');
+                        end
+                        null_accum{i} = null_store;
+    
+                        null_curr = null(elim_curr, 'rational');
+    
+    
+                        %form and enforce the constraint
+                        con_M_curr = null_curr'* con_M * null_curr;
+    
+                        sU = ssize(con_M_curr, 1);
+                        con_M_null{i} = con_M_curr;
                     end
-                    if ~isempty(V_cl{i})
-                        V_elim{i} = V_cl{i} * V_outer;
-                    end
-                    V_accum = [V_accum; V_cl{i}];
                     
-                    %get the nullspace
-                    if isempty(V_accum)
-                        elim_curr = U_elim{i}; %used in elimination
-                        null_store = eye(ssize(con_M, 1));       %stored for recovery
-                    else
-                        elim_curr = [V_accum * V_outer; U_elim{i}];
-                        null_store = null(V_accum * V_outer, 'rational');
-                    end
-                    null_accum{i} = null_store;
-
-                    null_curr = null(elim_curr, 'rational');
-
-
-                    %form and enforce the constraint
-                    con_M_curr = null_curr'* con_M * null_curr;
-
-                    sU = ssize(con_M_curr, 1);
-                    con_M_null{i} = con_M_curr;
                     
-                    cons = append_lmi(cons, con_M_curr - obj.config.tol.M*eye(sU), obj.LMILAB); 
-
                 end
+
+                sU = ssize(con_M_curr, 1);
+                cons = append_lmi(cons, con_M_curr - obj.config.tol.M*eye(sU), obj.LMILAB); 
 
                 con_M_0 = con_M;
 
@@ -252,6 +263,7 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %   objective:  term to be minimized            
             %   con_M:      PSD blocks for the dynamics constraint
 
+            assert(diss.rho == 1, 'H2 Synthesis: rho=1 is required to have a well-defined and bounded performance target');
 
             %get the variables of the problem
             G = obj.get_storage(vars.diss, vars.reg);
@@ -692,13 +704,17 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
 
                     %outer factors
-                    U_cl = [zeros(nxn, nxi), B(:, iu1);
+                    
+                    U_cl = cell(2, 1);
+                    U_cl{1} = [zeros(nxn, nxi), B(:, iu1);
                          rhoiP * eye(nxi), zeros(nxi, ns);
                         zeros(nz, nxi), D(iz, iu1)]';
     
-                    V_cl = [eye(nxi), zeros(nxi, nxn), zeros(nxi, nw);
+                    V_cl = cell(2, 1);
+                    V_cl{2} = [eye(nxi), zeros(nxi, nxn), zeros(nxi, nw);
                         zeros(ny, nxi), C(iy, :), D(iy, iw)];
 
+                    
 
                 else
                     %remove [Ak; Ck]
@@ -717,11 +733,14 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
     
                     
                     %outer factors
-                    U_cl = [zeros(nxn, nxi), B(:, iu);
+
+                    U_cl = cell(2, 1);
+                    U_cl{1} = [zeros(nxn, nxi), B(:, iu);
                         rhoiP * eye(nxi), zeros(nxi, nu);
                         zeros(nz, nxi), D(iz, iu)]';
-    
-                    V_cl = [eye(nxi), zeros(nxi, nxn+nw)];
+
+                    V_cl = cell(2, 1);
+                    V_cl{2} = [eye(nxi), zeros(nxi, nxn+nw)];
 
                 end
 

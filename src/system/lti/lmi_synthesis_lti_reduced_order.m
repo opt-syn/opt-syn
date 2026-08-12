@@ -13,10 +13,10 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
     %
     %   Implemented:
     %       quad
+    %       h2
     %
     %   TODO:
-    %       p2p
-    %       h2      
+    %       p2p          
     %       e2p
     %
     %
@@ -242,6 +242,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             if obj.elimination
                 vars_K.A = [];                
 
+                if obj.config.syn.elimination_type == 2
                 
                 %     %remove all terms [Ak, Bk; Ck, Dk]
                 %     %using triangular elimination (in development)
@@ -255,17 +256,17 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 %     vars_K.C = lmim(['Ck', name], ny, nc);                    
                 %     vars_K.D = obj.form_Dk(alg_psi, D_mask, [], include_Dk1);
                 %     kq = [vars_K.C, vars_K.D];
-                % else
-                %     %remove [Ak; Ck]
-                %     vars_K.C = [];
-                %     vars_K.B = lmim(['Bk', name], nc+ns, ny);
-                %     vars_K.D = obj.form_Dk(alg_psi, D_mask, [], include_Dk1);
-                %     kq = [vars_K.B;            
-                %     vars_K.D];
-                %     cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
-                % 
-                % 
-                % end
+                else
+                    %remove [Ak; Ck]
+                    vars_K.C = [];
+                    vars_K.B = lmim(['Bk', name], nc+ns, ny);
+                    vars_K.D = obj.form_Dk(alg_psi, D_mask, [], include_Dk1);
+                    kq = [vars_K.B;            
+                    vars_K.D];
+                    cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
+
+
+                end
             else
                 
                 if nc == 0
@@ -468,21 +469,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             if obj.elimination
 
-                if n ==0
-                    %no filters nor network dynamics 
-                    Acal = [zeros(n+nf+ns, n), GX*Aaug];
-                    Bcal = (GX*Pihatinv * Bpaug);
-                    Ccal = (Creg);
 
-                    
-                else
-                    %some filter or network dynamics
-                    Acal = [A*GY,  Pibar * Aaug ;
-                        zeros(n+ns, n), GX*Aaug];
-                    Bcal = [B(:, iw);
-                        GX*Pihatinv * Bpaug];
-                    Ccal = [C(iz, :)*GY, Creg];
-                end
                 Dcal = D(iz, iw);                
 
                 %construct the outer factors
@@ -506,20 +493,82 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 V_cl_base = [eye(nxiV), zeros(nxiV, nxn + ns), zeros(nxiV, nw);
                     zeros(ny, nxiV), Caug, D(iy, iw)];
 
-                %triangular decomposition
-                [U_coord, V_coord] = obj.get_K_tri_basis([nxiU, nxiV]);
+                % if obj.config.syn.elimination_type == 0
+                %     %eliminate (Ak, Ck)
+                %     %h2 performance
+                % 
+                % 
+                %     %Actually, never use this. h2 requires other
+                %     performance objectives, and never appears alone.
+                % 
+                %     if n ==0
+                %         %no filters nor network dynamics 
+                %         Acal = [zeros(n+nf+ns, n), GX*Aaug + Bk*Caug];
+                %         Bcal = (GX * Pihatinv * Bpaug + Bk*D(iy, iw));
+                %         Ccal = (Creg + D(iz, iu)*Dk*Caug);
+                % 
+                %         %indexers, no elimination needed
+                %         U_cl = cell(1, 1);      
+                %         U_cl{1} =[B(:, iu), zeros(nxn, nxiU);
+                %             zeros(nxiU, nu), rhoiP * eye(nxiU),;
+                %             D(iz, iu),  zeros(nz, nxiU)]';
+                %         V_cl = cell(1, 1);
+                %     else
+                %         %some filter or network dynamics
+                %         Acal = [A*GY,  Pibar * Aaug + B(:, iu)*Dk*Caug;
+                %             zeros(n+ns, n), GX*Aaug + Bk*Caug];
+                %         Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
+                %             GX * Pihatinv * Bpaug + Bk*D(iy, iw)];
+                %         Ccal = [C(iz, :)*GY, Creg + D(iz, iu)*Dk*Caug];
+                % 
+                %         %indexers
+                %         U_cl = cell(2, 1);
+                %         U_cl{1} =[B(:, iu), zeros(nxn, nxiU);
+                %             zeros(nxiU, nu), rhoiP * eye(nxiU),;
+                %             D(iz, iu),  zeros(nz, nxiU)]';
+                % 
+                %         V_cl = cell(2, 1);
+                %         V_cl{2} = [eye(nxiV), zeros(nxiV, nxn + ns), zeros(nxiV, nw)];
+                %     end
+                %     Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);
+                % 
+                %     %indexer matrices
+                % 
+                % 
+                % else
+                    %eliminate (Ak, Bk, Ck, Dk)
+                    %quadratic performance
+                    if n ==0
+                        %no filters nor network dynamics 
+                        Acal = [zeros(n+nf+ns, n), GX*Aaug];
+                        Bcal = (GX*Pihatinv * Bpaug);
+                        Ccal = (Creg);
 
-                ntri= length(V_coord);
-                U_cl = cell(ntri+1, 1);
-                V_cl = cell(ntri+1, 1);
 
-                for i = 1:ntri
-                    U_cl{i} = U_coord{i} * U_cl_base;
-                    V_cl{i+1} = V_coord{i} * V_cl_base;
-                end
+                    else
+                        %some filter or network dynamics
+                        Acal = [A*GY,  Pibar * Aaug ;
+                            zeros(n+ns, n), GX*Aaug];
+                        Bcal = [B(:, iw);
+                            GX*Pihatinv * Bpaug];
+                        Ccal = [C(iz, :)*GY, Creg];
+                    end
 
-                % error('reduced_order: elimination not yet supported')
 
+                    %triangular decomposition
+                    [U_coord, V_coord] = obj.get_K_tri_basis([nxiU, nxiV]);
+    
+                    ntri= length(V_coord);
+                    U_cl = cell(ntri+1, 1);
+                    V_cl = cell(ntri+1, 1);
+    
+                    for i = 1:ntri
+                        U_cl{i} = U_coord{i} * U_cl_base;
+                        V_cl{i+1} = V_coord{i} * V_cl_base;
+                    end
+                % end
+                
+                % sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
                 sys_cl = struct;
                 sys_cl.A = Acal;
                 sys_cl.B = Bcal;
@@ -566,15 +615,12 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %Returns:
             %   Ak, Bk, Ck, Dk: controller matrices
             
-            if obj.elimination
-                
-                % https://www.sciencedirect.com/science/article/pii/0167691194000919
-                %reconstruct the eliminated controller block
-                M0 = vars_rec.elim.M0;
-                U = vars_rec.elim.U;
-                V = vars_rec.elim.V;                                
-
-                
+            if obj.elimination && obj.config.syn.elimination_type == 2
+                    % https://www.sciencedirect.com/science/article/pii/0167691194000919
+                    %reconstruct the eliminated controller block
+                    M0 = vars_rec.elim.M0;
+                    U = vars_rec.elim.U;
+                    V = vars_rec.elim.V;  
                     Knull = vars_rec.elim.null;
 
                     M_accum = M0;
@@ -616,10 +662,10 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
                     Ck = K_block(1:nu, 1:nxi(2));
                     Dk = K_block(1:nu, (nxi(2)+1):end);
-
+ 
                     
             else
-                [Ak, Bk, Ck, Dk] = recover_K_from_elim@lmi_synthesis_interface(obj, vars_rec);
+                [Ak, Bk, Ck, Dk] = recover_K_from_elim@lmi_synthesis_lti(obj, vars_rec);
             end
         end
 
@@ -701,10 +747,14 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             Pi = vars_rec.reg.Pi;
             
             %get the base subcontroller
-
-            %TODO: implement this
+            
             [Ak, Bk, Ck, Dk] = obj.recover_K_from_elim(vars_rec);                        
 
+            if isempty(Ak)
+                %override for n=0
+                Ak = zeros(ssize(Bk, 1), 0);
+                Ck = zeros(ssize(Dk, 1), 0);
+            end
 
             %get the closed-loop regulator equation
             Yred = vars_rec.diss.GY;
@@ -877,69 +927,6 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
 
 
-
-            % 
-            % %The transformation recovery is causing many issues.
-            % %but we have the closed-loop response already. Use that:
-            % %subspace arguments to extract the controller.
-            % 
-            % %having trouble finding such a realization. Maybe there's a
-            % %coordinate transformation matrix occurring?
-            % 
-            % reg2 = obj.reg;
-            % reg2.Gam = Gam;
-            % reg2.Pi = Pi;
-            % reg2.Phi = reg2.compute_Phi(Pi, Gam, []);
-            % 
-            % P_orc = P_trans.drop_performance;
-            % 
-            % P_model = reg2.connect_model(P_orc, 1/rhoi);
-            % 
-            % iu0 = P_model.index_u();
-            % iu1 = iu0(1:ns);
-            % iu2 = iu((ns+1):end);
-            % 
-            % nxn = n + ns;
-            % nxi = n;
-            % 
-            % base_left = [zeros(nxn, nxi), P_model.Bu;
-            %      eye(nxi), zeros(nxi, nu + ns);
-            %     zeros(nz, nxi), P_model.Dzu];
-            % 
-            % base_right = [zeros(nxi, n + ns),  eye(nxi), zeros(nxi, nw);
-            %     P_model.Cy, zeros(ny, nxi), P_model.Dyw];
-            % 
-            % Omega_base = [P_model.A, zeros(nxn, nxi), P_model.Bw;
-            %     zeros(nxi, nxn), zeros(nxi), zeros(nxi, nw);
-            %     P_model.Cz, zeros(nw, nxi), P_model.Dzw];
-            % 
-            % 
-            % Omega_cl = [Acl, Bcl; Ccl, Dcl] - Omega_base;
-            % 
-            % Mat_sys = kron(base_right', base_left);
-            % ans_sys = reshape(Omega_cl, [], 1);
-            % 
-            % 
-            % %TODO: enforce the D_mask constraint in the system realization           
-            % [ii, jj] = find(~obj.get_D_mask());
-            % ND0 = length(ii);
-            % 
-            % ind_D2 = sub2ind([n+nu+ns, n+ny], n+ns+ii, n+jj);
-            % Nmasked = length(ind_D2);
-            % 
-            % Mat_D = sparse(1:Nmasked, ind_D2, ones(Nmasked, 1), Nmasked, (n+nu+ns)*(n+ny));
-            % ans_D = zeros(Nmasked, 1);
-            % 
-            % Mat_all = [Mat_sys; Mat_D];
-            % ans_all = [ans_sys; ans_D];
-            % 
-            % %solve for a system in the subspace and verify
-            % Kblock_vec = lsqminnorm(Mat_all, ans_all);
-            % Kblock_vec(ind_D2) = 0; %make sure the zero entries are zero.
-            % Kblock = reshape(Kblock_vec, n + length(iu0), n + ny);
-            % 
-            % 
-            % rec_error = norm(Mat_all*Kblock_vec - ans_all);
 
             
 

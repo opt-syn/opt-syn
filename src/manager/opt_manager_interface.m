@@ -283,6 +283,13 @@ classdef (Abstract) opt_manager_interface < handle
             for i = 1:numel(obj.specs)
                 obj.specs{i}.id = i;
 
+                %modify settings of the problem to comport with the
+                %specifications. This may involve adding new input/output
+                %ports to the system. 
+                %
+                %TODO: make a better interface for this.
+                %
+                %
                 %add extra performance channels for warranted
                 %specifications (e.g. ergodic)
                 if isa(obj.specs{i}, 'spec_ergodic')
@@ -293,6 +300,23 @@ classdef (Abstract) opt_manager_interface < handle
                     [obj.specs{i}, obj.sys] = obj.specs{i}.augment_ergodic(obj.sys);
                     obj.lmi.sys = obj.sys;
                     obj.lmi.reg.sys = obj.sys;
+                elseif isa(obj.specs{i}, 'spec_h2')
+                    %disable elimination. 
+                    %(Bk, Dk) appears in multiple constraints in h2, which 
+                    %
+                    % (Ak, Ck) appears in only one constraint of h2,
+                    %
+                    % but h2 is accompanied by other performance targets in
+                    % order to ensure some sort of convergence. Therefore,
+                    % (Ak, Ck) also appears in more than one block, and
+                    % elimination is disabled.                    
+
+                    obj.config.syn.elimination = false;
+                    obj.lmi.config.syn.elimination= false;
+
+
+                    % obj.config.syn.elimination_type = 0;
+                    % obj.lmi.config.syn.elimination_type = 0;
                 end
 
             end

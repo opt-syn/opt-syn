@@ -196,7 +196,7 @@ perf = spec_passivity(ind_w, ind_z, iwp, izp);
 Stochastic sensitivity imposes a mean-square boundedness requirement on the performance output {footcite}`van2021speed`. The performance input sequence $\{w_{p, k}\}$ is a sequence of i.i.d. random variables. These inputs are zero-mean and bounded: there exists a known $\Omega \succ 0$ such that  $\E[w_{p, k}] = 0$ and $\E[w_{p, k} w_{p, k}^\top] \preceq \Omega$ at all $k \in \N$. The algorithm achieves stochastic sensitivity with gain $\gamma \geq 0$ if for all initial conditions $x_0$ and performance inputs $w_p$, it holds that 
 ```{math}
  \limsup_{T \rightarrow \infty} \frac{1}{T} \sum_{k=0}^{T}
-        \mathbb{E}[|| z_{p,k}||^2_2] \leq \gamma^2.
+        \mathbb{E}[|| z_{p,k}||^2_2] \leq \gamma^2 \text{Trace}(\Omega).
 ```
 
 Stochastic sensitivity is invoked by the command

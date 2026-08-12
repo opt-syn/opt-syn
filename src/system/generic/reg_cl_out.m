@@ -8,8 +8,9 @@ classdef reg_cl_out
         Gam; %regulator equation solution, tracking input of controller 
         Phi; %regulator equation solution, tracking output of controller 
         Th; %regulator equation solution, tracking state of controller
-
-    end
+        W; %output of oracles at optimality
+        Z; %input of oracles at optimality
+    end    
     
     methods
         function obj = reg_cl_out()

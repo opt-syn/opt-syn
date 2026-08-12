@@ -402,6 +402,33 @@ classdef regulator_interface
 
         end
 
+        function [W, Z] = extract_opt_from_d(obj, param)
+            %extract the quantities to follow (w, z) from the disturbance
+
+            if nargin < 2
+                param = [];
+            end
+
+            N = obj.get_consensus();
+            [sN, dN] = size(N);
+            c = obj.sys.op{1}.c; %TODO: better coordinates
+
+            [Sbeta, Rbeta] = obj.get_tracked_opt(param);
+            
+            if iscell(Sbeta)
+                Nss = length(Rbeta);
+                Z = cell(1, Nss);
+                W = cell(1, Nss);
+                for i = 1:Nss
+                    Z{i} = [kron(-ones(sN/c, 1), eye(c))*Rbeta{i}, zeros(sN, dN)];
+                    W{i} = [zeros(size(N, 1), c)*Rbeta{i}, N];
+                end
+            else
+                Z = [kron(-ones(sN/c, 1), eye(c))*Rbeta, zeros(sN, dN)];
+                W = [zeros(size(N, 1), c)*Rbeta, N];
+            end
+        end
+
         function saug = sys_regulated_aug(obj)
             %the enriched system with the disturbance channel
             saug = [];
@@ -484,13 +511,23 @@ classdef regulator_interface
 
             [Pi, Gam, Phi, Th] = obj.sol_K_reg_all(reg_sol);
 
+            %package up the regulator equation
             reg_cl = reg_cl_out;
+
+            %exosystem
             reg_cl.S = obj.S;
             reg_cl.R = obj.R;
+
+            %regulator equation solution
             reg_cl.Pi = Pi;
             reg_cl.Gam = Gam;
             reg_cl.Phi = Phi;
             reg_cl.Th = Th;
+
+            %derived trackers of disturbances
+            [reg_cl.W, reg_cl.Z] = obj.extract_opt_from_d();
+            
+            
 
         end
 

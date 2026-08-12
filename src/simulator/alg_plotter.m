@@ -175,16 +175,33 @@ classdef alg_plotter
             rPhi = reg_cl.Phi;
             rTh = reg_cl.Th;
 
+            rW = reg_cl.W;
+            rZ = reg_cl.Z;
 
+            %tracking the optimal solution
+
+
+
+            %optimal points
+            obj.sim_out.werr = obj.sim_out.w;
+            obj.sim_out.zerr = obj.sim_out.z;
+
+            
+
+            %signals
             obj.sim_out.xnerr = obj.sim_out.xn;
             obj.sim_out.xcerr = obj.sim_out.xc;
             obj.sim_out.uerr = obj.sim_out.u;
             obj.sim_out.yerr = obj.sim_out.y;
             if iscell(reg_cl.Pi)
-                %TODO: override this for time-varying
+                %TODO: override this for general time-varying
+
+                
                 %tracking switched system
                 for i = 1:length(obj.sim_out.k)
                     m = obj.sim_out.mode(i);
+                    obj.sim_out.werr(:, :, i) = obj.sim_out.w(:, :, i) - rW{m} * dstar;
+                    obj.sim_out.zerr(:, :, i) = obj.sim_out.z(:, :, i) - rZ{m} * dstar;
                     obj.sim_out.xnerr(:, :, i) = obj.sim_out.xn(:, :, i) - rPi{m} * dstar;
                     obj.sim_out.xcerr(:, :, i) = obj.sim_out.xc(:, :, i) - rTh{m} * dstar;
                     obj.sim_out.yerr(:, :, i) = obj.sim_out.y(:, :, i) - rPhi{m} * dstar;
@@ -192,6 +209,8 @@ classdef alg_plotter
                 end
             else
 
+                obj.sim_out.werr = obj.sim_out.w -  rW * dstar;
+                obj.sim_out.zerr = obj.sim_out.z -  rZ * dstar;
                 obj.sim_out.xnerr = obj.sim_out.xn -  rPi * dstar;
                 obj.sim_out.xcerr = obj.sim_out.xc  - rTh * dstar;
                 obj.sim_out.yerr = obj.sim_out.y - rPhi * dstar;
@@ -200,7 +219,8 @@ classdef alg_plotter
 
                       
 
-
+            obj.sim_out.sq_werr = fs(obj.sim_out.werr);
+            obj.sim_out.sq_zerr = fs(obj.sim_out.zerr);
             obj.sim_out.sq_xnerr = fs(obj.sim_out.xnerr);
             obj.sim_out.sq_xcerr = fs(obj.sim_out.xcerr);
             obj.sim_out.sq_yerr = fs(obj.sim_out.yerr);
@@ -258,7 +278,7 @@ classdef alg_plotter
                 ylabel(obj.get_name(sig), 'interpreter', 'latex', 'fontsize', obj.FS)
                 title(obj.get_title(sig), 'interpreter', 'latex', 'fontsize', obj.FST)
                 if ismember(sig, {'res_w', 'res_z', 'sq_xcerr', 'sq_xerr', ...
-                        'sq_xnerr', 'sq_uerr', 'sq_yerr'})
+                        'sq_xnerr', 'sq_uerr', 'sq_yerr', 'sq_zerr', 'sq_werr'})
                     set(ax, 'YScale', 'log');
                 end
                 xlim([k(1), k(end)])
@@ -306,6 +326,8 @@ classdef alg_plotter
                     name = 'Primal Feasibility';
                 case 'payoff'
                     name = 'Payoff';
+
+                %errors
                 case 'xerr'
                     name = 'State Error';
                 case 'xcerr'
@@ -316,8 +338,16 @@ classdef alg_plotter
                     name = 'Input Error';
                 case 'yerr'
                     name = 'Output Error';
+                case 'werr'
+                    name = 'Oracle Output Error';
+                case 'zerr'
+                    name = 'Iterate Error';
 
                 %squared errors
+                case 'sq_werr'
+                    name = 'Oracle Output Error';
+                case 'sq_zerr'
+                    name = 'Iterate Error';
                 case 'sq_xerr'
                     name = 'State Error';
                 case 'sq_xcerr'
@@ -352,8 +382,6 @@ classdef alg_plotter
                 name_mid = '$w_p$';
             elseif strcmp(sig, 'zp')
                 name_mid = '$z_p$';
-            elseif strcmp(sig, 'sq_zp')
-                name_mid = '$||z_p||_2^2$';
             elseif strcmp(sig, 'xc')
                 name_mid = '$x_c$';
             elseif strcmp(sig, 'xn')
@@ -382,6 +410,10 @@ classdef alg_plotter
                 name_mid = '$u - u^*$';
             elseif strcmp(sig, 'yerr')
                 name_mid = '$y - y^*$';
+            elseif strcmp(sig, 'zerr')
+                name_mid = '$z - z^*$';
+            elseif strcmp(sig, 'werr')
+                name_mid = '$w - w^*$';
 
             %tracking residuals
             elseif strcmp(sig, 'sq_xcerr')
@@ -394,6 +426,10 @@ classdef alg_plotter
                 name_mid = '$||u - u^*||^2_2$';
             elseif strcmp(sig, 'sq_yerr')
                 name_mid = '$||y - y^*||^2_2$';
+            elseif strcmp(sig, 'sq_zerr')
+                name_mid = '$||z - z^*||^2_2$';
+            elseif strcmp(sig, 'sq_werr')
+                name_mid = '$||w - w^*||^2_2$';
             elseif strcmp(sig, 'sq_zp')
                 name_mid = '$||z_p||^2_2$';
 
