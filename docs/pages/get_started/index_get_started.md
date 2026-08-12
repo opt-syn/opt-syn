@@ -25,11 +25,10 @@ Analysis and Synthesis follow similar workflows:
 A constrained optimization problem of minimizing a function $f$ subject to a sparse $L_1$ norm constraint is
 ```{math}
 \begin{align}
-\beta^* \in \text{argmin}_{\norm{\beta}_1 \leq 50} f(\beta), & & & \beta^* \in \text{argmin}_{\beta \in \R^d} f(\beta) + \mathbf{I}_{\norm{\cdot}_1 \leq 50}(\beta),
-\end{align}
+\beta^* \in \text{argmin}_{\norm{\beta}_1 \leq 50} f(\beta).
 ```
 
-The function $f$ is known to be real-valued, $m$-strongly convex, and $L$-smooth (gradients with Lipschitz constant $L$).
+The function $f$ is known to be real-valued, $m$-strongly convex, and $L$-smooth.
 
 ## Analysis 
 
@@ -44,7 +43,7 @@ PGD achieves linear convergence at rate $\rho \in (0, 1)$ if there exists a cons
 \norm{\beta_{k}-\beta^*}_2  \leq  C_0 \rho^{-k} \norm{\beta_0-\beta^*}, \ \forall x_0, k, f.
 ```
 
-The minimal worst-case convergence convergence rate for PGD is $\frac{L-m}{L+m}$ {footcite}`taylor2018exact`. This rate is achieved with stepsize parameter $\gamma = \frac{2}{L+m}$.
+The minimal worst-case convergence rate for PGD is $\frac{L-m}{L+m}$ {footcite}`taylor2018exact`. This rate is achieved with stepsize parameter $\gamma = \frac{2}{L+m}$.
 
 
 Analysis code to numerically verify this rate for parameters $m = 1, L = 10$ is
@@ -53,8 +52,8 @@ Analysis code to numerically verify this rate for parameters $m = 1, L = 10$ is
 m = 1; L = 10;
 rho_theory = (L-m)/(L+m); % 0.8182
 
-op1 = op_sml(m, L); %\nabla f
-op2 = op_pcc();     %\partial I_Z
+op1 = op_sml(m, L); %gradient of f
+op2 = op_pcc();     %subdifferential of L1 norm ball indicator function
 
 %State-space representation of PGD
 gamma = 2/(L + m);

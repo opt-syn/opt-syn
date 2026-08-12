@@ -3,19 +3,12 @@
 {{osyn}} analyzes and synthesizes optimization algorithms using concepts from robust control. This page summarizes optimization/inclusion problems, convergence conditions, and the mathematical certificates provided by {{osyn}}.
  
  
-An optimization problem tries to find a point $\beta^*$ satisfying 
+A composite optimization problem tries to find a point $\beta^*$ satisfying 
 ```{math}
 \beta^*  \in \argmin_\beta \sum_{i=1}^s f_i(\beta).
 ```
 
-An inclusion problem is a more general concept than an optimization problem. Inclusion problems try to find a point $\beta^*$ in the zero in the sum of operators.
-```{math}
-\begin{align*}
- 0 \in \sum_{i=1}^s F_i(\beta^*).
-\end{align*}
-```
-
-A solution (fixed-point) to a zero-inclusion problem is a pair $(\beta^*, w^*)$ with 
+An inclusion problem is a more general concept than an optimization problem. Inclusion problems try to find a point $\beta^*$ satisfying $0 \in \sum_{i=1}^s F_i(\beta^*)$. A solution (fixed-point) to this  zero-inclusion problem is a pair $(\beta^*, w^*)$ with 
 
 ```{math}
 \begin{align*}
@@ -23,14 +16,7 @@ A solution (fixed-point) to a zero-inclusion problem is a pair $(\beta^*, w^*)$ 
 \end{align*}
 ```
 
-Zero-inclusion problems include solution concepts such as variational inequalities and constrained optimization problems. In particular, if each $F_i$ is the subdifferential of a proper function $f_i$, then 
-```{math}
-\begin{align*}
- \beta^* & \in \argmin_\beta \sum_{i=1}^s f_i(\beta) &  \text{implies} & & 0 & \in \sum_{i=1}^s  F_i(\beta^*).
-\end{align*}
-```
-The zero inclusion problem in $\partial f$ is a necessary optimality principle for the optimization problem.
-
+Zero-inclusion problems include solution concepts such as variational inequalities and constrained optimization problems. As an example, the zero inclusion problem $0 \in \sum_{i=1}^s \partial f_i(\beta^*) $ is a necessary optimality principle for the composite optimization problem.
 
 
 
@@ -41,7 +27,7 @@ The zero inclusion problem in $\partial f$ is a necessary optimality principle f
 An optimization algorithm is a procedure that generates a sequence of iterates $(w_k, z_k)_{k \in \N}$ satisfying $w^i_k \in F^i(z^i_k)$.
 
 
- Many common optimization algorithms can be expressed as the interconnection of operators and linear systems. As an example, the gradient descent/forward-step method with stepsize $\gamma > 0$ may be represented by 
+ Many common optimization algorithms can be expressed as the interconnection of operators and linear systems {footcite}`wang2011control`. As an example, the gradient descent/forward-step method with stepsize $\gamma > 0$ may be represented by 
 ```{math}
 \begin{align*}
  \mat{c}{x_{k+1} \hl z_k} &= \mat{c|cc}{I & -\gamma \lambda I \hl I & 0 }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{F_1(z_k^1)},
@@ -93,11 +79,11 @@ It is linearly convergent  with rate $\rho \in (0, 1)$ if there exists a constan
 
 ## Checking Convergence
 
-{{osyn}} certifies linear convergence of well-posed algorithms by checking two conditions: Robust Stability and the Solvability of Regulator Equations. This theory holds for on includion problems with unique fixed-point pairs $(\beta^*, w^*)$. 
+{{osyn}} certifies linear convergence of well-posed algorithms by checking two conditions: Robust Stability and the Solvability of Regulator Equations. This theory holds for includion problems with unique fixed-point pairs $(\beta^*, w^*)$ {footcite}`miller2026structure`. 
 
 Robust Stability ensures convergence to 0 if 0 is the solution to the inclusion problem ($0 \in F^i(0)$ holds for all operators $F^i$). Solvability of the Regulator Equations ensures that a nonzero solution to the inclusion problem can be shifted into a zero solution of an zero-centered problem (error coordinates).
 
-### Robust Stability
+### Condition 1: Robust Stability
  Assume that the algorithm is well-posed, and the operator inclusion problem $0\in \sum_{i=1}^s F^i(\beta^*)$ is uniquely solved by the pair $(\beta^*, w^*) = (0, 0)$  Then for all initial conditions $x_0$, the subsequent trajectories of 
 ```{math}
 \begin{align}
@@ -107,7 +93,7 @@ Robust Stability ensures convergence to 0 if 0 is the solution to the inclusion 
   satisfy $\lim_{k \rightarrow \infty} \rho^{-k} x_k = 0$.
 
 
-### Solvability of Regulator Equations
+### Condition 2: Solvability of Regulator Equations
  For any pair $(\beta^*, w^*)$ with $\sum_{i=1}^s w^{*,i} = 0$, there exists a state $x^*$ satisfying 
 ```{math}
 \begin{align}
@@ -121,7 +107,7 @@ Robust Stability ensures convergence to 0 if 0 is the solution to the inclusion 
 
 
 
-The Robust Stability criterion is an intensive dynamical test, and will be verified using Integral Quadratic Constraints and Linear Matrix Inequality methods. In contrast, the  Regulator Equation can be easily checked by solving a linear system of  equations. Uniqueness of the state $x^*$ is provided by detectability of $(\Acl, \Ccl)$.
+The Robust Stability criterion is an intensive dynamical test, and will be verified using Integral Quadratic Constraints and Linear Matrix Inequality methods {footcite}`megretski2002system` {footcite}`stoorvogel2000performance`. In contrast, the  Regulator Equation can be easily checked by solving a linear system of  equations. Uniqueness of the state $x^*$ is provided by detectability of $(\Acl, \Ccl)$.
 
 The Regulator Equation requirement is independent of the specific operators in $F$. Robust Stability is verified for classes of operators (e.g. $F_2$ is maximal monotone).
 
@@ -166,7 +152,7 @@ Under the Convergence and Regulator Equation conditions, convergence in all sign
 \end{align}
 ```
 
-Controllers are formed by the interconnection of an internal model {footcite}`francis1976internal` and a designed subcontroller. The internal model is based on the solutions $(\Pi, \Gamma, \Phi)$ of the regulator equations, and ensures that the Regulator Equation requirement is satisfied for *any* subcontroller.
+Controllers are formed by the interconnection of an internal model {footcite}`francis1976internal` {footcite}`stoorvogel2000performance` and a designed subcontroller. The internal model is based on the solutions $(\Pi, \Gamma, \Phi)$ of the regulator equations, and ensures that the Regulator Equation requirement is satisfied for *any* subcontroller.
 
 The subcontroller must then ensure that the overall procedure is well-posed and  obeys  Robust Stability condition. Solving for the subcontroller can be accomplished through  IQC synthesis methods {footcite}`veenman2011iqc`.
 Synthesis may also involve selecting a solution $(\Pi, \Gamma, \Phi)$ to the regulator equations {footcite}`scherer1997multiobjective`.

@@ -8,7 +8,7 @@ This example considers composite optimization problems with two functions
 
 Gradients  $\nabla f$ are 'easy' to evaluate, while subgradients $\partial g$ are computationally expensive and 'hard'. The easy operation $\nabla f$ can be computed $h$ times at every iteration $k$. The hard operation $\partial g$ is computed only once per iteration $k$, and $\partial g$ does not use information from $\nabla f_1$. 
 
-These requirement are formulated using {doc}`information structures <../problem_formulation/config>` and  {doc}`repeated operator evaluation <../usage/problem_formulation/system/bind>`. The associated inclusions and  information structure at $h=3$ is 
+These requirement are formulated using {doc}`information structures <../usage/problem_formulation/config>` and  {doc}`repeated operator evaluation <../usage/problem_formulation/system/bind>`. The associated inclusions and  information structure at $h=3$ is 
 \begin{align*}
 \mat{c}{w^1_k \\ w^2_k \\ w^3_k \\ w^4_k }  &\in \mat{c}{\nabla f(w^1_k) \\ \nabla f(w^2_k) \\ \nabla f(w^3_k) \\ \partial g(w^4_k)}, & \text{Sparsity}(\Dcl): & \mat{ccc:c}{0 & 0 & 0 & 0 \\ 
 \bullet & 0 & 0 & 0 \\
