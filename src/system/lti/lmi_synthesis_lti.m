@@ -34,7 +34,16 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             if obj.config.syn.elimination
                 %check D_mask, only perform elimination if it is
                 %block-lower triangular
-                obj.config.syn.elimination = obj.check_lower_triangular();
+                is_tri = obj.check_lower_triangular();
+                if ~is_tri
+                    %non-lower-triangular sparsity pattern of Dk. Dk cannot 
+                    % be eliminated. Can still knock out [Ak, Bk], and also
+                    %also remove [Ck1, Dk1] if 
+                    % config.syn.reduced_order = false
+                    %
+                    
+                    obj.config.syn.elimination_type = 1;
+                end
             end
             
 
@@ -149,22 +158,21 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                     U_cl = {U_cl0, []};
                     V_cl = {[], V_cl0};
                 end
+                
+                ntri = length(U_cl);                    
 
-                if isscalar(V_cl) && isempty(V_cl{1})
+                U_elim = cell(ntri, 1);
+                V_elim = cell(ntri, 1);
+                con_M_null = cell(ntri, 1);
+                V_accum = [];
+                null_accum = cell(ntri, 1);
+                if isempty(V_cl{2})
+                    %there is nothing to eliminate
+                    %just do the entire matrix
                     con_M_curr = con_M;
- 
-                    U_elim = U_cl{1} * U_outer;
-                    V_elim = {};
-                    null_accum = eye(ssize(con_M, 1));
-                    con_M_null = con_M;
+                    sU = ssize(con_M_curr, 1);
+                    cons = append_lmi(cons, con_M_curr - obj.config.tol.M*eye(sU), obj.LMILAB);                         
                 else
-                    ntri = length(U_cl);                    
-    
-                    U_elim = cell(ntri, 1);
-                    V_elim = cell(ntri, 1);
-                    con_M_null = cell(ntri, 1);
-                    V_accum = [];
-                    null_accum = cell(ntri, 1);
                     for i = 1:ntri
     
                         if ~isempty(U_cl{i})
@@ -189,17 +197,17 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
     
     
                         %form and enforce the constraint
+             
+                     
                         con_M_curr = null_curr'* con_M * null_curr;
     
                         sU = ssize(con_M_curr, 1);
                         con_M_null{i} = con_M_curr;
+                        
+                        cons = append_lmi(cons, con_M_curr - obj.config.tol.M*eye(sU), obj.LMILAB); 
+                  
                     end
-                    
-                    
                 end
-
-                sU = ssize(con_M_curr, 1);
-                cons = append_lmi(cons, con_M_curr - obj.config.tol.M*eye(sU), obj.LMILAB); 
 
                 con_M_0 = con_M;
 
@@ -263,7 +271,6 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             %   objective:  term to be minimized            
             %   con_M:      PSD blocks for the dynamics constraint
 
-            assert(diss.rho == 1, 'H2 Synthesis: rho=1 is required to have a well-defined and bounded performance target');
 
             %get the variables of the problem
             G = obj.get_storage(vars.diss, vars.reg);
@@ -704,17 +711,13 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
 
 
                     %outer factors
-                    
-                    U_cl = cell(2, 1);
-                    U_cl{1} = [zeros(nxn, nxi), B(:, iu1);
+                    U_cl = [zeros(nxn, nxi), B(:, iu1);
                          rhoiP * eye(nxi), zeros(nxi, ns);
                         zeros(nz, nxi), D(iz, iu1)]';
     
-                    V_cl = cell(2, 1);
-                    V_cl{2} = [eye(nxi), zeros(nxi, nxn), zeros(nxi, nw);
+                    V_cl = [eye(nxi), zeros(nxi, nxn), zeros(nxi, nw);
                         zeros(ny, nxi), C(iy, :), D(iy, iw)];
 
-                    
 
                 else
                     %remove [Ak; Ck]
@@ -733,14 +736,11 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
     
                     
                     %outer factors
-
-                    U_cl = cell(2, 1);
-                    U_cl{1} = [zeros(nxn, nxi), B(:, iu);
+                    U_cl = [zeros(nxn, nxi), B(:, iu);
                         rhoiP * eye(nxi), zeros(nxi, nu);
                         zeros(nz, nxi), D(iz, iu)]';
-
-                    V_cl = cell(2, 1);
-                    V_cl{2} = [eye(nxi), zeros(nxi, nxn+nw)];
+    
+                    V_cl = [eye(nxi), zeros(nxi, nxn+nw)];
 
                 end
 

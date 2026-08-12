@@ -126,10 +126,11 @@ classdef spec_e2e < spec_interface
             vars = struct('mu_l2', mu_l2);
             if ~obj.target
                 cons = append_lmi(cons, obj.gain - mu_l2, config.LMILAB);
-            else
+            end
+            % else
                 % cons = append_lmi(cons, 1000 - mu_l2, config.LMILAB);
                 cons = append_lmi(cons, mu_l2, config.LMILAB);
-            end
+            
         end
     end
 end

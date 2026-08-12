@@ -30,7 +30,7 @@ config.tol.M = 1e-9;
 %raised from default
 config.tol.GX_max = 300;   
 config.tol.GY_max = 300;
-
+config.syn.elimination_type = 0;
 config.syn.D_mask = [0, 0; 1, 1]; %gradient evaluation of lsq
 man = opt_synthesis(sys, config);
 

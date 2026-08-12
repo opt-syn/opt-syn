@@ -21,18 +21,35 @@ sys = opt_system(ops, network);
 %% solve the problem
 config =opt_config();
 config.syn.prox= [1, 0]; %prox evaluation of g, gradient evaluation of f
+config.syn.elimination = true;
 man = opt_synthesis(sys, config);
 
 %specifications
 spec_stab = spec_stability(0.9);
-GAIN = 1; %upper bound on gain
+GAIN = 10; %upper bound on gain
 spec_stoch = spec_h2(GAIN, 1, 1, 1);
  
 spec_stoch.target = true;
 specs = {spec_stab, spec_stoch};
-sol = man.bisect([], specs);
+
+%create warm start
+gamma = 2/(L + m);
+K = ss(1, [-gamma, -gamma], [1; 1], [-gamma, 0; -gamma, 0],1);
+order = 1;
+sys_ana = sys;
+sys_ana.K = K;
+man_ana = opt_analysis(sys_ana, config);
+sol_ana = man_ana.bisect(order); %rho = 0.8182
+warm_start = sol_ana.cert.iqc_op;
+
+%only verify linear convergence
+sol_exp = man.bisect(); %rho = 0.8321
+sol_exp_warm = man.bisect(warm_start); %rho = 0.7476
 
 
+%optimize over convergence rate (outer) and stochastic sensitivity (inner)
+sol = man.bisect([], specs); %rho = 0.8561, h2 = 0.3792
+sol_warm = man.bisect(warm_start, specs); %rho = 0.8395, h2 = 0.9737
 
 
 

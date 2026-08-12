@@ -13,10 +13,10 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
     %
     %   Implemented:
     %       quad
-    %       h2
     %
     %   TODO:
-    %       p2p          
+    %       p2p
+    %       h2      
     %       e2p
     %
     %
@@ -180,12 +180,13 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             diss.iqc_data.rotate = 0; %specialization for orbits
 
             diss.iqc_data.augmented = true;
-            [Plant, ~, alg_loop_aug] = sys_aug.build_plant(diss.iqc_data, diss.rho);
+            [Plant, ~, alg_loop_aug] = sys_aug.build_plant(diss.iqc_data, rho);
 
-            P_model = rhotrafo(Plant, rho);
+            P_model = Plant;
+            % P_model = rhotrafo(Plant, rho);
             
             % P_model = struct('P', Plant, 'rho', diss.rho);
-            % P_model = obj.reg.connect_model(diss.plant, diss.rho);
+            % P_model = obj.reg.connect_model(diss.plant, rho);
         end
 
         
@@ -243,19 +244,23 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 vars_K.A = [];                
 
                 if obj.config.syn.elimination_type == 2
-                
-                %     %remove all terms [Ak, Bk; Ck, Dk]
-                %     %using triangular elimination (in development)
-                %     %lemma 4 of https://arxiv.org/pdf/1305.1746
+                    %remove all terms [Ak, Bk; Ck, Dk]
+                    %using triangular elimination (in development)
+                    %lemma 4 of https://arxiv.org/pdf/1305.1746
                     vars_K.B = [];  
                     vars_K.C = [];  
                     vars_K.D = [];  
-                % elseif obj.config.syn.elimination_type == 1                                    
-                %     %remove [Ak, Bk; Ck1, Dk1]    
-                %     vars_K.B = [];  
-                %     vars_K.C = lmim(['Ck', name], ny, nc);                    
-                %     vars_K.D = obj.form_Dk(alg_psi, D_mask, [], include_Dk1);
-                %     kq = [vars_K.C, vars_K.D];
+                elseif obj.config.syn.elimination_type == 1                                    
+                    %remove [Ak, Bk]    
+                    vars_K.B = [];  
+                    if nc > 0
+                        vars_K.C = lmim(['Ck', name], nC, nc, 'full');                
+                    else
+                        vars_K.C = zeros(nC, nc);                
+                    end
+                    vars_K.D = obj.form_Dk(alg_psi, D_mask, [], include_Dk1);
+                    kq = [vars_K.C, vars_K.D];
+                    cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
                 else
                     %remove [Ak; Ck]
                     vars_K.C = [];
@@ -264,8 +269,6 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                     kq = [vars_K.B;            
                     vars_K.D];
                     cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
-
-
                 end
             else
                 
@@ -467,84 +470,25 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             Piaug = [zeros(nf, ns); vars_reg.Pi];
             Creg = [C(iz, :), -C(iz, :) * Piaug- D(iz, iu) * vars_reg.Gam];
 
+
+            nxn = size(B, 1);
+
+            nu = length(iu);
+            nz = length(iz);
+            nw = length(iw);
+            ny = length(iy);
+
+
             if obj.elimination
 
-
-                Dcal = D(iz, iw);                
-
-                %construct the outer factors
-
-                nxn = size(B, 1);
-                nxiU = n + ns;
-                nu = length(iu);
-                nz = length(iz);
-                nw = length(iw);
-                ny = length(iy);
-                
-
-                %rhoi hits the identity here.
-                %this is ok, because there is only one performance
-                %specification. Recovery will catch the controller.                
-                U_cl_base = [B(:, iu), zeros(nxn, nxiU);
-                 zeros(nxiU, nu), rhoiP * eye(nxiU),;
-                 D(iz, iu),  zeros(nz, nxiU)]';
-
-                nxiV = n;
-                V_cl_base = [eye(nxiV), zeros(nxiV, nxn + ns), zeros(nxiV, nw);
-                    zeros(ny, nxiV), Caug, D(iy, iw)];
-
-                % if obj.config.syn.elimination_type == 0
-                %     %eliminate (Ak, Ck)
-                %     %h2 performance
-                % 
-                % 
-                %     %Actually, never use this. h2 requires other
-                %     performance objectives, and never appears alone.
-                % 
-                %     if n ==0
-                %         %no filters nor network dynamics 
-                %         Acal = [zeros(n+nf+ns, n), GX*Aaug + Bk*Caug];
-                %         Bcal = (GX * Pihatinv * Bpaug + Bk*D(iy, iw));
-                %         Ccal = (Creg + D(iz, iu)*Dk*Caug);
-                % 
-                %         %indexers, no elimination needed
-                %         U_cl = cell(1, 1);      
-                %         U_cl{1} =[B(:, iu), zeros(nxn, nxiU);
-                %             zeros(nxiU, nu), rhoiP * eye(nxiU),;
-                %             D(iz, iu),  zeros(nz, nxiU)]';
-                %         V_cl = cell(1, 1);
-                %     else
-                %         %some filter or network dynamics
-                %         Acal = [A*GY,  Pibar * Aaug + B(:, iu)*Dk*Caug;
-                %             zeros(n+ns, n), GX*Aaug + Bk*Caug];
-                %         Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
-                %             GX * Pihatinv * Bpaug + Bk*D(iy, iw)];
-                %         Ccal = [C(iz, :)*GY, Creg + D(iz, iu)*Dk*Caug];
-                % 
-                %         %indexers
-                %         U_cl = cell(2, 1);
-                %         U_cl{1} =[B(:, iu), zeros(nxn, nxiU);
-                %             zeros(nxiU, nu), rhoiP * eye(nxiU),;
-                %             D(iz, iu),  zeros(nz, nxiU)]';
-                % 
-                %         V_cl = cell(2, 1);
-                %         V_cl{2} = [eye(nxiV), zeros(nxiV, nxn + ns), zeros(nxiV, nw)];
-                %     end
-                %     Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);
-                % 
-                %     %indexer matrices
-                % 
-                % 
-                % else
-                    %eliminate (Ak, Bk, Ck, Dk)
-                    %quadratic performance
+                if obj.config.syn.elimination_type == 2
                     if n ==0
                         %no filters nor network dynamics 
                         Acal = [zeros(n+nf+ns, n), GX*Aaug];
                         Bcal = (GX*Pihatinv * Bpaug);
                         Ccal = (Creg);
-
-
+    
+                        
                     else
                         %some filter or network dynamics
                         Acal = [A*GY,  Pibar * Aaug ;
@@ -553,8 +497,24 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                             GX*Pihatinv * Bpaug];
                         Ccal = [C(iz, :)*GY, Creg];
                     end
-
-
+                    Dcal = D(iz, iw);                
+    
+                    %construct the outer factors
+    
+                     nxiU = n + ns;
+ 
+    
+                    %rhoi hits the identity here.
+                    %this is ok, because there is only one performance
+                    %specification. Recovery will catch the controller.                
+                    U_cl_base = [B(:, iu), zeros(nxn, nxiU);
+                     zeros(nxiU, nu), rhoiP * eye(nxiU),;
+                     D(iz, iu),  zeros(nz, nxiU)]';
+    
+                    nxiV = n;
+                    V_cl_base = [eye(nxiV), zeros(nxiV, nxn + ns), zeros(nxiV, nw);
+                        zeros(ny, nxiV), Caug, D(iy, iw)];
+    
                     %triangular decomposition
                     [U_coord, V_coord] = obj.get_K_tri_basis([nxiU, nxiV]);
     
@@ -566,15 +526,103 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                         U_cl{i} = U_coord{i} * U_cl_base;
                         V_cl{i+1} = V_coord{i} * V_cl_base;
                     end
-                % end
+
+                % error('reduced_order: elimination not yet supported')
+                elseif obj.config.syn.elimination_type == 1
+                    %eliminate [Ak, Bk]
+                    if n ==0
+                        %no filters nor network dynamics 
+                        Acal = [zeros(n+nf+ns, n), GX*Aaug];
+                        Bcal = (GX*Pihatinv * Bpaug);
+                        Ccal = (Creg + D(iz, iu)*Dk*Caug);
+                    else
+                        %some filter or network dynamics
+                        Acal = [A*GY + B(:, iu)*Ck,  Pibar * Aaug + B(:, iu)*Dk*Caug;
+                            zeros(n+nf+ns, n), GX*Aaug];
+                        Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
+                            GX * Pihatinv * Bpaug];
+                        Ccal = [C(iz, :)*GY+ D(iz, iu)*Ck, Creg + D(iz, iu)*Dk*Caug];
+                    end
+                    Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);               
+
+                    %construct the outer factors
+
+  
+                    %rhoi hits the identity here.
+                    %this is ok, because there is only one performance
+                    %specification. Recovery will catch the controller.       
+
+
+                    %outer factors
+                    nxiU = n + ns;
+                    nxiV = n;
+                     U_cl_base = [ zeros(nxn, nxiU);
+                        rhoiP * eye(nxiU),;
+                        zeros(nz, nxiU)]';
+
+                    
+                    V_cl_base = [eye(nxiV), zeros(nxiV, nxn + ns), zeros(nxiV, nw);
+                        zeros(ny, nxiV), Caug, D(iy, iw)];
+
+                    U_cl = cell(2, 1);
+                    V_cl = cell(2, 1);
+                    
+                    U_cl{1} =  U_cl_base;
+                    V_cl{2} =  V_cl_base;
                 
-                % sys_cl = sdpss(Acal, Bcal, Ccal, Dcal);
+
+                else
+                    %eliminate [Ak, Ck]
+                    if n ==0
+                        %no filters nor network dynamics 
+                        Acal = [zeros(n+nf+ns, n), GX*Aaug + Bk*Caug];
+                        Bcal = (GX * Pihatinv * Bpaug + Bk*D(iy, iw));
+                        Ccal = (Creg + D(iz, iu)*Dk*Caug);
+                    else
+                        %some filter or network dynamics
+                        Acal = [A*GY,  Pibar * Aaug + B(:, iu)*Dk*Caug;
+                            zeros(n+nf+ns, n), GX*Aaug + Bk*Caug];
+                        Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
+                            GX * Pihatinv * Bpaug + Bk*D(iy, iw)];
+                        Ccal = [C(iz, :)*GY , Creg + D(iz, iu)*Dk*Caug];
+                    end
+                    Dcal = D(iz, iw) + D(iz, iu)*Dk*D(iy, iw);               
+
+                    %construct the outer factors
+
+
+                    %rhoi hits the identity here.
+                    %this is ok, because there is only one performance
+                    %specification. Recovery will catch the controller.       
+
+
+                    %outer factors
+                    nxiU = n + ns;
+                    nxiV = n;
+ 
+ 
+    
+                    U_cl_base = [B(:, iu), zeros(nxn, nxiU);
+                     zeros(nxiU, nu), rhoiP * eye(nxiU),;
+                     D(iz, iu),  zeros(nz, nxiU)]';
+ 
+                    V_cl_base = [eye(nxiV), zeros(nxiV, nxn + ns), zeros(nxiV, nw)];
+ 
+
+                    U_cl = cell(2, 1);
+                    V_cl = cell(2, 1);
+
+                    U_cl{1} =  U_cl_base;
+                    V_cl{2} =  V_cl_base;                    
+                end
+
                 sys_cl = struct;
                 sys_cl.A = Acal;
                 sys_cl.B = Bcal;
                 sys_cl.C = Ccal;
                 sys_cl.D = Dcal;
             else
+                %no elimination
                 if n ==0
                     %no filters nor network dynamics 
                     Acal = [Ak, GX*Aaug + Bk*Caug];
@@ -615,57 +663,112 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             %Returns:
             %   Ak, Bk, Ck, Dk: controller matrices
             
-            if obj.elimination && obj.config.syn.elimination_type == 2
-                    % https://www.sciencedirect.com/science/article/pii/0167691194000919
-                    %reconstruct the eliminated controller block
-                    M0 = vars_rec.elim.M0;
-                    U = vars_rec.elim.U;
-                    V = vars_rec.elim.V;  
-                    Knull = vars_rec.elim.null;
+            if obj.elimination
+                
+                % https://www.sciencedirect.com/science/article/pii/0167691194000919
+                %reconstruct the eliminated controller block
+                M0 = vars_rec.elim.M0;
+                U = vars_rec.elim.U;
+                V = vars_rec.elim.V;                     
 
-                    M_accum = M0;
+                ns = obj.reg.ns;
+                nu = obj.sys.nu;
+                ny = obj.sys.ny;
 
-                    ns = obj.reg.ns;
-                    nu = obj.sys.nu;
-                    ny = obj.sys.ny;
+                nxi1 = size(vars_rec.diss.GX, 1);
+                nxi2 = size(vars_rec.diss.GY, 1);
 
-                    nxi1 = size(vars_rec.diss.GX, 1);
-                    nxi2 = size(vars_rec.diss.GY, 1);
+                nxi = [nxi1; nxi2];
 
-                    nxi = [nxi1; nxi2];
-                    % K_block = zeros(ns + nxi(1) + nu, nxi(2) + ny);
+                switch obj.config.syn.elimination_type
+                    case 2
+                        %knocked out [Ak, Bk; Ck, Dk]
+                        Knull = vars_rec.elim.null;
+    
+                        M_accum = M0;
+    
 
-                    [U_coord, V_coord] = obj.get_K_tri_basis(nxi);
+                        % K_block = zeros(ns + nxi(1) + nu, nxi(2) + ny);
+    
+                        [U_coord, V_coord] = obj.get_K_tri_basis(nxi);
+    
+                        K_block = zeros(size(U_coord{1}, 2), size(V_coord{1}, 2));
+                        for i = (length(U)-1):-1:1
+                            
+                            %recover the current portion of the triangular
+                            %controller
+                            null_curr = Knull{i};
+                            M_curr = null_curr' * M_accum * null_curr;
+                            K_frag_curr = basiclmi(-M_curr, -U{i} * null_curr, V{i+1} * null_curr, 'Xmin');
+    
+                            K_embed_curr = U_coord{i}' * K_frag_curr * V_coord{i};
+                            K_outer_curr = U{i}' * K_frag_curr * V{i+1};
+                            K_block = K_block + K_embed_curr;
+    
+                            %prep for the next recovery step
+                            M_accum = M_accum + K_outer_curr + K_outer_curr'; 
+                        end
+    
+                        %now index the block
+    
+                        Ak = K_block(nu + (1:nxi(1)), 1:nxi(2));
+                        Bk = K_block(nu + (1:nxi(1)), (nxi(2)+1):end);
+    
+    
+                        Ck = K_block(1:nu, 1:nxi(2));
+                        Dk = K_block(1:nu, (nxi(2)+1):end);
+                    case 1
+                        U = U{1};
+                        V = V{2};
+                        nu = obj.sys.nu;
 
-                    K_block = zeros(size(U_coord{1}, 2), size(V_coord{1}, 2));
-                    for i = (length(U)-1):-1:1
-                        
-                        %recover the current portion of the triangular
-                        %controller
-                        null_curr = Knull{i};
-                        M_curr = null_curr' * M_accum * null_curr;
-                        K_frag_curr = basiclmi(-M_curr, -U{i} * null_curr, V{i+1} * null_curr, 'Xmin');
+                        K_block = basiclmi(-M0, -U, V, 'Xmin');
 
-                        K_embed_curr = U_coord{i}' * K_frag_curr * V_coord{i};
-                        K_outer_curr = U{i}' * K_frag_curr * V{i+1};
-                        K_block = K_block + K_embed_curr;
+                        %knocked out [Ak, Bk]
+                        %get the prior entries
+                        Ck = vars_rec.K.C;
+                        Dk = vars_rec.K.D;
 
-                        %prep for the next recovery step
-                        M_accum = M_accum + K_outer_curr + K_outer_curr'; 
-                    end
+         
+                        %index the block
+                        Ak = K_block(:, 1:nxi(2));
+                        Bk = K_block(:, (nxi(2)+1):end);
+    
+                    otherwise
+                        U = U{1};
+                        V = V{2};
 
-                    %now index the block
-
-                    Ak = K_block(nu + (1:nxi(1)), 1:nxi(2));
-                    Bk = K_block(nu + (1:nxi(1)), (nxi(2)+1):end);
+                        Bk = vars_rec.K.B;
+                        Dk = vars_rec.K.D;
 
 
-                    Ck = K_block(1:nu, 1:nxi(2));
-                    Dk = K_block(1:nu, (nxi(2)+1):end);
- 
+                        if isempty(V)
+                            %no dynamics
+                            Ak = zeros(size(Bk, 1), 0);
+                            Ck = zeros(size(Dk, 1), 0);
+                        else
+                            K_block = basiclmi(-M0, -U, V, 'Xmin');
+
+                            %knocked out [Ak;  Ck]
+                            %get the prior entries
+
+
+                            %index the block
+                            Ak = K_block(nu + (1:nxi(1)), 1:nxi(2));
+                             
+
+                            Ck = K_block(1:nu, 1:nxi(2));
+                             
+                            % Ak = K_block(1:nxi, :);
+                            % Ck = K_block((nxi + 1):end, :);
+                        end
+
+
+                 
+                end
                     
             else
-                [Ak, Bk, Ck, Dk] = recover_K_from_elim@lmi_synthesis_lti(obj, vars_rec);
+                [Ak, Bk, Ck, Dk] = recover_K_from_elim@lmi_synthesis_interface(obj, vars_rec);
             end
         end
 
@@ -747,14 +850,10 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
             Pi = vars_rec.reg.Pi;
             
             %get the base subcontroller
-            
+
+            %TODO: implement this
             [Ak, Bk, Ck, Dk] = obj.recover_K_from_elim(vars_rec);                        
 
-            if isempty(Ak)
-                %override for n=0
-                Ak = zeros(ssize(Bk, 1), 0);
-                Ck = zeros(ssize(Dk, 1), 0);
-            end
 
             %get the closed-loop regulator equation
             Yred = vars_rec.diss.GY;
@@ -927,6 +1026,69 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
 
 
+
+            % 
+            % %The transformation recovery is causing many issues.
+            % %but we have the closed-loop response already. Use that:
+            % %subspace arguments to extract the controller.
+            % 
+            % %having trouble finding such a realization. Maybe there's a
+            % %coordinate transformation matrix occurring?
+            % 
+            % reg2 = obj.reg;
+            % reg2.Gam = Gam;
+            % reg2.Pi = Pi;
+            % reg2.Phi = reg2.compute_Phi(Pi, Gam, []);
+            % 
+            % P_orc = P_trans.drop_performance;
+            % 
+            % P_model = reg2.connect_model(P_orc, 1/rhoi);
+            % 
+            % iu0 = P_model.index_u();
+            % iu1 = iu0(1:ns);
+            % iu2 = iu((ns+1):end);
+            % 
+            % nxn = n + ns;
+            % nxi = n;
+            % 
+            % base_left = [zeros(nxn, nxi), P_model.Bu;
+            %      eye(nxi), zeros(nxi, nu + ns);
+            %     zeros(nz, nxi), P_model.Dzu];
+            % 
+            % base_right = [zeros(nxi, n + ns),  eye(nxi), zeros(nxi, nw);
+            %     P_model.Cy, zeros(ny, nxi), P_model.Dyw];
+            % 
+            % Omega_base = [P_model.A, zeros(nxn, nxi), P_model.Bw;
+            %     zeros(nxi, nxn), zeros(nxi), zeros(nxi, nw);
+            %     P_model.Cz, zeros(nw, nxi), P_model.Dzw];
+            % 
+            % 
+            % Omega_cl = [Acl, Bcl; Ccl, Dcl] - Omega_base;
+            % 
+            % Mat_sys = kron(base_right', base_left);
+            % ans_sys = reshape(Omega_cl, [], 1);
+            % 
+            % 
+            % %TODO: enforce the D_mask constraint in the system realization           
+            % [ii, jj] = find(~obj.get_D_mask());
+            % ND0 = length(ii);
+            % 
+            % ind_D2 = sub2ind([n+nu+ns, n+ny], n+ns+ii, n+jj);
+            % Nmasked = length(ind_D2);
+            % 
+            % Mat_D = sparse(1:Nmasked, ind_D2, ones(Nmasked, 1), Nmasked, (n+nu+ns)*(n+ny));
+            % ans_D = zeros(Nmasked, 1);
+            % 
+            % Mat_all = [Mat_sys; Mat_D];
+            % ans_all = [ans_sys; ans_D];
+            % 
+            % %solve for a system in the subspace and verify
+            % Kblock_vec = lsqminnorm(Mat_all, ans_all);
+            % Kblock_vec(ind_D2) = 0; %make sure the zero entries are zero.
+            % Kblock = reshape(Kblock_vec, n + length(iu0), n + ny);
+            % 
+            % 
+            % rec_error = norm(Mat_all*Kblock_vec - ans_all);
 
             
 

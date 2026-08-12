@@ -28,7 +28,10 @@ sys = opt_system(ops, network);
 
 %% solve the problem
 config =opt_config();
-config.syn.elimination = false;
+config.syn.elimination = true;
+config.syn.elimination_type = 0;
+config.syn.reduced_order = 1;
+config.gen.same_rho = true;
 man = opt_synthesis(sys, config);
 order = {1, 1};
 
@@ -37,7 +40,7 @@ order = {1, 1};
 % [sol_h, v_h] = man.alternate(Niter, order);
 % sol = sol_h{end, end};
 sol = man.bisect();
-
+sol.rho
 
 
 %% simulate and plot
