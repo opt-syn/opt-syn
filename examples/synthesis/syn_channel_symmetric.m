@@ -29,8 +29,8 @@ sys = opt_system(ops, network);
 %% solve the problem
 config =opt_config();
 config.syn.elimination = true;
-config.syn.elimination_type = 1;
-config.syn.reduced_order = false;
+config.syn.elimination_type = 0;
+config.syn.reduced_order = 1;
 config.gen.same_rho = true;
 man = opt_synthesis(sys, config);
 order = {1, 1};

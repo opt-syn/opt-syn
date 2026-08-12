@@ -34,7 +34,16 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
             if obj.config.syn.elimination
                 %check D_mask, only perform elimination if it is
                 %block-lower triangular
-                obj.config.syn.elimination = obj.check_lower_triangular();
+                is_tri = obj.check_lower_triangular();
+                if ~is_tri
+                    %non-lower-triangular sparsity pattern of Dk. Dk cannot 
+                    % be eliminated. Can still knock out [Ak, Bk], and also
+                    %also remove [Ck1, Dk1] if 
+                    % config.syn.reduced_order = false
+                    %
+                    
+                    obj.config.syn.elimination_type = 1;
+                end
             end
             
 
