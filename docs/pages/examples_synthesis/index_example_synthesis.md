@@ -16,6 +16,7 @@ LASSO <syn_lasso>
 Games with Delay <syn_games_with_delay>
 Unstable Network <syn_unstable_network>
 Remote Quadratic Programming <syn_server>
+Stochastic Gradient Noise <syn_stoch_noise>
 Repeated Operators <syn_repeated>
 Coordinate Descent <syn_coord_descent>
 Sequential Games <syn_games_sequential>

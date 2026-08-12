@@ -28,6 +28,7 @@ classdef alg_sim_out
       xcerr; %error in state of network
       yerr; %error in controller input
       uerr; %error in controller output
+      ferr; %error in function value
 
       sq_zerr; %square of error in oracle input (iterates)
       sq_werr; %square of error in oracle output (subgradients)
@@ -35,6 +36,7 @@ classdef alg_sim_out
       sq_xcerr; %square of error in state of network
       sq_yerr; %square of error in controller input
       sq_uerr; %square of error in controller output
+      abs_ferr; %l1 norm of error in function output
     end
     
     methods

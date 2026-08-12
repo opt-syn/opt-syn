@@ -120,6 +120,37 @@ classdef alg_plotter
             fig = obj.plot(sigs, fignum);
         end
 
+        function fig = plot_6f_err(obj, fignum)
+            %PLOT_6f_err plot the error signals/regulated quantities ('xerr', 'uerr', 'ferr', 'yerr', 'werr', 'zerr')            
+            %Args:            
+            %   fignum: figure number to display
+            %Return:
+            %   fig:    figure environment
+
+
+            if nargin < 2
+                fignum = [];
+            end
+            sigs = {'zerr', 'xerr', 'uerr', 'werr' 'ferr', 'yerr'};
+            fig = obj.plot(sigs, fignum);
+        end
+
+
+        function fig = plot_6_err(obj, fignum)
+            %PLOT_6_err plot the error signals/regulated quantities ('xnerr', 'uerr', 'xcerr', 'yerr', 'werr', 'zerr')            
+            %Args:            
+            %   fignum: figure number to display
+            %Return:
+            %   fig:    figure environment
+
+
+            if nargin < 2
+                fignum = [];
+            end
+            sigs = {'zerr', 'xnerr', 'uerr', 'werr' 'xcerr', 'yerr'};
+            fig = obj.plot(sigs, fignum);
+        end
+
         function fig = plot_3_err(obj, fignum)
             %PLOT_3_err plot the error signals/regulated quantities ('xerr', 'uerr', 'yerr')            
             %Args:            
@@ -130,6 +161,45 @@ classdef alg_plotter
                 fignum = [];
             end
             sigs = {'xerr','uerr', 'yerr'};
+            fig = obj.plot(sigs, fignum);
+        end
+
+        function fig = plot_6_sq_err(obj, fignum)
+            %PLOT_6_sq_err plot the squared error signals/regulated quantities ('sq_werr', 'sq_xnerr', 'sq_uerr', 'sq_zerr', 'sq_xcerr', 'sq_yerr')            
+            %Args:            
+            %   fignum: figure number to display
+            %Return:
+            %   fig:    figure environment
+            if nargin < 2
+                fignum = [];
+            end
+            sigs = {'sq_werr', 'sq_xnerr', 'sq_uerr', 'sq_zerr', 'sq_xcerr', 'sq_yerr'};
+            fig = obj.plot(sigs, fignum);
+        end
+
+        function fig = plot_6f_sq_err(obj, fignum)
+            %PLOT_6f_sq_err plot the squared error signals/regulated quantities ('sq_werr', 'sq_xnerr', 'sq_uerr', 'sq_zerr', 'sq_xcerr', 'sq_yerr')            
+            %Args:            
+            %   fignum: figure number to display
+            %Return:
+            %   fig:    figure environment
+            if nargin < 2
+                fignum = [];
+            end
+            sigs = {'sq_werr', 'sq_xerr', 'sq_uerr', 'sq_zerr', 'abs_ferr', 'sq_yerr'};
+            fig = obj.plot(sigs, fignum);
+        end
+
+        function fig = plot_4f_sq_err(obj, fignum)
+            %PLOT_4f_sq_err plot the squared error signals/regulated quantities ('sq_nerr', 'sq_uerr', 'ferr', 'sq_yerr')            
+            %Args:            
+            %   fignum: figure number to display
+            %Return:
+            %   fig:    figure environment
+            if nargin < 2
+                fignum = [];
+            end
+            sigs = {'sq_xerr', 'sq_uerr', 'sq_ferr', 'sq_yerr'};
             fig = obj.plot(sigs, fignum);
         end
 
@@ -159,8 +229,9 @@ classdef alg_plotter
             fig = obj.plot(sigs, fignum);
         end
 
+        
 
-        function obj = add_opt_sig(obj, reg_cl, dstar)
+        function obj = add_opt_sig(obj, reg_cl, dstar, fstar)
             %ADD_OPT_SIG Use the optimal trajectory to define the error signals            
             %Args:            
             %   reg_cl: closed-loop regulator equation, output from regulator.check_regulator()            
@@ -227,6 +298,11 @@ classdef alg_plotter
             obj.sim_out.sq_uerr = fs(obj.sim_out.uerr);            
 
 
+            if nargin > 3
+                obj.sim_out.ferr = obj.sim_out.f - fstar;
+                obj.sim_out.abs_ferr = sum(abs(obj.sim_out.f - fstar), 1);
+            end
+
         end
 
         function ax = plot_tile(obj, ax, sig)
@@ -278,7 +354,7 @@ classdef alg_plotter
                 ylabel(obj.get_name(sig), 'interpreter', 'latex', 'fontsize', obj.FS)
                 title(obj.get_title(sig), 'interpreter', 'latex', 'fontsize', obj.FST)
                 if ismember(sig, {'res_w', 'res_z', 'sq_xcerr', 'sq_xerr', ...
-                        'sq_xnerr', 'sq_uerr', 'sq_yerr', 'sq_zerr', 'sq_werr'})
+                        'sq_xnerr', 'sq_uerr', 'sq_yerr', 'sq_zerr', 'sq_werr', 'abs_ferr'})
                     set(ax, 'YScale', 'log');
                 end
                 xlim([k(1), k(end)])
@@ -342,6 +418,9 @@ classdef alg_plotter
                     name = 'Oracle Output Error';
                 case 'zerr'
                     name = 'Iterate Error';
+                case 'ferr'
+                    name = 'Function Value Error';
+
 
                 %squared errors
                 case 'sq_werr'
@@ -360,6 +439,9 @@ classdef alg_plotter
                     name = 'Output Error';
                 case 'sq_zp'
                     name = 'Performance Output Error';
+                case 'abs_ferr'
+                    name = 'Function Value Error';
+
 
             end
         end
@@ -404,6 +486,8 @@ classdef alg_plotter
                 name_mid = '$x_c - x_c^*$';
             elseif strcmp(sig, 'xerr')
                 name_mid = '$x - x^*$';
+            elseif strcmp(sig, 'ferr')
+                name_mid = '$f - f^*$';
             elseif strcmp(sig, 'xnerr')
                 name_mid = '$x_N - x_N^*$';
             elseif strcmp(sig, 'uerr')
@@ -421,7 +505,7 @@ classdef alg_plotter
             elseif strcmp(sig, 'sq_xerr')
                 name_mid = '$||x - x^*||^2_2$';
             elseif strcmp(sig, 'sq_xnerr')
-                name_mid = '$||x_N - x_N^*||^2_2$';
+                name_mid = '$||x_N - x_N^*||^2_2$';            
             elseif strcmp(sig, 'sq_uerr')
                 name_mid = '$||u - u^*||^2_2$';
             elseif strcmp(sig, 'sq_yerr')
@@ -432,6 +516,8 @@ classdef alg_plotter
                 name_mid = '$||w - w^*||^2_2$';
             elseif strcmp(sig, 'sq_zp')
                 name_mid = '$||z_p||^2_2$';
+            elseif strcmp(sig, 'abs_ferr')
+                name_mid = '$||f - f^*||_1$';
 
 
             %residuals
