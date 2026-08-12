@@ -22,10 +22,11 @@ Analysis and Synthesis follow similar workflows:
 ## Optimization  Example Setup
 
 
-A constrained optimization problem of minimizing a function $f$ subject to a sparse $L_1$ norm constraint is
+A constrained optimization problem minimizing a function $f$ subject to a $L_1$ norm constraint is
 ```{math}
-\begin{align}
+\begin{align*}
 \beta^* \in \text{argmin}_{\norm{\beta}_1 \leq 50} f(\beta).
+\end{align*}
 ```
 
 The function $f$ is known to be real-valued, $m$-strongly convex, and $L$-smooth.
@@ -35,10 +36,10 @@ The function $f$ is known to be real-valued, $m$-strongly convex, and $L$-smooth
 The Projected Gradient Descent (PGD) algorithm with stepsize $\gamma > 0$ is the iterative procedure
 
 ```{math}
-\beta_{k+1} = \text{proj}_{\mathcal{Z}}(\beta_k - \gamma \partial f_1(\beta_k)).
+\beta_{k+1} = \text{proj}_{\mathcal{Z}}(\beta_k - \gamma \partial f(\beta_k)).
 ```
 
-PGD achieves linear convergence at rate $\rho \in (0, 1)$ if there exists a constant $C_0 > 0$ such that
+PGD achieves linear convergence at rate $\rho \in (0, 1)$ to the optimum $\beta^*$ if there exists a constant $C_0 > 0$ such that
 ```{math}
 \norm{\beta_{k}-\beta^*}_2  \leq  C_0 \rho^{-k} \norm{\beta_0-\beta^*}, \ \forall x_0, k, f.
 ```
