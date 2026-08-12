@@ -24,12 +24,19 @@ classdef lmi_analysis_interface < lmi_dispatch_interface
 
             obj@lmi_dispatch_interface(sys, config);
 
+            if isempty(sys.K) || (iscell(sys.K) && isempty(sys.K{1}))
+
+            
+                error('Analysis: No controller is provided in the System.')
+                
+            end
+
             %if the regulator equation fails, then the algorithm may
             %converge to a nonoptimal point.
             try
                 obj.regcl = obj.reg.check_regulator();
             catch
-                error('Failure of Regulator Equation: Convergence cannot be assured.')
+                error('Analysis: Failure of Regulator Equation: Convergence cannot be assured.')
             end
             
         end

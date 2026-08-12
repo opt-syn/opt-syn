@@ -33,7 +33,7 @@ man = opt_synthesis(sys, config);
 
 %specifications
 spec_stab = spec_stability(0.9);
-GAIN = 1;
+GAIN = 1; %upper bound on gain
 spec_stoch = spec_h2(GAIN, 1, 1, 1);
  
 spec_stoch.target = true;

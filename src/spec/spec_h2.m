@@ -151,9 +151,9 @@ classdef spec_h2 < spec_interface
             vars = struct('Z', Z);    
 
             cons = append_lmi(cons, Z, config.LMILAB);
-            if ~obj.target
+            % if ~obj.target
                 cons = append_lmi(cons, obj.gain^2 - trace(Z), config.LMILAB);
-            end
+            % end
         end
     end
 end
