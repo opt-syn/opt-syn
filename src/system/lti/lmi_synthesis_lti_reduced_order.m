@@ -253,7 +253,11 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 elseif obj.config.syn.elimination_type == 1                                    
                     %remove [Ak, Bk]    
                     vars_K.B = [];  
-                    vars_K.C = lmim(['Ck', name], ny, nc);                    
+                    if nc > 0
+                        vars_K.C = lmim(['Ck', name], nC, nc, 'full');                
+                    else
+                        vars_K.C = zeros(nC, nc);                
+                    end
                     vars_K.D = obj.form_Dk(alg_psi, D_mask, [], include_Dk1);
                     kq = [vars_K.C, vars_K.D];
                     cons= append_lmi(cons, obj.config.tol.K_max*eye(sum(kq.dim)) - [zeros(kq.dim(1)), kq; kq', zeros(kq.dim(2))], obj.LMILAB);
@@ -740,8 +744,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
                         if isempty(V)
                             %no dynamics
-                            Ak = zeros(nxi(2), 0);
-                            Ck = zeros(np, 0);
+                            Ak = zeros(size(Bk, 1), 0);
+                            Ck = zeros(size(Dk, 1), 0);
                         else
                             K_block = basiclmi(-M0, -U, V, 'Xmin');
 

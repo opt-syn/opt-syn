@@ -166,37 +166,47 @@ classdef lmi_synthesis_lti < lmi_synthesis_interface
                 con_M_null = cell(ntri, 1);
                 V_accum = [];
                 null_accum = cell(ntri, 1);
-                for i = 1:ntri
-
-                    if ~isempty(U_cl{i})
-                        U_elim{i} = U_cl{i} * U_outer;
-                    end
-                    if ~isempty(V_cl{i})
-                        V_elim{i} = V_cl{i} * V_outer;
-                    end
-                    V_accum = [V_accum; V_cl{i}];
-                    
-                    %get the nullspace
-                    if isempty(V_accum)
-                        elim_curr = U_elim{i}; %used in elimination
-                        null_store = eye(ssize(con_M, 1));       %stored for recovery
-                    else
-                        elim_curr = [V_accum * V_outer; U_elim{i}];
-                        null_store = null(V_accum * V_outer, 'rational');
-                    end
-                    null_accum{i} = null_store;
-
-                    null_curr = null(elim_curr, 'rational');
-
-
-                    %form and enforce the constraint
-                    con_M_curr = null_curr'* con_M * null_curr;
-
+                if isempty(V_cl{2})
+                    %there is nothing to eliminate
+                    %just do the entire matrix
+                    con_M_curr = con_M;
                     sU = ssize(con_M_curr, 1);
-                    con_M_null{i} = con_M_curr;
-                    
-                    cons = append_lmi(cons, con_M_curr - obj.config.tol.M*eye(sU), obj.LMILAB); 
-
+                    cons = append_lmi(cons, con_M_curr - obj.config.tol.M*eye(sU), obj.LMILAB);                         
+                else
+                    for i = 1:ntri
+    
+                        if ~isempty(U_cl{i})
+                            U_elim{i} = U_cl{i} * U_outer;
+                        end
+                        if ~isempty(V_cl{i})
+                            V_elim{i} = V_cl{i} * V_outer;
+                        end
+                        V_accum = [V_accum; V_cl{i}];
+                        
+                        %get the nullspace
+                        if isempty(V_accum)
+                            elim_curr = U_elim{i}; %used in elimination
+                            null_store = eye(ssize(con_M, 1));       %stored for recovery
+                        else
+                            elim_curr = [V_accum * V_outer; U_elim{i}];
+                            null_store = null(V_accum * V_outer, 'rational');
+                        end
+                        null_accum{i} = null_store;
+    
+                        null_curr = null(elim_curr, 'rational');
+    
+    
+                        %form and enforce the constraint
+             
+                     
+                        con_M_curr = null_curr'* con_M * null_curr;
+    
+                        sU = ssize(con_M_curr, 1);
+                        con_M_null{i} = con_M_curr;
+                        
+                        cons = append_lmi(cons, con_M_curr - obj.config.tol.M*eye(sU), obj.LMILAB); 
+                  
+                    end
                 end
 
                 con_M_0 = con_M;
