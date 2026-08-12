@@ -73,6 +73,7 @@ The function $\theta: \N \rightarrow \{1, \ldots, N_s\}$ chooses the active subs
 ```{math}
 \begin{align*}
 & \mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_{\theta(k)} & \Bcl_{\theta(k)} \hl \Ccl_{\theta(k)} & \Dcl_{\theta(k)} } \mat{c}{x_k \\ w_k} & & \forall k \in \N, \\
+\\
 & (\theta(k), \theta(k+1)) \in \text{Edges}(\mathcal{G}).
 \end{align*}
 ```

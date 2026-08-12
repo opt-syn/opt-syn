@@ -29,7 +29,7 @@ The time-varying inclusion problem may be expressed as the existence of a pair $
 The linear system (signal generator) governing the path $\beta^*$ is described by 
 ```{math}
 \begin{align}
- \mat{c}{\eta_{k+1} \\ \beta^*_k} = \mat{c}{S_\beta \\ R_\beta} \eta_{k}
+ \mat{c}{\eta_{k+1} \\ \beta^*_k} = \mat{c}{S_\beta \\ R_\beta} \eta_{k}.
 \end{align}
 ```
 

@@ -1,6 +1,6 @@
 # Repeated Operator Evaluations
 
-Some optimziation algorithms involve multiple evaluations of operators within a single time step. The Extragradient Method {footcite}`korpelevich1976extragradient`  
+Some optimization algorithms involve multiple evaluations of operators within a single time step. The Extragradient Method {footcite}`korpelevich1976extragradient`  
 ```{math}
 x_{k+1} = x_{k} - \gamma \nabla f(x_k - \gamma \nabla f(x_k)),
 ```
