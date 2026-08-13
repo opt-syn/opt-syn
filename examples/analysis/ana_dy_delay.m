@@ -50,7 +50,7 @@ end
 %% plot the result
 
 
-figure(k)
+figure(1)
 clf
 plot(L_all, squeeze(rho_bound(:, 4, :)), 'linewidth', 2);
 hold on

@@ -61,9 +61,7 @@ classdef lmi_synthesis_periodic < lmi_synthesis_switched
                 
                 [GX, GY, cons] = obj.define_storage_G(cons, alg_psi{1}, '');
                 n = ssize(GX, 1);
-                
-
-                G = vars_diss.G;
+                                
                 GX_cell = cell(obj.Nss, 1);
                 for i = 1:obj.Nss
                     GX_cell{i} = GX;

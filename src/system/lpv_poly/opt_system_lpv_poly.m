@@ -336,6 +336,7 @@ classdef  opt_system_lpv_poly < opt_system_interface
 
         function mode_next = next_mode(obj, mode)
             %next mode in the switching sequence
+            mode_next = [];
             error('need to implement the next mode nicely')
         end
     end

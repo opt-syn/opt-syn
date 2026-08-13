@@ -147,6 +147,8 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
 
             sol.cert.Gcl = Gcl;
             sol.cert.Ycl = Ycl;
+
+            K_sub = sol.cert.K_sub;
             
         end
 

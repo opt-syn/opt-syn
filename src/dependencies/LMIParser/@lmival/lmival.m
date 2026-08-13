@@ -30,15 +30,18 @@ classdef lmival
         %------------------------------------------------------------------
         function s=ctranspose(p)
             %not allowed
-            error('No transposition of lmival input.')
+            s = [];
+            error('lmival: No transposition of lmival input.')
         end
         function s=transpose(p)
             %not allowed
-            error('No transposition of lmival input.')
+            s = [];
+            error('lmival: No transposition of lmival input.')
         end
         function s=vertcat(p1,p2)
             %not allowed
-            error('No vertical concatenation of lmival inputs.')
+            s = [];
+            error('lmival: No vertical concatenation of lmival inputs.')
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function s = lmival(p,val)
@@ -109,7 +112,8 @@ classdef lmival
             end
         end
         %------------------------------------------------------------------
-        function s=dim(p)                        
+        function s=dim(p)           
+            s = 1;
         end
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -262,7 +262,7 @@ classdef (Abstract) opt_manager_interface < handle
             %   obj: cleaned up manager
             obj.cons = [];
             obj.vars = {};
-            obj.iqc = {};
+            obj.iqc_op = {};
             obj.specs = {};
         end
         

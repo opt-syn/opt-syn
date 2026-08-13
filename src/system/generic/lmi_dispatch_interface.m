@@ -79,7 +79,7 @@ classdef lmi_dispatch_interface < handle
                 spt = obj.sys.type;
                 msg = ['The performance specification ', diss.spec.type, ...
                     ' is not supported for ', spt, 'systems.'];
-                error('msg', 'OPT:spec_unsupported');
+                error(msg, 'OPT:spec_unsupported');
             end
         end
 
