@@ -67,7 +67,7 @@ Figure [2](#dr-noisy) plots a trace of a trajectory starting at $x_0=0$, in whic
 :align: center
 :class: only-light
 :name: dr-noisy
-*Figure 2:*Response under bounded noise
+*Figure 2:* Response under bounded noise
 :::
 
 
