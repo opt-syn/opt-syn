@@ -194,13 +194,16 @@ classdef opt_synthesis < opt_manager_interface
                     %channels are overloaded by the error outputs
 
                     %index the specifications
-                    n_input = [nw, nwp, plant_reg.nwp, nu];
-                    ind_input = {1:nw, sp.iwp, 1:plant_reg.nwp, 1:nu};
+                    n_same = length(iqc_data.ind_same);
+                    nw0 = nw+n_same;
+                    n_input = [nw0, nwp, plant_reg.nwp, nu];
+                    ind_input = {1:nw0, sp.iwp, 1:plant_reg.nwp, 1:nu};
                     E_input_aug = screen_system(n_input, ind_input);
 
 
-                    n_output = [nz, nzp, plant_reg.nzp, ny];
-                    ind_output= {1:nz, sp.izp, 1:plant_reg.nzp, 1:ny};
+                    nz0 = nz+n_same;
+                    n_output = [nz0, nzp, plant_reg.nzp, ny];
+                    ind_output= {1:nz0, sp.izp, 1:plant_reg.nzp, 1:ny};
                     E_output_aug = screen_system(n_output, ind_output);
 
 
@@ -209,8 +212,8 @@ classdef opt_synthesis < opt_manager_interface
                     %screen out the performance indices and perform bookkeepping
                     plant_reg_P = E_output_aug * plant_reg.P * E_input_aug';
                     n = plant_reg.dump_dim();
-                    n.nz = nz + length(sp.izp);
-                    n.nw = nw + length(sp.iwp);
+                    n.nz = nz0 + length(sp.izp);
+                    n.nw = nw0 + length(sp.iwp);
 
                     diss{i}.plant_reg = genplant(plant_reg_P, n);
                 end
