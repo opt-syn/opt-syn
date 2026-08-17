@@ -29,6 +29,7 @@ sys_channel = opt_system(ops, channel);
 
 %information structure for the channel case
 config = opt_config();
+config.syn.reduced_order = true;
 config.syn.D_mask = [1, 0, 1, 1, 0, 0;
     1, 1, 1, 1, 0, 0;
     1, 1, 1, 1, 1, 1;
@@ -38,11 +39,12 @@ config.syn.D_mask = [1, 0, 1, 1, 0, 0;
 
 %solve the problem
 man_channel = opt_synthesis(sys_channel, config);
-sol_channel = man_channel.bisect(); 
+% sol_channel = man_channel.bisect(); 
 % 0.9341 with info structure in line 32
 % 0.9357 with block-triangular D
 
-
+specs = {spec_stability(0.95)};
+sol_channel = man_channel.solve_single([], specs); 
 
 %% plot solutions
 rng(345, 'twister');
@@ -69,4 +71,5 @@ out = sim.sim(T);
 
 plt = alg_plotter(out);
 plt.plot({'f', 'res_w', 'res_z'}, 3)
+
 
