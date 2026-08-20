@@ -65,11 +65,27 @@ ops_sim{end} = op_sim_l1_hard(tau);
 
 sys_sim = sol_channel.export_sim(ops_sim);
 
-T = 200;
+T = 201;
 sim = alg_sim(sys_sim, d);
 out = sim.sim(T);
 
+%% plots
 plt = alg_plotter(out);
-plt.plot({'f', 'res_w', 'res_z'}, 3)
+plt.plot({'w', 'z',  'res_w', 'res_z'}, 3)
+
+
+T = 2001;
+sim_long = alg_sim(sys_sim, d);
+out = sim_long.sim(T);
+
+betastar = out.z(end, :, end);
+wstar = out.w(1:end-1, :, end);
+dstar = [-betastar; wstar];
+fstar = out.f(:, end);
+reg = regulator_lti(sys_sim);
+regcl = reg.check_regulator();
+plt = plt.add_opt_sig(regcl, dstar, fstar);
+
+plt.plot_4_sq_err(4)
 
 

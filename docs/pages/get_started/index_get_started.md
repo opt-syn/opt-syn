@@ -41,7 +41,7 @@ The Projected Gradient Descent (PGD) algorithm with stepsize $\gamma > 0$ is the
 
 PGD achieves linear convergence at rate $\rho \in (0, 1)$ to the optimum $\beta^*$ if there exists a constant $C_0 > 0$ such that
 ```{math}
-\norm{\beta_{k}-\beta^*}_2  \leq  C_0 \rho^{-k} \norm{\beta_0-\beta^*}, \ \forall x_0, k, f.
+\norm{\beta_{k}-\beta^*}_2  \leq  C_0 \rho^{-k} \norm{\beta_0-\beta^*}_2, \ \forall x_0, k, f.
 ```
 
 The minimal worst-case convergence rate for PGD is $\frac{L-m}{L+m}$ {footcite}`taylor2018exact`. This rate is achieved with stepsize parameter $\gamma = \frac{2}{L+m}$.
