@@ -486,7 +486,7 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                 if obj.config.syn.elimination_type == 2
                     if n ==0
                         %no filters nor network dynamics 
-                        Acal = [zeros(n+nf+ns, n), GX*Aaug];
+                        Acal = [zeros(n+ns, n), GX*Aaug];
                         Bcal = (GX*Pihatinv * Bpaug);
                         Ccal = (Creg);
     
@@ -534,13 +534,13 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                     %eliminate [Ak, Bk]
                     if n ==0
                         %no filters nor network dynamics 
-                        Acal = [zeros(n+nf+ns, n), GX*Aaug];
+                        Acal = [zeros(n+ns, n), GX*Aaug];
                         Bcal = (GX*Pihatinv * Bpaug);
                         Ccal = (Creg + D(iz, iu)*Dk*Caug);
                     else
                         %some filter or network dynamics
                         Acal = [A*GY + B(:, iu)*Ck,  Pibar * Aaug + B(:, iu)*Dk*Caug;
-                            zeros(n+nf+ns, n), GX*Aaug];
+                            zeros(n+ns, n), GX*Aaug];
                         Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
                             GX * Pihatinv * Bpaug];
                         Ccal = [C(iz, :)*GY+ D(iz, iu)*Ck, Creg + D(iz, iu)*Dk*Caug];
@@ -577,13 +577,13 @@ classdef lmi_synthesis_lti_reduced_order < lmi_synthesis_lti
                     %eliminate [Ak, Ck]
                     if n ==0
                         %no filters nor network dynamics 
-                        Acal = [zeros(n+nf+ns, n), GX*Aaug + Bk*Caug];
+                        Acal = [zeros(n+ns, n), GX*Aaug + Bk*Caug];
                         Bcal = (GX * Pihatinv * Bpaug + Bk*D(iy, iw));
                         Ccal = (Creg + D(iz, iu)*Dk*Caug);
                     else
                         %some filter or network dynamics
                         Acal = [A*GY,  Pibar * Aaug + B(:, iu)*Dk*Caug;
-                            zeros(n+nf+ns, n), GX*Aaug + Bk*Caug];
+                            zeros(n+ns, n), GX*Aaug + Bk*Caug];
                         Bcal = [B(:, iw) + B(:, iu)*Dk*D(iy, iw);
                             GX * Pihatinv * Bpaug + Bk*D(iy, iw)];
                         Ccal = [C(iz, :)*GY , Creg + D(iz, iu)*Dk*Caug];
