@@ -2,4 +2,4 @@ docs/_build/
 *.asv
 derived/
 .vscode/
-resources/
+docenv/

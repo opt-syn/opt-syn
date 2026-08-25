@@ -28,8 +28,7 @@ extensions = [
     'sphinx.ext.napoleon',  
     'sphinx.ext.mathjax',
     'sphinx_favicon',     
-    'sphinxcontrib.bibtex',    
-    'sphinxcontrib.tikz',    
+    'sphinxcontrib.bibtex',        
     'sphinxemoji.sphinxemoji',
     'myst_parser'
 ]
@@ -50,7 +49,7 @@ html_context = {
 }
 
 templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'pages/how_it_works_extended', 'img/logo' ]
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'pages/how_it_works_extended', 'img/logo', 'docenv']
 myst_number_code_blocks = ['matlab']
 
 
