@@ -1,4 +1,4 @@
-%analysis of douglas-rachford algorithm
+%analysis of gradient descent algorithm
 m= 1;
 L = 10;
 
