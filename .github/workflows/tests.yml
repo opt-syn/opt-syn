@@ -1,0 +1,52 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ dev, main ]
+  pull_request:
+    branches: [ dev, main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v3
+        with:
+          products: >
+            Robust_Control_Toolbox
+
+      - name: Run tests #and generate artifacts
+        uses: matlab-actions/run-tests@v3
+        with:
+          source-folder: tests
+          #code-coverage-cobertura: code-coverage/coverage.xml
+          #test-results-junit: test-results/results.xml
+
+      #- name: Upload code coverage report
+      #  uses: actions/upload-artifact@v2
+     #   with:
+    #      name: code-coverage
+    #      path: code-coverage/coverage.xml
+
+   #   - name: Upload test results
+   #     uses: actions/upload-artifact@v2
+   #     if: always()
+   #     with:
+   #       name: test-results
+   #       path: test-results/results.xml
+
+      # As an alternative to run-tests, you can use run-command to execute a MATLAB script
+      # - name: Run script
+      #   uses: matlab-actions/run-command@v1
+      #   with:
+      #     command: myscript
+
+      # As an alternative to run-tests, you can use run-build to execute a MATLAB build
+      # - name: Run build
+      #   uses: matlab-actions/run-build@v1
+
