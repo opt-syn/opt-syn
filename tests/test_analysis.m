@@ -14,7 +14,7 @@ classdef test_analysis < matlab.unittest.TestCase
     methods(Test)
         % Test methods
 
-        function testAnalysisSML(testCase)
+        function testGDrate(testCase)
             %analysis of gradient-descent algorithm with optimal step size
             m= 1;
             L = 10;

@@ -1,4 +1,4 @@
-%analysis of douglas-rachford algorithm
+%analysis of pgd
 m= 1;
 L = 5;
 
