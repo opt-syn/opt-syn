@@ -44,8 +44,10 @@ classdef alg_plotter
 
             nplt = length(traces);
             if nplt ==3
-                nrows = 1;
-                ncols = 3;
+                % nrows = 1;
+                % ncols = 3;
+                nrows = 3;
+                ncols = 1;
             else
                 nrows = floor(sqrt(nplt));
                 ncols = ceil(sqrt(nplt));

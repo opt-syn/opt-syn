@@ -77,7 +77,7 @@ classdef spec_l2< spec_interface
 
                Q_l2 = -vars_spec.mu_l2;
                
-               S_l2 = -zeros(nwp, 0);
+               S_l2 = -zeros(nwp, 0)';
                % S_l2 = [];
 
                T_l2 = [];

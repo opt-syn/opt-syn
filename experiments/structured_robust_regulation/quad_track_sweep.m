@@ -142,3 +142,13 @@ reg_ext = regulator_lti(sys_ext);
 regcl = reg_ext.check_regulator();
 
 
+%% get properties of the external system
+Nrho = 100;
+rhol = linspace(0.8, 1, Nrho);
+gain_ext = zeros(Nrho, 1);
+for i = 1:Nrho
+    gain_ext(i) = hinfnorm(rhotrafo(Pext, rhol(i)));
+end
+figure(4)
+clf
+plot(rhol, gain_ext)

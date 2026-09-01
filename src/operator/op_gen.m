@@ -84,7 +84,7 @@ classdef op_gen  < operator_interface
             if ~isempty(obj.cocoercive)
                 L = 1/obj.cocoercive;
             elseif ~isempty(obj.lipschitz)
-                L = obj.Lipschitz;
+                L = obj.lipschitz;
             end
 
             if isempty(mu)
@@ -126,7 +126,7 @@ classdef op_gen  < operator_interface
             if ~isempty(obj.cocoercive)
                 L = 1/obj.cocoercive;
             elseif ~isempty(obj.lipschitz)
-                L = obj.Lipschitz;
+                L = obj.lipschitz;
             end
 
             if isempty(mu)

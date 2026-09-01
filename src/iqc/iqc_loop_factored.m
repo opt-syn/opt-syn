@@ -136,7 +136,7 @@ classdef iqc_loop_factored
                         if isempty(obj.C3)
                             C3 = zeros(n1+n2, 0);
                         else
-                            C3 = [obj.C3; zeros(n2, size(obj.C3, 1))];
+                            C3 = [obj.C3; zeros(n2, size(obj.C3, 2))];
                         end
                     else
                         if isempty(obj.C3)
