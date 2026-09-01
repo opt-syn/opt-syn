@@ -336,10 +336,17 @@ classdef (Abstract) opt_manager_interface < handle
             rho = 1;
 
             if obj.config.gen.same_rho
+                rho_picked = false;
                 for i = 1:length(specs)
                     if isa(specs{i}, 'spec_stability')
                         rho = specs{i}.rho;
+                        rho_picked = true;
+                        break
                     end
+                end
+                
+                if ~rho_picked
+                    rho = specs{1}.rho;
                 end
             end
         end

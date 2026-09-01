@@ -41,7 +41,7 @@ classdef alg_sim
             if nargin >= 3               
                 obj.sampler = sampler;
             else
-                obj.sampler = struct('wp', @(param) [], 'param', @(param) [], ...
+                obj.sampler = struct('wp', @(k, param) [], 'param', @(k, param) [], ...
             'x0', @() [], 'param0', @() []);
                 
                 if ismember(obj.sys.type, ['switched', 'periodic', 'periodic_orbit'])
@@ -149,7 +149,7 @@ classdef alg_sim
                 %TODO: allow for performance
                 for i = 1:s
                     %ASSERT D is lower-triangular
-                    wp = obj.sampler.wp(param);
+                    wp = obj.sampler.wp(k, param);
                     if i==1
                         %flush the w and z values
                         w = NaN * w;

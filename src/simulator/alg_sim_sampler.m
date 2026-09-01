@@ -3,10 +3,10 @@ classdef alg_sim_sampler
     %random generation
     
     properties
-        wp = @(param_in) []; %performance input
+        wp = @(k, param_in) []; %performance input
+        param = @(k, param_in) []; %parameters at each time (transition rule)
         x0 = @() []; %initial state
-        param = @(param_in) []; %parameters at each time (transition rule)
-        param0 = @(param_in) []; %initial parameters
+        param0 = @() []; %initial parameters              
     end
     
     methods
