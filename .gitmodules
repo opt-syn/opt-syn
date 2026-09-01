@@ -1,3 +1,0 @@
-[submodule "src/dependencies/LMI-Parser"]
-	path = src/dependencies/LMI-Parser
-	url = https://github.com/opt-syn/LMI-Parser.git
