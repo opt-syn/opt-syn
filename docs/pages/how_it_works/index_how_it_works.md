@@ -24,7 +24,7 @@ Zero-inclusion problems include solution concepts such as variational inequaliti
 
 
 
-An optimization algorithm is a procedure that generates a sequence of iterates $(w_k, z_k)_{k \in \N}$ satisfying $w^i_k \in F^i(z^i_k)$.
+An optimization algorithm is a procedure that generates a sequence of iterates $(w_k, z_k)_{k \in \N}$ satisfying $w^i_k \in F_i(z^i_k)$.
 
 
  Many common optimization algorithms can be expressed as the interconnection of operators and linear systems {footcite}`wang2011control`. As an example, the gradient descent/forward-step method with stepsize $\gamma > 0$ may be represented by 
@@ -79,12 +79,12 @@ It is linearly convergent  with rate $\rho \in (0, 1)$ if there exists a constan
 
 ## Checking Convergence
 
-{{osyn}} certifies linear convergence of well-posed algorithms by checking two conditions: Robust Stability and the Solvability of Regulator Equations. This theory holds for includion problems with unique fixed-point pairs $(\beta^*, w^*)$ {footcite}`miller2026structure`. 
+{{osyn}} certifies linear convergence of well-posed algorithms by checking two conditions: Robust Stability and the Solvability of Regulator Equations. This theory holds for inclusion problems with unique fixed-point pairs $(\beta^*, w^*)$ {footcite}`miller2026structure`. 
 
-Robust Stability ensures convergence to 0 if 0 is the solution to the inclusion problem ($0 \in F^i(0)$ holds for all operators $F^i$). Solvability of the Regulator Equations ensures that a nonzero solution to the inclusion problem can be shifted into a zero solution of an zero-centered problem (error coordinates).
+Robust Stability ensures convergence to 0 if 0 is the solution to the inclusion problem ($0 \in F_i(0)$ holds for all operators $F_i$). Solvability of the Regulator Equations ensures that a nonzero solution to the inclusion problem can be shifted into a zero solution of a zero-centered problem (error coordinates).
 
 ### Condition 1: Robust Stability
- Assume that the algorithm is well-posed, and the operator inclusion problem $0\in \sum_{i=1}^s F^i(\beta^*)$ is uniquely solved by the pair $(\beta^*, w^*) = (0, 0)$  Then for all initial conditions $x_0$, the subsequent trajectories of 
+ Assume that the algorithm is well-posed, and the operator inclusion problem $0\in \sum_{i=1}^s F_i(\beta^*)$ is uniquely solved by the pair $(\beta^*, w^*) = (0, 0)$  Then for all initial conditions $x_0$, the subsequent trajectories of 
 ```{math}
 \begin{align}
 \mat{c}{ x_{k+1} \hl {z}_k} &= \mat{c|c}{ \Acl &  \Bcl \hl \Ccl & \Dcl} \mat{c}{ x_{k} \hl {w}_k}, & {w}_k \in  F( {z_k}),
