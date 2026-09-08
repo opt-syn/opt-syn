@@ -206,7 +206,7 @@ perf = spec_h2(GAIN, Omega, iwp, izp);   %GAIN = gamma
 
 Stochastic sensitivity is only certified if  $\rho = 1$ and the oracle input $z$ is independent of $w_p$. In contrast, the $\ell_2$ gain is usable if these conditions are violated.
 
-
+<!-- 
  
 ## Ergodic Convergence
 
@@ -231,7 +231,7 @@ Ergodic convergence is weaker than linear convergence. It can certify properties
 
 :::{warning}
 In the current implementation, Ergodic convergence requires nonstrict feasibility of linear matrix inequalities. In numerical experiments, the maximal eigenvalue of a negative-semidefinite-constrained block is $\approx 10^{-12}$, which is not less than or equal to  $0$. Future developments will try to patch this feasibility issue, in the meantime use with caution.
-:::
+::: -->
 
 
 

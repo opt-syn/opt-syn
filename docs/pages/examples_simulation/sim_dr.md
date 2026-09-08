@@ -48,8 +48,8 @@ The {doc}`System <../usage/problem_formulation/system/index_system>` representin
 0 & 0 & 0 & 0 & 0 & I  \hdl
 0 & 0 & 0 & 0 & \frac{1}{2} I & -\frac{1}{2} I \\
 0 & 0 & 0 & 0 & -\frac{1}{2} I & \frac{1}{2} I \hdl
-0 & 0 & I & 0 & I & 0 \\
-0 & 0 & 0 & I & 0 & I} \mat{c}{w_k^1 \\ w_k^2 \hdl w_{p, k}^1 \\ w_{p, k}^2 \hdl u_{k}^1 \\ u_k^2}, \\
+ I & 0 & I & 0 & 0 & 0 \\
+ 0 & I & 0 & I & 0 & 0 } \mat{c}{w_k^1 \\ w_k^2 \hdl w_{p, k}^1 \\ w_{p, k}^2 \hdl u_{k}^1 \\ u_k^2}, \\
  \text{Douglas-Rachford} & & \mat{c}{x^c_{k+1} \hl u_k^1 \\ u_k^2} &= \mat{c|cc}{I & -\gamma \lambda I & -\gamma \lambda I \hl I &-\gamma I & 0 \\
  I & -2\gamma I & -\gamma I  }   \mat{c}{x^c_{k} \hl y_k^1 \\ y_k^2}.
 \end{align*}

@@ -39,12 +39,12 @@ specification acts on is created by the plant's `perf_output_*` and `add_oracle_
     :members:
 ```
 
-## Peak-to-Peak
+<!-- ## Peak-to-Peak
 
 ```{eval-rst}
 .. mat:autoclass:: spec.spec_p2p
     :members:
-```
+``` -->
 
 ## Passivity
 
@@ -53,9 +53,16 @@ specification acts on is created by the plant's `perf_output_*` and `add_oracle_
     :members:
 ```
 
-## Ergodic Convergence
+## Stochastic Sensitivity
+
+```{eval-rst}
+.. mat:autoclass:: spec.spec_h2
+    :members:
+```
+
+<!-- ## Ergodic Convergence
 
 ```{eval-rst}
 .. mat:autoclass:: spec.spec_ergodic
     :members:
-```
+``` -->

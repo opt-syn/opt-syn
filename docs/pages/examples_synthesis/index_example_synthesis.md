@@ -12,7 +12,6 @@ These examples perform Synthesis of inclusion algorithms.
 ```{toctree}
 :maxdepth: 1
 Channel Memory <syn_channel_memory>
-LASSO <syn_lasso>
 Games with Delay <syn_games_with_delay>
 Unstable Network <syn_unstable_network>
 Remote Quadratic Programming <syn_server>
