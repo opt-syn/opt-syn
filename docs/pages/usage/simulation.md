@@ -128,7 +128,7 @@ The System `sys` executed  by first interconnecting the Network and Controller, 
 \Ccl_{z_p} & \Dcl_{z_p w} & \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k \\ w_{p k}},
 \end{align*}
 ```
-Well-posedness requires that the map $H: = (F^{-1} - \Dcl{zw})^{-1}$ is globally defined and continuous.
+Well-posedness requires that the map $H: = (F^{-1} - \Dcl_{zw})^{-1}$ is globally defined and continuous.
 
 The closed loop state $x$ is the concatenation $x = [x^N, x^c]$. 
 

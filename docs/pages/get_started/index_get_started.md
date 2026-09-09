@@ -25,7 +25,7 @@ Analysis and Synthesis follow similar workflows:
 A constrained optimization problem minimizing a function $f$ subject to a $L_1$ norm constraint is
 ```{math}
 \begin{align*}
-\beta^* \in \text{argmin}_{\norm{\beta}_1 \leq 50} f(\beta).
+\beta^* \in \text{argmin}_{\norm{\beta}_1 \leq 100} f(\beta).
 \end{align*}
 ```
 
@@ -84,14 +84,14 @@ Convergence is not guaranteed with time-delays, because $1.3744 > 1$.
 
 ## Synthesis
 
-Code to generate an optimization algorithm for $m=1, L=10$ is 
-```{literalinclude} ../../examples/getting_started/synthesis_workflow_test.m
+Code to generate an optimization algorithm for $m=1, L=50$ is 
+```{literalinclude} ../../../examples/getting_started/synthesis_workflow_test.m
 :caption: Synthesis without Network Effects
 :language: matlab
 :lines:  1-13
 ```
 
-Convergence is confirmed, because the algorithm has a worst-case linear convergence rate of $0.8676 < 1$.
+Convergence is confirmed, because the algorithm has a worst-case linear convergence rate of $0.8674 < 1$.
 
 Synthesis is then performed when the oracle $\nabla f$ has a delay of one time step before and after evaluation.
 ```{literalinclude} ../../../examples/getting_started/synthesis_workflow_test.m
@@ -100,12 +100,12 @@ Synthesis is then performed when the oracle $\nabla f$ has a delay of one time s
 :lines:  16-21
 ```
 
-Convergence is again confirmed, since $0.9860 > 1$.
+Convergence is again confirmed, since $0.9860 < 1$.
 
 ## Simulation
 
 The delay-1 synthesized algorithm is used to solve an $L_1$-norm-constrained quadratic program with $\beta \in \R^{500}$. The code to perform this execution is 
-```{literalinclude} ../../examples/getting_started/synthesis_workflow_test.m
+```{literalinclude} ../../../examples/getting_started/synthesis_workflow_test.m
 :caption: Execution of a 1-step time-delay synthesized algorithm
 :language: matlab 
 :lines:  25-43

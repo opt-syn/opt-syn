@@ -10,7 +10,7 @@ sys = opt_system({op1, op2});
 man = opt_synthesis(sys); 
 sol = man.bisect();
 
-rho = sol.rho; % 0.8676
+rho = sol.rho; % 0.8674
 
 
 %% with time-delay dynamics

@@ -12,6 +12,7 @@ classdef opt_synthesis < opt_manager_interface
     methods
         function obj = opt_synthesis(sys, config, iqc_op)
             %OPT_SYNTHESIS Constructor for synthesis
+            %
             % Args:
             %   sys: algorithmic system
             %   config: configuration options
