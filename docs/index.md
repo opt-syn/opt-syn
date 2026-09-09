@@ -62,6 +62,7 @@ Examples <pages/examples>
 Documentation <pages/documentation/index_documentation>
 Changelog <pages/changelog/changelog>
 Resources <pages/resources/resources>
+About <pages/about>
 ```
 
 
