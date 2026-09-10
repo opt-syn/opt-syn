@@ -5,7 +5,7 @@
 # from the environment for the first two.
 SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
-SOURCEDIR     = ../src
+SOURCEDIR     = .
 BUILDDIR      = ./_build
 REQFILE = requirements.txt
 
