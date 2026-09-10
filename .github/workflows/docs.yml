@@ -39,7 +39,7 @@ jobs:
         with:
           name: docs-dirhtml
           include-hidden-files: true
-          path: docs/_build/html/
+          path: docs/_build/dirhtml/
           if-no-files-found: error
 
   publish:
