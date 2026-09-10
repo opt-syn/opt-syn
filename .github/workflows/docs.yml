@@ -33,7 +33,7 @@ jobs:
           python -m pip install -r docs/requirements.txt
       - name: Build docs
         run: |
-          make -C docs dirhtml          
+          make -C docs html          
       - name: Upload docs artifact
         uses: actions/upload-artifact@v6
         with:
