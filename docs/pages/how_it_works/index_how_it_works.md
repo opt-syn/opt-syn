@@ -30,7 +30,7 @@ An optimization algorithm is a procedure that generates a sequence of iterates $
  Many common optimization algorithms can be expressed as the interconnection of operators and linear systems {footcite}`wang2011control`. As an example, the gradient descent/forward-step method with stepsize $\gamma > 0$ may be represented by 
 ```{math}
 \begin{align*}
- \mat{c}{x_{k+1} \hl z_k} &= \mat{c|cc}{I & -\gamma \lambda I \hl I & 0 }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{F_1(z_k^1)},
+ \mat{c}{x_{k+1} \hl z_k} &= \mat{c|c}{I & -\gamma \lambda I \hl I & 0 }   \mat{c}{x_{k} \hl w_k}, & \mat{c}{w_k} \in  \mat{c}{F_1(z_k)},
 \end{align*}
 ```
  and the   Douglas-Rachford algorithm {footcite}`douglas1956numerical`   with parameters $\gamma, \lambda \geq 0$ may be represented by 

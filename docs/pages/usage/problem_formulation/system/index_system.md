@@ -20,27 +20,27 @@ where the specific signals are
 *   - 
     - State
     -
-    - Plant Input
+    - Plant input
     -
-    - Plant Output
+    - Plant output
 *   - $x^N$
-    - network
+    - Network
     - $z$
-    - input to operators
+    - Input to operators
     - $w$ 
-    - output from operators
+    - Output from operators
 *   - $x^c$
-    - controller
+    - Controller
     - $z_p$
-    - performance output
+    - Performance output
     - $w_p$
-    - performance input
+    - Performance input
 *   - 
     - 
     - $y$
-    - output to controller
+    - Output to controller
     - $u$
-    - input from controller
+    - Input from controller
 :::
 
 
@@ -87,20 +87,20 @@ Supported operators for simulation include
   - Description
 * - Custom
   - {class}`op_sim` 
-  - implemented by [anonymous functions](https://www.mathworks.com/help/matlab/matlab_prog/anonymous-functions.html)
+  - Implemented by [anonymous functions](https://www.mathworks.com/help/matlab/matlab_prog/anonymous-functions.html)
 * - Quadratic
   - {class}`op_sim_quad`
   - Quadratic function $\frac{1}{2} (x - x^*)^\top M (x - x^*)$
-  * - Least Squares
+* - Least squares
   - {class}`op_sim_lsq`
   - Quadratic function $\frac{1}{2} \norm{Ax - b}^2_2$
 * - $L_\infty$ (hard) 
   - {class}`op_sim_box`
-  - indicator function of  $L_\infty$ ball 
+  - Indicator function of  $L_\infty$ ball 
 * - $L_1$ (hard) 
   - {class}`op_sim_l1_hard`
-  - indicator function of  $L_1$ ball
-* - Linear Quadratic Game
+  - Indicator function of  $L_1$ ball
+* - Linear quadratic game
   - {class}`op_sim_lq_game`
   - Pseudogradient of game, with agent payoffs  $f_j = \frac{1}{2} x^\top Q_j x + b^\top x_j + e_j$  
 ```
