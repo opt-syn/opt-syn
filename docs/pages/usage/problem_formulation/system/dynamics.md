@@ -59,7 +59,7 @@ sys_orbit = opt_system_periodic_orbit(Operator_Class, Network, Controller, M);
 Periodic-orbit systems can be enumerated into periodic systems,  and can then be lifted into LTI systems:
 ```matlab
 sys_per = sys_orbit.export_periodic();
-sys_lti = sys_orbit.periodic_lift();
+sys_lti = sys_per.periodic_lift();
 ```
 
 ## Switched
@@ -82,7 +82,7 @@ Switched systems can model network phenomena such as time-varying delays and com
 
 A system with switched system  networks and controllers can be specified using the command
 ```matlab
-sys_per = opt_system_switched(Operator_Class, Network, Controller, G);
+sys_switch = opt_system_switched(Operator_Class, Network, Controller, G);
 ```
 
 where `G` is the $\{0, 1\}$ adjacency matrix for the graph $\mathcal{G}$. 

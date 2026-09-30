@@ -139,16 +139,16 @@ Setting the `monotone` field to  $\mu \in \R$ is a description that $F_i - \mu \
 The supported subdifferentials are based on properties of proper, closed, convex (p.c.c.) functions. A p.c.c. function $f$ satisfies the properties
 ```{list-table}
 * - Proper
-  - $f(x) > -\infty$ everywhere
+  - $f(x) > -\infty$ everywhere and there is $x$ with $f(x) < \infty$
 * - Closed
   - The set $\{x \mid f(x) \leq \gamma\}$ is closed for all $\gamma \in \R$
 * - Convex
   - $f( \alpha x + (1-\alpha)y) \leq \alpha f(x) + (1-\alpha) f(y)$ for all $\alpha \in [0, 1]$ and $(x, y)$.
 ```
-The subdifferential  of a p.c.c. function $f$ is the set 
+The subdifferential  of a p.c.c. function $f$ at $x$ is the set 
 
 \begin{align*}
-\partial f(x) = \{g \mid f(x) - f(y) \geq \langle g, x-y \rangle, \ \forall (x, y) \}
+\partial f(x) = \{g \mid   f(y) - f(x) \geq \langle g, y-x \rangle \; \forall y \}
 \end{align*}
 
 Indicator functions of closed,  convex sets are p.c.c.
