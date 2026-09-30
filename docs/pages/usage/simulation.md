@@ -23,7 +23,7 @@ sim_result = simulator.sim(T);
 ```
 
 
-By default, algorithm execution will occur with $x_0=0$, and $w_p = 0$. The  `sampler` field of {class}`alg_sim` allows for random generation and external signals. The attributes of `sampler` are:
+By default, algorithm execution will occur with $x_0=0$, and $w_p = 0$. The  `sampler` field of {class}`alg_sim` allows for random generation and external signals. The fields of `sampler` are:
 :::{list-table}
 :header-rows: 1
 * - Field
@@ -42,34 +42,41 @@ By default, algorithm execution will occur with $x_0=0$, and $w_p = 0$. The  `sa
 The output of `alg_sim.sim(T)` is an {class}`alg_sim_out` object. The fields of `alg_sim_out` include
 :::{list-table} 
 :widths: 2 8 2 8 2 8 
+:header-rows: 1
+*   - Field
+    - Description
+    - Field
+    - Description
+    - Field
+    - Description
 *   - `xn`
-    - state of network
+    - State of network
     - `z`
-    - input to operators
+    - Input to operators
     - `w` 
-    - output from operators
+    - Output from operators
 *   - `xi`
-    - state of controller
+    - State of controller
     - `zp`
-    - performance output
+    - Performance output
     - `wp`
-    - performance input
+    - Performance input
 *   - `k`
-    - time index
+    - Time index
     - `y`
-    - output to controller
+    - Output to controller
     - `u`
-    - input from controller
+    - Input from controller
 *   - `f`
-    - function value
+    - Function value
     - `res_w`
-    - optimality error $\norm{\sum_{i=1}^s w^i_k}_2$
+    - Optimality error $\norm{\sum_{i=1}^s w^i_k}_2$
     - `res_z`
-    - consensus error $\norm{z^i_k - z^i_{\text{average}, k}}_2$
+    - Consensus error $\norm{z^i_k - z^i_{\text{average}, k}}_2$
   * - `mode`
-    - subsystem for switched systems
+    - Subsystem for switched systems
     - `param`
-    - problem-dependent parameters
+    - Problem-dependent parameters
     - 
     - 
 :::
@@ -108,7 +115,7 @@ Helper functions of {class}`alg_plotter`  include
     - States, oracles, convergence, function values
     - (`x`, `w`, `res_w`, `f`, `z`, `res_z`)
 *   - {meth}`plot_4`
-    -  oracles, convergence
+    -  Oracles, convergence
     - (`w`, `res_w`, `z`, `res_z`)
 :::
 
@@ -119,38 +126,41 @@ Helper functions of {class}`alg_plotter`  include
 
 ## Details of  Execution
 
-The System `sys` executed  by first interconnecting the Network and Controller, and then interconnecting the possibly nonlinear operator $F$. This is mathematically described by 
+The System `sys` is built  by first interconnecting the Network and Controller, and then interconnecting the possibly nonlinear operator $F$. This is mathematically described by 
 ```{math}
 \begin{align*}
 \text{Operator}: & & w_k & \in F(z_k), \\
-\text{Algorithm}: & & \mat{c}{x_{k+1} \hl z_k \\ z_{p k}} &= \mat{c|cc}{\Acl & \Bcl_z & \Bcl_{z_p} \hl 
+\text{Algorithm}: & & \mat{c}{x_{k+1} \hl z_k \\ z_{p, k}} &= \mat{c|cc}{\Acl & \Bcl_z & \Bcl_{z_p} \hl 
 \Ccl_z & \Dcl_{zw} & \Dcl_{z w_p}  \\
-\Ccl_{z_p} & \Dcl_{z_p w} & \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k \\ w_{p k}},
+\Ccl_{z_p} & \Dcl_{z_p w} & \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k \\ w_{p, k}},
 \end{align*}
 ```
-Well-posedness requires that the map $H: = (F^{-1} - \Dcl_{zw})^{-1}$ is globally defined and continuous.
 
 The closed loop state $x$ is the concatenation $x = [x^N, x^c]$. 
 
+Well-posedness of this interconnection requires that the map $H: = (F^{-1} - \Dcl_{zw})^{-1}$ is globally defined and continuous.
 
-{class}`alg_sim` execution using {meth}`sim`  requires   well-posedness and a block-triangular information structure (closed loop $\Dcl$ matrix). 
+
+
+
+The execution of {class}`alg_sim` using {meth}`sim`  requires the interconnection to be well-posed and to have a block-triangular information structure (closed loop $\Dcl$ matrix). 
 
 Under these conditions, the System can be partitioned as 
 
 \begin{align*}
 \text{Operator}: & & w_k & \in F(z_k), \\
-\text{Algorithm}: & & \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2 \\ \vdots \\ z_k^s \\ z_{p k}} &= \mat{c|cccc:c}{\Acl & \Bcl_{z,1} & \Bcl_{z,2} & \cdots & \Bcl_{z,s} & \Bcl_{z_p} \hl 
-\Ccl_{z 1} & \Dcl_{zw,11} & 0 & \cdots & 0 & \Dcl_{z w_p, 1}  \\
-\Ccl_{z 1} & \Dcl_{zw,21} & \Dcl_{zw,22} & \cdots & 0 & \Dcl_{z w_p, 2}  \\
+\text{Algorithm}: & & \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2 \\ \vdots \\ z_k^s \\ z_{p, k}} &= \mat{c|cccc:c}{\Acl & \Bcl_{z,1} & \Bcl_{z,2} & \cdots & \Bcl_{z,s} & \Bcl_{z_p} \hl 
+\Ccl_{z, 1} & \Dcl_{zw,11} & 0 & \cdots & 0 & \Dcl_{z w_p, 1}  \\
+\Ccl_{z, 2} & \Dcl_{zw,21} & \Dcl_{zw,22} & \cdots & 0 & \Dcl_{z w_p, 2}  \\
 \vdots &  \vdots & \vdots &  \ddots & \vdots & \vdots  \\
-\Ccl_{z 1} & \Dcl_{zw, s1} & \Dcl_{zws2} & \cdots & \Dcl_{zw,ss} & \Dcl_{z w_p s}  \\
-\Ccl_{z_p} & \Dcl_{z_p w,1} & \Dcl_{z_p w, 2} & \cdots & \Dcl_{z_p w, s} & \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s \\ w_{p k}},
+\Ccl_{z, s} & \Dcl_{zw, s1} & \Dcl_{zw, s2} & \cdots & \Dcl_{zw,ss} & \Dcl_{z w_p, s}  \\
+\Ccl_{z_p} & \Dcl_{z_p w,1} & \Dcl_{z_p w, 2} & \cdots & \Dcl_{z_p w, s} & \Dcl_{z_p w_p}} \mat{c}{x_k \hl w_k^1 \\ w_k^2 \\ \vdots \\ w_k^s \\ w_{p, k}},
 \end{align*}
 
 
 <!-- Algorithm simulation assumes that the System forms a well-posed algorithm with a block-lower triangular  -->
 
-The iterative loop for algorithm simulation is to evaluate the equations for each $k \in \N$
+The algorithm is simulated by iteratively evaluating the following equations for each $k = 1, \dots, T$
 ```{math}
 \begin{align}
 w^i_k &= (F_i^{-1} - \Dcl_{zw, ii})^{-1} (\Ccl_i x_k + \textstyle \sum_{j=1}^{i-1} \Dcl_{zw, ij} w^j_k),  & & \forall i \in 1, \ldots, s,\\ 
@@ -170,12 +180,12 @@ The operator $H_i: = (F_i^{-1} - \Dcl_{zw, ii})^{-1}$ can be evaluated using the
   - Operation $z_i \mapsto H_i z_i$
 * - Explicit
   - {meth}`fw`
-  - $\Dcl_{zw, ii} = 0$
+  - $F_i$ single-valued and $\Dcl_{zw, ii} = 0$
   - $z \mapsto F_i(z_i)$,
 * - Implicit
   - {meth}`bw`
   - $\Dcl_{zw,ii}$ is invertible
-  - $z_i \mapsto \Dcl_{zw, ii}^{-1} [z - (I - \Dcl_{zw, ii} F_i)^{-1}(z_i)]$
+  - $z_i \mapsto \Dcl_{zw, ii}^{-1} [(I - \Dcl_{zw, ii} F_i)^{-1}(z_i) - z_i]$
 :::
 
 <!-- If the backward-evaluation  $(I - \Dcl_{ii} F_i)^{-1}$ is available (such as from a  resolvent/proximal operator), then this algorithm execution is tractable. -->
