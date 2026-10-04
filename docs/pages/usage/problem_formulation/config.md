@@ -8,14 +8,14 @@ config = opt_config();
 Configuration options include numerical tolerances and  recovery prereferences. These are detailed in the  {doc}`Configuration Documentation <../../documentation/doc_config>`.
 
 
-## Restricting  Information Structures
+## Restricting  information structures
 
-The primary user-facing configuration option in algorithm synthesis is specification of the sparsity pattern of the controller matrix $D_K$. 
+The primary user-facing configuration option in algorithm synthesis is the specification of the sparsity pattern of the controller matrix $D_K$. 
 
 
-### Background of Information Structure
+### Background of information structure
 
-The well-posed algorithmic interconnection $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)$ is a nonlinear iterative procedure. Computation of  $x_{k+1}$ from $x_k$ for general $(F, \Dcl)$ requires the solution of a nonlinear fixed-point equation, and may be computationally intractable. If $\Dcl$ is block-lower-triangular, the system $(\Acl, \Bcl, \Ccl, \Dcl)$ can be then partitioned as 
+The well-posed algorithmic interconnection $x_{k+1} = \Acl x_k + \Bcl H(\Ccl x_k)$ is a nonlinear iterative procedure. Computation of  $x_{k+1}$ from $x_k$ for general $(F, \Dcl)$ requires the solution of a nonlinear fixed-point equation, and may be computationally intractable. If $\Dcl$ is block-lower-triangular, the system $(\Acl, \Bcl, \Ccl, \Dcl)$ can be partitioned as 
 ```{math}
 \begin{align}
 \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2 \\ \vdots \\ z_k^s} &= \mat{c|cccc}{
@@ -33,7 +33,7 @@ The information structure of the algorithm is the block-sparsity pattern of $\Dc
 
 - If $\Dcl_{ii} = 0$, then $w^i_k$ is explicitly computed from $(x_k, w^1_k, \ldots, w^{i-1}_k)$. 
 
-- If $\Dcl_{ii} \neq 0$, then $w^i_k$ implicitly depends on $(x_k, w^1_k, \ldots, w^{i-1}_k, w^i_k)$.   
+- If $\Dcl_{ii} \neq 0$, then $w^i_k$ implicitly depends on $(x_k, w^1_k, \ldots, w^{i-1}_k)$.   
 
 - If $\Dcl_{ij} = 0$ with $i > j$, then $w^i_k$ does not use information from the previously computed output $w^j_k$.
 
@@ -41,15 +41,15 @@ The information structure of the algorithm is the block-sparsity pattern of $\Dc
 Examples of information structures for $s=2$ operators (with $\bullet$ marking  nonzero entries) are 
 |    | Sequential    | Parallel       |
 | ------: | :-----: | :-------:  |
-| Only Implicit | $\mat{cc}{\bullet & 0 \\ \bullet & \bullet}$ | $\mat{cc}{\bullet & 0 \\ 0 & \bullet}$ |
+| Only implicit | $\mat{cc}{\bullet & 0 \\ \bullet & \bullet}$ | $\mat{cc}{\bullet & 0 \\ 0 & \bullet}$ |
 | Mixed | $\mat{cc}{0 & 0 \\ \bullet & \bullet}, \quad  \mat{cc}{\bullet & 0 \\ \bullet & 0}$ | $ \mat{cc}{0& 0 \\ 0 & \bullet}, \quad   \mat{cc}{\bullet & 0 \\ 0 & 0}$ |
-| Only Explicit | $\mat{cc}{0 & 0 \\ \bullet & 0}$  | $\mat{cc}{0 & 0 \\ 0 & 0}$ |
+| Only explicit | $\mat{cc}{0 & 0 \\ \bullet & 0}$  | $\mat{cc}{0 & 0 \\ 0 & 0}$ |
 
 The sequential schemes each have a $\bullet$ in the lower-left position: $w^2$ is computed based on information from $w^1$. Parallel schemes can evaluate $w^1$ and $w^2$ separately. 
 
 In Analysis, the information structure can be verified by inspection. Synthesis may be constrained to return algorithms with a desired information structure.
 
-### Control of Information Structures
+### Control of information structures
 
 Coarse-grained control on the sparsity of $K$ is performed by setting the vector `config.syn.prox`, indicating which oracles are permitted proximal evaluation. Fine-grained control is achieved by assigning the matrix `config.syn.D_mask`. 
 
@@ -78,13 +78,13 @@ config.syn.D_mask = [0, 0;
                       0, 0]; 
 ```
 
-By default, `config.syn.D_mask` will be an lower-triangular matrix with all ones, permitting all implicit evaluations. `config.syn.prox` will override `config.syn.D_mask` if both are present.`
+By default, `config.syn.D_mask` will be a lower-triangular matrix with all ones, permitting all implicit evaluations. `config.syn.prox` will override `config.syn.D_mask` if both are present.
 
 
-An algorithm with nonzero upper-block-triangular  entries of `D_mask` can be Analyzed or Synthesized. However {{osyn}} cannot guarantee that the resulting algorithm will be well-posed, nor will it be able to {doc}`Simulate <../simulation>` trajectories of an algorithm execution.
+An algorithm with nonzero upper-block-triangular  entries of `D_mask` can be analyzed or synthesized. However {{osyn}} cannot guarantee that the resulting algorithm will be well-posed, nor will it be able to {doc}`simulate <../simulation>` trajectories of an algorithm execution.
 
 
-## Simplified Synthesis Programs
+## Simplified Synthesis programs
 
 Special structures of the IQC synthesis programs allow for simplification of the LMI programs. 
 The supported pairs of simplification methods and dynamical system types are
@@ -116,13 +116,12 @@ config.syn.elimination = false;
 config.syn.reduced_order = false;
 ```
 
-### Matrix Elimination
+### Matrix elimination
 
-If only one performance requirement is present and the matrix $D_K$ is constrained by `config.syn.D_mask` to have block-lower-triangular sparsity, then a triangular {footcite}`scherer1995complete` Matrix Elimination Lemma {footcite}`gahinet1994linear` can be used to remove the some or all of controller variables from the Synthesis problem. 
-A single LMI constraint in Synthesis with the controller variables is replaced by multiple smaller LMI constraints lacking these variables. Both constraint sets have the same feasibility region.
+If only one performance requirement is present and the matrix $D_K$ is constrained by `config.syn.D_mask` to have block-lower-triangular sparsity, then a triangular {footcite}`scherer1995complete` matrix elimination lemma {footcite}`gahinet1994linear` can be used to remove some or all of the controller variables from the synthesis problem, thereby reducing the complexity. After verification or bisection of the performance level $\rho$, the corresponding controller parameters can be reconstructed.
 
-All Synthesis programs the nonlinear  Transformation approach from {footcite}`scherer1997multiobjective` to convexify the search for controllers.
+All synthesis programs apply the nonlinear transformation approach from {footcite}`scherer1997multiobjective` to convexify the search for controllers.
 
-### Reduced-Order Control
+### Reduced-order control
 
-Reduced-Order Control uses the internal model structure of the controllers to lower the number of states in the generated algorithm. This reduced-order control is based on the formulation of {footcite}`korouglu2009generalized`. Reduced-order control also allows for the search over solutions of the Regulator Equations.
+Reduced-order control uses the internal model structure of the controllers to lower the number of states in the generated algorithm. This reduced-order control is based on the formulation of {footcite}`korouglu2009generalized`. Reduced-order control also allows for the search over solutions of the regulator equations.

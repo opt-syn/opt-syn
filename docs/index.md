@@ -55,8 +55,8 @@ Development of {{osyn}} was in part supported by  Deutsche Forschungsgemeinschaf
 :hidden:
 
 Home <self>
-Get Started <pages/get_started/index_get_started>
-How it Works <pages/how_it_works/index_how_it_works>
+Get started <pages/get_started/index_get_started>
+How it works <pages/how_it_works/index_how_it_works>
 Usage <pages/usage/index_usage>
 Examples <pages/examples>
 Documentation <pages/documentation/index_documentation>
