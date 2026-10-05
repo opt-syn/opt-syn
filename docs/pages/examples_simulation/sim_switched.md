@@ -1,6 +1,6 @@
-# Time-Varying Delay
+# Time-varying delay
 
-This example simulates a Projected Gradient Descent algorithm subject to time-varying delays. We aim to solve the constrained optimization problem
+This example simulates a projected gradient descent algorithm subject to time-varying delays. We aim to solve the constrained optimization problem
 
 ```{math}
 \beta^* \in \argmin_{\norm{\beta}_\infty \leq 10} f(\beta),
@@ -109,8 +109,8 @@ Figure [3](#delay-contiguous) plots the algorithm trajectory under contiguous ti
 
 ```{literalinclude} ../../../examples/simulation/sim_time_var_delay.m
 :linenos: true
-:caption: Code for Projected Gradient Descent with time-varying delays
+:caption: Code for projected gradient descent with time-varying delays
 :language: matlab
 ```
 
-Introducing a time-varying delay before evaluation of $\partial f$ as $z_{k-h(k)}^1$ instead of $w_{k-h(k)}^1$ fails the Regulator Equation requirement for algorithm convergence.
+Introducing a time-varying delay before evaluation of $\partial f$ as $z_{k-h(k)}^1$ instead of $w_{k-h(k)}^1$ fails the regulator equation requirement for algorithm convergence.

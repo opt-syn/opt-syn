@@ -1,4 +1,4 @@
-# Noisy Douglas Rachford
+# Noisy Douglas-Rachford
 
 The Douglas-Rachford algorithm is a procedure for solving a two-operator inclusion problem {footcite}`douglas1956numerical`.
 It is characterized by parameters $\gamma, \lambda > 0$, and can be described as the interconnection
@@ -14,12 +14,12 @@ The Douglas-Rachford algorithm is used in this example to solve a composite opti
 \beta^* \in \argmin_{\norm{\beta}_\infty \leq 10} f(\beta)
 ```
 
-The necessary optimality condition for this problem is posed using the operators $F_1 = \partial f$, and $F_2 = \partial \mathbb{I}_{\norm{\cdot}_\infty \leq 10}$ 
+The necessary optimality condition for this problem is posed using the operators $F_1 = \partial f$ and $F_2 = \partial \operatorname{I}_{\norm{\cdot}_\infty \leq 10}$ as
 ```{math}
-0 \in \partial  f(\beta^*) + \partial \mathbb{I}_{\norm{\cdot}_\infty}(\beta^*).
+0 \in \partial  f(\beta^*) + \partial \operatorname{I}_{\norm{\cdot}_\infty}(\beta^*).
 ```
 
-## No Noise
+## Without noise
 The Douglas-Rachford scheme with parameters $\gamma = 0.4, \lambda = 1$ is executed for a problem where $f$ is a convex quadratic (eigenvalue bounds $m = 1, L = 10$). Figure [1](#dr-clean) plots a trajectory of Douglas-Rachford starting from $x_0 = 0$.
 
 :::{figure} _static/dr_clean_dark.png
@@ -40,7 +40,7 @@ The Douglas-Rachford scheme with parameters $\gamma = 0.4, \lambda = 1$ is execu
 ## With Noise
 Noise is then added to the Douglas-Rachford execution. The performance input $w_p$ introduces additive noise
 at the output of the subgradient evaluations. The performance output $z_p$ is the consensus error $\pm \frac{1}{2}(z_1 - z_2)$. 
-The {doc}`System <../usage/problem_formulation/system/index_system>` representing Douglas-Rachford with this noise structure is
+The {doc}`system <../usage/problem_formulation/system/index_system>` representing Douglas-Rachford with this noise structure is
 ```{math}
 \begin{align*}
  \text{Operator} & & \mat{c}{w_k^1 \\ w_k^2} &\in  \mat{c}{F_1(z_k^1) \\  F_2(z_k^2)}, \\
