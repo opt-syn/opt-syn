@@ -1,4 +1,4 @@
-# Remote Quadratic Programming 
+# Remote quadratic programming 
 
 This example considers a strongly convex  optimization problem 
 ```{math}
@@ -16,10 +16,10 @@ L &= \mat{cccccc}{5, 2, 1, 6, 1, \infty}.\\
 
 ```
 
-The Synthesized algorithm to solve this problem must have a block-lower-triangular $\Dcl$ matrix. Synthesis of an algorithm with convergence rate $\rho < 0.7679$ is accomplished by using the code
+The synthesized algorithm to solve this problem must have a block-lower-triangular $\Dcl$ matrix. Synthesis of an algorithm with convergence rate $\rho < 0.7679$ is accomplished by using the code
 ```{literalinclude} ../../../examples/synthesis/syn_server.m
 :linenos: true
-:caption: Composite Quadratic Programming
+:caption: Composite quadratic programming
 :language: matlab
 :lines: 1-16
 ```
@@ -29,7 +29,7 @@ Next, the same optimization  problem must be solved in a remote setting. The net
 
 ```{literalinclude} ../../../examples/synthesis/syn_server_channel.m
 :linenos: true
-:caption: Composite Quadratic Programming with Network Dynamics
+:caption: Composite quadratic programming with network dynamics
 :language: matlab
 :lines: 1-44
 ```

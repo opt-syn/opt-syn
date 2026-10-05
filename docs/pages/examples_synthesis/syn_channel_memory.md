@@ -1,4 +1,4 @@
-#  Channel Memory
+#  Channel memory
 
 This example continues the {doc}`channel memory simulation <../examples_simulation/sim_channel_memory_symmetric>` example.
 
@@ -17,7 +17,7 @@ z^2_k &= u_k^2, & y_k^2 &= w_k^2, & & \forall k \in \N.
 \end{align*}
 ```
 
-Three rounds of Synthesis/Analysis alternation are performed using `order = {1, 1}` and parameter $\alpha = 0.4$. Upper-bounds on the convergence rate $\rho$ over the course of this alternation are
+Three rounds of synthesis/analysis alternation are performed using `order = {1, 1}` and parameter $\alpha = 0.4$. Upper-bounds on the convergence rate $\rho$ over the course of this alternation are
 :::{list-table}
 :header-rows: 1
 * - Round
@@ -35,11 +35,11 @@ Three rounds of Synthesis/Analysis alternation are performed using `order = {1, 
 :::
 
 
-In contrast, the algorithm from {doc}`channel memory simulation <../examples_simulation/sim_channel_memory_symmetric>` is certified as convergent with $\rho < 0.9448$ under the same `order={1, 1}` Analysis method.
+In contrast, the algorithm from {doc}`channel memory simulation <../examples_simulation/sim_channel_memory_symmetric>` is certified as convergent with $\rho < 0.9448$ under the same `order={1, 1}` analysis method.
 
 
 ```{literalinclude} ../../../examples/synthesis/syn_channel_symmetric.m
-:caption: Code for Repeated Synthesis
+:caption: Code for repeated synthesis
 :language: matlab
 :lines:  1-37
 ```
