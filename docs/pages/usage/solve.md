@@ -13,7 +13,7 @@ man_syn = opt_synthesis(sys, config);
 
 
 Three solution modes are available: 
-1. [Single Solution](#single-solution)
+1. [Single solution](#single-solution)
 2. [Bisection](#bisection)
 3. [Alternation](#alternation)
 

@@ -5,7 +5,7 @@ The configuration options are called by
 config = opt_config();
 ```
 
-Configuration options include numerical tolerances and  recovery prereferences. These are detailed in the  {doc}`Configuration Documentation <../../documentation/doc_config>`.
+Configuration options include numerical tolerances and  recovery preferences. These are detailed in the  {doc}`Configuration documentation <../../documentation/doc_config>`.
 
 
 ## Restricting  information structures
@@ -47,7 +47,7 @@ Examples of information structures for $s=2$ operators (with $\bullet$ marking  
 
 The sequential schemes each have a $\bullet$ in the lower-left position: $w^2$ is computed based on information from $w^1$. Parallel schemes can evaluate $w^1$ and $w^2$ separately. 
 
-In Analysis, the information structure can be verified by inspection. Synthesis may be constrained to return algorithms with a desired information structure.
+In analysis, the information structure can be verified by inspection. Synthesis may be constrained to return algorithms with a desired information structure.
 
 ### Control of information structures
 
@@ -84,7 +84,7 @@ By default, `config.syn.D_mask` will be a lower-triangular matrix with all ones,
 An algorithm with nonzero upper-block-triangular  entries of `D_mask` can be analyzed or synthesized. However {{osyn}} cannot guarantee that the resulting algorithm will be well-posed, nor will it be able to {doc}`simulate <../simulation>` trajectories of an algorithm execution.
 
 
-## Simplified Synthesis programs
+## Simplified synthesis programs
 
 Special structures of the IQC synthesis programs allow for simplification of the LMI programs. 
 The supported pairs of simplification methods and dynamical system types are
@@ -93,15 +93,15 @@ The supported pairs of simplification methods and dynamical system types are
 :stub-columns: 1
 * -
   - LTI 
-  - Periodic-Orbit
+  - Periodic-orbit
   - Periodic
   - Switched
-* - Matrix Elimination
+* - Matrix elimination
   - ✔
   - ✔
   - 
   - 
-* - Reduced-Order
+* - Reduced-order
   - ✔
   - ✔
   - 

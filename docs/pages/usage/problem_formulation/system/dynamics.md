@@ -1,13 +1,13 @@
-# Time-Varying Dynamical Systems
+# Time-varying dynamical systems
 
 
-A trajectory $(x, w, z)$ of a Linear Time-Varying (LTV) dynamical system with matrix representation $(\Acl_k, \Bcl_k, \Ccl_k, \Dcl_k)_{k \in \N}$ obeys the relation
+A trajectory $(x, w, z)$ of a linear time-varying (LTV) dynamical system with matrix representation $(\Acl_k, \Bcl_k, \Ccl_k, \Dcl_k)_{k \in \N}$ obeys the relation
 ```{math}
 \mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_k & \Bcl_k \hl \Ccl_k & \Dcl_k } \mat{c}{x_k \\ w_k}, & & \forall k \in \N.
 ```
 
-Linear Time Invariant (LTI) systems are a special case of LTV systems where $(\Acl, \Bcl, \Ccl, \Dcl)$ are constant in time. 
-The {class}`opt_system` class in the {doc}`System <index_system>` page involves networks and controllers that are only  Linear Time Invariant (LTI). 
+Linear time-invariant (LTI) systems are a special case of LTV systems where $(\Acl, \Bcl, \Ccl, \Dcl)$ are constant in time. 
+The {class}`opt_system` class in the {doc}`System <index_system>` page involves networks and controllers that are only  linear time-invariant (LTI). 
 
 This page documents time-varying dynamical systems that are supported by {{osyn}}.
 
@@ -24,7 +24,7 @@ A linear time-varying  system is periodic if there exists an integer $h$ such th
 
 Systems with periodic networks and controllers can be specified using the command
 ```matlab
-sys_per = opt_system_periodic(Operator_Class, Network, Controller);
+sys_per = opt_system_periodic(operator_class, network, controller);
 ```
 
 An $h$-periodic network is stored as an $h$-length cell of {class}`genplant` objects, or as a {class}`genplant_poly` object. 
@@ -39,7 +39,7 @@ sys_lti = sys_per.periodic_lift();
 
 
 
-## Periodic-Orbit
+## Periodic-orbit
 
 A periodic-orbit linear system is an $h$-periodic linear system 
 in which there exists matrices  $(M_x, M_w, M_z)$ such that 
@@ -47,13 +47,13 @@ in which there exists matrices  $(M_x, M_w, M_z)$ such that
 M_x^h &= M_x, \qquad \ M_w^h = M_w,  \qquad M_z^h = M_z, \\
  \mat{c|c}{\Acl_k & \Bcl_k \hl \Ccl_k & \Dcl_k }  &= \mat{c c}{M_x & 0 \\ 0 & M_y}^{-k} \mat{c|c}{\Acl_{0} & \Bcl_{0} \hl \Ccl_{0} & \Dcl_{0} } \mat{c c}{M_x & 0 \\ 0 & M_u}^k, & & \qquad \forall k \in \N.
 ```
-Cyclic Coordinate-Descent algorithms are instances of periodic-orbit algorithms satisfying this simplified structure.
+Cyclic coordinate-descent algorithms are instances of periodic-orbit algorithms satisfying this simplified structure.
 
-The {{osyn}} implementation of periodic-orbit systems is simplified. The matrix $M \in \R^{c \times c}$ must satisfy $M = M^\top, M^h = M$, where $c$ is the coordinate dimension of the Kronecker Structure. All other matrices follow from $M$ by Kronecker structure (e.g. $M_x = I_{n_x/c} \otimes M$).
+The {{osyn}} implementation of periodic-orbit systems is simplified. The matrix $M \in \R^{c \times c}$ must satisfy $M = M^\top, M^h = M$, where $c$ is the coordinate dimension of the Kronecker structure. All other matrices follow from $M$ by Kronecker structure (e.g. $M_x = I_{n_x/c} \otimes M$).
 
 Systems with periodic-orbit  networks and controllers can be specified using the command
 ```matlab
-sys_orbit = opt_system_periodic_orbit(Operator_Class, Network, Controller, M);
+sys_orbit = opt_system_periodic_orbit(operator_class, network, controller, M);
 ```
 
 Periodic-orbit systems can be enumerated into periodic systems,  and can then be lifted into LTI systems:

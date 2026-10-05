@@ -25,7 +25,7 @@ Most specifications have an additional field `rho` discount rate $\rho >0$ as an
 Choosing $\rho < 1$ imposes that the property holds at an exponential rate. 
 
 
-Refer to the  {doc}`Performance Specification Documentation <../../documentation/doc_specs>` for information about the specifications and their interfaces. 
+Refer to the  {doc}`Performance specification documentation <../../documentation/doc_specs>` for information about the specifications and their interfaces. 
 
 
 ## Linear convergence
@@ -95,7 +95,7 @@ M = [Q, S; S', R];
 perf = spec_quad(M, iwp, izp);
 ```
 
-The Synthesis procedure requires that $Q = Q^\top$ and $R \succ 0$. 
+The synthesis procedure requires that $Q = Q^\top$ and $R \succ 0$. 
 
 The following specifications are all specific instances of quadratic performance.
 
@@ -182,7 +182,7 @@ Passivity is obeyed if for all time horizons $T$ with  with $x_0 = 0, x^*(x_0) =
 \end{align*}
 ```
 
-Setting both indices to zero corresponds to classical passivity. Positive indices correspond to the stronger input- or output-strict passivity property, respectively. The performance input and output channels must have the same length.
+Setting both indices to zero corresponds to classical passivity. Positive indices correspond to the stronger input or output strict passivity property, respectively. The performance input and output channels must have the same length.
 
 ```matlab
 % ind_w = nu_w, ind_z = nu_z

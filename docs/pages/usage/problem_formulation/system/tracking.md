@@ -1,4 +1,4 @@
-# Time-Varying Optimal Solutions
+# Time-varying optimal solutions
 
 
 A trajectory $\{\beta^*_k\}$ is a critical path {footcite}`bianchin2026internal` of a time-varying inclusion problem if

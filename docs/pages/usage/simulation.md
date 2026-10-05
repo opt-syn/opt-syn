@@ -7,8 +7,8 @@ Simulation involves evaluating a trajectory of the system starting from an initi
 
 
 :::{seealso}
-- {doc}`Simulation Documentation <../documentation/doc_simulation>` for more details about all objects and routines.
-- {doc}`Simulation Examples <../examples_simulation/index_example_simulation>` for demonstrations.
+- {doc}`Simulation documentation <../documentation/doc_simulation>` for more details about all objects and routines.
+- {doc}`Simulation examples <../examples_simulation/index_example_simulation>` for demonstrations.
 
 :::
 
@@ -29,7 +29,7 @@ By default, algorithm execution will occur with $x_0=0$, and $w_p = 0$. The  `sa
 * - Field
   - Description
 * - `x0`
-  - Initial Condition
+  - Initial condition
 * - `wp`
   - Performance Input  
 * - `param0`
@@ -124,9 +124,9 @@ Helper functions of {class}`alg_plotter`  include
 {doc}`Plotting <../documentation/doc_plotting>` contains a  full list of helper functions and more details.
 :::
 
-## Details of  Execution
+## Details of  execution
 
-The System `sys` is built  by first interconnecting the Network and Controller, and then interconnecting the possibly nonlinear operator $F$. This is mathematically described by 
+The System `sys` is built  by first interconnecting the network and controller, and then interconnecting the possibly nonlinear operator $F$. This is mathematically described by 
 ```{math}
 \begin{align*}
 \text{Operator}: & & w_k & \in F(z_k), \\
@@ -175,7 +175,7 @@ The operator $H_i: = (F_i^{-1} - \Dcl_{zw, ii})^{-1}$ can be evaluated using the
 :::{list-table}
 :header-rows: 1
 * - Evaluation
-  - Used Method
+  - Used method
   - Condition
   - Operation $z_i \mapsto H_i z_i$
 * - Explicit

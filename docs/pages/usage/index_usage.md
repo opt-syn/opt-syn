@@ -22,7 +22,7 @@ Simulation solves an inclusion algorithm $0 \in \sum_{i=1}^{s} F_i(\beta^*)$ by 
 
 
 
-All three tasks model the algorithm as a System ({class}`opt_system`). The System has three main parts: the operators, the network, and the controller.
+All three tasks model the algorithm as a system ({class}`opt_system`). The system has three main parts: the operators, the network, and the controller.
 ```matlab
 sys = opt_system(Operators, Network, Controller);
 ```
@@ -30,7 +30,7 @@ sys = opt_system(Operators, Network, Controller);
 The operators are specified as an $s$-length cell array. These are specific operators $F_i$ in simulation ({class}`op_sim`), or are operator classes in analysis/synthesis (e.g. {class}`op_gen` for set-valued maps, {class}`op_quad` for quadratics). 
 
 
-The network and controller are both state-space dynamical systems. These are  represented through a Generalized Plant construction as {class}`genplant` objects. 
+The network and controller are both state-space dynamical systems. These are  represented through a generalized plant construction as {class}`genplant` objects. 
 
 
 ## Simulation
