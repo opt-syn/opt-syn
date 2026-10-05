@@ -7,7 +7,7 @@ These classes describe valid relations satisfied by  subdifferentials of functio
 
 The non-causal implementations are less conservative, but are more computationally intensive as compared to the causal implementation. 
 
-The `order` supplied to Analysis is a single integer for causal (number of lags), and a pair of integers (number of primal lags, number of dual lags) for non-causal. Causal is equivalent a noncausal implementation with `order` = (number of lags, 0). 
+The `order` supplied to analysis is a single integer for causal (number of lags), and a pair of integers (number of primal lags, number of dual lags) for non-causal. Causal is equivalent a noncausal implementation with `order` = (number of lags, 0). 
 
 ## Non-causal
 

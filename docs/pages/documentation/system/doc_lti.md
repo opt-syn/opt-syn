@@ -1,9 +1,9 @@
-# Linear  Time Invariant Systems
+# Linear  time-invariant systems
 
 
-A Linear Time Invariant system has a representation
+A linear time-invariant system has a representation
 ```{math}
-\mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl & \Bcl \hl \Ccl & \Dcl } \mat{c}{x_k \\ w_k}.
+\mat{c}{x_{k+1} \hl z_k} = \mat{c|c}{\Acl & \Bcl \hl \Ccl & \Dcl } \mat{c}{x_k \hl w_k}.
 ```
 
 ## System
@@ -12,9 +12,11 @@ The algorithmic interconnection is
 ```{math}
 \begin{align*}
 w_k & \in F_k(z_k), \\
+\\
 \mat{c}{x^N_{k+1} \hl z_k \\ y_k} &= \mat{c|cc}{A & B_z & B_u \hl 
 C_z & D_{zd} & D_{zu} \\
 C_y & D_{yd} & D_{yu}} \mat{c}{x_k^N \hl w_k \\ u_k}, \\
+\\
 \mat{c}{\xi_{k+1} \\ u_k} &= \mat{c|c}{\Ac & \Bc \hl \Cc & \Dc } \mat{c}{\xi_k \\ y_k}.
 \end{align*}
 ```
@@ -52,7 +54,7 @@ If these regulator equations fail, then there does not exist a well-posed and co
     :members:
 ```
 
-## LMI Analysis
+## LMI analysis
 
 
 ```{eval-rst}
@@ -60,7 +62,7 @@ If these regulator equations fail, then there does not exist a well-posed and co
     :members:
 ```
 
-## LMI Synthesis
+## LMI synthesis
 
 ```{eval-rst}
 .. mat:autoclass :: system.lti.lmi_synthesis_lti
@@ -68,7 +70,7 @@ If these regulator equations fail, then there does not exist a well-posed and co
 ```
 
 
-## LMI Synthesis, Reduced-Order Control
+## LMI synthesis, reduced-order control
 
 LTI systems allow for reduced-order control synthesis 
 

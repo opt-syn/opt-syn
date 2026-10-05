@@ -1,8 +1,8 @@
-# Plant Templates
+# Plant templates
 
 Three basic types of networks are:
-1. No network dynamics
-2. Time delays between oracle and controller
+1. No network dynamics,
+2. Time delays between oracle and controller,
 3. Randomly generated dynamics.
 
 These three types can be generated using the following commands:

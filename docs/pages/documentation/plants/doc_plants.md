@@ -4,8 +4,8 @@ The network and controller of the algorithmic interconnection are specified by d
 
 ```{toctree}
 :maxdepth: 1
-Generalized Plants <doc_genplant>
-Plant Templates <doc_templates>
+Generalized plants <doc_genplant>
+Plant templates <doc_templates>
 ``` 
 
 

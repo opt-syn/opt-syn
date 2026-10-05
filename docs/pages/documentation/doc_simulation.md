@@ -2,7 +2,7 @@
 
  
 
-Simulation routines are explored in the  {doc}`Simulation <../usage/simulation>` page.
+Simulation routines are explored in the  {doc}`simulation <../usage/simulation>` page.
 
 
 
@@ -48,7 +48,7 @@ The operators are defined by {class}`op_sim` classes. Each operator $F$ has thre
 
 At least one of `fw` and `bw` must be defined.
 
-Function evaluation is supported if the operator $F$ is the subdifferential of a function $f$. When $F$ is the psuedogradient of a game with multiple agents, $f$ can be defined as the vector of payoff functions for each agent. If $f$ is undefined, then `f` returns the empty set `[]`. 
+Function evaluation is supported if the operator $F$ is the subdifferential of a function $f$. When $F$ is the pseudogradient of a game with multiple agents, $f$ can be defined as the vector of payoff functions for each agent. If $f$ is undefined, then `f` returns the empty set `[]`. 
 
 ```{eval-rst}
 .. mat:automodule :: simulator.op_sim
