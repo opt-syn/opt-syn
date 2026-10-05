@@ -11,9 +11,9 @@ Four algorithms to solve this inclusion problem are synthesized.
 2. Forward evaluation of $F_1$, backward evaluation of $F_2$,
 3. A delay of one time step before and after evaluation of $F_1$.
 
-Synthesis is performed for each case without a warm start (`iqc=[]`). The certified convergence rates are $\rho < 0.7163$ for algorithm 1, $\rho < 0.8734$ for algorithm 2, and $\rho < 0.9430$ for algorithm 3.
+Synthesis is performed for each case without a warm start (`iqc=[]`). The certified convergence rates are $\rho < 0.7163$ for Algorithm 1, $\rho < 0.8734$ for Algorithm 2, and $\rho < 0.9430$ for Algorithm 3.
 
-All three are certifiably  convergent, but algorithm 1 has the least worst-case convergence rate.
+All three are certifiably  convergent, but Algorithm 1 has the least worst-case convergence rate.
 Each synthesis is accompanied by an algorithm simulation starting from an initial condition $x_0=0$, empirically demonstrating this speed of convergence.
 
 Figure  [1](#game-bw) plots a trajectory of the backward evaluation algorithm.
