@@ -1,6 +1,6 @@
-# Tracking an Oscillator
+# Channel memory
 
-This example continues the Channel Memory {doc}`simulation <../examples_simulation/sim_channel_memory_symmetric>` demonstration. 
+This example continues the channel memory {doc}`simulation <../examples_simulation/sim_channel_memory_symmetric>` demonstration. 
 
 A two-operator problem is solved over a network with channel memory, parameterized by a forgetting factor $\alpha>0$
 ```{math}
@@ -20,7 +20,7 @@ An $\alpha$-dependent controller
 is used to solve the problem  with values of $\gamma = 0.4, \lambda = 0.2$.
 The operator $F_1$ is the subdifferential of a function in $S_{1, 5}$. The operator $F_2$ is the subdifferential of a function in  $S_{0, \infty}$. 
 
-Figure [1](#alpha-sweep) plots Analysis-computed upper-bounds on $\rho$ as the forgetting factor $\alpha$ increases. The same order is used for each operator.   $\rho=2$ is used as an upper bound in bisection: a rate of $\rho<2$ is certified as a worst-case bound.
+Figure [1](#alpha-sweep) plots computed upper-bounds on $\rho$ as the forgetting factor $\alpha$ increases. The same order is used for each operator.   $\rho=2$ is used as an upper bound in bisection: a rate of $\rho<2$ is certified as a worst-case bound.
 
 :::{figure} _static/channel_memory_alpha_dark.png
 :align: center
@@ -39,7 +39,7 @@ Figure [1](#alpha-sweep) plots Analysis-computed upper-bounds on $\rho$ as the f
 <!-- The operators $F_1 = \partial f$ and $F_2 = \partial \mathbb{I}_{\text{convex set}}$ of the optimization problem satisfy -->
 
 ```{literalinclude} ../../../examples/analysis/ana_delay_memory.m
-:caption: Code for Channel Memory sweep analysis
+:caption: Code for channel memory sweep analysis
 :language: matlab
 :linenos:  true
 :lines: 1-52

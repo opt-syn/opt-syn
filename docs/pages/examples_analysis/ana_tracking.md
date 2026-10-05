@@ -1,8 +1,8 @@
-# Tracking an Oscillator
+# Tracking an oscillator
 
-This example continues the Oscillator {doc}`simulation <../examples_simulation/sim_tracking>` demonstration. 
+This example continues the oscillator {doc}`simulation <../examples_simulation/sim_tracking>` demonstration. 
 
-Figure [1](#track-ana) plots bounds on the convergence rate $\rho$ as $\omega$ is swept in the range $[-\pi, \pi]$. Each Analysis run uses the same orders for each operator. The $\rho=1$ stability boundary is shown by the gray dashed line, convergence is certified if $\rho <1$.
+Figure [1](#track-ana) plots bounds on the convergence rate $\rho$ as $\omega$ is swept in the range $[-\pi, \pi]$. Each analysis run uses the same orders for each operator. The $\rho=1$ stability boundary is shown by the gray dashed line, convergence is certified if $\rho <1$.
 
 :::{figure} _static/track_circle_2_0_sml_dark.png
 :align: center
@@ -55,7 +55,7 @@ Figure [3](#track-ana-nonconv) plots a nonconvergent algorithm trajectory at  $\
 :::
 
 ```{literalinclude} ../../../examples/analysis/track_analysis_sweep.m
-:caption: Code for Oscillator Tracker Analysis at order [2, 0], sweeping over $\omega$
+:caption: Code for the analysis of the oscillator tracker at order [2, 0], sweeping over $\omega$
 :language: matlab
 :linenos:  true
 :lines: 1-53
