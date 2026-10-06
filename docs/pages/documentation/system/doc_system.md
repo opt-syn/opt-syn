@@ -1,6 +1,6 @@
 # Systems
 
-Each type of {doc}`dynamical system <../../usage/problem_formulation/system/index_system>` has a dedicated  collection of routines to pose the Analysis and Synthesis problems. 
+Each type of {doc}`dynamical system <../../usage/problem_formulation/system/index_system>` has a dedicated  collection of routines to pose the analysis and synthesis problems. 
 
 
 The routines are 
@@ -13,15 +13,15 @@ The routines are
 The supported types of dynamical systems are
 ```{toctree}
 :maxdepth: 1
-Linear Time Invariant <doc_lti>
+Linear time-invariant <doc_lti>
 Switched <doc_switched>
 Periodic <doc_periodic>
-Periodic-Orbit <doc_periodic_orbit>
+Periodic-orbit <doc_periodic_orbit>
 ``` 
 
 
 All component routines inherit from the `generic` interface.
-## System (Algorithmic Interconnection)
+## System (algorithmic interconnection)
 
 ```{eval-rst}
 .. mat:autoclass :: system.generic.opt_system_interface   
@@ -30,29 +30,29 @@ All component routines inherit from the `generic` interface.
 
 ## Regulator
 
-Both Analysis and Synthesis require a confirmation of the Regulator Equation.
+Both analysis and synthesis require a verification of the regulator equation.
 ```{eval-rst}
 .. mat:autoclass :: system.generic.regulator_interface
     :members:
 ```
 
 
-For Analysis, the output of the `check_regulator()` function is contained in a separate class. If `check_regulator()` fails, then the algorithmic interconnection is not guaranteed to converge.
+For analysis, the output of the `check_regulator()` function is contained in a separate class. If `check_regulator()` fails, then the algorithmic interconnection is not guaranteed to converge.
 
 ```{eval-rst}
 .. mat:autoclass :: system.generic.reg_cl_out
     :members:
 ```
 
-## LMI Handler
+## LMI handler
 
-These routines are shared by both Analysis and Synthesis.
+These routines are shared by both analysis and synthesis.
 ```{eval-rst}
 .. mat:autoclass :: system.generic.lmi_dispatch_interface
     :members:
 ```
 
-## LMI Analysis 
+## LMI analysis 
 
 ```{eval-rst}
 .. mat:autoclass :: system.generic.lmi_analysis_interface
@@ -61,7 +61,7 @@ These routines are shared by both Analysis and Synthesis.
 ```
 
 
-## LMI Synthesis 
+## LMI synthesis 
 
 ```{eval-rst}
 .. mat:autoclass :: system.generic.lmi_synthesis_interface
@@ -71,9 +71,9 @@ These routines are shared by both Analysis and Synthesis.
 
 
 
-## Dissipation Container
+## Dissipation container
 
-The dissipation constraints are stored in `diss_data`. This container is used to construct the LMIs in Analysis and Synthesis.
+The dissipation constraints are stored in `diss_data`. This container is used to construct the LMIs in analysis and synthesis.
 ```{eval-rst}
 .. mat:autoclass :: manager.diss_data   
     :members:

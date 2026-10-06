@@ -1,17 +1,17 @@
-# Integral Quadratic Constraints
+# Integral quadratic constraints
 
-Input-output sequences of the operators satisfy a family of relations defined by {doc}Integral Quadratic Constraints (IQC).
+Input-output sequences of the operators satisfy a family of relations defined by integral quadratic constraints (IQC).
 
 
  
 
-## IQC Analysis
+## IQC analysis
 
 
-Sequences $(w, z)$ obeying $w_k \in F(z_k)$ are constrained by $F$'s membership in the operator class $\F$. Valid relations among $(w, z)$ may expressed in the framework of Integral Quadratic Constraints (IQC) if $0 \in F(0)$. This IQC methodology is used to certify the Robust Stability portion of the convergence test, the Regulator Equation requirement must be evaluated separately. 
+Sequences $(w, z)$ obeying $w_k \in F(z_k)$ are constrained by $F$'s membership in the operator class $\F$. Valid relations among $(w, z)$ may expressed in the framework of integral quadratic constraints (IQC) if $0 \in F(0)$. This IQC methodology is used to certify the robust stability portion of the convergence test. The regulator equation requirement must be evaluated separately. 
 
 
-### IQCs and Valid Relations
+### IQCs and valid relations
 
 
 
@@ -30,16 +30,16 @@ A sequence $(p, q)$ obeys the IQC $(\Psi, M, X)$ if the relation
 ```
 holds for all time horizons $T \in \N$, whenever  $\Psi$ is driven by the inputs $(p, q)$ starting from the initial condition $\psi_0 = 0$.
 
-### IQCs for Operators
+### IQCs for operators
 
 Every operator class obeys a family of valid relations. Each relation is parameterized by a tuple  $(\Psi, M, X, \ell)$, where  $\ell$ is a  signal transformation matrix 
 ```{math}
-\mat{c}{p_k \\ z_k} = \mat{cc}{\ell_{pq} & \ell_{pw} \\ \ell_{zq} & \ell_{qw}} \mat{c}{q_k \\ w_k},
+\mat{c}{p_k \\ z_k} = \mat{cc}{\ell_{pq} & \ell_{pw} \\ \ell_{zq} & \ell_{zw}} \mat{c}{q_k \\ w_k},
 ```
 and the signals $(p, q)$ derived from $w_k \in F(z_k)$ satisfy the IQC $(\Psi, M, X)$.
 
 
-As an example, if an $m$-strongly convex function $f_0$ obeys  $0 \in \partial f_0(0)$ and $0 = f_0(0)$, then sequences $(w, z)$ with $w_k \in \partial f_0(z_k)$ for all $k \in \N$ satisfy a relation $(\Psi, M, X, \ell)$ defined by
+As an example, if an $m$-strongly convex function $f_0$ obeys  $0 \in \partial f_0(0)$, then sequences $(w, z)$ with $w_k \in \partial f_0(z_k)$ for all $k \in \N$ satisfy a relation $(\Psi, M, X, \ell)$ defined by
 ```{math}
 \begin{align*}
 \Psi_1: \quad & \mat{c}{\psi_{k+1} \hl r_k} = \mat{c|cc}{0& 0 & I \hl
@@ -56,7 +56,7 @@ for any scalar coefficients $\lambda_0, \lambda_1$ satisfying
 ```
 
 
-### Exponential Weighting
+### Exponential weighting
 
 Linear convergence can be established by proving boundedness of an exponentially weighted system.
 
@@ -82,7 +82,7 @@ Valid relations for operators can be adjusted to allow for exponential weighting
 \end{align*}
 ```
 
-### Outlook for Optimization
+### Outlook for optimization
 
 
 IQC descriptions of uncertainties can be used to validate optimization algorithms.
@@ -125,10 +125,10 @@ P - \mat{cc}{X & 0 \\ 0 & 0 } &\succ 0, &
 \end{align*}
 ```
 Boundedness of the $\rho$- weighted $\ov x$ implies linear convergence at rate $\rho$ of the original state $x$ if $\rho \in (0, 1)$. 
-Bisection can be used to minimize the rate $\rho$ in this IQC Analysis problem, thus upper-bounding a worst case linear convergence rate. 
-Conservatism can be reduced by consider higher-order valid IQCs.
+Bisection can be used to minimize the rate $\rho$ in this IQC analysis problem, thus upper-bounding a worst case linear convergence rate. 
+Conservatism can be reduced by considering higher-order valid IQCs.
  
-## IQCS for Analysis
+## IQCs for analysis
 
 The IQC structure used in {{osyn}} for analysis of operators is a tuple $(\Psi, M, X, \ell)$, in which $\Psi$ is structured as 
 
@@ -144,7 +144,7 @@ The IQC structure used in {{osyn}} for analysis of operators is a tuple $(\Psi, 
 
 The analysis IQCs may be tall: the dimensions of $(p^\psi, q^\psi)$ may be larger than the dimensions of $(p, q)$ respectively.
 
-## IQCS for Synthesis
+## IQCs for synthesis
 
 IQC synthesis requires filters in which the dimensions of $(p^\psi, q^\psi)$ and $(p, q)$ are equal. The class of filters used are
 
@@ -160,18 +160,18 @@ IQC synthesis requires filters in which the dimensions of $(p^\psi, q^\psi)$ and
 
 In IQC synthesis, it is required that $\Psi_1, \Psi_2, \Psi_3$ are all stable, and that $\Psi_2$ has a stable inverse. A tall IQC from analysis must be factorized into this square form first. 
 
-## IQC Routines
+## IQC routines
 
-The iqcs routines are `iqc_loop_split` (analysis) and `iqc_loop_factored` (synthesis).
+The IQCs routines are `iqc_loop_split` (analysis) and `iqc_loop_factored` (synthesis).
 
-### Analysis Structure
+### Analysis structure
 
 ```{eval-rst}
 .. mat:autoclass :: iqc.iqc_loop_split   
     :members:
 ```
 
-### Synthesis Structure
+### Synthesis structure
 
 
 
@@ -180,7 +180,7 @@ The iqcs routines are `iqc_loop_split` (analysis) and `iqc_loop_factored` (synth
     :members:
 ```
 
-### Data Container
+### Data container
 
 ```{eval-rst}
 .. mat:autoclass :: iqc.iqc_data_container 

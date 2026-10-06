@@ -1,4 +1,4 @@
-# Time-Varying Optimal Solutions
+# Time-varying optimal solutions
 
 
 A trajectory $\{\beta^*_k\}$ is a critical path {footcite}`bianchin2026internal` of a time-varying inclusion problem if
@@ -21,7 +21,7 @@ The time-varying inclusion problem may be expressed as the existence of a pair $
 {{osyn}} supports time-variation in $\beta^*$ according to linear dynamics. Time-variation in  $w^*$ is not yet supported. This restriction is equivalent to the existence of time-independent operators $F_\bullet$ such that 
 ```{math}
 \begin{align}
- F_k(\beta) = F_{\bullet i}(\beta - \beta^*_k) & & \forall k \in \N.
+ F_{ik}(\beta) = F_{\bullet i}(\beta - \beta^*_k) & & \forall k \in \N.
 \end{align}
 ```
 
@@ -33,9 +33,7 @@ The linear system (signal generator) governing the path $\beta^*$ is described b
 \end{align}
 ```
 
-Tracking of an the optimal solution is accomplished by setting the `tracking` field in `opt_system` to a struct with fields (`Sbeta`, `Rbeta`). 
-
-Time-variation of `w^*` is not yet supported.
+Tracking of the optimal solution is accomplished by setting the `tracking` field in `opt_system` to a struct with fields (`Sbeta`, `Rbeta`). 
 
 :::{seealso}
 The {doc}`Tracking <../../../examples_simulation/sim_tracking>` example executes an algorithm with an oscillating optimal trajectory, with provided code.

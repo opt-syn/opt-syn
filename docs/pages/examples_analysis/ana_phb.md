@@ -1,9 +1,9 @@
-# Proximal Heavy Ball
+# Proximal heavy ball
 
-The Proximal Heavy Ball algorithm is a scheme to solve composite optimization problems $\min_\beta f(\beta) + g(\beta)$ (Sec. 2.5.3. {footcite}`upadhyaya2025automated`). 
+The proximal heavy ball algorithm is a scheme to solve composite optimization problems $\min_\beta f(\beta) + g(\beta)$ (Sec. 2.5.3. {footcite}`upadhyaya2025automated`). 
 
 
- The description of the Proximal Heavy Ball algorithm is with parameters $\gamma, \lambda > 0$ is
+ The description of the proximal heavy ball algorithm with parameters $\gamma, \lambda > 0$ is
 ```{math}
 \begin{align*}
  \mat{c}{x_{k+1}^1 \\ x_{k+1}^2 \hl z_k^1 \\ z_k^2} &= \mat{cc|cc}{ (1+\lambda) I & -\lambda I & -\gamma I & -\gamma I \\
@@ -14,7 +14,7 @@ The Proximal Heavy Ball algorithm is a scheme to solve composite optimization pr
 ```
 
 Analysis is performed to upper-bound the convergence worst-case rate $\rho$ for parameter choices $\gamma = \frac{2}{m+L}$ and $\lambda = 0.65$. 
-The operators $\nabla f$ and $\partial g$ are Analyzed each with orders `[3, 0]` or `[3, 1]`.
+The operators $\nabla f$ and $\partial g$ are analyzed each with orders `[3, 0]` or `[3, 1]`.
 The  parameter $L$ swept in the range $[1, 500]$ with fixed $m=1$. $f$ is restricted to general functions in $S_{m, L}$ or to quadratics in $S_{m, L}$, and $g$ is a member of $S_{0, \infty}$.
 
 
@@ -24,19 +24,19 @@ Figure [1](#phb-quad) plots the computed $\rho$ upper bounds at each order and o
 :align: center
 :class: only-dark
 :name: phb-quad
-*Figure 1:* Estimates of the Proximal Heavy Ball convergence rate
+*Figure 1:* Estimates of the proximal heavy ball convergence rate
 :::
 
 :::{figure} _static/ana_phb_quad_light.png
 :align: center
 :class: only-light
 :name: phb-quad
-*Figure 1:* Estimates of the Proximal Heavy Ball convergence rate
+*Figure 1:* Estimates of the proximal heavy ball convergence rate
 :::
 
 
 ```{literalinclude} ../../../examples/analysis/ana_phb_sweep.m
-:caption: Code for Proximal Heavy Ball sweep analysis
+:caption: Code for proximal heavy ball sweep analysis
 :language: matlab
 :linenos:  true
 ```

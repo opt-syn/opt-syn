@@ -1,7 +1,7 @@
-# Performance Specifications
+# Performance specifications
 
 
-Performance specifications describe constraints on the behavior of the algorithm. Analysis attempts to certify that an algorithm obeys the specification, and Synthesis tries to form an algorithm that obeys the specifications. 
+Performance specifications describe constraints on the behavior of the algorithm. Analysis attempts to certify that an algorithm obeys the specification, and synthesis tries to form an algorithm that obeys the specifications. 
 
 
 
@@ -15,20 +15,20 @@ All specifications have the fields
 *   - Field
     - Description    
 *   - `iwp`
-    - indices of performance input $w_p$
+    - Indices of performance input $w_p$
 *   - `izp`
-    - indices of performance output $z_p$
+    - Indices of performance output $z_p$
 *   - `target`
-    - should this specification be minimized
+    - Should this specification be minimized
 :::
 Most specifications have an additional field `rho` discount rate $\rho >0$ as an argument. 
 Choosing $\rho < 1$ imposes that the property holds at an exponential rate. 
 
 
-Refer to the  {doc}`Performance Specification Documentation <../../documentation/doc_specs>` for information about the specifications and their interfaces. 
+Refer to the  {doc}`Performance specification documentation <../../documentation/doc_specs>` for information about the specifications and their interfaces. 
 
 
-## Linear Convergence
+## Linear convergence
 
 This imposes exponential stability of the iterates at rate $\rho$. For every
 initial condition $x_0$ there is a fixed point $(x^*(x_0), w^*(x_0), z^*(x_0))$ with
@@ -58,14 +58,14 @@ The default specification used if none are supplied (`specs = []`) is `{spec_sta
 Infinite-horizon exponential stability is that for $x_0$, 
 ```{math}
 \begin{align*}
-\lim_{k \rightarrow \infty}\rho^{-k}\mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2
+\lim_{k \rightarrow \infty}\rho^{-k}\mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2 = 0
 \end{align*}
 ```
 
-## Quadratic Performance
+## Quadratic performance
 
 Several  specifications are special cases of general **quadratic supply-rate** conditions on
-$(w_p, z_p)$. These conditions must be respected for all performance input sequence $(w_{p, k})_{k \in \N}$ with a finite $\rho$-weighted &#8467;2 norm  $(\sum_{k=0}^T -\epsilon \rho^{-2k} \norm{w_{p, k}}_2^2 < \infty)$.
+$(w_p, z_p)$. These conditions must be respected for all performance input sequence $(w_{p, k})_{k \in \N}$ with a finite $\rho$-weighted $\ell_2$-norm  $(\sum_{k=0}^\infty \rho^{-2k} \norm{w_{p, k}}_2^2 < \infty)$.
 
 
  A quadratic supply rate condition with respect to matrices $(Q, S, R)$ is the existence of an $\epsilon > 0$ such that 
@@ -95,14 +95,14 @@ M = [Q, S; S', R];
 perf = spec_quad(M, iwp, izp);
 ```
 
-The Synthesis procedure requires that $Q = Q^\top$ and $R \prec 0$. 
+The synthesis procedure requires that $Q = Q^\top$ and $R \succ 0$. 
 
-The below specifications are all specific instances of quadratic performance:
+The following specifications are all specific instances of quadratic performance.
 
-### &#8467;2 Stability
+### $\ell_2$-stability
 
 *Stability and ISS.* Certifies that the performance input has a bounded effect on the
-state.
+state,
 
 ```{math}
 \begin{align*}
@@ -111,7 +111,7 @@ state.
 \end{align*}
 ```
 
-If $\rho \in (0, 1)$, then &#8467;2 stability implies an Input-to-State Stability property {footcite}`sontag1989smooth`, {footcite}`schwenkel2026multi` 
+If $\rho \in (0, 1)$, then $\ell_2$-stability implies an input-to-state stability property {footcite}`sontag1989smooth`, {footcite}`schwenkel2026multi` 
 ```{math}
 \begin{align*}
 \norm{x_k - x^*(x_0)}_2^2 \leq \gamma\, \rho^{2k} \norm{x_0 - x^*(x_0)}_2^2
@@ -120,19 +120,19 @@ If $\rho \in (0, 1)$, then &#8467;2 stability implies an Input-to-State Stabilit
 ```
 
 
-Linear convergence is recovered from Input-to-State Stability when the
+Linear convergence is recovered from input-to-state stability when the
 disturbance vanishes ($w_p= 0$). 
 
 
 Use this when you need the iterates to stay
 bounded and convergent under noise but do not need a specific gain; for a gain bound, use
-$\ell_2$ gain instead.
+$\ell_2$-gain instead.
 
 ```matlab
 perf = spec_l2(iwp);        % no performance output; optional bound: spec_l2(iwp, MU)
 ```
 
-Infinite-horizon  &#8467;2 stability is 
+Infinite-horizon  $\ell_2$-stability is 
 ```{math}
 \begin{align*}
 \limsup_{T \to \infty}
@@ -141,20 +141,20 @@ Infinite-horizon  &#8467;2 stability is
 \end{align*}
 ```
 
-### &#8467;2 Gain
+### $\ell_2$-gain
 
-*Energy-to-energy gain.* Bounds the induced &#8467;2 gain $\gamma$ from the performance
+*Energy-to-energy gain.* Bounds the induced $\ell_2$-gain $\gamma$ from the performance
 input to the performance output,
 
 ```{math}
 \begin{align*}
 \limsup_{T \to \infty}
-  \frac{\sum_{k=0}^{T} \rho^{2k} \norm{z_{p,k}}_2^2}{   \sum_{k=0}^{T} \rho^{-2k} \norm{w_{p,k}}^2_2}
+  \frac{\sum_{k=0}^{T} \rho^{-2k} \norm{z_{p,k}}_2^2}{   \sum_{k=0}^{T} \rho^{-2k} \norm{w_{p,k}}^2_2}
   \; < \; \gamma^2.
 \end{align*}
 ```
 
-For a linear system this, this is the $H_\infty$ gain under a $\rho$-weighting. The &#8467;2 gain is an infinite-horizon penalty.
+For linear systems this is the $\rho$-weighted $H_\infty$-gain. The $\ell_2$-gain is an infinite-horizon penalty.
 
 
 Use it to quantify how strongly a
@@ -182,16 +182,14 @@ Passivity is obeyed if for all time horizons $T$ with  with $x_0 = 0, x^*(x_0) =
 \end{align*}
 ```
 
-Setting both indices to zero requests standard passivity; positive indices request the
-correspondingly stronger input- or output-strict passivity properties. The performance input and
-output channels must have the same length.
+Setting both indices to zero corresponds to classical passivity. Positive indices correspond to the stronger input or output strict passivity property, respectively. The performance input and output channels must have the same length.
 
 ```matlab
 % ind_w = nu_w, ind_z = nu_z
 perf = spec_passivity(ind_w, ind_z, iwp, izp);   
 ```
 
-## Stochastic Sensitivity
+## Stochastic sensitivity
 
 Stochastic sensitivity imposes a mean-square boundedness requirement on the performance output {footcite}`van2021speed`. The performance input sequence $\{w_{p, k}\}$ is a sequence of i.i.d. random variables. These inputs are zero-mean and bounded: there exists a known $\Omega \succ 0$ such that  $\E[w_{p, k}] = 0$ and $\E[w_{p, k} w_{p, k}^\top] \preceq \Omega$ at all $k \in \N$. The algorithm achieves stochastic sensitivity with gain $\gamma \geq 0$ if for all initial conditions $x_0$ and performance inputs $w_p$, it holds that 
 ```{math}
@@ -204,7 +202,7 @@ Stochastic sensitivity is invoked by the command
 perf = spec_h2(GAIN, Omega, iwp, izp);   %GAIN = gamma
 ```
 
-Stochastic sensitivity is only certified if  $\rho = 1$ and the oracle input $z$ is independent of $w_p$. In contrast, the $\ell_2$ gain is usable if these conditions are violated.
+Stochastic sensitivity is only certified if  $\rho = 1$ and the oracle input $z$ is independent of $w_p$. In contrast, the $\ell_2$-gain is usable if these conditions are violated.
 
 <!-- 
  
@@ -236,7 +234,7 @@ In the current implementation, Ergodic convergence requires nonstrict feasibilit
 
 
 
-## Performance for Time-Varying Dynamical Systems
+## Performance for time-varying dynamical systems
 
 The specific performance constraints imposed by `specs` may vary for {doc}`systems with time-variations <system/dynamics>`.
 
@@ -245,6 +243,6 @@ All specifications on this page are used as presented for LTI, periodic, and per
 For switched systems, a performance specification in `specs` imposes a  worst-case bound over all possible switching sequences.
 
 
-## More Specifications
+## More specifications
 
-We plan to implement further performance criteria for both Analysis and Synthesis.
+We plan to implement further performance criteria for both analysis and synthesis.

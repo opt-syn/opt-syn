@@ -1,6 +1,6 @@
-# Tracking an Oscillator
+# Tracking an oscillator
 
-This example involves a time-varying optimization algorithm (from {doc}`Tracking <../usage/problem_formulation/system/tracking>`). The optimal solution $\{\beta^*_k\}$ orbits about a constant point $\beta^*_{\text{center}}$ with a frequency of $\omega = \frac{\pi}{8}$ radians per time step.
+This example involves a time-varying optimization algorithm (from {doc}`tracking <../usage/problem_formulation/system/tracking>`). The optimal solution $\{\beta^*_k\}$ orbits about a constant point $\beta^*_{\text{center}}$ with a frequency of $\omega = \frac{\pi}{8}$ radians per time step.
 
 
 

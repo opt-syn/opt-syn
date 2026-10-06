@@ -9,7 +9,7 @@
 
 The specific subconfiguration options are:
 
-## Numerical Tolerances
+## Numerical tolerances
 
 ```{eval-rst}
 .. mat:autoclass :: config.opt_config_tol 
@@ -38,7 +38,7 @@ The specific subconfiguration options are:
 
 
 ## Bisection
-The bisection options are used only when the Analysis or Synthesis problems are solved in Bisect or Alternating mode. These options are not required if the problem is solved only once, such as at a fixed linear rate $\rho$. 
+The bisection options are used only when the analysis or synthesis problems are solved in bisect or alternating mode. These options are not required if the problem is solved only once, such as at a fixed linear rate $\rho$. 
 
 ```{eval-rst}
 .. mat:autoclass :: config.bisect_opts        

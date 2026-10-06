@@ -1,13 +1,13 @@
-# Noisy Unstable Network
+# Noisy unstable network
 
 This example solves a composite optimization problem with three functions
 ```{math}
-\beta^* \in \argmin f(\beta) + \frac{1}{2}\norm{\beta - b_0}_2^2 + \mathbb{I}_{\mathcal{Z}}(\beta)
+\beta^* \in \argmin f(\beta) + \frac{1}{2}\norm{\beta - b_0}_2^2 + \operatorname{I}_{\mathcal{Z}}(\beta)
 ```
 
-The three functions in the sum are respectively in the classes $S_{m, L}, S_{1, 1}, S_{0, \infty}$. 
+The three functions in the sum are in the classes $S_{m, L}, S_{1, 1}, and S_{0, \infty}$, respectively. 
 
-The evaluation of $\nabla f$ is inexact $(w = \nabla f(z) + w_p)$, and the transmission  of these noisy gradients occur over an unstable communication channel
+The evaluation of $\nabla f$ is inexact $(w = \nabla f(z) + w_p)$, and the transmission  of these noisy gradients occurs over an unstable communication channel
 ```{math}
 \begin{align*}
 \mat{c}{x^N_{k+1} \hl z^1_k \\ y^1_k} = \mat{cc|cc}{1.2 I & 0 & I & 0\\0 & -0.2 I & 0 & I \hl 0 & I & 0 & 0 \\ I & 0 & 0 & 2 I} \mat{c}{x^N_{k} \hl w^1_k \\ u^1_k}.
@@ -16,7 +16,7 @@ The evaluation of $\nabla f$ is inexact $(w = \nabla f(z) + w_p)$, and the trans
 
 
 
-Synthesis is performed with $m=1, L=3$. Only the nonsmooth term $\mathbb{I}_{\mathcal{Z}}$ is evaluated implicitly. The overall algorithm satisfy an $\ell_2$-stability specification at minimal rate $\rho$.
+Synthesis is performed with $m=1, L=3$. Only the nonsmooth term $\operatorname{I}_{\mathcal{Z}}$ is evaluated implicitly. The overall algorithm satisfy an $\ell_2$-stability specification at minimal rate $\rho$.
 
 
  The resulting controller has a worst-case performance of $\rho < 0.9896$. The algorithm is simulated starting at $x_0=0$, for a problem where $f$ is a randomly generated quadratic and $\mathcal{Z}$ is an $L_1$-ball with radius $50$.
@@ -56,7 +56,7 @@ Figure [2](#state) plots the states, oracle input, oracle output over this execu
 
 
 
-Figure [3](#track) plots the tracking errors of the algorithm based on the Regulator Equation solutions.
+Figure [3](#track) plots the tracking errors of the algorithm based on the regulator equation solutions.
 :::{figure} _static/unstable_3_tracking_dark.png
 :align: center
 :class: only-dark

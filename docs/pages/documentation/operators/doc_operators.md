@@ -9,12 +9,12 @@ listed in {doc}`Operators <../../usage/problem_formulation/system/index_system>`
 
 ```{toctree}
 :maxdepth: 1
-Set-Valued Maps <doc_set_valued>
+Set-valued maps <doc_set_valued>
 Subdifferentials <doc_sml>
-Gradients of Quadratics <doc_quadratic>
+Gradients of quadratics <doc_quadratic>
 ``` 
 
-## Common Routines
+## Common routines
 
 All operator classes share common routines:
 ```{eval-rst}

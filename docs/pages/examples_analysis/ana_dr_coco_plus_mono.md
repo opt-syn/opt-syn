@@ -1,7 +1,7 @@
-# Cocoercive plus Strongly Monotone
+# Cocoercive plus strongly monotone
 
-This example involves finding the solution to a two-operator inclusion problem, where $F_1$ is $\beta$-cocoercive and $F_1$ is $\mu$-strongly maximal monotone.
-The Douglas-Rachford Algorithm with parameters $\lambda = 1, \gamma = 1$ is used to solve this   problem,
+This example involves finding the solution to a two-operator inclusion problem, where $F_1$ is $\beta$-cocoercive and $F_2$ is $\mu$-strongly maximal monotone.
+The Douglas-Rachford algorithm with parameters $\lambda = 1, \gamma = 1$ is used to solve this problem,
 ```{math}
 \begin{align*}
  \mat{c}{x_{k+1} \hl z_k^1 \\ z_k^2} &= \mat{c|cc}{I & - I & - I \hl I &- I & 0 \\
@@ -12,10 +12,10 @@ The Douglas-Rachford Algorithm with parameters $\lambda = 1, \gamma = 1$ is used
 The explicit minimal rate $\rho$ for this Douglas Rachford algorithm is (Corollary 4.2{footcite}`ryu2020operator`)
 \begin{align*}
 \rho_{\text{best}} = \begin{cases} 
-\abs{1-\frac{\beta}{\beta+1}} & & \beta^2 + \mu \beta + \beta \leq 0 \\
-\abs{1-\frac{\1 + \mu\beta}{(\mu+1)(\beta+1)}} & & \mu \beta - \mu - \beta \leq 0 \\
-\abs{1 - \frac{\mu}{\mu+1}} & & \mu^2 + \mu \beta + \mu - \beta \leq 0 \\
-\frac{1}{2} \frac{\beta + \mu}{\sqrt{\beta \mu(\beta + \mu + 1)}} & & \text{else}. \\
+\abs{1-\frac{\beta}{\beta+1}} & & \text{if} \; \beta^2 + \mu \beta + \beta \leq 0, \\
+\abs{1-\frac{1 + \mu\beta}{(\mu+1)(\beta+1)}} & & \text{if}\; \mu \beta - \mu - \beta \leq 0, \\
+\abs{1 - \frac{\mu}{\mu+1}} & & \text{if}\; \mu^2 + \mu \beta + \mu - \beta \leq 0, \\
+\frac{1}{2} \frac{\beta + \mu}{\sqrt{\beta \mu(\beta + \mu + 1)}} & & \text{otherwise}. \\
 \end{cases}
 \end{align*}
 
@@ -26,17 +26,17 @@ Analysis is performed to numerically estimate this minimal rate at order `{1, 1}
 :align: center
 :class: only-dark
 :name: dr-est-sum
-*Figure 1:* Estimates of the Douglas Rachford Convergence Rate
+*Figure 1:* Estimates of the Douglas Rachford convergence rate
 :::
 
 :::{figure} _static/dr_mono_plus_coco_light.png
 :align: center
 :class: only-light
 :name: dr-est-sum
-*Figure 1:* Estimates of the Douglas Rachford Convergence Rate
+*Figure 1:* Estimates of the Douglas Rachford convergence rate
 :::
 
-Noise is then introduced into the Douglas Rachford execution. The performance input $w_p$ introduces a shift at the input of each oracle $F_i$. The performance output $z$ is the optimality error $z_{p, k} := w^1_k + w^2_k$. Figure [2](#only-light) plots the $\ell_2$ gain between $w_p$ and $z_p$ as a function of the cocoercivity parameter. The gain rises as the cocoercivity parameter decreases. 
+Noise is then introduced into the Douglas Rachford execution. The performance input $w_p$ introduces a shift at the input of each oracle $F_i$. The performance output $z_p$ is the optimality error $z_{p, k} := w^1_k + w^2_k$. Figure [2](#only-light) plots the $\ell_2$ gain between $w_p$ and $z_p$ as a function of the cocoercivity parameter. The gain rises as the cocoercivity parameter decreases. 
 
 
 :::{figure} _static/ana_dr_coco_mono_gain_dark.png

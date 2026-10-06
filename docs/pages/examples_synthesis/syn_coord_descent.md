@@ -1,23 +1,23 @@
-# Coordinate Descent
+# Coordinate descent
 
-This examples Synthesizes cyclic coordinate descent algorithms, continuing from the previous {doc}`simulation <../examples_simulation/sim_coord_descent>` and {doc}`Analysis <../examples_analysis/ana_coord_descent>` examples.
+This example synthesizes cyclic coordinate descent algorithms, continuing from the previous {doc}`simulation <../examples_simulation/sim_coord_descent>` and {doc}`analysis <../examples_analysis/ana_coord_descent>` examples.
 
 
 
 
 Two types of cyclic coordinate descent algorithms are the considered in this demonstration:
-1. Full Knowledge: the entire vector  $\nabla f(\beta_k)$ is known,
-2. Partial Knowledge: only the actively updated portion $[\nabla f(\beta_k)]^i$.
+1. Full knowledge: the entire vector  $\nabla f(\beta_k)$ is known,
+2. Partial knowledge: only the actively updated portion $[\nabla f(\beta_k)]^{i(k)}$ is known.
 
 The reference coordinate descent algorithm in the prior examples is 
 ```{math}
 \begin{align}
-    \beta^{i(k)}_{k+1} = \beta^{i(k)}_{k} -\gamma \   [\nabla f(\beta_k)]^i.
+    \beta^{i(k)}_{k+1} = \beta^{i(k)}_{k} -\gamma \   [\nabla f(\beta_k)]^{i(k)}.
 \end{align}
 ```
-This reference algorithm has Partial Knowledge.
+This reference algorithm has partial knowledge.
 
-Synthesis is performed to design a $c$-block cyclic coordinate descent algorithm with respect to a function $f \in S_{1, 2}$. Figure [1](#coord-6) plots the upper bounds on the convergence rate $\rho$ as $c$ increases. Algorithms with Partial Knowledge (orange, top) have a higher worst-case convergence rate when compared against algorithms with Full Knowledge (blue, bottom) at $c>1$. The two synthesized algorithms are equal in the trivial case of $c=1$.
+Synthesis is performed to design a $c$-block cyclic coordinate descent algorithm with respect to a function $f \in S_{1, 2}$. Figure [1](#coord-6) plots the upper bounds on the convergence rate $\rho$ as $c$ increases. Algorithms with partial knowledge (orange, top) have a higher worst-case convergence rate when compared against algorithms with full knowledge (blue, bottom) at $c>1$. The two synthesized algorithms are equal in the trivial case of $c=1$.
 
 
 

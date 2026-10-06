@@ -1,9 +1,9 @@
-# Periodic-Orbit Systems
+# Periodic-orbit systems
 
 
-A Periodic-orbit system has a representation
+A periodic-orbit system has a representation
 ```{math}
-\mat{c}{x_{k+1} \\ z_k} = \mat{c|c}{\Acl_k & \Bcl_k \hl \Ccl_k & \Dcl_k } \mat{c}{x_k \\ w_k}.
+\mat{c}{x_{k+1} \hl z_k} = \mat{c|c}{\Acl_k & \Bcl_k \hl \Ccl_k & \Dcl_k } \mat{c}{x_k \hl w_k}.
 ```
 
 in which there exists an integer $h$ and $h$-periodic $(M_x, M_w, M_z)$ such that for all $k \in \N$, we have
@@ -17,10 +17,10 @@ in which there exists an integer $h$ and $h$-periodic $(M_x, M_w, M_z)$ such tha
 The algorithmic interconnection for a periodic system is 
 ```{math}
 \begin{align*}
-w_k & \in F_k(z_k), \,  \\
+w_k & \in F_k(z_k), \,  \\ \\
  \mat{c}{x^N_{k+1} \hl z_k \\ y_k} &= \mat{c|cc}{A_{k} & B_{k, \,  z} & B_{k, \,  u} \hl 
-C_{k, \,  z} & D_{k, \,  zd} & D_{k, \,  zu} \\ C_{k, \,  y} & D_{k, \,  yd} & D_{k, \,  yu}} \mat{c}{x_k^N \hl w_k \\ u_k}, \\
- \mat{c}{\xi_{k+1} \\ y_k} &=  \mat{c|c}{A_{K, k} & B_{K, k} \hl C_{K, k} & D_{K, k} } \mat{c}{\xi_k \\ y_k}
+C_{k, \,  z} & D_{k, \,  zd} & D_{k, \,  zu} \\ C_{k, \,  y} & D_{k, \,  yd} & D_{k, \,  yu}} \mat{c}{x_k^N \hl w_k \\ u_k}, \\ \\
+ \mat{c}{\xi_{k+1} \hl y_k} &=  \mat{c|c}{A_{K, k} & B_{K, k} \hl C_{K, k} & D_{K, k} } \mat{c}{\xi_k \hl y_k}
 \end{align*}
 ``` 
 
@@ -57,7 +57,7 @@ If these regulator equations fail, then there does not exist a well-posed and co
     :members:
 ```
 
-## LMI Analysis
+## LMI analysis
 
 
 ```{eval-rst}
@@ -65,14 +65,14 @@ If these regulator equations fail, then there does not exist a well-posed and co
     :members:
 ```
 
-## LMI Synthesis
+## LMI synthesis
 
 ```{eval-rst}
 .. mat:autoclass :: system.periodic_orbit.lmi_synthesis_periodic_orbit
     :members:
 ```
 
-## LMI Synthesis, Reduced-Order Control
+## LMI synthesis, reduced-order control
 
 LTI systems allow for reduced-order control synthesis 
 

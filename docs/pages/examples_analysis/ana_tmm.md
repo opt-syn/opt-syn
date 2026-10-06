@@ -1,12 +1,11 @@
 # Triple Momentum
 
-The Triple Momentum (TMM) algorithm is an explicit first-order accelerated method to optimize a function $f \in S_{m, L}$ {footcite}`van2017fastest`. The worst-case linear convergence rate for the triple momentum scheme is $\rho \leq 1 - \sqrt{\frac{m}{L}}$ .
+The Triple Momentum (TMM) algorithm is an explicit first-order accelerated method to optimize a function $f \in S_{m, L}$ {footcite}`van2017fastest`. The worst-case linear convergence rate for the Triple Momentum scheme is $\rho \leq 1 - \sqrt{\frac{m}{L}}$ .
 
 
 The Triple Momentum method was extended to composite optimization in {footcite}`upadhyaya2026optimal`. The composite triple momentum algorithm minimizes the sum of functions $f_1 + f_2$  with $f_1 \in S_{m, L}$ and $f_2 \in S_{0, \infty}$, and maintains the worst-case convergence rate $\rho \leq 1 - \sqrt{\frac{m}{L}}$.
 
-Analysis is used to numerically verify the rate  $1 - \sqrt{\frac{m}{L}}$ using IQCs of order `[1, 1]`.  Figure  [1](#tmm-sweep) plots the results of the a parameter sweep. The left plots are the computed upper bounds (solid) v.s. the true rate (dotted lines). The right plots are the error between the computed bounds and the true rate. The top plots report a sweep of $m \in [0.0033
-, 1]$ with $L=1$. The bottom plots report a sweep of $L \in [1, 1/0.0033]$ ($L \in [1,303.0303]$). 
+Analysis is used to numerically verify the rate  $1 - \sqrt{\frac{m}{L}}$ using IQCs of order `[1, 1]`.  Figure  [1](#tmm-sweep) plots the results of a parameter sweep. The left plots are the computed upper bounds (solid) as well as the true rates (dotted lines). The right plots are the error between the computed bounds and the true rate. The top plots report a sweep of $m \in [0.0033, 1]$ with $L=1$. The bottom plots report a sweep of $L \in [1, 1/0.0033] = [1,303.0303]$. 
 
 :::{figure} _static/tmm_ana_sweep_dark.png
 :align: center

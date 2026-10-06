@@ -1,4 +1,4 @@
-# How it Works
+# How it works
 
 {{osyn}} analyzes and synthesizes optimization algorithms using concepts from robust control. This page summarizes optimization/inclusion problems, convergence conditions, and the mathematical certificates provided by {{osyn}}.
  
@@ -20,17 +20,17 @@ Zero-inclusion problems include solution concepts such as variational inequaliti
 
 
 
-## Optimization Algorithms
+## Optimization algorithms
 
 
 
 An optimization algorithm is a procedure that generates a sequence of iterates $(w_k, z_k)_{k \in \N}$ satisfying $w^i_k \in F_i(z^i_k)$.
 
 
- Many common optimization algorithms can be expressed as the interconnection of operators and linear systems {footcite}`wang2011control`. As an example, the gradient descent/forward-step method with stepsize $\gamma > 0$ may be represented by 
+Many common optimization algorithms can be expressed as the interconnection of operators and linear systems {footcite}`wang2011control`. As an example, the gradient descent/forward-step method with stepsize $\gamma > 0$ may be represented by 
 ```{math}
 \begin{align*}
- \mat{c}{x_{k+1} \hl z_k} &= \mat{c|cc}{I & -\gamma \lambda I \hl I & 0 }   \mat{c}{x_{k} \hl w_k^1 \\ w_k^2}, & \mat{c}{w_k^1 \\ w_k^2} \in  \mat{c}{F_1(z_k^1)},
+ \mat{c}{x_{k+1} \hl z_k} &= \mat{c|c}{I & -\gamma \lambda I \hl I & 0 }   \mat{c}{x_{k} \hl w_k}, & \mat{c}{w_k} \in  \mat{c}{F_1(z_k)},
 \end{align*}
 ```
  and the   Douglas-Rachford algorithm {footcite}`douglas1956numerical`   with parameters $\gamma, \lambda \geq 0$ may be represented by 
@@ -45,13 +45,13 @@ An optimization algorithm is a procedure that generates a sequence of iterates $
 Figure [1](#fig-dr) visualizes  executions of the Douglas-Rachford algorithm to solve the optimization problem $\min f(\beta) + \norm{\beta}_1$ for a quadratic $f$.
 
 :::{figure} img/dr_trace.webp
-:alt: Multiple trajectories of the Douglas-Rachford Algorithm
+:alt: Multiple trajectories of the Douglas-Rachford algorithm
 :name: fig_dr
 
  *Figure 1:* The optimal solution is the black circle. The visualized curves are the outputs $\{z_k^2\}_{k \in \N}$ starting from random initial conditions $x_0$.
 :::
 
-## Convergence Properties
+## Convergence properties
 
 
 The algorithm is well-posed if the trajectory $(x_k, w_k, z_k)_{k \in \N}$ is unique for all initial conditions $x_0$.
@@ -65,25 +65,24 @@ A fixed-point of the algorithm is a tuple $(x^*, w^*, z^*)$ satisfying
 ``` 
 
 The algorithm is convergent if for every initial condition $x_0$, there exists a fixed point $(x^*(x_0), w^*(x_0), z^*(x_0))$ such that 
-1. Optimality: $\sum_{i=1}^s w^{*,i}(x_0) = 0$ 
-2. Consensus:  $z^{*1}(x_0) = z^{*2}(x_0) = \ldots = z^{*s}(x_0)$
-3. Attractivity:  $\lim_{k\rightarrow \infty} \mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2 = 0$.
+1. Optimality: $\sum_{i=1}^s w^{*,i}(x_0) = 0$,
+2. Consensus:  $z^{*1}(x_0) = z^{*2}(x_0) = \ldots = z^{*s}(x_0)$,
+3. Attractivity:  $\lim_{k\rightarrow \infty} \mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2 = 0$,
 
-
-It is linearly convergent  with rate $\rho \in (0, 1)$ if there exists a constant $\gamma_0> 0$ with
+hold. It is linearly convergent  with rate $\rho \in (0, 1)$ if there exists a constant $\gamma_0> 0$ with
 ```{math}
 \begin{align*}
  \mav{c}{x_k - x^*(x_0) \\ w_k - w^*(x_0) \\ z_k - z^*(x_0)}_2  \leq \gamma_0 \rho^{k} \norm{x_0 - x^*(x_0)}_2 & & \forall k \in \N, \ x_0.
 \end{align*}
 ``` 
 
-## Checking Convergence
+## Checking convergence
 
-{{osyn}} certifies linear convergence of well-posed algorithms by checking two conditions: Robust Stability and the Solvability of Regulator Equations. This theory holds for inclusion problems with unique fixed-point pairs $(\beta^*, w^*)$ {footcite}`miller2026structure`. 
+{{osyn}} certifies linear convergence of well-posed algorithms by checking two conditions: robust stability and the solvability of regulator equations. This theory holds for inclusion problems with unique fixed-point pairs $(\beta^*, w^*)$ {footcite}`miller2026structure`. 
 
-Robust Stability ensures convergence to 0 if 0 is the solution to the inclusion problem ($0 \in F_i(0)$ holds for all operators $F_i$). Solvability of the Regulator Equations ensures that a nonzero solution to the inclusion problem can be shifted into a zero solution of a zero-centered problem (error coordinates).
+Robust stability ensures convergence to 0 if 0 is the solution to the inclusion problem ($0 \in F_i(0)$ holds for all operators $F_i$). Solvability of the regulator equations ensures that a nonzero solution to the inclusion problem can be shifted into a zero solution of a zero-centered problem (error coordinates).
 
-### Condition 1: Robust Stability
+### Condition 1: Robust stability
  Assume that the algorithm is well-posed, and the operator inclusion problem $0\in \sum_{i=1}^s F_i(\beta^*)$ is uniquely solved by the pair $(\beta^*, w^*) = (0, 0)$  Then for all initial conditions $x_0$, the subsequent trajectories of 
 ```{math}
 \begin{align}
@@ -93,7 +92,7 @@ Robust Stability ensures convergence to 0 if 0 is the solution to the inclusion 
   satisfy $\lim_{k \rightarrow \infty} \rho^{-k} x_k = 0$.
 
 
-### Condition 2: Solvability of Regulator Equations
+### Condition 2: Solvability of regulator equations
  For any pair $(\beta^*, w^*)$ with $\sum_{i=1}^s w^{*,i} = 0$, there exists a state $x^*$ satisfying 
 ```{math}
 \begin{align}
@@ -107,16 +106,16 @@ Robust Stability ensures convergence to 0 if 0 is the solution to the inclusion 
 
 
 
-The Robust Stability criterion is an intensive dynamical test, and will be verified using Integral Quadratic Constraints and Linear Matrix Inequality methods {footcite}`megretski2002system` {footcite}`stoorvogel2000performance`. In contrast, the  Regulator Equation can be easily checked by solving a linear system of  equations. Uniqueness of the state $x^*$ is provided by detectability of $(\Acl, \Ccl)$.
+The robust stability criterion is an intensive dynamical test, and will be verified using integral quadratic constraints and linear matrix inequality methods {footcite}`megretski2002system` {footcite}`stoorvogel2000performance`. In contrast, the  regulator equation can be easily checked by solving a linear system of  equations. Uniqueness of the state $x^*$ follows if $(\Acl, \Ccl)$ is detectable.
 
-The Regulator Equation requirement is independent of the specific operators in $F$. Robust Stability is verified for classes of operators (e.g. $F_2$ is maximal monotone).
+The regulator equation requirement is independent of the specific operators in $F$. Robust stability is verified for classes of operators (e.g. $F_2$ is maximal monotone).
 
 
-Fullfillment of the Regulator Equation and the {{osyn}}-verified Robust Stability requrirements imply that the algorithm is a fixed-point encoding {footcite}`ryu2020uniqueness`: every fixed point of the algorithm is a fixed point of the inclusion problem.
+Fullfillment of the regulator equation and the {{osyn}}-verified robust stability condition imply that the algorithm is a fixed-point encoding {footcite}`ryu2020uniqueness`: every fixed point of the algorithm is a fixed point of the inclusion problem.
 
-## Networked Setting
+## Networked setting
 
-Synthesis is posed in terms of a Network separating the oracle $F$ to the controller (you). These networks can model time-delays, cross-talk, channel memory, and other phenomena. The default case of no network dynamics (direct connection to the oracle $F$) is 
+Synthesis is posed in terms of a network separating the oracle $F$ to the controller (you). These networks can model time-delays, cross-talk, channel memory, and other phenomena. The default case of no network dynamics (direct connection to the oracle $F$) is 
 
 ```{math}
 \mat{c}{
@@ -128,9 +127,9 @@ Synthesis is posed in terms of a Network separating the oracle $F$ to the contro
 
 A more general network can be modeled as a linear system. The interconnection between the network and a controller forms the algorithm that interfaces the operator $F$. 
 
-The Regulator Equation condition in the networked setting can be expanded into 
+The regulator equation condition in the networked setting can be expanded into 
 
-*Regulator Equation*:  For any $(\beta^*, w^*)$ with $\sum_{i=1}^s w^{*,i} = 0$, there exists a 
+*Regulator equation*:  For any $(\beta^*, w^*)$ with $\sum_{i=1}^s w^{*,i} = 0$, there exists a 
 ```{math}
 \begin{align}    
      \text{Network}: & &    \mat{c|cc:c}{A & 0 & B_w & B_y \hl
@@ -143,7 +142,7 @@ The Regulator Equation condition in the networked setting can be expanded into
 
 If there does not exist a $(\Pi, \Gamma, \Phi)$ triple satisfying the top equation, then a convergent optimization algorithm cannot be found.
 
-Under the Convergence and Regulator Equation conditions, convergence in all signals is achieved as
+Under the convergence and regulator equation conditions, convergence in all signals is achieved as
 ```{math}
 \begin{align}
     \lim_{k \rightarrow \infty}
@@ -152,15 +151,15 @@ Under the Convergence and Regulator Equation conditions, convergence in all sign
 \end{align}
 ```
 
-Controllers are formed by the interconnection of an internal model {footcite}`francis1976internal` {footcite}`stoorvogel2000performance` and a designed subcontroller. The internal model is based on the solutions $(\Pi, \Gamma, \Phi)$ of the regulator equations, and ensures that the Regulator Equation requirement is satisfied for *any* subcontroller.
+Controllers are formed by the interconnection of an internal model {footcite}`francis1976internal` {footcite}`stoorvogel2000performance` and a designed subcontroller. The internal model is based on the solutions $(\Pi, \Gamma, \Phi)$ of the regulator equations, and ensures that the regulator equation condition is satisfied for *any* subcontroller.
 
-The subcontroller must then ensure that the overall procedure is well-posed and  obeys  Robust Stability condition. Solving for the subcontroller can be accomplished through  IQC synthesis methods {footcite}`veenman2011iqc`.
+The subcontroller must then ensure that the overall procedure is well-posed and  obeys  robust stability condition. Solving for the subcontroller can be accomplished through  IQC synthesis methods {footcite}`veenman2011iqc`.
 Synthesis may also involve selecting a solution $(\Pi, \Gamma, \Phi)$ to the regulator equations {footcite}`scherer1997multiobjective`.
 
 
 ## Extensions
 
-The overview is limited to static optimization problems with time-independent memory/stepsize rules. The {doc}`Problem Formulation <../usage/problem_formulation/index_problem_formulation>` section in {doc}`Usage<../usage/index_usage>` documents generalizations to this base construction, including 
+The overview is limited to static optimization problems with time-independent memory/stepsize rules. The {doc}`Problem formulation <../usage/problem_formulation/index_problem_formulation>` section in {doc}`Usage<../usage/index_usage>` documents generalizations to this base construction, including 
 - Performance criteria
 - Time-varying optimization problems
 - Time-varying dynamical systems

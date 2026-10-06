@@ -1,4 +1,4 @@
-# Repeated Operator Evaluations
+# Repeated operator evaluations
 
 Some optimization algorithms involve multiple evaluations of operators within a single time step. The Extragradient Method {footcite}`korpelevich1976extragradient`  
 ```{math}
@@ -25,7 +25,7 @@ I & -2 \lambda I & -\lambda I & - \lambda I & 0} \mat{c}{x_k \hl w^1_k \\ w^2_k 
 ```
 evaluates the operator $F_2$ twice per time step: at positions 2 and 4. This algorithm may be modeled using the code
 ```matlab
-Operator_Class = {op1, op2, op3}; %classes for F1, F2, F3
+operator_class = {op1, op2, op3}; %classes for F1, F2, F3
 A = [1];
 B = [2, 1, 2, 1] * (-lambda * gamma);
 C = [1; 1; 1; 1];
@@ -38,10 +38,10 @@ K = ss(A, B, C, D, 1);
 
 bind = [1, 2, 3, 2]; %ordering of operators in repeated evaluations
 
-sys = opt_system(Operator_Class, [], K);
+sys = opt_system(operator_class, [], K);
 sys.bind = bind;
 ```
 
 :::{seealso}
-The {doc}`Repeated Evaluations <../../../examples_simulation/sim_bind>` example executes this algorithm with provided code.
+The {doc}`Repeated evaluations <../../../examples_simulation/sim_bind>` example executes this algorithm with provided code.
 :::

@@ -1,4 +1,4 @@
-# Get Started
+# Get started
 
 
 ## Installation
@@ -11,7 +11,7 @@ It is tested for MATLAB versions  $\geq$ 2024a.
 
 ## Workflow
 
-Analysis and Synthesis follow similar workflows:
+Analysis and synthesis follow similar workflows:
 1. Define the class of functions/operators in the optimization/inclusion problem.
 2. Specify the algorithm (analysis), or the network interfacing the operators (synthesis)
 3. Choose the order of the certification (higher order: better bounds, more expensive)
@@ -19,7 +19,7 @@ Analysis and Synthesis follow similar workflows:
 5. Validate the solution, and plot sample trajectories
 
 (#optimization-example-setup)=
-## Optimization  Example Setup
+## Optimization example setup
 
 
 A constrained optimization problem minimizing a function $f$ subject to a $L_1$ norm constraint is
@@ -33,7 +33,7 @@ The function $f$ is known to be real-valued, $m$-strongly convex, and $L$-smooth
 
 ## Analysis 
 
-The Projected Gradient Descent (PGD) algorithm with stepsize $\gamma > 0$ is the iterative procedure
+The projected gradient descent (PGD) algorithm with stepsize $\gamma > 0$ is the iterative procedure
 
 ```{math}
 \beta_{k+1} = \text{proj}_{\mathcal{Z}}(\beta_k - \gamma \partial f(\beta_k)).
@@ -86,7 +86,7 @@ Convergence is not guaranteed with time-delays, because $1.3744 > 1$.
 
 Code to generate an optimization algorithm for $m=1, L=50$ is 
 ```{literalinclude} ../../../examples/getting_started/synthesis_workflow_test.m
-:caption: Synthesis without Network Effects
+:caption: Synthesis without network effects
 :language: matlab
 :lines:  1-13
 ```

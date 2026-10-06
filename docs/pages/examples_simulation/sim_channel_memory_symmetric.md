@@ -1,4 +1,4 @@
-#  Channel Memory
+#  Channel memory
 
 This example involves a two-operator inclusion problem. Memory effects are present in the communication link to and from evaluation of $F_1$. 
 The intensity of the memory effects are represented by a scalar forgetting factor $\alpha > 0$. 
@@ -30,8 +30,8 @@ The controller structure with parameters $(\gamma, \lambda) \geq 0$ used to solv
  I & -\gamma I & -\frac{ -\gamma }{\alpha+1} I }  \mat{c}{x_{k}^c \hl y_k^1 \\ y_k^2}.
 ```
 
-This controller structure is parameterized by $\alpha$. If $\alpha = 0$ and $\lambda = 1$, then this controller is the same as Projected Gradient Descent.
-The controller structure is chosen to ensure that the {doc}`Regulator Equation <../how_it_works/index_how_it_works>` condition for algorithm convergence is satisfied for all values $(\gamma, \lambda)$. Projected Gradient Descent fails the regulator equation requirement of convergence when $\alpha > 0$. 
+This controller structure is parameterized by $\alpha$. If $\alpha = 0$ and $\lambda = 1$, then this controller is the same as projected gradient descent.
+The controller structure is chosen to ensure that the {doc}`regulator equation <../how_it_works/index_how_it_works>` condition for algorithm convergence is satisfied for all values $(\gamma, \lambda)$. Projected gradient descent fails the regulator equation requirement of convergence when $\alpha > 0$. 
 
 We use this algorithm to solve a composite optimization problem 
 ```{math}
@@ -55,7 +55,7 @@ Figure [1](#sym-trace) plots a trace of algorithm execution starting from $x_0 =
 *Figure 1:* Trace of execution and convergence
 :::
 
-The Regulator Equations are used to  establish tracking properties of solution trajectories. The solution to the Regulator Equations for this network and controller are
+The regulator equations are used to  establish tracking properties of solution trajectories. The solution to the regulator equations for this network and controller are
 ```{math}
 \begin{align*}
 \Pi &= \mat{cc}{0 & \frac{1}{2(\alpha+1)}I \\ -\frac{1}{2} I & 0 }, &  \Gamma &= \mat{cc}{-(\alpha+1) I & 0 \\

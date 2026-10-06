@@ -1,4 +1,4 @@
-# Repeated Operators
+# Repeated operators
 
 
 This example considers composite optimization problems with two functions
@@ -17,7 +17,7 @@ These requirement are formulated using {doc}`information structures <../usage/pr
 }.
 \end{align*}
 
-Synthesis is used to find a algorithm that is convergent for all $f \in S_{1, 8}$ and $g \in S_{0,\infty}$, that also satisfies the information structure and repetition requirement. Two rounds of Synthesis/Analysis alternation are performed using `order = {1, 1}`. The Analysis-certified convergence rates for Repeated Evaluations are
+Synthesis is used to find a algorithm that is convergent for all $f \in S_{1, 8}$ and $g \in S_{0,\infty}$, that also satisfies the information structure and repetition requirement. Two rounds of synthesis/analysis alternation are performed using `order = {1, 1}`. The analysis-certified convergence rates for repeated evaluations are
 :::{list-table}
 * - \# $f$ evaluations
   - $\rho$ bound (Round 1)
@@ -49,7 +49,7 @@ Figure  [1](#rep) compares convergence behavior of trajectories solving a constr
 
 
 ```{literalinclude} ../../../examples/synthesis/syn_repeated_multigrad.m
-:caption: Code for Repeated Synthesis
+:caption: Code for repeated synthesis
 :language: matlab
 :lines:  1-39
 ```

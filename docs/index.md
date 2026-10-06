@@ -8,7 +8,7 @@ tocdepth: 1
 
 
 
-Analysis and Synthesis of First-Order Algorithms (MATLAB)
+Analysis and synthesis of first-order algorithms (MATLAB)
 
 ---
 
@@ -25,16 +25,16 @@ Analysis and Synthesis of First-Order Algorithms (MATLAB)
 
 
 Analysis bounds performance measures such as  worst-case convergence rates and gains for error amplification. Synthesis tries to design an optimization algorithm satisfying these desired performance constraints. 
-Analysis and Synthesis may be performed for algorithms arising in dynamic environments,  including cases  with constant or time-varying delays, channel memory, and cross-talk.
+Analysis and synthesis may be performed for algorithms arising in dynamic environments,  including cases  with constant or time-varying delays, channel memory, and cross-talk.
 
 
-Both the Analysis and Synthesis tasks are posed as convex problems with  Linear Matrix Inequality constraints. These problems are posed and solved using [LMILab](https://www.mathworks.com/help/robust/ug/introduction.html).  
+Both the analysis and synthesis tasks are posed as convex problems with  linear matrix inequality (LMI) constraints. These problems are posed and solved using [LMI Lab](https://www.mathworks.com/help/robust/ug/introduction.html).  
 
 
 
 ## Get Started
 
-For installation and  examples of algorithm  Analysis and Synthesis workflows, see  {doc}`Get Started <pages/get_started/index_get_started>`.
+For installation and  examples of algorithm  analysis and synthesis workflows, see  {doc}`Get Started <pages/get_started/index_get_started>`.
 
 ## Contributors
 
@@ -55,8 +55,8 @@ Development of {{osyn}} was in part supported by  Deutsche Forschungsgemeinschaf
 :hidden:
 
 Home <self>
-Get Started <pages/get_started/index_get_started>
-How it Works <pages/how_it_works/index_how_it_works>
+Get started <pages/get_started/index_get_started>
+How it works <pages/how_it_works/index_how_it_works>
 Usage <pages/usage/index_usage>
 Examples <pages/examples>
 Documentation <pages/documentation/index_documentation>
