@@ -7,11 +7,11 @@ This page collects the documentation for each object and function in {{osyn}}.
 :maxdepth: 1
 Manager <doc_manager>
 Solution <doc_solutions>
-Operator Classes <operators/doc_operators>
+Operator classes <operators/doc_operators>
 Plants <plants/doc_plants>
 Systems <system/doc_system>
-Integral Quadratic Constraints <doc_iqc>
-Performance Specifications <doc_specs>
+Integral quadratic constraints <doc_iqc>
+Performance specifications <doc_specs>
 Configuration <doc_config>
 Simulation  <doc_simulation>
 Plotting  <doc_plotting>

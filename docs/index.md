@@ -32,9 +32,9 @@ Both the analysis and synthesis tasks are posed as convex problems with  linear 
 
 
 
-## Get Started
+## Get started
 
-For installation and  examples of algorithm  analysis and synthesis workflows, see  {doc}`Get Started <pages/get_started/index_get_started>`.
+For installation and  examples of algorithm  analysis and synthesis workflows, see  {doc}`Get started <pages/get_started/index_get_started>`.
 
 ## Contributors
 
