@@ -30,7 +30,7 @@ An optimization algorithm is a procedure that generates a sequence of iterates $
 Many common optimization algorithms can be expressed as the interconnection of operators and linear systems {footcite}`wang2011control`. As an example, the gradient descent/forward-step method with stepsize $\gamma > 0$ may be represented by 
 ```{math}
 \begin{align*}
- \mat{c}{x_{k+1} \hl z_k} &= \mat{c|c}{I & -\gamma \lambda I \hl I & 0 }   \mat{c}{x_{k} \hl w_k}, & \mat{c}{w_k} \in  \mat{c}{F_1(z_k)},
+ \mat{c}{x_{k+1} \hl z_k} &= \mat{c|c}{I & -\gamma  I \hl I & 0 }   \mat{c}{x_{k} \hl w_k}, & \mat{c}{w_k} \in  \mat{c}{F_1(z_k)},
 \end{align*}
 ```
  and the   Douglas-Rachford algorithm {footcite}`douglas1956numerical`   with parameters $\gamma, \lambda \geq 0$ may be represented by 
@@ -106,16 +106,16 @@ Robust stability ensures convergence to 0 if 0 is the solution to the inclusion 
 
 
 
-The robust stability criterion is an intensive dynamical test, and will be verified using integral quadratic constraints and linear matrix inequality methods {footcite}`megretski2002system` {footcite}`stoorvogel2000performance`. In contrast, the  regulator equation can be easily checked by solving a linear system of  equations. Uniqueness of the state $x^*$ follows if $(\Acl, \Ccl)$ is detectable.
+The robust stability criterion is an intensive dynamical test, and is verified using integral quadratic constraints and linear matrix inequality methods {footcite}`megretski2002system` {footcite}`stoorvogel2000performance`. In contrast, the  regulator equation can be easily checked by solving a linear system of  equations. Uniqueness of the state $x^*$ follows if $(\Acl, \Ccl)$ is detectable.
 
 The regulator equation requirement is independent of the specific operators in $F$. Robust stability is verified for classes of operators (e.g. $F_2$ is maximal monotone).
 
 
-Fullfillment of the regulator equation and the {{osyn}}-verified robust stability condition imply that the algorithm is a fixed-point encoding {footcite}`ryu2020uniqueness`: every fixed point of the algorithm is a fixed point of the inclusion problem.
+Fulfillment of the regulator equation and the {{osyn}}-verified robust stability condition imply that the algorithm is a fixed-point encoding {footcite}`ryu2020uniqueness`: every fixed point of the algorithm is a fixed point of the inclusion problem.
 
 ## Networked setting
 
-Synthesis is posed in terms of a network separating the oracle $F$ to the controller (you). These networks can model time-delays, cross-talk, channel memory, and other phenomena. The default case of no network dynamics (direct connection to the oracle $F$) is 
+Synthesis is posed in terms of a network separating the oracle $F$ from  the controller (you). These networks can model time-delays, cross-talk, channel memory, and other phenomena. The default case of no network dynamics (direct connection to the oracle $F$) is 
 
 ```{math}
 \mat{c}{
@@ -159,7 +159,7 @@ Synthesis may also involve selecting a solution $(\Pi, \Gamma, \Phi)$ to the reg
 
 ## Extensions
 
-The overview is limited to static optimization problems with time-independent memory/stepsize rules. The {doc}`Problem formulation <../usage/problem_formulation/index_problem_formulation>` section in {doc}`Usage<../usage/index_usage>` documents generalizations to this base construction, including 
+The overview is limited to static optimization problems with time-independent memory/stepsize rules. The {doc}`Problem setup <../usage/problem_formulation/index_problem_formulation>` section in {doc}`Usage<../usage/index_usage>` documents generalizations to this base construction, including 
 - Performance criteria
 - Time-varying optimization problems
 - Time-varying dynamical systems

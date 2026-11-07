@@ -3,7 +3,7 @@
 
 ## Installation
 
-{{osyn}} may be downloaded from [github](https://github.com/Jarmill/opt-syn).
+{{osyn}} may be downloaded from [github](https://github.com/opt-syn/opt-syn).
 
 It is tested for MATLAB versions  $\geq$ 2024a.
 
@@ -15,14 +15,14 @@ Analysis and synthesis follow similar workflows:
 1. Define the class of functions/operators in the optimization/inclusion problem.
 2. Specify the algorithm (analysis), or the network interfacing the operators (synthesis)
 3. Choose the order of the certification (higher order: better bounds, more expensive)
-4. Solve the profiling problem
+4. Solve the analysis or synthesis problem
 5. Validate the solution, and plot sample trajectories
 
 (#optimization-example-setup)=
 ## Optimization example setup
 
 
-A constrained optimization problem minimizing a function $f$ subject to a $L_1$ norm constraint is
+A constrained optimization problem minimizing a function $f$ subject to an $L_1$ norm constraint is
 ```{math}
 \begin{align*}
 \beta^* \in \text{argmin}_{\norm{\beta}_1 \leq 100} f(\beta).
