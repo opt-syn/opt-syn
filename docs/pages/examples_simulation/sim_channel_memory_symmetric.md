@@ -39,7 +39,7 @@ We use this algorithm to solve a composite optimization problem
 ```
 where $f$ is a convex quadratic with $m=1$, $L=5$. 
 
-Figure [1](#sym-trace) plots a trace of algorithm execution starting from $x_0 = 0$, highlighting the states of the network and controller.
+Figure [1](#sym-trace) plots a trace of algorithm execution with $\alpha = 0.4$ starting from $x_0 = 0$, highlighting the states of the network and controller.
 
 :::{figure} _static/sim_channel_sym_dark.png
 :align: center
@@ -107,7 +107,7 @@ Figure [3](#sym-trace-sq) plots the squared norm of the tracking error
 *Figure 3:* Tracking residuals
 :::
 
-```{literalinclude} ../../../examples/simulation/dr_example/sim_channel_symmetric.m
+```{literalinclude} ../../../examples/simulation/sim_channel_symmetric.m
 :linenos: true
 :caption: Code for optimization with symmetric channel memory effects
 :language: matlab
