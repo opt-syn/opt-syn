@@ -268,18 +268,25 @@ classdef lmi_dispatch_interface < handle
 
             %sb =  [C, D]^T [-M] [C D]
             
-            [nzp, nwp] = ssize(quad.S);
+            [nwp, nzp] = ssize(quad.S);
             if nzp + nwp > 0                
                 I = eye(nzp+nwp);
                 Iwp = I(1:nwp, :);
                 Izp = I((nwp+1):end, :);
                 
-    
-                F = Izp * [plant.C, plant.D];
                 E = Iwp * [plant.C, plant.D];
+                topc = E'*quad.Q * E;
+                if nzp == 0
+                    F = zeros(0, ssize([plant.C, plant.D], 2));
+                else
+                    F = Izp * [plant.C, plant.D];
+                    topc = topc + E' * quad.S' * F + F' * quad.S * E;
+                end
+                
+                
     
-                topc = E'*quad.Q * E + E' * quad.S' * F + F' * quad.S * E;
-                sidec = F * quad.T';
+                 
+                sidec = quad.T' * F;
                 botc = -quad.U;
     
                 pb = [topc, sidec';

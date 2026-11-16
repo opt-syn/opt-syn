@@ -38,9 +38,11 @@ network.nz = 2; network.ny = 2;
 network = network.add_oracle_shift(1);
 
 %define the specifications
-spec = spec_l2(1);
-spec.target = true;
-specs = {spec};
+specs = {spec_stability(), spec_l2(1)};
+% spec = {};
+specs{2}.target = true;
+specs{2}.gain = 50;
+% specs = {spec};
 
 %% form the system
 sys = opt_system(ops, network);
@@ -54,8 +56,8 @@ man = opt_synthesis(sys, config);
 
 %three rounds of alternation
 Niter = 3; 
-[sol_h, v_h] = man.alternate(Niter, order);
-sol = sol_h{end, end};
+[sol_h, v_h] = man.alternate(Niter, order, [], specs);
+% sol = sol_h{end, end};
 % sol = man.bisect([], specs);
 % sol.rho
 
@@ -79,7 +81,8 @@ ops_sim = {op1_sim, op2_sim};
 
 sys_sim = sol.sys.export_sim(ops_sim);
 sim = alg_sim(sys_sim, d);
-wp_eps = 0;
+% wp_eps = 0;
+wp_eps = 1;
 sim.sampler.wp = @(k, param) wp_eps*(2*rand(1, d)-1);
 
 T = 61;
@@ -103,7 +106,10 @@ dstar = [-betastar; wend(1:end-1, :, end)]; %the tracked reference
 plt = plt.add_opt_sig(sol.regcl, dstar);
 plt.plot_4_err(2);    %plot the tracking error
 plt.plot_4_sq_err(3); %plot the  squared norm of the tracking error
-% 
+
+
+
+
 % %% compare against the algorithm in the simulation example
 % gamma = 0.4;
 % lambda = 0.2;

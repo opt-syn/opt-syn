@@ -166,15 +166,18 @@
                 end                
                 if isa(p,'double')
                     %generate constant map with empty block of correct dimension
-                    if ~isempty(p)
+%                     if isempty(p)
                         s.A=p;
                         [k,m]=size(s.A);
                         s.B=double.empty(k,0);
                         s.C=double.empty(0,m);
-                        s.rpar=k;
-                        s.cpar=m;
+                        if ~isempty(p)
+                            s.rpar=k;
+                            s.cpar=m;
+                        end
                         s.bl=[];
-                    end
+%                     end
+                    
                 end
             end
         end

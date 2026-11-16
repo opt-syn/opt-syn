@@ -77,14 +77,14 @@ classdef spec_l2< spec_interface
 
                Q_l2 = -vars_spec.mu_l2;
                
-               S_l2 = -zeros(nwp, 0)';
+               S_l2 = -zeros(nwp, 0);
                % S_l2 = [];
 
                T_l2 = [];
                U_l2 = [];
   
 
-               quad = struct('Q', Q_l2, 'T', T_l2, 'S', S_l2, 'U', U_l2);
+               quad = quad_param(Q_l2, S_l2, U_l2, T_l2);
 
                objective  = vars_spec.mu_l2;
 

@@ -769,7 +769,7 @@ classdef lmi_synthesis_interface < lmi_dispatch_interface
                 zeros(nw, n), eye(nw)], zeros(n+nw, n+nt)];
 
             outer_cl_left = [zeros(n), zeros(n, nz);
-                zeros(nw, n), quad.S';
+                zeros(nw, n), quad.S;
                 eye(n), zeros(n, nz); %check the sign here
                 zeros(nt, n), quad.T];
 

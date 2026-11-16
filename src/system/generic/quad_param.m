@@ -80,7 +80,17 @@ classdef quad_param
 
             
             Q_new = blkdiag(obj.Q, other.Q);
-            S_new = blkdiag(obj.S, other.S);
+
+            nz1 = size(obj.U, 2);
+            nz2 = size(other.U, 2);
+
+            if nz1 == 0
+                S_new = [zeros(size(obj.S, 1), size(other.S, 2)); other.S];
+            elseif nz2 == 0
+                S_new = [obj.S; zeros(size(other.S, 1), size(obj.S, 2))];
+            else
+                S_new = blkdiag(obj.S, other.S);
+            end
             U_new = blkdiag(obj.U, other.U);            
             T_new = blkdiag(obj.T, other.T);
 
@@ -93,6 +103,12 @@ classdef quad_param
             R_out = obj.T' * (obj.U \ obj.T);
 
 
+        end
+
+        function P_out = P(obj)
+            % get the double matrix
+
+            P_out = [obj.Q, obj.S; obj.S', obj.R()];
         end
     end
 end
