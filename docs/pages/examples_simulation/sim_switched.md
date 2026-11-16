@@ -104,7 +104,7 @@ Figure [3](#delay-cont) plots the algorithm trajectory under contiguous time-var
 :align: center
 :class: only-light
 :name: delay-cont
-*Figure 2:* Contiguous time delays
+*Figure 3:* Contiguous time delays
 :::
 
 ```{literalinclude} ../../../examples/simulation/sim_time_var_delay.m
