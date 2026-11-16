@@ -76,7 +76,7 @@ We solve the composite optimization problem using a nominal PGD algorithm with s
 :::
 
 
-Figure [1](#delay-snap) plots the algorithm trajectory under periodic time-varying delays.
+Figure [2](#delay-snap) plots the algorithm trajectory under snap time-varying delays.
 :::{figure} _static/sim_time_var_delay_snap_dark.png
 :align: center
 :class: only-dark
@@ -92,7 +92,7 @@ Figure [1](#delay-snap) plots the algorithm trajectory under periodic time-varyi
 :::
 
 
-Figure [3](#delay-contiguous) plots the algorithm trajectory under contiguous time-varying delays.
+Figure [3](#delay-cont) plots the algorithm trajectory under contiguous time-varying delays.
 :::{figure} _static/sim_time_var_delay_contiguous_dark.png
 :align: center
 :class: only-dark
