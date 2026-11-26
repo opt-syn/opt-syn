@@ -26,7 +26,7 @@ sys_sml = opt_system({op1_gen, op2_sml,  op3}, [], sK);
 
 man_sml = opt_analysis(sys_sml);
 
-sol_iqc_noncaus_bit = man_sml.bisect({3, [3, 3], [3, 3]}); %  
+sol_iqc_noncaus_bit = man_sml.bisect({3, [3, 3], [3, 3]}); %0.9529
 sol_iqc_noncaus = man_sml.bisect({0, [2, 2], [2, 2]}); %0.9545
 sol_incr = man_sml.bisect(0); %0.9553
 
