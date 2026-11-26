@@ -8,7 +8,12 @@ tocdepth: 1
 
  ## Slides
 
+[opt-syn functionality ](_static/Presentation__opt_syn_PGMO.pdf)
+
+
 [Structures of Optimization Algorithms ](_static/presentation_wuds_structure.pdf)
+
+
 
 <!-- ## Publications with {{osyn}}
 

@@ -16,12 +16,11 @@ sys = opt_system(ops);
 %% solve the problem
 config =opt_config();
 
-config.syn.D_mask = [0, 0; 1, 1]; %gradient evaluation of lsq
+% config.syn.D_mask = [0, 0; 1, 1]; %gradient evaluation of lsq
+config.syn.prox = [1, 1];
 config.gen.same_rho = 0;
-config.syn.elimination = true;
-config.syn.reduced_order = false;
 man = opt_synthesis(sys, config);
-
+sol = man.bisect();
 % sol = man.bisect();
 Niter = 2;
 order = {[2, 1], 1};
