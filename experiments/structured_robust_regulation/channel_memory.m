@@ -1,7 +1,8 @@
 %% describe the operators
 m = 1; L = 5;
 
-SML = false;
+% SML = false;
+SML = true;
 
 if SML
     op1 = op_sml(m, L);

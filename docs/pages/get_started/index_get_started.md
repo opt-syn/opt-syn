@@ -5,7 +5,7 @@
 
 {{osyn}} may be downloaded from [github](https://github.com/opt-syn/opt-syn).
 
-It is tested for MATLAB versions  $\geq$ 2024a.
+It is tested for MATLAB versions  $\geq$ 2024a. The <a href="https://www.mathworks.com/products/robust.html">Robust Control Toolbox</a> is required.
 
 
 

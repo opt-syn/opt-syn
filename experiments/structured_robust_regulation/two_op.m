@@ -1,11 +1,12 @@
 %% describe the operators
 m = 1; L = 5;
 
-SML = false;
+SML = true;
 
 if SML
     op1 = op_sml(m, L);
-    order = {[1, 1], [1,1]};
+    % order = {[1, 1], [1,1]};
+    order = {[1, 0], [1, 0]};
 else
     op1 = op_gen();
     op1.monotone = m;
@@ -65,16 +66,19 @@ ops_sim = {op1_sim, op2_sim};
 
 sys_sim = sol.sys.export_sim(ops_sim);
 sim = alg_sim(sys_sim, d);
-wp_eps = 10;
+% wp_eps = 10;
+wp_eps = 0;
 sim.sampler.wp = @(k, param) wp_eps*(2*rand(1, d)-1);
 
-T = 61;
+% T = 61;
+T = 31;
 sim_out= sim.sim(T);
 plt = alg_plotter(sim_out);
-plt.plot_6(1);
+% plt.plot_6(1);
 
 plt.plot_6(4);
 
+plt.plot({'z', 'res_z', 'res_w'}, 5);
 
 %% regulator equation tracking
 
